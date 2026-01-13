@@ -1370,6 +1370,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
+            padding-bottom: 240px !important;
+            /* GLOBAL FIX: Prevent Footer Overlap */
         }
 
         /* GRID LAYOUTS */
@@ -1900,13 +1902,14 @@
             padding: 12px 20px;
             display: flex;
             justify-content: flex-end;
-            /* Align inputs to right */
             align-items: center;
             gap: 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
             z-index: 1000;
             padding-bottom: max(16px, env(safe-area-inset-bottom));
+            flex-wrap: wrap;
+            /* Safe wrapping for mobile */
         }
 
         .status-select {

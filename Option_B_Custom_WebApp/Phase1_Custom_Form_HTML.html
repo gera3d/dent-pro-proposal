@@ -1321,7 +1321,12 @@
                 <!-- Left: Stats -->
                 <div class="footer-stats">
                     <span>Panels: <strong id="livePanelCount" style="color: #fff;">0</strong></span>
-                    <span id="saveStatus" style="opacity: 0.5;"></span>
+                    <span
+                        style="border-left: 1px solid #555; margin: 0 8px; height: 12px; display: inline-block;"></span>
+                    <span>Dents: <strong id="liveDentCount" style="color: #4CD964;">0</strong></span>
+                    <span
+                        style="border-left: 1px solid #555; margin: 0 8px; height: 12px; display: inline-block;"></span>
+                    <span>OS: <strong id="liveOsCount" style="color: #ff3b30;">0</strong></span>
                 </div>
 
                 <!-- Right: Actions -->
@@ -1567,8 +1572,8 @@
             background: rgba(30, 30, 30, 0.4);
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 140px;
-            /* INCREASED: Prevent Footer Overlap */
+            margin-bottom: 20px;
+            /* FIXED: Removed large gap, global padding handles footer */
         }
 
         .grid-header {
@@ -2125,29 +2130,36 @@
 
         function updateSummary() {
             const activePanels = new Set();
+            let totalDents = 0;
+            let totalOs = 0;
+
             document.querySelectorAll('#scopeForm [name]').forEach(el => {
                 if (el.type === 'hidden') return;
-                // Check if field has meaningful data
+
+                // Track Active Panels
                 if (el.type === 'checkbox' && !el.checked) return;
                 if ((el.type === 'text' || el.type === 'number') && (!el.value || el.value === '0')) return;
 
+                const name = el.name;
                 // Parse Panel Name from "lf_fender_dc" -> "lf_fender"
-                const match = el.name.match(/^(.+?)_(dc|os|ri|rr)/);
+                const match = name.match(/^(.+?)_(dc|os|ri|rr)/);
                 if (match) {
                     activePanels.add(match[1]);
                 }
-            });
-            const count = activePanels.size;
-            document.getElementById('livePanelCount').textContent = count;
 
-            // Optional: visual flair if count > 0
-            if (count > 0) {
-                document.getElementById('submitBtn').style.background = '#4CD964';
-                document.getElementById('submitBtn').style.color = '#000';
-            } else {
-                document.getElementById('submitBtn').style.background = '#333';
-                document.getElementById('submitBtn').style.color = '#888';
-            }
+                // Sum Values
+                if (name.endsWith('_dc')) {
+                    totalDents += parseInt(el.value) || 0;
+                }
+                if (name.endsWith('_os')) {
+                    totalOs += parseInt(el.value) || 0;
+                }
+            });
+
+            // Update UI
+            document.getElementById('livePanelCount').textContent = activePanels.size;
+            document.getElementById('liveDentCount').textContent = totalDents;
+            document.getElementById('liveOsCount').textContent = totalOs;
         }
 
         function clearDraft() {

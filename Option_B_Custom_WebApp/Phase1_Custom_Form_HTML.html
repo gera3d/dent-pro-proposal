@@ -1356,23 +1356,38 @@
 
         .header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            /* Center Title */
             align-items: center;
             background: #2d2d2d;
-            padding: 10px 20px;
+            padding: 14px 20px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            /* For absolute positioning of sides */
         }
 
         .header .logo {
             font-size: 20px;
             font-weight: bold;
             color: #4CD964;
+            position: absolute;
+            left: 20px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .form-meta {
             display: flex;
             gap: 20px;
+            position: absolute;
+            right: 20px;
         }
 
         input[type="text"],
@@ -1456,6 +1471,19 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+        }
+
+        /* Fix Year/Make/Model Row */
+        .ymb-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .ymb-row select,
+        .ymb-row input {
+            width: auto;
+            /* Allow flex to control width */
         }
 
         .info-group label {

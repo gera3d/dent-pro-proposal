@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dent Experts - Workflow Automation | Gera Yeremin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #141414;
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-blue: #007AFF;
+            --accent-gradient: linear-gradient(135deg, #007AFF 0%, #AF52DE 50%, #FF2D55 100%);
+            --border-color: #1d1d1f;
+            --success-green: #30D158;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Slideshow Container */
+        .slideshow {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100px);
+        }
+
+        .slide-content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-blue);
+            transform: scale(1.2);
+        }
+
+        .nav-dot:hover {
+            background: var(--text-secondary);
+        }
+
+        .nav-arrows {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-arrow {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-arrow:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 48px;
+            left: 40px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            z-index: 100;
+        }
+
+        /* Typography */
+        .label {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -3px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .highlight {
+            color: var(--accent-blue);
+        }
+
+        /* Pain Point Grid */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .pain-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+        }
+
+        .pain-emoji {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .pain-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pain-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .phase-1::before {
+            background: linear-gradient(90deg, #30D158, #32ADE6);
+        }
+
+        .phase-2::before {
+            background: linear-gradient(90deg, #007AFF, #AF52DE);
+        }
+
+        .phase-3::before {
+            background: linear-gradient(90deg, #AF52DE, #FF2D55);
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .phase-number {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .phase-title {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .phase-price {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .price-timeline {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .phase-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            max-width: 600px;
+        }
+
+        .deliverables {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .deliverable {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .check {
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        /* Quote */
+        .quote-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-blue);
+            padding: 32px 40px;
+            border-radius: 0 20px 20px 0;
+            margin: 40px 0;
+            text-align: left;
+        }
+
+        .quote-text {
+            font-size: 22px;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .quote-author {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary Table */
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            text-align: left;
+            width: 100%;
+        }
+
+        .summary-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 180px 100px;
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-header {
+            background: var(--bg-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            padding: 16px 28px;
+        }
+
+        .summary-total {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(175, 82, 222, 0.1));
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* About Section */
+        .about-content {
+            text-align: left;
+            max-width: 700px;
+        }
+
+        .about-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .signature {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .signature-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .signature-title {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .signature-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        /* CTA Slide */
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            border-radius: 100px;
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cta-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 122, 255, 0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .cta-secondary:hover {
+            border-color: var(--text-secondary);
+        }
+
+        /* Prepared For */
+        .meta {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .slide {
+                padding: 40px 24px 100px;
+            }
+
+            h1 {
+                font-size: 48px;
+                letter-spacing: -2px;
+            }
+
+            h2 {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .deliverables {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .phase-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .phase-price {
+                text-align: left;
+            }
+
+            .meta {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* Keyboard hint */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .keyboard-hint kbd {
+            background: var(--bg-card);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin: 0 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slideshow">
+        <!-- Slide 1: Title -->
+        <div class="slide active" data-slide="0">
+            <div class="slide-content">
+                <div class="label">Workflow Automation Proposal</div>
+                <h1>Stop Copying Data.<br>Start Building <span class="gradient-text">Assets.</span></h1>
+                <p class="subtitle">A phased approach to eliminate busywork, standardize your scope process, and prepare
+                    Dent Experts to scale.</p>
+                <div class="meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Prepared For</div>
+                        <div class="meta-value">Judah Howe — Dent Experts</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Date</div>
+                        <div class="meta-value">January 12, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem -->
+        <div class="slide" data-slide="1">
+            <div class="slide-content">
+                <div class="label">The Problem</div>
+                <h2>Your Team Is Drowning<br>in <span class="highlight">Busywork</span></h2>
+                <p class="subtitle">Every scope means duplicate entry. Every customer means re-typing data that already
+                    exists. This is expensive chaos disguised as "just how things work."</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Pain Points -->
+        <div class="slide" data-slide="2">
+            <div class="slide-content">
+                <div class="label">The Cost of Chaos</div>
+                <h2>These Problems Cost Money.<br><span class="highlight">Every. Single. Week.</span></h2>
+                <div class="pain-grid">
+                    <div class="pain-card">
+                        <div class="pain-emoji">📋</div>
+                        <div class="pain-title">Manual Scope Sheets</div>
+                        <div class="pain-desc">Paper forms or scattered files. No searchable history. No accountability.
+                        </div>
+                    </div>
+                    <div class="pain-card">
+                        <div class="pain-emoji">🔁</div>
+                        <div class="pain-title">Double (Triple) Entry</div>
+                        <div class="pain-desc">Same VIN, claim number, customer info typed into Mitchell, scope sheets,
+                            then GoHighLevel.</div>
+                    </div>
+                    <div class="pain-card">
+                        <div class="pain-emoji">📱</div>
+                        <div class="pain-title">8 Apps That Don't Talk</div>
+                        <div class="pain-desc">Mitchell, OrcaScan, spreadsheets, Drive, GHL, email... data scattered
+                            everywhere.</div>
+                    </div>
+                    <div class="pain-card">
+                        <div class="pain-emoji">💸</div>
+                        <div class="pain-title">$50/hr Labor, $10/hr Work</div>
+                        <div class="pain-desc">Skilled scopers and writers spend 30% of their day on copy-paste tasks.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Approach -->
+        <div class="slide" data-slide="3">
+            <div class="slide-content">
+                <div class="label">The Solution</div>
+                <h2>A Phased Approach<br>That <span class="gradient-text">Pays for Itself</span></h2>
+                <p class="subtitle">We start simple, prove the workflow works, and build from there. Each phase delivers
+                    immediate value before we invest in the next.</p>
+                <div class="quote-block">
+                    <div class="quote-text">"The MVP doesn't need APIs. The MVP is just: they fill out a form, and we
+                        have a dashboard that's a record of that information."</div>
+                    <div class="quote-author">— From our conversation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Phase 1 -->
+        <div class="slide" data-slide="4">
+            <div class="slide-content">
+                <div class="phase-card phase-1">
+                    <div class="phase-header">
+                        <div>
+                            <div class="phase-number">Phase 1</div>
+                            <div class="phase-title">Google Forms & Sheets</div>
+                        </div>
+                        <div class="phase-price">
+                            <div class="price-amount">$2,000</div>
+                            <div class="price-timeline">1 Week</div>
+                        </div>
+                    </div>
+                    <p class="phase-desc">Validate your digital workflow using free, proven tools. Scopers get a
+                        mobile-friendly form. You get a searchable dashboard with instant PDF export.</p>
+                    <div class="deliverables">
+                        <div class="deliverable"><span class="check">✓</span> Branded Google Form</div>
+                        <div class="deliverable"><span class="check">✓</span> Auto-populated Sheet dashboard</div>
+                        <div class="deliverable"><span class="check">✓</span> PDF export template</div>
+                        <div class="deliverable"><span class="check">✓</span> Email notifications</div>
+                        <div class="deliverable"><span class="check">✓</span> iPad setup guide</div>
+                        <div class="deliverable"><span class="check">✓</span> Team training docs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Phase 2 -->
+        <div class="slide" data-slide="5">
+            <div class="slide-content">
+                <div class="phase-card phase-2">
+                    <div class="phase-header">
+                        <div>
+                            <div class="phase-number">Phase 2</div>
+                            <div class="phase-title">Custom Webapp Dashboard</div>
+                        </div>
+                        <div class="phase-price">
+                            <div class="price-amount">$9,800 – $12,800</div>
+                            <div class="price-timeline">4–6 Weeks</div>
+                        </div>
+                    </div>
+                    <p class="phase-desc">Once the workflow is proven, we build your own branded system. Login with
+                        Google, beautiful interface, central dashboard. Software you own.</p>
+                    <div class="deliverables">
+                        <div class="deliverable"><span class="check">✓</span> Custom web application</div>
+                        <div class="deliverable"><span class="check">✓</span> Google authentication</div>
+                        <div class="deliverable"><span class="check">✓</span> User roles & permissions</div>
+                        <div class="deliverable"><span class="check">✓</span> Enhanced scope form</div>
+                        <div class="deliverable"><span class="check">✓</span> Photo gallery uploads</div>
+                        <div class="deliverable"><span class="check">✓</span> Interactive damage diagram</div>
+                        <div class="deliverable"><span class="check">✓</span> Search & filter dashboard</div>
+                        <div class="deliverable"><span class="check">✓</span> Professional PDF generation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Phase 3 -->
+        <div class="slide" data-slide="6">
+            <div class="slide-content">
+                <div class="phase-card phase-3">
+                    <div class="phase-header">
+                        <div>
+                            <div class="phase-number">Phase 3</div>
+                            <div class="phase-title">API Integrations</div>
+                        </div>
+                        <div class="phase-price">
+                            <div class="price-amount">$8,800 – $12,400</div>
+                            <div class="price-timeline">4–6 Weeks</div>
+                        </div>
+                    </div>
+                    <p class="phase-desc">Connect all your systems. Scan a VIN and the form fills itself. Complete a
+                        scope and it uploads to Mitchell. Capture a customer and they appear in GHL.</p>
+                    <div class="deliverables">
+                        <div class="deliverable"><span class="check">✓</span> OrcaScan VIN scanning</div>
+                        <div class="deliverable"><span class="check">✓</span> Auto-fill 8+ fields from VIN</div>
+                        <div class="deliverable"><span class="check">✓</span> Mitchell Connect job import</div>
+                        <div class="deliverable"><span class="check">✓</span> Auto-upload PDFs to Mitchell</div>
+                        <div class="deliverable"><span class="check">✓</span> GoHighLevel opportunity sync</div>
+                        <div class="deliverable"><span class="check">✓</span> One-click customer capture</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Investment Summary -->
+        <div class="slide" data-slide="7">
+            <div class="slide-content">
+                <div class="label">Investment Summary</div>
+                <h2>What This Costs vs.<br><span class="highlight">What It Saves</span></h2>
+                <div class="summary-card" style="margin-top: 40px;">
+                    <div class="summary-row summary-header">
+                        <div>Phase</div>
+                        <div>Deliverable</div>
+                        <div>Investment</div>
+                        <div>Timeline</div>
+                    </div>
+                    <div class="summary-row">
+                        <div>1</div>
+                        <div>Google Forms & Sheets</div>
+                        <div>$2,000</div>
+                        <div>1 week</div>
+                    </div>
+                    <div class="summary-row">
+                        <div>2</div>
+                        <div>Custom Webapp Dashboard</div>
+                        <div>$9,800 – $12,800</div>
+                        <div>4–6 weeks</div>
+                    </div>
+                    <div class="summary-row">
+                        <div>3</div>
+                        <div>API Integrations</div>
+                        <div>$8,800 – $12,400</div>
+                        <div>4–6 weeks</div>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <div></div>
+                        <div>Total (All Phases)</div>
+                        <div>$20,600 – $27,200</div>
+                        <div>9–14 weeks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Why Me -->
+        <div class="slide" data-slide="8">
+            <div class="slide-content">
+                <div class="about-content">
+                    <div class="label">Why Work With Me</div>
+                    <h2>Developer + Marketer +<br><span class="gradient-text">Business Owner</span></h2>
+                    <p>Most developers don't understand P&L. Most marketers can't build product. I do both.</p>
+                    <p>I've been building software for 15+ years and running marketing for almost as long. I co-founded
+                        57 Seconds, a digital agency, where I build the tools we use to help clients.</p>
+                    <p><span class="highlight">If it doesn't make money or save time, I don't write the code.</span></p>
+                    <div class="signature">
+                        <div class="signature-name">Gera Yeremin</div>
+                        <div class="signature-title">Custom Software That Pays For Itself</div>
+                        <a href="https://gera.yerem.in" class="signature-link" target="_blank">gera.yerem.in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Let's Go -->
+        <div class="slide" data-slide="9">
+            <div class="slide-content">
+                <div class="label">Next Steps</div>
+                <h1>Ready to Stop<br>the <span class="gradient-text">Chaos?</span></h1>
+                <p class="subtitle">Let's start with Phase 1 and prove this works for your team. You're never locked
+                    in—just building what you actually need.</p>
+                <div class="cta-buttons">
+                    <a href="mailto:gera3d@gmail.com?subject=Dent%20Experts%20-%20Let's%20Start%20Phase%201"
+                        class="cta-btn cta-primary">Let's Get Started →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">10</span></div>
+
+    <div class="nav" id="navDots"></div>
+
+    <div class="nav-arrows">
+        <button class="nav-arrow" id="prevBtn">←</button>
+        <button class="nav-arrow" id="nextBtn">→</button>
+    </div>
+
+    <div class="keyboard-hint">Use <kbd>←</kbd> <kbd>→</kbd> arrow keys to navigate</div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.getElementById('navDots');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideEl = document.getElementById('currentSlide');
+        const totalSlidesEl = document.getElementById('totalSlides');
+
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        // Set total slides
+        totalSlidesEl.textContent = totalSlides;
+
+        // Create nav dots
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+            dot.addEventListener('click', () => goToSlide(index));
+            navDots.appendChild(dot);
+        });
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else if (index < currentIndex) {
+                    slide.classList.add('prev');
+                }
+            });
+
+            // Update dots
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            // Update counter
+            currentSlideEl.textContent = currentIndex + 1;
+
+            // Update buttons
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === totalSlides - 1;
+        }
+
+        function goToSlide(index) {
+            currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+            updateSlide();
+        }
+
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) {
+                currentIndex++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        }
+
+        // Button events
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Hide keyboard hint after first interaction
+        document.addEventListener('keydown', () => {
+            document.querySelector('.keyboard-hint').style.opacity = '0';
+        }, { once: true });
+    </script>
+</body>
+
+</html>

@@ -1295,6 +1295,10 @@
             </div>
 
             <div class="submit-bar">
+                <div class="form-summary" style="margin-right: auto; font-size: 12px; color: #888; font-weight: 500;">
+                    Panels Scoped: <strong id="livePanelCount" style="color: #4CD964; margin-left: 4px;">0</strong>
+                    <span id="saveStatus" style="font-size: 10px; opacity: 0.5; margin-left: 8px;"></span>
+                </div>
                 <div class="status-select">
                     <label>Status:</label>
                     <select id="status" required>
@@ -1792,7 +1796,97 @@
 
             // Camera handler
             document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
+
+            // Initialize Auto-Save
+            initAutoSave();
         });
+
+        // --- AUTO-SAVE & SUMMARY ---
+        const DRAFT_KEY = 'dent_pro_scope_draft';
+
+        function initAutoSave() {
+            // Restore if exists
+            const saved = localStorage.getItem(DRAFT_KEY);
+            if (saved) {
+                try {
+                    restoreDraft(JSON.parse(saved));
+                    console.log('Draft restored');
+                } catch (e) {
+                    console.error('Error restoring draft', e);
+                }
+            }
+            updateSummary();
+
+            // Listeners
+            document.getElementById('scopeForm').addEventListener('input', () => {
+                saveDraft();
+                updateSummary();
+            });
+            document.getElementById('scopeForm').addEventListener('change', () => {
+                saveDraft();
+                updateSummary();
+            });
+        }
+
+        function saveDraft() {
+            const data = {};
+            document.querySelectorAll('#scopeForm [name]').forEach(el => {
+                if (el.type === 'checkbox') data[el.name] = el.checked;
+                else data[el.name] = el.value;
+            });
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+            document.getElementById('saveStatus').textContent = 'Saved';
+            setTimeout(() => document.getElementById('saveStatus').textContent = '', 2000);
+        }
+
+        function restoreDraft(data) {
+            Object.keys(data).forEach(name => {
+                const els = document.getElementsByName(name);
+                if (els.length > 0) {
+                    const el = els[0];
+                    if (el.type === 'checkbox') el.checked = data[name];
+                    else el.value = data[name];
+                }
+            });
+        }
+
+        function updateSummary() {
+            const activePanels = new Set();
+            document.querySelectorAll('#scopeForm [name]').forEach(el => {
+                if (el.type === 'hidden') return;
+                // Check if field has meaningful data
+                if (el.type === 'checkbox' && !el.checked) return;
+                if ((el.type === 'text' || el.type === 'number') && (!el.value || el.value === '0')) return;
+
+                // Parse Panel Name from "lf_fender_dc" -> "lf_fender"
+                const match = el.name.match(/^(.+?)_(dc|os|ri|rr)/);
+                if (match) {
+                    activePanels.add(match[1]);
+                }
+            });
+            const count = activePanels.size;
+            document.getElementById('livePanelCount').textContent = count;
+
+            // Optional: visual flair if count > 0
+            if (count > 0) {
+                document.getElementById('submitBtn').style.background = '#4CD964';
+                document.getElementById('submitBtn').style.color = '#000';
+            } else {
+                document.getElementById('submitBtn').style.background = '#333';
+                document.getElementById('submitBtn').style.color = '#888';
+            }
+        }
+
+        function clearDraft() {
+            localStorage.removeItem(DRAFT_KEY);
+            document.getElementById('scopeForm').reset();
+            updateSummary();
+            // Reset steppers visual? They read input value, so reset() works?
+            // Yes, input value becomes "" or default.
+            // But we might need to manually set steppers to 0 if reset doesn't trigger 'input' event?
+            // Steppers read `input.value`. If `reset()` clears it, the `adjustStepper` reads it next time.
+            // But the Visual `input` needs to update? Browser handles reset of inputs. Smart.
+        }
 
         function adjustStepper(name, delta) {
             const input = document.querySelector(`input[name="${name}"]`);
@@ -1997,6 +2091,7 @@
                     // Assuming 'result' from Apps Script indicates success/failure
                     if (result && result.success) {
                         document.getElementById('successModal').style.display = 'flex'; // Use style.display for visibility
+                        clearDraft(); // Clear local storage on success
                     } else {
                         alert('Error: ' + (result ? (result.error || 'Unknown error') : 'Unknown error from server'));
                     }

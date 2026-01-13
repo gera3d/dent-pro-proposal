@@ -1515,6 +1515,59 @@
             outline: none;
         }
 
+        /* SMART STEPPER UI */
+        .stepper-ui {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-right: 8px;
+        }
+
+        .st-label {
+            font-size: 11px;
+            color: #888;
+            margin: 0 8px 0 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .st-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #4CD964;
+            font-size: 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: all 0.1s;
+        }
+
+        .st-btn:active {
+            background: #4CD964;
+            color: #000;
+            transform: scale(0.95);
+        }
+
+        .st-input {
+            width: 36px !important;
+            border: none !important;
+            background: transparent !important;
+            text-align: center;
+            color: #fff !important;
+            font-size: 15px !important;
+            font-weight: bold;
+            margin: 0 2px;
+            padding: 0 !important;
+        }
+
         /* CHECKLIST TABLES */
         .checklist-table {
             width: 100%;
@@ -1693,6 +1746,62 @@
         // --- PHOTO LOGIC ---
         function openCamera() {
             document.getElementById('cameraInput').click();
+        }
+
+        // --- INITIALIZATION ---
+        // Convert DC/OS inputs to Smart Steppers
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.panel-ratings input[type="text"]').forEach(input => {
+                const name = input.name;
+                if (name.endsWith('_dc') || name.endsWith('_os')) {
+                    const parentLabel = input.closest('label');
+                    if (parentLabel) {
+                        // Create Wrapper
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'stepper-ui';
+
+                        // Extract Label Text (e.g. "DC:")
+                        // Note: input is inside label, so text content includes input value if not careful
+                        // Using firstChild mostly works if format is "Text <input>"
+                        let labelText = parentLabel.firstChild.textContent.trim().replace(':', '');
+                        if (labelText === "") labelText = name.endsWith('_dc') ? 'DC' : 'OS';
+
+                        wrapper.innerHTML = `
+                            <span class="st-label">${labelText}</span>
+                            <button type="button" class="st-btn" onclick="adjustStepper('${name}', -1)">−</button>
+                        `;
+
+                        // Move input
+                        input.classList.add('st-input');
+                        wrapper.appendChild(input);
+
+                        // Add Plus Button
+                        const plusBtn = document.createElement('button');
+                        plusBtn.type = 'button';
+                        plusBtn.className = 'st-btn';
+                        plusBtn.innerHTML = '+';
+                        plusBtn.onclick = function () { adjustStepper(name, 1); };
+                        wrapper.appendChild(plusBtn);
+
+                        // Replace Label
+                        parentLabel.parentNode.insertBefore(wrapper, parentLabel);
+                        parentLabel.remove();
+                    }
+                }
+            });
+
+            // Camera handler
+            document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
+        });
+
+        function adjustStepper(name, delta) {
+            const input = document.querySelector(`input[name="${name}"]`);
+            if (input) {
+                let val = parseInt(input.value) || 0;
+                val += delta;
+                if (val < 0) val = 0;
+                input.value = val;
+            }
         }
 
         function handlePhotoSelect(event) {

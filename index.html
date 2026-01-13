@@ -1602,29 +1602,35 @@
             align-items: start;
         }
 
-        /* iPad Pro / Landscape Tweak (Prevent Cutoff) */
+        /* iPad Pro / Landscape / Tablet Tweak (Prevent Cutoff on 820px) */
         @media (max-width: 1100px) {
             .visual-grid {
-                grid-template-columns: 300px 1fr 300px;
-                /* Wider sides for better alignment */
-                gap: 16px;
-            }
-
-            body {
-                padding: 0;
+                grid-template-columns: 245px 1fr 245px;
+                /* Slimmer to fit 820px width */
+                gap: 12px;
             }
 
             .container {
-                padding: 20px 16px;
+                padding: 10px 12px;
+                /* tighter padding saves ~10px */
+            }
+
+            .damage-grid-container {
+                padding: 12px;
+                /* tighter padding saves ~16px */
             }
 
             .panel-box {
-                padding: 16px;
+                padding: 12px;
+            }
+
+            .brand-bar .logo {
+                font-size: 20px;
             }
         }
 
-        /* iPad Portrait & Tablets (Wait until < 800px to break layout) */
-        @media (max-width: 800px) {
+        /* iPad Portrait & Tablets (Break layout early to prevent squishing) */
+        @media (max-width: 780px) {
             .visual-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
@@ -1642,6 +1648,14 @@
             .visual-grid {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* CAR SCHEMATIC */
+        .car-schematic svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
 
         /* PANEL BOXES (Glassmorphism) */

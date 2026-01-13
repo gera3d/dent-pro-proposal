@@ -688,7 +688,7 @@
 
                 <div class="visual-grid">
                     <!-- LEFT COLUMN -->
-                    <div class="side-column">
+                    <div class="side-column" id="col_left">
                         <!-- Left Fender -->
                         <div class="panel-box">
                             <div class="panel-header">Left Fender</div>
@@ -874,7 +874,6 @@
                         <!-- Schematic Visualization -->
                         <div class="car-schematic" style="text-align: center; margin-bottom: 20px; opacity: 0.8;">
                             <svg width="200" height="300" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Styles -->
                                 <style>
                                     .car-line {
                                         fill: none;
@@ -884,6 +883,11 @@
 
                                     .car-fill {
                                         fill: #222;
+                                        transition: fill 0.3s;
+                                    }
+
+                                    .car-fill:hover {
+                                        fill: #2a2a2a;
                                     }
 
                                     .glass {
@@ -891,42 +895,58 @@
                                         stroke: #4CD964;
                                         stroke-width: 1;
                                     }
+
+                                    .click-zone {
+                                        fill: transparent;
+                                        cursor: pointer;
+                                    }
+
+                                    .click-zone:hover {
+                                        fill: rgba(76, 217, 100, 0.1);
+                                    }
+
+                                    text {
+                                        pointer-events: none;
+                                        user-select: none;
+                                    }
                                 </style>
 
-                                <!-- Body Outline -->
+                                <!-- Body Structure -->
                                 <path class="car-line car-fill"
                                     d="M40,60 C40,40 60,20 100,20 C140,20 160,40 160,60 L160,240 C160,260 140,280 100,280 C60,280 40,260 40,240 Z" />
-
-                                <!-- Windshield -->
                                 <path class="glass" d="M45,80 L155,80 L150,110 L50,110 Z" />
-
-                                <!-- Rear Window -->
                                 <path class="glass" d="M45,220 L155,220 L150,190 L50,190 Z" />
-
-                                <!-- Roof Lines (Ditches) -->
                                 <line x1="45" y1="110" x2="45" y2="190" stroke="#444" stroke-width="1" />
                                 <line x1="155" y1="110" x2="155" y2="190" stroke="#444" stroke-width="1" />
 
-                                <!-- Hood -->
+                                <!-- Labels -->
                                 <text x="100" y="55" fill="#666" font-size="10" text-anchor="middle"
                                     font-family="sans-serif">HOOD</text>
-
-                                <!-- Roof -->
                                 <text x="100" y="150" fill="#666" font-size="10" text-anchor="middle"
                                     font-family="sans-serif">ROOF</text>
-
-                                <!-- Decklid/Gate -->
                                 <text x="100" y="250" fill="#666" font-size="10" text-anchor="middle"
                                     font-family="sans-serif">TRUNK</text>
 
                                 <!-- Mirrors -->
                                 <rect x="25" y="85" width="15" height="10" rx="2" fill="#444" />
                                 <rect x="160" y="85" width="15" height="10" rx="2" fill="#444" />
+
+                                <!-- INTERACTIVE ZONES -->
+                                <rect x="0" y="0" width="40" height="300" class="click-zone"
+                                    onclick="scrollToPanel('col_left')" title="Left Side Panels" />
+                                <rect x="160" y="0" width="40" height="300" class="click-zone"
+                                    onclick="scrollToPanel('col_right')" title="Right Side Panels" />
+                                <rect x="40" y="0" width="120" height="100" class="click-zone"
+                                    onclick="scrollToPanel('section_hood')" title="Front / Hood" />
+                                <rect x="40" y="100" width="120" height="100" class="click-zone"
+                                    onclick="scrollToPanel('section_roof')" title="Center / Roof" />
+                                <rect x="40" y="200" width="120" height="120" class="click-zone"
+                                    onclick="scrollToPanel('section_deck')" title="Rear / Trunk" />
                             </svg>
                         </div>
 
                         <!-- Hood/Windshield -->
-                        <div class="panel-box">
+                        <div class="panel-box" id="section_hood">
                             <div class="panel-header">Hood / Windshield</div>
                             <div class="panel-ratings">
                                 <label>Hood DC: <input type="text" name="hood_dc"></label>
@@ -957,7 +977,7 @@
                         </div>
 
                         <!-- Roof -->
-                        <div class="panel-box">
+                        <div class="panel-box" id="section_roof">
                             <div class="panel-header">Roof</div>
                             <div class="panel-ratings">
                                 <label>DC: <input type="text" name="roof_dc"></label>
@@ -1026,7 +1046,7 @@
                         </div>
 
                         <!-- Deck/Lid -->
-                        <div class="panel-box">
+                        <div class="panel-box" id="section_deck">
                             <div class="panel-header">Deck / Lid / Gate</div>
                             <div class="panel-ratings">
                                 <label>DC: <input type="text" name="deck_dc"></label>
@@ -1068,7 +1088,7 @@
                     </div>
 
                     <!-- RIGHT COLUMN -->
-                    <div class="side-column">
+                    <div class="side-column" id="col_right">
                         <!-- Right Fender -->
                         <div class="panel-box">
                             <div class="panel-header">Right Fender</div>
@@ -1742,6 +1762,20 @@
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        // --- UI HELPER FUNCTIONS ---
+        function scrollToPanel(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a flash effect
+                el.style.transition = 'box-shadow 0.3s ease';
+                el.style.boxShadow = '0 0 20px #4CD964';
+                setTimeout(() => {
+                    el.style.boxShadow = '';
+                }, 1000);
+            }
         }
 
         // --- SUBMISSION LOGIC ---

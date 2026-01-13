@@ -640,43 +640,47 @@
 
         <form id="scopeForm">
             <!-- GENERAL INFORMATION (Compact Grid) -->
+            <!-- GENERAL INFORMATION (Pro Grid) -->
             <div class="general-info-grid">
-                <div class="info-group">
+                <div class="info-group col-span-2">
                     <label>Insured</label>
-                    <div class="custom-select-wrapper">
-                        <select id="insuranceCompany" required>
-                            <option value="">Select Insurance</option>
-                        </select>
-                    </div>
+                    <select id="insuranceCompany" required>
+                        <option value="">Select Insurance</option>
+                    </select>
                 </div>
-                <div class="info-group">
+                <div class="info-group col-span-2">
                     <label>Claim #</label>
                     <input type="text" id="claimNumber" required>
                 </div>
-                <div class="info-group">
+
+                <div class="info-group col-span-2">
                     <label>Year / Make / Model</label>
                     <div class="ymb-row">
-                        <select id="year" style="width: 70px"></select>
+                        <select id="year" style="width: 80px"></select>
                         <select id="make" style="flex:1"></select>
                         <input type="text" id="model" placeholder="Model" style="flex:1">
                     </div>
                 </div>
-                <div class="info-group">
+
+                <div class="info-group col-span-1">
                     <label>Odometer</label>
                     <input type="text" id="odometer">
                 </div>
-                <div class="info-group">
+
+                <div class="info-group col-span-1">
                     <label>Location</label>
                     <select id="location"></select>
-                </div> <!-- VIN Row -->
-                <div class="info-group span-2">
+                </div>
+
+                <div class="info-group col-span-2">
                     <label>VIN # <span id="vinCounter" class="vin-counter">0/17</span></label>
                     <div class="vin-row">
                         <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()">
                         <button type="button" class="scan-btn" onclick="startScanner()">📷</button>
                     </div>
                 </div>
-                <div class="info-group">
+
+                <div class="info-group col-span-2">
                     <label>Color / Trim</label>
                     <input type="text" id="color">
                 </div>
@@ -872,8 +876,14 @@
                     <div class="center-column">
                         <!-- Schematic Visualization (CSS Art or Image Placehoder) -->
                         <!-- Schematic Visualization -->
-                        <div class="car-schematic" style="text-align: center; margin-bottom: 20px; opacity: 0.8;">
-                            <svg width="200" height="300" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Schematic Visualization -->
+                        <div class="car-schematic" style="text-align: center; margin-bottom: 20px; position: relative;">
+                            <!-- Glow Effect -->
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 300px; background: radial-gradient(closest-side, rgba(76, 217, 100, 0.15), transparent); pointer-events: none;">
+                            </div>
+                            <svg width="220" height="330" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg"
+                                style="filter: drop-shadow(0 0 10px rgba(76,217,100,0.2));">
                                 <style>
                                     .car-line {
                                         fill: none;
@@ -1365,6 +1375,43 @@
             gap: 20px;
         }
 
+        input[type="text"],
+        input[type="number"],
+        select {
+            background: rgba(255, 255, 255, 0.08);
+            /* Lighter Glass */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 0 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            /* Prevent iOS zoom */
+            height: 44px;
+            /* iOS Touch Target */
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            /* Remove default styling */
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: 10px auto;
+        }
+
+        input:focus,
+        select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4CD964;
+            /* Highlight */
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 217, 100, 0.1);
+        }
+
         .inline-input {
             background: #111;
             border: 1px solid #444;
@@ -1376,12 +1423,39 @@
         /* GENERAL INFO GRID */
         .general-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            background: #252525;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .col-span-1 {
+            grid-column: span 1;
+        }
+
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        @media (max-width: 768px) {
+            .general-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .col-span-1,
+            .col-span-2,
+            .col-span-4 {
+                grid-column: auto;
+            }
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .info-group label {
@@ -1460,35 +1534,43 @@
         }
 
         /* PANEL BOXES (Glassmorphism) */
+        /* INDIVIDUAL PANELS */
         .panel-box {
-            background: rgba(40, 40, 40, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 16px;
+            /* More padding */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
         }
 
         .panel-box:hover {
-            border-color: rgba(76, 217, 100, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .panel-header {
-            background: linear-gradient(90deg, rgba(58, 58, 58, 0.8), rgba(42, 42, 42, 0.8));
-            border-left: 3px solid #4CD964;
+            font-size: 15px;
+            /* Larger */
+            font-weight: 800;
             color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 10px 14px;
+            /* White */
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            background: transparent;
+            border-left: 4px solid #4CD964;
+            /* Neon accent */
+            padding-left: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .panel-ratings {
@@ -1529,32 +1611,35 @@
             outline: none;
         }
 
-        /* SMART STEPPER UI */
+        /* SMART STEPPER UI v2 */
         .stepper-ui {
             display: flex;
             align-items: center;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
-            padding: 3px;
+            padding: 2px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-right: 8px;
+            height: 44px;
+            /* Touch Target */
         }
 
         .st-label {
             font-size: 11px;
-            color: #888;
-            margin: 0 8px 0 6px;
+            color: #aaa;
+            margin: 0 8px 0 8px;
             font-weight: 700;
             text-transform: uppercase;
         }
 
         .st-btn {
-            width: 28px;
-            height: 28px;
+            width: 40px;
+            /* Large Hit Area */
+            height: 40px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: none;
             color: #4CD964;
-            font-size: 18px;
+            font-size: 20px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
@@ -1567,42 +1652,48 @@
         .st-btn:active {
             background: #4CD964;
             color: #000;
-            transform: scale(0.95);
         }
 
         .st-input {
-            width: 36px !important;
+            width: 40px !important;
             border: none !important;
             background: transparent !important;
             text-align: center;
             color: #fff !important;
-            font-size: 15px !important;
+            font-size: 18px !important;
             font-weight: bold;
-            margin: 0 2px;
+            margin: 0;
             padding: 0 !important;
+            height: 100% !important;
         }
 
         /* CHECKLIST TABLES */
         .checklist-table {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            /* Legible size */
+            border-collapse: separate;
+            border-spacing: 0 2px;
+            /* Slight gap */
+            margin-top: 10px;
         }
 
         .checklist-table th {
-            background: rgba(0, 0, 0, 0.3);
-            color: #888;
-            padding: 6px;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: left;
+            /* Align Left */
+            padding: 8px 12px;
             font-size: 10px;
+            color: #ccc;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .checklist-table th:first-child,
+        .checklist-table th:last-child {
+            text-align: center;
         }
 
         .checklist-table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             text-align: center;
             vertical-align: middle;
         }

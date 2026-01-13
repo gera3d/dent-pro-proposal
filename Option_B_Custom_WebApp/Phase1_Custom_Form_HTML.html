@@ -1664,10 +1664,8 @@
 
         .panel-header {
             font-size: 15px;
-            /* Larger */
             font-weight: 800;
             color: #fff;
-            /* White */
             margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -1675,11 +1673,52 @@
             letter-spacing: 0.5px;
             background: transparent;
             border-left: 4px solid #4CD964;
-            /* Neon accent */
             padding-left: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        /* DONE TOGGLE STYLES */
+        .panel-done-toggle {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #888;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-done-toggle input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #4CD964;
+        }
+
+        .panel-done-toggle:hover {
+            color: #fff;
+        }
+
+        /* COMPLETE STATE */
+        .panel-box.is-complete {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.05);
+            box-shadow: 0 0 15px rgba(76, 217, 100, 0.1);
+        }
+
+        .panel-box.is-complete .panel-header {
+            color: #4CD964;
+        }
+
+        .panel-box.is-complete .panel-done-toggle {
+            background: #4CD964;
+            color: #000;
         }
 
         .panel-ratings {
@@ -1691,6 +1730,16 @@
             background: rgba(0, 0, 0, 0.2);
             align-items: center;
         }
+
+
+
+
+
+
+
+
+
+
 
         .panel-ratings label {
             font-size: 11px;
@@ -2075,9 +2124,51 @@
             // Camera handler
             document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
 
+            // Inject "Done" Toggles
+            initPanelToggles();
+
             // Initialize Auto-Save
             initAutoSave();
         });
+
+        function initPanelToggles() {
+            document.querySelectorAll('.panel-box').forEach(box => {
+                const header = box.querySelector('.panel-header');
+                if (!header) return;
+
+                // Derive a unique name for this panel's done state
+                // Try to find the first input with a name
+                const refInput = box.querySelector('input[name]');
+                let baseName = "panel";
+                if (refInput) {
+                    const match = refInput.name.match(/^(.+?)_/);
+                    if (match) baseName = match[1];
+                }
+                const toggleName = baseName + "_done";
+
+                // Create Toggle
+                const label = document.createElement('label');
+                label.className = 'panel-done-toggle';
+                label.innerHTML = `<input type="checkbox" name="${toggleName}" class="done-chk"> Done`;
+
+                // Add Listener
+                const chk = label.querySelector('input');
+                chk.addEventListener('change', () => {
+                    if (chk.checked) box.classList.add('is-complete');
+                    else box.classList.remove('is-complete');
+
+                    // Trigger Auto-Save manually since this is dynamic
+                    saveDraft();
+                });
+
+                // Check initial state (will be handled by restoreDraft, but we need to update visuals after restore)
+                // Actually, restoreDraft runs AFTER this if we call it in order. 
+                // But restoreDraft just sets .checked. It doesn't trigger 'change'.
+                // We need a helper to sync visuals.
+
+                header.appendChild(label);
+            });
+        }
 
         // --- AUTO-SAVE & SUMMARY ---
         const DRAFT_KEY = 'dent_pro_scope_draft';
@@ -2122,7 +2213,14 @@
                 const els = document.getElementsByName(name);
                 if (els.length > 0) {
                     const el = els[0];
-                    if (el.type === 'checkbox') el.checked = data[name];
+                    if (el.type === 'checkbox') {
+                        el.checked = data[name];
+                        // If this is a "Done" toggle, update the visual state
+                        if (name.endsWith('_done')) {
+                            const box = el.closest('.panel-box');
+                            if (box && el.checked) box.classList.add('is-complete');
+                        }
+                    }
                     else el.value = data[name];
                 }
             });

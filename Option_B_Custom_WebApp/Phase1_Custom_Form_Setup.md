@@ -2,8 +2,6 @@
 
 This guide walks you through setting up the **custom version** of the Dent Experts scope form that stores data directly to Google Sheets (bypassing Google Forms).
 
-> **📋 Source of Truth**: Field definitions are based on [`Phase1_Google_Form_Structure.md`](../Option_A_Google_Forms/Phase1_Google_Form_Structure.md). Reference that document for the canonical list of required fields, dropdowns, and validation rules.
-
 ---
 
 ## What's Different?

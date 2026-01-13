@@ -144,36 +144,9 @@ This document contains the complete structure for the Google Form that scopers w
 
 ---
 
-## SECTION 5: Detailed Ratings
+## SECTION 5: Photos & Notes
 
-### Question 15: DCS Dent Count
-- **Type:** Multiple choice
-- **Options:**
-  - 1-5
-  - 5-10
-- **Validation:** Optional
-- **Helper text:** Double Check Scope dent count
-
-### Question 16: OC Rating (Oversized Count)
-- **Type:** Multiple choice
-- **Options:**
-  - Oversized
-  - 1-40
-  - 40+
-- **Validation:** Optional
-
-### Question 17: Additional Flags (RNIN / R&R)
-- **Type:** Checkboxes
-- **Options:**
-  - RNIN (Repair Not In Nature)
-  - R&R (Remove and Replace)
-- **Validation:** Optional
-
----
-
-## SECTION 6: Photos & Notes
-
-### Question 18: Vehicle Photos *
+### Question 15: Vehicle Photos *
 - **Type:** File upload
 - **Settings:** 
   - Allow multiple files
@@ -182,12 +155,12 @@ This document contains the complete structure for the Google Form that scopers w
 - **Helper text:** Upload clear photos of all damage areas. Include VIN plate, odometer, and overall vehicle shots.
 - **Validation:** Required (at least 1 photo)
 
-### Question 19: Additional Notes
+### Question 16: Additional Notes
 - **Type:** Paragraph (long answer)
 - **Validation:** Optional
 - **Helper text:** Any additional observations, special circumstances, or notes for the estimator
 
-### Question 20: PDR Candidate?
+### Question 17: PDR Candidate?
 - **Type:** Multiple choice
 - **Options:**
   - Yes - Good candidate for PDR
@@ -198,9 +171,9 @@ This document contains the complete structure for the Google Form that scopers w
 
 ---
 
-## SECTION 7: Completion
+## SECTION 6: Completion
 
-### Question 21: Scope Status *
+### Question 18: Scope Status *
 - **Type:** Multiple choice
 - **Options:**
   - Complete - Ready for estimate
@@ -208,7 +181,7 @@ This document contains the complete structure for the Google Form that scopers w
   - On Hold - Waiting for parts/access
 - **Validation:** Required
 
-### Question 22: Date/Time
+### Question 19: Date/Time
 - **Type:** Date + Time (auto-captured by form)
 - **Note:** This is automatically recorded by Google Forms
 

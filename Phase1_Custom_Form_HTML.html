@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 24px 0;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #a1a1a6;
+            font-size: 14px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4CD964;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #a1a1a6;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        label .required {
+            color: #FF453A;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #666;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1a6' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .checkbox-item.selected {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #4CD964;
+        }
+
+        .checkbox-item span {
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+
+        /* Rating Scale Styles */
+        .rating-scale {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            flex: 1;
+            min-width: calc(33% - 8px);
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rating-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .rating-option.selected {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .rating-option input {
+            display: none;
+        }
+
+        .rating-option span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .toggle-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .toggle-item.active {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #4CD964;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* Severity Pills */
+        .severity-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .severity-option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .severity-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .severity-option.selected {
+            border-color: var(--severity-color);
+            background: rgba(var(--severity-rgb), 0.15);
+        }
+
+        .severity-option input {
+            display: none;
+        }
+
+        .severity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .severity-option.light .severity-dot {
+            background: #30D158;
+        }
+
+        .severity-option.moderate .severity-dot {
+            background: #FF9F0A;
+        }
+
+        .severity-option.heavy .severity-dot {
+            background: #FF453A;
+        }
+
+        .severity-option.total .severity-dot {
+            background: #8E8E93;
+        }
+
+        .severity-option.light.selected {
+            --severity-color: #30D158;
+            --severity-rgb: 48, 209, 88;
+        }
+
+        .severity-option.moderate.selected {
+            --severity-color: #FF9F0A;
+            --severity-rgb: 255, 159, 10;
+        }
+
+        .severity-option.heavy.selected {
+            --severity-color: #FF453A;
+            --severity-rgb: 255, 69, 58;
+        }
+
+        .severity-option.total.selected {
+            --severity-color: #8E8E93;
+            --severity-rgb: 142, 142, 147;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(to top, rgba(10, 10, 10, 1) 0%, rgba(10, 10, 10, 0.95) 80%, transparent 100%);
+        }
+
+        .submit-btn button {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            border: none;
+            border-radius: 14px;
+            color: #000;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .submit-btn button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(76, 217, 100, 0.3);
+        }
+
+        .submit-btn button:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .modal h2 {
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .modal p {
+            color: #a1a1a6;
+            margin-bottom: 24px;
+        }
+
+        .modal button {
+            padding: 14px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* VIN Counter */
+        .vin-counter {
+            font-size: 11px;
+            color: #666;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .vin-counter.valid {
+            color: #4CD964;
+        }
+
+        .vin-counter.invalid {
+            color: #FF453A;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚗 Dent Experts</div>
+            <div class="subtitle">Vehicle Scope Sheet</div>
+        </div>
+
+        <form id="scopeForm">
+            <!-- VEHICLE INFORMATION -->
+            <div class="section">
+                <div class="section-title">Vehicle Information</div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>RO Number <span class="required">*</span></label>
+                        <input type="text" id="roNumber" required placeholder="e.g., RO-12345">
+                    </div>
+                    <div class="form-group">
+                        <label>Year <span class="required">*</span></label>
+                        <select id="year" required>
+                            <option value="">Select</option>
+                            <option>2026</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>2021</option>
+                            <option>2020</option>
+                            <option>2019</option>
+                            <option>2018</option>
+                            <option>2017</option>
+                            <option>2016</option>
+                            <option>2015</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>VIN Number <span class="required">*</span></label>
+                    <input type="text" id="vin" maxlength="17" required placeholder="17 characters"
+                        oninput="updateVinCounter()">
+                    <div class="vin-counter" id="vinCounter">0/17</div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Make <span class="required">*</span></label>
+                        <select id="make" required>
+                            <option value="">Select</option>
+                            <option>Acura</option>
+                            <option>Audi</option>
+                            <option>BMW</option>
+                            <option>Buick</option>
+                            <option>Cadillac</option>
+                            <option>Chevrolet</option>
+                            <option>Chrysler</option>
+                            <option>Dodge</option>
+                            <option>Ford</option>
+                            <option>GMC</option>
+                            <option>Honda</option>
+                            <option>Hyundai</option>
+                            <option>Infiniti</option>
+                            <option>Jeep</option>
+                            <option>Kia</option>
+                            <option>Lexus</option>
+                            <option>Lincoln</option>
+                            <option>Mazda</option>
+                            <option>Mercedes-Benz</option>
+                            <option>Nissan</option>
+                            <option>Ram</option>
+                            <option>Subaru</option>
+                            <option>Tesla</option>
+                            <option>Toyota</option>
+                            <option>Volkswagen</option>
+                            <option>Volvo</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Model <span class="required">*</span></label>
+                        <input type="text" id="model" required placeholder="e.g., Accord">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Color</label>
+                    <select id="color">
+                        <option value="">Select</option>
+                        <option>White</option>
+                        <option>Black</option>
+                        <option>Silver</option>
+                        <option>Gray</option>
+                        <option>Red</option>
+                        <option>Blue</option>
+                        <option>Green</option>
+                        <option>Brown</option>
+                        <option>Beige</option>
+                        <option>Gold</option>
+                        <option>Orange</option>
+                        <option>Yellow</option>
+                        <option>Purple</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CLAIM INFORMATION -->
+            <div class="section">
+                <div class="section-title">Claim Information</div>
+
+                <div class="form-group">
+                    <label>Insurance Company <span class="required">*</span></label>
+                    <select id="insurance" required>
+                        <option value="">Select</option>
+                        <option>Progressive</option>
+                        <option>State Farm</option>
+                        <option>Geico</option>
+                        <option>Allstate</option>
+                        <option>USAA</option>
+                        <option>Farmers</option>
+                        <option>Liberty Mutual</option>
+                        <option>Nationwide</option>
+                        <option>Travelers</option>
+                        <option>American Family</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Claim Number <span class="required">*</span></label>
+                    <input type="text" id="claimNumber" required placeholder="Insurance claim #">
+                </div>
+            </div>
+
+            <!-- ASSIGNMENT -->
+            <div class="section">
+                <div class="section-title">Location & Assignment</div>
+
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    <select id="location" required>
+                        <option value="">Select</option>
+                        <option>Main Shop</option>
+                        <option>North Location</option>
+                        <option>South Location</option>
+                        <option>Mobile Unit</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Scoper <span class="required">*</span></label>
+                        <select id="scoper" required>
+                            <option value="">Select</option>
+                            <option>John Smith</option>
+                            <option>Jane Doe</option>
+                            <option>Mike Johnson</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimator <span class="required">*</span></label>
+                        <select id="estimator" required>
+                            <option value="">Select</option>
+                            <option>Sarah Williams</option>
+                            <option>Tom Brown</option>
+                            <option>Chris Davis</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAMAGE ASSESSMENT -->
+            <div class="section">
+                <div class="section-title">Damage Assessment</div>
+
+                <div class="form-group">
+                    <label>Damage Areas <span class="required">*</span></label>
+                    <div class="checkbox-group" id="damageAreas">
+                        <label class="checkbox-item"><input type="checkbox" value="Hood"><span>Hood</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="Roof"><span>Roof</span></label>
+                        <label class="checkbox-item"><input type="checkbox"
+                                value="Trunk"><span>Trunk/Decklid</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="Front Bumper"><span>Front
+                                Bumper</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="Rear Bumper"><span>Rear
+                                Bumper</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="LF Fender"><span>LF
+                                Fender</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="RF Fender"><span>RF
+                                Fender</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="LR Quarter"><span>LR
+                                Quarter</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="RR Quarter"><span>RR
+                                Quarter</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="LF Door"><span>LF Door</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="RF Door"><span>RF Door</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="LR Door"><span>LR Door</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="RR Door"><span>RR Door</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="Pillars"><span>Pillars</span></label>
+                        <label class="checkbox-item"><input type="checkbox"
+                                value="Windshield"><span>Windshield</span></label>
+                        <label class="checkbox-item"><input type="checkbox" value="Other"><span>Other</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Overall Severity <span class="required">*</span></label>
+                    <div class="severity-options">
+                        <label class="severity-option light">
+                            <input type="radio" name="severity" value="Light">
+                            <span class="severity-dot"></span>
+                            <span>Light (minor dents, minimal repair)</span>
+                        </label>
+                        <label class="severity-option moderate">
+                            <input type="radio" name="severity" value="Moderate">
+                            <span class="severity-dot"></span>
+                            <span>Moderate (multiple panels, standard)</span>
+                        </label>
+                        <label class="severity-option heavy">
+                            <input type="radio" name="severity" value="Heavy">
+                            <span class="severity-dot"></span>
+                            <span>Heavy (extensive damage, major repair)</span>
+                        </label>
+                        <label class="severity-option total">
+                            <input type="radio" name="severity" value="Total Loss">
+                            <span class="severity-dot"></span>
+                            <span>Total Loss Candidate</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Panel Count</label>
+                    <select id="panelCount">
+                        <option value="">Select</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13+</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- DCS & OC RATINGS -->
+            <div class="section">
+                <div class="section-title">Detailed Ratings</div>
+
+                <div class="form-group">
+                    <label>DCS Dent Count</label>
+                    <div class="rating-scale" id="dcsDentCount">
+                        <label class="rating-option">
+                            <input type="radio" name="dcsDentCount" value="1-5">
+                            <span>1-5</span>
+                        </label>
+                        <label class="rating-option">
+                            <input type="radio" name="dcsDentCount" value="5-10">
+                            <span>5-10</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>OC Rating (Oversized Count)</label>
+                    <div class="rating-scale" id="ocRating">
+                        <label class="rating-option">
+                            <input type="radio" name="ocRating" value="Oversized">
+                            <span>Oversized</span>
+                        </label>
+                        <label class="rating-option">
+                            <input type="radio" name="ocRating" value="1-40">
+                            <span>1-40</span>
+                        </label>
+                        <label class="rating-option">
+                            <input type="radio" name="ocRating" value="40+">
+                            <span>40+</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional Flags</label>
+                    <div class="toggle-group">
+                        <div class="toggle-item" id="rninToggle" onclick="toggleSwitch('rnin')">
+                            <span>RNIN</span>
+                            <div class="toggle-switch" id="rninSwitch"></div>
+                            <input type="hidden" id="rnin" value="false">
+                        </div>
+                        <div class="toggle-item" id="rrToggle" onclick="toggleSwitch('rr')">
+                            <span>R&R</span>
+                            <div class="toggle-switch" id="rrSwitch"></div>
+                            <input type="hidden" id="rr" value="false">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDR & STATUS -->
+            <div class="section">
+                <div class="section-title">Repair Assessment</div>
+
+                <div class="form-group">
+                    <label>PDR Candidate? <span class="required">*</span></label>
+                    <div class="severity-options">
+                        <label class="severity-option light">
+                            <input type="radio" name="pdrCandidate" value="Yes" required>
+                            <span class="severity-dot"></span>
+                            <span>Yes - Good candidate for PDR</span>
+                        </label>
+                        <label class="severity-option moderate">
+                            <input type="radio" name="pdrCandidate" value="Partial">
+                            <span class="severity-dot"></span>
+                            <span>Partial - Some PDR, some conventional</span>
+                        </label>
+                        <label class="severity-option heavy">
+                            <input type="radio" name="pdrCandidate" value="No">
+                            <span class="severity-dot"></span>
+                            <span>No - Conventional repair needed</span>
+                        </label>
+                        <label class="severity-option total">
+                            <input type="radio" name="pdrCandidate" value="Unsure">
+                            <span class="severity-dot"></span>
+                            <span>Unsure - Needs further evaluation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Scope Status <span class="required">*</span></label>
+                    <select id="status" required>
+                        <option value="">Select</option>
+                        <option value="Complete">Complete - Ready for estimate</option>
+                        <option value="Partial">Partial - Additional inspection needed</option>
+                        <option value="On Hold">On Hold - Waiting for parts/access</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- NOTES -->
+            <div class="section">
+                <div class="section-title">Additional Notes</div>
+
+                <div class="form-group">
+                    <label>Notes for Estimator</label>
+                    <textarea id="notes"
+                        placeholder="Any additional observations, special circumstances, or notes..."></textarea>
+                </div>
+            </div>
+        </form>
+
+        <div class="submit-btn">
+            <button type="submit" id="submitBtn" onclick="submitForm()">
+                Submit Scope
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">✓</div>
+            <h2>Scope Submitted!</h2>
+            <p>The estimator has been notified.</p>
+            <button onclick="resetForm()">Submit Another</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize checkbox styling
+        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                this.closest('.checkbox-item').classList.toggle('selected', this.checked);
+            });
+        });
+
+        // Initialize radio button styling for severity options
+        document.querySelectorAll('.severity-option input').forEach(radio => {
+            radio.addEventListener('change', function () {
+                this.closest('.severity-options').querySelectorAll('.severity-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.closest('.severity-option').classList.add('selected');
+            });
+        });
+
+        // Initialize radio button styling for rating scales
+        document.querySelectorAll('.rating-option input').forEach(radio => {
+            radio.addEventListener('change', function () {
+                this.closest('.rating-scale').querySelectorAll('.rating-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.closest('.rating-option').classList.add('selected');
+            });
+        });
+
+        // Toggle switch function
+        function toggleSwitch(id) {
+            const toggle = document.getElementById(id + 'Toggle');
+            const switchEl = document.getElementById(id + 'Switch');
+            const input = document.getElementById(id);
+
+            const isActive = input.value === 'true';
+            input.value = (!isActive).toString();
+            toggle.classList.toggle('active', !isActive);
+            switchEl.classList.toggle('active', !isActive);
+        }
+
+        // VIN counter
+        function updateVinCounter() {
+            const vin = document.getElementById('vin').value;
+            const counter = document.getElementById('vinCounter');
+            counter.textContent = vin.length + '/17';
+            counter.className = 'vin-counter';
+            if (vin.length === 17) {
+                counter.classList.add('valid');
+            } else if (vin.length > 0) {
+                counter.classList.add('invalid');
+            }
+        }
+
+        // Form submission
+        function submitForm() {
+            const form = document.getElementById('scopeForm');
+            const btn = document.getElementById('submitBtn');
+
+            // Validate required fields
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Get checked damage areas
+            const damageAreas = [];
+            document.querySelectorAll('#damageAreas input:checked').forEach(cb => {
+                damageAreas.push(cb.value);
+            });
+
+            if (damageAreas.length === 0) {
+                alert('Please select at least one damage area');
+                return;
+            }
+
+            // Get severity
+            const severityRadio = document.querySelector('input[name="severity"]:checked');
+            if (!severityRadio) {
+                alert('Please select the overall severity');
+                return;
+            }
+
+            // Build form data
+            const formData = {
+                roNumber: document.getElementById('roNumber').value,
+                vin: document.getElementById('vin').value.toUpperCase(),
+                year: document.getElementById('year').value,
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                color: document.getElementById('color').value,
+                insurance: document.getElementById('insurance').value,
+                claimNumber: document.getElementById('claimNumber').value,
+                location: document.getElementById('location').value,
+                scoper: document.getElementById('scoper').value,
+                estimator: document.getElementById('estimator').value,
+                damageAreas: damageAreas,
+                severity: severityRadio.value,
+                panelCount: document.getElementById('panelCount').value,
+                dcsDentCount: document.querySelector('input[name="dcsDentCount"]:checked')?.value || '',
+                ocRating: document.querySelector('input[name="ocRating"]:checked')?.value || '',
+                rnin: document.getElementById('rnin').value === 'true',
+                rr: document.getElementById('rr').value === 'true',
+                pdrCandidate: document.querySelector('input[name="pdrCandidate"]:checked')?.value || '',
+                notes: document.getElementById('notes').value,
+                status: document.getElementById('status').value,
+                photoUrls: [] // Photos handled separately in production
+            };
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+            // Submit to Apps Script
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Submit Scope';
+
+                    if (result.success) {
+                        document.getElementById('successModal').classList.add('show');
+                    } else {
+                        alert('Error: ' + (result.error || 'Unknown error'));
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Submit Scope';
+                    alert('Error submitting form: ' + error.message);
+                })
+                .saveToSheet(formData);
+        }
+
+        // Reset form for another submission
+        function resetForm() {
+            document.getElementById('successModal').classList.remove('show');
+            document.getElementById('scopeForm').reset();
+
+            // Reset visual states
+            document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.toggle-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.toggle-switch').forEach(el => el.classList.remove('active'));
+            document.getElementById('rnin').value = 'false';
+            document.getElementById('rr').value = 'false';
+            document.getElementById('vinCounter').textContent = '0/17';
+            document.getElementById('vinCounter').className = 'vin-counter';
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+
+</html>

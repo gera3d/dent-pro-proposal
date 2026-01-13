@@ -1305,7 +1305,8 @@
         }
 
         body {
-            background: #1e1e1e;
+            background: radial-gradient(circle at 50% 0%, #252525 0%, #111111 100%);
+            min-height: 100vh;
             color: #ccc;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
@@ -1424,86 +1425,148 @@
             }
         }
 
-        /* PANEL BOXES */
+        /* PANEL BOXES (Glassmorphism) */
         .panel-box {
-            background: #303030;
-            border: 1px solid #444;
-            margin-bottom: 15px;
-            border-radius: 6px;
+            background: rgba(40, 40, 40, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 16px;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .panel-box:hover {
+            border-color: rgba(76, 217, 100, 0.3);
         }
 
         .panel-header {
-            background: linear-gradient(90deg, #3a3a3a, #2a2a2a);
+            background: linear-gradient(90deg, rgba(58, 58, 58, 0.8), rgba(42, 42, 42, 0.8));
             border-left: 3px solid #4CD964;
             color: #fff;
             font-size: 12px;
             font-weight: 700;
-            padding: 8px 12px;
+            padding: 10px 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .panel-ratings {
             display: flex;
-            gap: 10px;
-            padding: 8px;
-            background: #383838;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            align-items: center;
         }
 
         .panel-ratings label {
-            font-size: 12px;
-            color: #aaa;
+            font-size: 11px;
+            color: #ccc;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            font-weight: 600;
         }
 
         .panel-ratings input {
-            width: 50px;
-            background: #222;
-            border: 1px solid #555;
+            width: 44px;
+            /* Larger touch target */
+            height: 32px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #4CD964;
             padding: 4px;
             text-align: center;
             font-weight: bold;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .panel-ratings input:focus {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+            outline: none;
         }
 
         /* CHECKLIST TABLES */
         .checklist-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 13px;
+            /* Legible size */
         }
 
         .checklist-table th {
-            background: #222;
+            background: rgba(0, 0, 0, 0.3);
             color: #888;
-            padding: 4px;
-            font-weight: normal;
+            padding: 6px;
+            font-weight: 600;
             font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .checklist-table td {
-            padding: 6px 4px;
-            border-bottom: 1px solid #3a3a3a;
+            padding: 8px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             text-align: center;
+            vertical-align: middle;
         }
 
         .checklist-table td:nth-child(2) {
             text-align: left;
             width: 60%;
+            color: #ddd;
+            font-weight: 500;
         }
 
-        /* Custom Checkbox */
+        /* CUSTOM CHECKBOX (Touch Friendly) */
         input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #4CD964;
+            appearance: none;
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #555;
+            border-radius: 6px;
             cursor: pointer;
+            position: relative;
+            vertical-align: middle;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="checkbox"]:checked {
+            background: #4CD964;
+            border-color: #4CD964;
+            box-shadow: 0 0 10px rgba(76, 217, 100, 0.4);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 6px;
+            height: 12px;
+            border: solid #000;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        input[type="checkbox"]:active {
+            transform: scale(0.92);
+        }
+
+        /* Add row hover effect for easier tracking */
+        .checklist-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         /* FOOTER */

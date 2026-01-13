@@ -1620,8 +1620,8 @@
             /* Compact padding */
         }
 
-        /* iPad Portrait & Tablets (Wait until < 960px to break layout) */
-        @media (max-width: 960px) {
+        /* iPad Portrait & Tablets (Wait until < 900px to break layout) */
+        @media (max-width: 900px) {
             .visual-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
@@ -1632,11 +1632,10 @@
                 order: -1;
                 margin-bottom: 20px;
             }
-
-            /* Center moves to top on tablet */
         }
 
-        @media (max-width: 700px) {
+        /* Mobile Only (< 600px) */
+        @media (max-width: 600px) {
             .visual-grid {
                 grid-template-columns: 1fr;
             }

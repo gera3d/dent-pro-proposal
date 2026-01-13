@@ -1635,7 +1635,12 @@
 
         .panel-ratings {
             display: flex;
-            gap: 12px;
+            flex-wrap: wrap;
+            /* Allow wrapping */
+            justify-content: center;
+            /* Center when wrapped */
+            gap: 8px;
+            /* Slightly tighter gap */
             padding: 12px;
             background: rgba(0, 0, 0, 0.2);
             align-items: center;

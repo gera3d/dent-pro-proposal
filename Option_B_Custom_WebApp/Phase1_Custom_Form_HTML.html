@@ -1683,13 +1683,10 @@
         }
 
         .panel-ratings {
-            display: flex;
-            flex-wrap: wrap;
-            /* Allow wrapping */
-            justify-content: center;
-            /* Center when wrapped */
-            gap: 8px;
-            /* Slightly tighter gap */
+            display: grid;
+            /* Stack vertically and fill width */
+            grid-template-columns: 1fr;
+            gap: 10px;
             padding: 12px;
             background: rgba(0, 0, 0, 0.2);
             align-items: center;
@@ -1729,13 +1726,16 @@
         .stepper-ui {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            /* Spread Label and Controls */
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
-            padding: 2px;
+            padding: 4px 6px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-right: 8px;
+            margin: 0;
+            width: 100%;
+            /* Fill Container */
             height: 44px;
-            /* Touch Target */
         }
 
         .st-label {

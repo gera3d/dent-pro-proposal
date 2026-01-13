@@ -1318,28 +1318,25 @@
             </div>
 
             <div class="submit-bar">
-                <div class="form-summary" style="margin-right: auto; font-size: 12px; color: #888; font-weight: 500;">
-                    Panels Scoped: <strong id="livePanelCount" style="color: #4CD964; margin-left: 4px;">0</strong>
-                    <span id="saveStatus" style="font-size: 10px; opacity: 0.5; margin-left: 8px;"></span>
+                <!-- Left: Stats -->
+                <div class="footer-stats">
+                    <span>Panels: <strong id="livePanelCount" style="color: #fff;">0</strong></span>
+                    <span id="saveStatus" style="opacity: 0.5;"></span>
                 </div>
 
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <div class="status-select">
-                        <label>Status:</label>
-                        <select id="status" required>
-                            <option value="Complete">Complete</option>
-                            <option value="Partial">Partial</option>
-                            <option value="Supplement">Supplement</option>
-                        </select>
-                    </div>
+                <!-- Right: Actions -->
+                <div class="footer-actions">
+                    <select id="status" class="footer-input" required>
+                        <option value="Complete">Complete</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Supplement">Supplement</option>
+                    </select>
 
-                    <button type="button" class="submit-btn"
-                        style="background:#007AFF !important; color:#fff !important; width: auto !important; padding: 0 16px !important;"
-                        onclick="emailScope()">
-                        ✉️ Email PDF
+                    <button type="button" class="footer-btn blue" onclick="emailScope()">
+                        Email PDF
                     </button>
 
-                    <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+                    <button type="button" class="footer-btn green" id="submitBtn" onclick="submitForm()">
                         Submit Scope
                     </button>
                 </div>
@@ -1370,8 +1367,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            padding-bottom: 240px !important;
-            /* GLOBAL FIX: Prevent Footer Overlap */
+            padding-bottom: 140px !important;
+            /* Footer Space: Sufficient but not crazy */
         }
 
         /* GRID LAYOUTS */
@@ -1892,54 +1889,74 @@
             padding: 10px;
         }
 
+        /* REBUILT FOOTER CSS */
         .submit-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(30, 30, 30, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 16px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(12px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
-            flex-wrap: wrap;
-            /* Safe wrapping for mobile */
-        }
-
-        .status-select {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            padding: 12px 16px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 9999;
+            /* Max Z-Index */
+            gap: 12px;
         }
 
-        /* Force heights */
-        .submit-bar select,
-        .submit-bar button {
-            height: 44px !important;
-            margin: 0;
+        .footer-stats {
+            display: flex;
+            flex-direction: column;
+            font-size: 11px;
+            color: #888;
+            font-weight: 600;
         }
 
-        /* Submit Button */
-        #submitBtn,
-        .submit-btn {
-            background: #4CD964 !important;
-            color: #000 !important;
+        .footer-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .footer-input {
+            height: 40px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 0 8px;
+            font-size: 14px;
+        }
+
+        .footer-btn {
+            height: 40px;
             border: none;
-            padding: 0 24px !important;
+            border-radius: 6px;
             font-weight: bold;
-            border-radius: 8px;
+            font-size: 14px;
+            padding: 0 16px;
             cursor: pointer;
-            font-size: 16px;
-            width: auto !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .footer-btn.blue {
+            background: #007AFF;
+            color: #fff;
+        }
+
+        .footer-btn.green {
+            background: #4CD964;
+            color: #000;
+        }
+
+        /* Clear old styles */
+        .status-select,
+        .submit-btn {
+            display: none;
         }
     </style>
 

@@ -631,7 +631,8 @@
             <div class="logo">🚗 Dent Experts</div>
             <div class="subtitle">PDR Vehicle Scope & Parts Sheet</div>
             <div class="form-meta">
-                <span><strong>RO#:</strong> <input type="text" id="roNumber" class="inline-input" required></span>
+                <span><strong>RO#:</strong> <input type="text" id="roNumber" class="inline-input" required
+                        placeholder="e.g. 10452"></span>
                 <span><strong>Estimator:</strong> <select id="estimator" class="inline-input">
                         <option value="">Select</option>
                     </select></span>
@@ -650,7 +651,7 @@
                 </div>
                 <div class="info-group col-span-2">
                     <label>Claim #</label>
-                    <input type="text" id="claimNumber" required>
+                    <input type="text" id="claimNumber" required placeholder="e.g. 123-456-789">
                 </div>
 
                 <div class="info-group col-span-2">
@@ -658,13 +659,13 @@
                     <div class="ymb-row">
                         <select id="year" style="width: 80px"></select>
                         <select id="make" style="flex:1"></select>
-                        <input type="text" id="model" placeholder="Model" style="flex:1">
+                        <input type="text" id="model" placeholder="Model (e.g. F-150)" style="flex:1">
                     </div>
                 </div>
 
                 <div class="info-group col-span-1">
                     <label>Odometer</label>
-                    <input type="text" id="odometer">
+                    <input type="text" id="odometer" placeholder="e.g. 45,200">
                 </div>
 
                 <div class="info-group col-span-1">
@@ -675,14 +676,15 @@
                 <div class="info-group col-span-2">
                     <label>VIN # <span id="vinCounter" class="vin-counter">0/17</span></label>
                     <div class="vin-row">
-                        <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()">
+                        <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()"
+                            placeholder="17 Characters">
                         <button type="button" class="scan-btn" onclick="startScanner()">📷</button>
                     </div>
                 </div>
 
                 <div class="info-group col-span-2">
                     <label>Color / Trim</label>
-                    <input type="text" id="color">
+                    <input type="text" id="color" placeholder="e.g. Pearl White / LX">
                 </div>
             </div>
 

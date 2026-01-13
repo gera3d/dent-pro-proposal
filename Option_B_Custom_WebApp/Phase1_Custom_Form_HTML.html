@@ -642,6 +642,10 @@
                 <label>Estimator</label>
                 <select id="estimator" class="toolbar-input">
                     <option value="">Select</option>
+                    <option value="Oleg">Oleg</option>
+                    <option value="Gera">Gera</option>
+                    <option value="John">John</option>
+                    <option value="Jane">Jane</option>
                 </select>
             </div>
         </div>
@@ -1318,15 +1322,27 @@
                     Panels Scoped: <strong id="livePanelCount" style="color: #4CD964; margin-left: 4px;">0</strong>
                     <span id="saveStatus" style="font-size: 10px; opacity: 0.5; margin-left: 8px;"></span>
                 </div>
-                <div class="status-select">
-                    <label>Status:</label>
-                    <select id="status" required>
-                        <option value="Complete">Complete</option>
-                        <option value="Partial">Partial</option>
-                        <option value="Supplement">Supplement</option>
-                    </select>
+
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="status-select">
+                        <label>Status:</label>
+                        <select id="status" required>
+                            <option value="Complete">Complete</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Supplement">Supplement</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="submit-btn"
+                        style="background:#007AFF !important; color:#fff !important; width: auto !important; padding: 0 16px !important;"
+                        onclick="emailScope()">
+                        ✉️ Email PDF
+                    </button>
+
+                    <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+                        Submit Scope
+                    </button>
                 </div>
-                <button type="submit" id="submitBtn" onclick="submitForm()">Submit Scope</button>
             </div>
         </form>
     </div>
@@ -1552,8 +1568,8 @@
             background: rgba(30, 30, 30, 0.4);
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 90px;
-            /* Space for footer */
+            margin-bottom: 140px;
+            /* INCREASED: Prevent Footer Overlap */
         }
 
         .grid-header {
@@ -2247,6 +2263,29 @@
             } else {
                 // Return empty array if no photos
                 submitData([]);
+            }
+        }
+
+        function emailScope() {
+            if (confirm("Send a PDF copy of this scope via email?")) {
+                const subBtn = document.querySelector('button[onclick="emailScope()"]');
+                const origText = subBtn.textContent;
+                subBtn.textContent = 'Sending...';
+                subBtn.disabled = true;
+
+                // Simulate/Call Backend
+                google.script.run
+                    .withSuccessHandler(() => {
+                        alert("✅ PDF Sent Successfully!");
+                        subBtn.textContent = origText;
+                        subBtn.disabled = false;
+                    })
+                    .withFailureHandler((e) => {
+                        alert("Error sending email: " + e); // Backend hook
+                        subBtn.textContent = origText;
+                        subBtn.disabled = false;
+                    })
+                    .sendPdfEmail(document.getElementById('roNumber').value);
             }
         }
 

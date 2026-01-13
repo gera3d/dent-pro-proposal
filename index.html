@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 24px 0;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #a1a1a6;
+            font-size: 14px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4CD964;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #a1a1a6;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        label .required {
+            color: #FF453A;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #666;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1a6' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .checkbox-item.selected {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #4CD964;
+        }
+
+        .checkbox-item span {
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+
+        /* Rating Scale Styles */
+        .rating-scale {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            flex: 1;
+            min-width: calc(33% - 8px);
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rating-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .rating-option.selected {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .rating-option input {
+            display: none;
+        }
+
+        .rating-option span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .toggle-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .toggle-item.active {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #4CD964;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* Severity Pills */
+        .severity-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .severity-option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .severity-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .severity-option.selected {
+            border-color: var(--severity-color);
+            background: rgba(var(--severity-rgb), 0.15);
+        }
+
+        .severity-option input {
+            display: none;
+        }
+
+        .severity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .severity-option.light .severity-dot {
+            background: #30D158;
+        }
+
+        .severity-option.moderate .severity-dot {
+            background: #FF9F0A;
+        }
+
+        .severity-option.heavy .severity-dot {
+            background: #FF453A;
+        }
+
+        .severity-option.total .severity-dot {
+            background: #8E8E93;
+        }
+
+        .severity-option.light.selected {
+            --severity-color: #30D158;
+            --severity-rgb: 48, 209, 88;
+        }
+
+        .severity-option.moderate.selected {
+            --severity-color: #FF9F0A;
+            --severity-rgb: 255, 159, 10;
+        }
+
+        .severity-option.heavy.selected {
+            --severity-color: #FF453A;
+            --severity-rgb: 255, 69, 58;
+        }
+
+        .severity-option.total.selected {
+            --severity-color: #8E8E93;
+            --severity-rgb: 142, 142, 147;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(to top, rgba(10, 10, 10, 1) 0%, rgba(10, 10, 10, 0.95) 80%, transparent 100%);
+        }
+
+        .submit-btn button {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            border: none;
+            border-radius: 14px;
+            color: #000;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .submit-btn button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(76, 217, 100, 0.3);
+        }
+
+        .submit-btn button:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .modal h2 {
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .modal p {
+            color: #a1a1a6;
+            margin-bottom: 24px;
+        }
+
+        .modal button {
+            padding: 14px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* VIN Counter */
+        .vin-counter {
+            font-size: 11px;
+            color: #666;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .vin-counter.valid {
+            color: #4CD964;
+        }
+
+        .vin-counter.invalid {
+            color: #FF453A;
+        }
+
+        /* Photo Upload Styles */
+        .photo-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .photo-upload-area:hover {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.05);
+        }
+
+        .photo-upload-area.dragover {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+
+        .photo-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .photo-upload-text {
+            color: #a1a1a6;
+            font-size: 14px;
+        }
+
+        .photo-upload-text strong {
+            color: #4CD964;
+        }
+
+        .photo-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .photo-btn {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .photo-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .photo-btn.camera {
+            background: rgba(0, 122, 255, 0.2);
+            border-color: #007AFF;
+        }
+
+        .photo-btn.camera:hover {
+            background: rgba(0, 122, 255, 0.3);
+        }
+
+        .photo-previews {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .photo-preview {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview .remove-photo {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 69, 58, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-preview .upload-status {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .photo-preview .upload-status.uploading {
+            color: #FF9F0A;
+        }
+
+        .photo-preview .upload-status.uploaded {
+            color: #4CD964;
+        }
+
+        .photo-preview .upload-status.error {
+            color: #FF453A;
+        }
+
+        .photo-count {
+            font-size: 12px;
+            color: #a1a1a6;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- NEW HEADER DESIGN (Split Layout) -->
+        <div class="brand-bar">
+            <div class="logo">🚗 Dent Experts</div>
+            <div class="subtitle">PDR Vehicle Scope & Parts Sheet</div>
+        </div>
+
+        <div class="action-toolbar">
+            <div class="meta-group">
+                <label>RO#</label>
+                <input type="text" id="roNumber" class="toolbar-input" required placeholder="e.g. 10452">
+            </div>
+            <div class="meta-group">
+                <label>Estimator</label>
+                <select id="estimator" class="toolbar-input">
+                    <option value="">Select</option>
+                    <option value="Oleg">Oleg</option>
+                    <option value="Gera">Gera</option>
+                    <option value="John">John</option>
+                    <option value="Jane">Jane</option>
+                </select>
+            </div>
+        </div>
+
+        <form id="scopeForm">
+            <!-- GENERAL INFORMATION (Compact Grid) -->
+            <!-- GENERAL INFORMATION (Pro Grid) -->
+            <div class="general-info-grid">
+                <div class="info-group col-span-2">
+                    <label>Insured</label>
+                    <select id="insuranceCompany" required>
+                        <option value="">Select Insurance</option>
+                    </select>
+                </div>
+                <div class="info-group col-span-2">
+                    <label>Claim #</label>
+                    <input type="text" id="claimNumber" required placeholder="e.g. 123-456-789">
+                </div>
+
+                <div class="info-group col-span-2">
+                    <label>Year / Make / Model</label>
+                    <div class="ymb-row">
+                        <select id="year" style="width: 80px"></select>
+                        <select id="make" style="flex:1"></select>
+                        <input type="text" id="model" placeholder="Model (e.g. F-150)" style="flex:1">
+                    </div>
+                </div>
+
+                <div class="info-group col-span-1">
+                    <label>Odometer</label>
+                    <input type="text" id="odometer" placeholder="e.g. 45,200">
+                </div>
+
+                <div class="info-group col-span-1">
+                    <label>Location</label>
+                    <select id="location"></select>
+                </div>
+
+                <div class="info-group col-span-2">
+                    <label>VIN # <span id="vinCounter" class="vin-counter">0/17</span></label>
+                    <div class="vin-row">
+                        <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()"
+                            placeholder="17 Characters">
+                        <button type="button" class="scan-btn" onclick="startScanner()">📷</button>
+                    </div>
+                </div>
+
+                <div class="info-group col-span-2">
+                    <label>Color / Trim</label>
+                    <input type="text" id="color" placeholder="e.g. Pearl White / LX">
+                </div>
+            </div>
+
+            <!-- VEHICLE DAMAGE ASSESSMENT (Visual Grid) -->
+            <div class="damage-grid-container">
+                <div class="grid-header">Vehicle Damage Assessment</div>
+
+                <div class="visual-grid">
+                    <!-- LEFT COLUMN -->
+                    <div class="side-column" id="col_left">
+                        <!-- Left Fender -->
+                        <div class="panel-box">
+                            <div class="panel-header">Left Fender</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="lf_fender_dc"></label>
+                                <label>OS: <input type="text" name="lf_fender_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_fender_ri_lamp"></td>
+                                    <td>Lamp(s)</td>
+                                    <td><input type="checkbox" name="lf_fender_rr_lamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_fender_ri_mldg"></td>
+                                    <td>Side Mldg</td>
+                                    <td><input type="checkbox" name="lf_fender_rr_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_fender_ri_emblem"></td>
+                                    <td>Emblem</td>
+                                    <td><input type="checkbox" name="lf_fender_rr_emblem"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_fender_ri_liner"></td>
+                                    <td>Liner/Flare</td>
+                                    <td><input type="checkbox" name="lf_fender_rr_liner"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Left Front Door -->
+                        <div class="panel-box">
+                            <div class="panel-header">Left Front Door</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="lf_door_dc"></label>
+                                <label>OS: <input type="text" name="lf_door_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_mirror"></td>
+                                    <td>Mirror</td>
+                                    <td><input type="checkbox" name="lf_door_rr_mirror"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_uppermldg"></td>
+                                    <td>Upper Mldg</td>
+                                    <td><input type="checkbox" name="lf_door_rr_uppermldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_beltmldg"></td>
+                                    <td>Belt Mldg</td>
+                                    <td><input type="checkbox" name="lf_door_rr_beltmldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_applique"></td>
+                                    <td>Applique</td>
+                                    <td><input type="checkbox" name="lf_door_rr_applique"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_trim"></td>
+                                    <td>Trim Panel</td>
+                                    <td><input type="checkbox" name="lf_door_rr_trim"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_door"></td>
+                                    <td>Door</td>
+                                    <td><input type="checkbox" name="lf_door_rr_door"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lf_door_ri_handle"></td>
+                                    <td>Handle</td>
+                                    <td><input type="checkbox" name="lf_door_rr_handle"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Left Rear Door -->
+                        <div class="panel-box">
+                            <div class="panel-header">Left Rear Door</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="lr_door_dc"></label>
+                                <label>OS: <input type="text" name="lr_door_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_uppermldg"></td>
+                                    <td>Upper Mldg</td>
+                                    <td><input type="checkbox" name="lr_door_rr_uppermldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_beltmldg"></td>
+                                    <td>Belt Mldg</td>
+                                    <td><input type="checkbox" name="lr_door_rr_beltmldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_applique"></td>
+                                    <td>Applique</td>
+                                    <td><input type="checkbox" name="lr_door_rr_applique"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_trim"></td>
+                                    <td>Trim Panel</td>
+                                    <td><input type="checkbox" name="lr_door_rr_trim"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_door"></td>
+                                    <td>Door</td>
+                                    <td><input type="checkbox" name="lr_door_rr_door"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_door_ri_handle"></td>
+                                    <td>Handle</td>
+                                    <td><input type="checkbox" name="lr_door_rr_handle"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Left Quarter -->
+                        <div class="panel-box">
+                            <div class="panel-header">Left Quarter/Bed</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="lr_quarter_dc"></label>
+                                <label>OS: <input type="text" name="lr_quarter_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_quarter_ri_lamp"></td>
+                                    <td>Lamp(s)</td>
+                                    <td><input type="checkbox" name="lr_quarter_rr_lamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_quarter_ri_mldg"></td>
+                                    <td>Side Mldg</td>
+                                    <td><input type="checkbox" name="lr_quarter_rr_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_quarter_ri_glass"></td>
+                                    <td>Glass</td>
+                                    <td><input type="checkbox" name="lr_quarter_rr_glass"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_quarter_ri_liner"></td>
+                                    <td>Liner/Flare</td>
+                                    <td><input type="checkbox" name="lr_quarter_rr_liner"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Left Cab Corner (Ratings Only) -->
+                        <div class="panel-box mini">
+                            <div class="panel-header">Left Cab Corner</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="l_cab_dc"></label>
+                                <label>OS: <input type="text" name="l_cab_os"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CENTER COLUMN (Schematic + Top/Bottom Panels) -->
+                    <div class="center-column">
+                        <!-- Schematic Visualization (CSS Art or Image Placehoder) -->
+                        <!-- Schematic Visualization -->
+                        <!-- Schematic Visualization -->
+                        <div class="car-schematic" style="text-align: center; margin-bottom: 20px; position: relative;">
+                            <!-- Glow Effect -->
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 300px; background: radial-gradient(closest-side, rgba(76, 217, 100, 0.15), transparent); pointer-events: none;">
+                            </div>
+                            <svg width="220" height="330" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg"
+                                style="filter: drop-shadow(0 0 10px rgba(76,217,100,0.2));">
+                                <style>
+                                    .car-line {
+                                        fill: none;
+                                        stroke: #4CD964;
+                                        stroke-width: 2;
+                                    }
+
+                                    .car-fill {
+                                        fill: #222;
+                                        transition: fill 0.3s;
+                                    }
+
+                                    .car-fill:hover {
+                                        fill: #2a2a2a;
+                                    }
+
+                                    .glass {
+                                        fill: #333;
+                                        stroke: #4CD964;
+                                        stroke-width: 1;
+                                    }
+
+                                    .click-zone {
+                                        fill: transparent;
+                                        cursor: pointer;
+                                    }
+
+                                    .click-zone:hover {
+                                        fill: rgba(76, 217, 100, 0.1);
+                                    }
+
+                                    text {
+                                        pointer-events: none;
+                                        user-select: none;
+                                    }
+                                </style>
+
+                                <!-- Body Structure -->
+                                <path class="car-line car-fill"
+                                    d="M40,60 C40,40 60,20 100,20 C140,20 160,40 160,60 L160,240 C160,260 140,280 100,280 C60,280 40,260 40,240 Z" />
+                                <path class="glass" d="M45,80 L155,80 L150,110 L50,110 Z" />
+                                <path class="glass" d="M45,220 L155,220 L150,190 L50,190 Z" />
+                                <line x1="45" y1="110" x2="45" y2="190" stroke="#444" stroke-width="1" />
+                                <line x1="155" y1="110" x2="155" y2="190" stroke="#444" stroke-width="1" />
+
+                                <!-- Labels -->
+                                <text x="100" y="55" fill="#666" font-size="10" text-anchor="middle"
+                                    font-family="sans-serif">HOOD</text>
+                                <text x="100" y="150" fill="#666" font-size="10" text-anchor="middle"
+                                    font-family="sans-serif">ROOF</text>
+                                <text x="100" y="250" fill="#666" font-size="10" text-anchor="middle"
+                                    font-family="sans-serif">TRUNK</text>
+
+                                <!-- Mirrors -->
+                                <rect x="25" y="85" width="15" height="10" rx="2" fill="#444" />
+                                <rect x="160" y="85" width="15" height="10" rx="2" fill="#444" />
+
+                                <!-- INTERACTIVE ZONES -->
+                                <rect x="0" y="0" width="40" height="300" class="click-zone"
+                                    onclick="scrollToPanel('col_left')" title="Left Side Panels" />
+                                <rect x="160" y="0" width="40" height="300" class="click-zone"
+                                    onclick="scrollToPanel('col_right')" title="Right Side Panels" />
+                                <rect x="40" y="0" width="120" height="100" class="click-zone"
+                                    onclick="scrollToPanel('section_hood')" title="Front / Hood" />
+                                <rect x="40" y="100" width="120" height="100" class="click-zone"
+                                    onclick="scrollToPanel('section_roof')" title="Center / Roof" />
+                                <rect x="40" y="200" width="120" height="120" class="click-zone"
+                                    onclick="scrollToPanel('section_deck')" title="Rear / Trunk" />
+                            </svg>
+                        </div>
+
+                        <!-- Hood/Windshield -->
+                        <div class="panel-box" id="section_hood">
+                            <div class="panel-header">Hood / Windshield</div>
+                            <div class="panel-ratings">
+                                <label>Hood DC: <input type="text" name="hood_dc"></label>
+                                <label>Hood OS: <input type="text" name="hood_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="hood_ri_windshield"></td>
+                                    <td>Windshield</td>
+                                    <td><input type="checkbox" name="hood_rr_windshield"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="hood_ri_cowl"></td>
+                                    <td>Cowl</td>
+                                    <td><input type="checkbox" name="hood_rr_cowl"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="hood_ri_hood"></td>
+                                    <td>Hood</td>
+                                    <td><input type="checkbox" name="hood_rr_hood"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Roof -->
+                        <div class="panel-box" id="section_roof">
+                            <div class="panel-header">Roof</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="roof_dc"></label>
+                                <label>OS: <input type="text" name="roof_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_hilamp"></td>
+                                    <td>Hi-Mt Lamp</td>
+                                    <td><input type="checkbox" name="roof_rr_hilamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_headliner"></td>
+                                    <td>Headliner</td>
+                                    <td><input type="checkbox" name="roof_rr_headliner"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_sunroof"></td>
+                                    <td>Sunroof</td>
+                                    <td><input type="checkbox" name="roof_rr_sunroof"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_l_mldg"></td>
+                                    <td>L Roof Mldg</td>
+                                    <td><input type="checkbox" name="roof_rr_l_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_r_mldg"></td>
+                                    <td>R Roof Mldg</td>
+                                    <td><input type="checkbox" name="roof_rr_r_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_rack"></td>
+                                    <td>Roof Rack</td>
+                                    <td><input type="checkbox" name="roof_rr_rack"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_ant"></td>
+                                    <td>Antenna</td>
+                                    <td><input type="checkbox" name="roof_rr_ant"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Rails -->
+                        <div class="rails-row">
+                            <div class="panel-box mini">
+                                <div class="panel-header">Left Rail</div>
+                                <div class="panel-ratings vertical">
+                                    <label>DC: <input type="text" name="l_rail_dc"></label>
+                                    <label>OS: <input type="text" name="l_rail_os"></label>
+                                </div>
+                            </div>
+                            <div class="panel-box mini">
+                                <div class="panel-header">Right Rail</div>
+                                <div class="panel-ratings vertical">
+                                    <label>DC: <input type="text" name="r_rail_dc"></label>
+                                    <label>OS: <input type="text" name="r_rail_os"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deck/Lid -->
+                        <div class="panel-box" id="section_deck">
+                            <div class="panel-header">Deck / Lid / Gate</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="deck_dc"></label>
+                                <label>OS: <input type="text" name="deck_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_llamp"></td>
+                                    <td>L Lamp(s)</td>
+                                    <td><input type="checkbox" name="deck_rr_llamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_rlamp"></td>
+                                    <td>R Lamp(s)</td>
+                                    <td><input type="checkbox" name="deck_rr_rlamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_handle"></td>
+                                    <td>Handle</td>
+                                    <td><input type="checkbox" name="deck_rr_handle"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_spoiler"></td>
+                                    <td>Spoiler</td>
+                                    <td><input type="checkbox" name="deck_rr_spoiler"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_ant"></td>
+                                    <td>Antenna</td>
+                                    <td><input type="checkbox" name="deck_rr_ant"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="side-column" id="col_right">
+                        <!-- Right Fender -->
+                        <div class="panel-box">
+                            <div class="panel-header">Right Fender</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="rf_fender_dc"></label>
+                                <label>OS: <input type="text" name="rf_fender_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_fender_ri_lamp"></td>
+                                    <td>Lamp(s)</td>
+                                    <td><input type="checkbox" name="rf_fender_rr_lamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_fender_ri_mldg"></td>
+                                    <td>Side Mldg</td>
+                                    <td><input type="checkbox" name="rf_fender_rr_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_fender_ri_emblem"></td>
+                                    <td>Emblem</td>
+                                    <td><input type="checkbox" name="rf_fender_rr_emblem"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_fender_ri_liner"></td>
+                                    <td>Liner/Flare</td>
+                                    <td><input type="checkbox" name="rf_fender_rr_liner"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Right Front Door -->
+                        <div class="panel-box">
+                            <div class="panel-header">Right Front Door</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="rf_door_dc"></label>
+                                <label>OS: <input type="text" name="rf_door_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_mirror"></td>
+                                    <td>Mirror</td>
+                                    <td><input type="checkbox" name="rf_door_rr_mirror"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_uppermldg"></td>
+                                    <td>Upper Mldg</td>
+                                    <td><input type="checkbox" name="rf_door_rr_uppermldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_beltmldg"></td>
+                                    <td>Belt Mldg</td>
+                                    <td><input type="checkbox" name="rf_door_rr_beltmldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_applique"></td>
+                                    <td>Applique</td>
+                                    <td><input type="checkbox" name="rf_door_rr_applique"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_trim"></td>
+                                    <td>Trim Panel</td>
+                                    <td><input type="checkbox" name="rf_door_rr_trim"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_door"></td>
+                                    <td>Door</td>
+                                    <td><input type="checkbox" name="rf_door_rr_door"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rf_door_ri_handle"></td>
+                                    <td>Handle</td>
+                                    <td><input type="checkbox" name="rf_door_rr_handle"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Right Rear Door -->
+                        <div class="panel-box">
+                            <div class="panel-header">Right Rear Door</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="rr_door_dc"></label>
+                                <label>OS: <input type="text" name="rr_door_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_uppermldg"></td>
+                                    <td>Upper Mldg</td>
+                                    <td><input type="checkbox" name="rr_door_rr_uppermldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_beltmldg"></td>
+                                    <td>Belt Mldg</td>
+                                    <td><input type="checkbox" name="rr_door_rr_beltmldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_applique"></td>
+                                    <td>Applique</td>
+                                    <td><input type="checkbox" name="rr_door_rr_applique"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_trim"></td>
+                                    <td>Trim Panel</td>
+                                    <td><input type="checkbox" name="rr_door_rr_trim"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_door"></td>
+                                    <td>Door</td>
+                                    <td><input type="checkbox" name="rr_door_rr_door"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_door_ri_handle"></td>
+                                    <td>Handle</td>
+                                    <td><input type="checkbox" name="rr_door_rr_handle"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Right Quarter -->
+                        <div class="panel-box">
+                            <div class="panel-header">Right Quarter/Bed</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="rr_quarter_dc"></label>
+                                <label>OS: <input type="text" name="rr_quarter_os"></label>
+                            </div>
+                            <table class="checklist-table">
+                                <tr>
+                                    <th>R&I</th>
+                                    <th>Part</th>
+                                    <th>R&R</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_quarter_ri_lamp"></td>
+                                    <td>Lamp(s)</td>
+                                    <td><input type="checkbox" name="rr_quarter_rr_lamp"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_quarter_ri_mldg"></td>
+                                    <td>Side Mldg</td>
+                                    <td><input type="checkbox" name="rr_quarter_rr_mldg"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_quarter_ri_glass"></td>
+                                    <td>Glass</td>
+                                    <td><input type="checkbox" name="rr_quarter_rr_glass"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_quarter_ri_liner"></td>
+                                    <td>Liner/Flare</td>
+                                    <td><input type="checkbox" name="rr_quarter_rr_liner"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Right Cab Corner (Ratings Only) -->
+                        <div class="panel-box mini">
+                            <div class="panel-header">Right Cab Corner</div>
+                            <div class="panel-ratings">
+                                <label>DC: <input type="text" name="r_cab_dc"></label>
+                                <label>OS: <input type="text" name="r_cab_os"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHOTOS ONLY (Reduced notes etc to match photo priority, kept Notes though) -->
+            <div class="section footer-section">
+                <!-- Notes -->
+                <div class="notes-box">
+                    <label>Notes:</label>
+                    <textarea id="notes" rows="4"></textarea>
+                </div>
+
+                <!-- Photos -->
+                <div class="photo-section">
+                    <label>Photos (Vin/Odometer/Damage):</label>
+                    <div class="photo-controls">
+                        <button type="button" class="photo-btn camera" onclick="openCamera()">📷 Camera</button>
+                        <button type="button" class="photo-btn"
+                            onclick="document.getElementById('photoInput').click()">🖼️ Gallery</button>
+                    </div>
+                    <input type="file" id="photoInput" accept="image/*" multiple style="display: none"
+                        onchange="handlePhotoSelect(event)">
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none"
+                        onchange="handlePhotoSelect(event)">
+                    <div id="photoPreviews" class="photo-previews-row"></div>
+                </div>
+            </div>
+
+            <div class="submit-bar">
+                <!-- Left: Stats -->
+                <div class="footer-stats">
+                    <span>Panels: <strong id="livePanelCount" style="color: #fff;">0</strong></span>
+                    <span
+                        style="border-left: 1px solid #555; margin: 0 8px; height: 12px; display: inline-block;"></span>
+                    <span>Dents: <strong id="liveDentCount" style="color: #4CD964;">0</strong></span>
+                    <span
+                        style="border-left: 1px solid #555; margin: 0 8px; height: 12px; display: inline-block;"></span>
+                    <span>OS: <strong id="liveOsCount" style="color: #ff3b30;">0</strong></span>
+                </div>
+
+                <!-- Right: Actions -->
+                <div class="footer-actions">
+                    <select id="status" class="footer-input" required>
+                        <option value="Complete">Complete</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Supplement">Supplement</option>
+                    </select>
+
+                    <button type="button" class="footer-btn blue" onclick="emailScope()">
+                        Email PDF
+                    </button>
+
+                    <button type="button" class="footer-btn green" id="submitBtn" onclick="submitForm()">
+                        Submit Scope
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal and Scripts -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">✓</div>
+            <h2>Scope Submitted!</h2>
+            <button onclick="resetForm()">New Scope</button>
+        </div>
+    </div>
+
+    <!-- Retaining Scripts & Styles block (will update CSS next tool call) -->
+    <style>
+        /* BASE & RESET */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #252525 0%, #111111 100%);
+            min-height: 100vh;
+            color: #ccc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 140px !important;
+            /* Footer Space: Sufficient but not crazy */
+        }
+
+        /* GRID LAYOUTS */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* HEADER REDESIGN (Split Layout) */
+        .brand-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-bar .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #4CD964;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-bar .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .action-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: rgba(45, 45, 45, 0.4);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .meta-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .meta-group label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #bbb;
+        }
+
+        .toolbar-input {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            height: 44px;
+            border-radius: 8px;
+            padding: 0 12px;
+            color: #fff;
+            font-size: 16px;
+            min-width: 140px;
+        }
+
+        /* Clear old header styles if any remain */
+        .header,
+        .form-meta,
+        .inline-input {
+            display: none;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            background: rgba(255, 255, 255, 0.08);
+            /* Lighter Glass */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 0 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            /* Prevent iOS zoom */
+            height: 44px;
+            /* iOS Touch Target */
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            /* Remove default styling */
+            appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: 10px auto;
+        }
+
+        input:focus,
+        select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #4CD964;
+            /* Highlight */
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 217, 100, 0.1);
+        }
+
+        .inline-input {
+            background: #111;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        /* GENERAL INFO GRID */
+        .general-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .col-span-1 {
+            grid-column: span 1;
+        }
+
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        @media (max-width: 768px) {
+            .general-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .col-span-1,
+            .col-span-2,
+            .col-span-4 {
+                grid-column: auto;
+            }
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Fix Year/Make/Model Row */
+        .ymb-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .ymb-row select,
+        .ymb-row input {
+            width: auto;
+            /* Allow flex to control width */
+        }
+
+        .info-group label {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .info-group input,
+        .info-group select {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .vin-row {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* DAMAGE GRID */
+        .damage-grid-container {
+            background: rgba(30, 30, 30, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            /* FIXED: Removed large gap, global padding handles footer */
+        }
+
+        .grid-header {
+            background: rgba(51, 51, 51, 0.8);
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+        }
+
+        .visual-grid {
+            display: grid;
+            /* Optimized for iPad Landscape (1024px) */
+            grid-template-columns: 290px 1fr 290px;
+            gap: 16px;
+            align-items: start;
+        }
+
+        /* iPad Pro / Landscape Tweak (Prevent Cutoff) */
+        @media (max-width: 1100px) {
+            .visual-grid {
+                grid-template-columns: 260px 1fr 260px;
+                /* Slimmer side cols */
+                gap: 10px;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .damage-grid-container {
+                padding: 10px;
+            }
+
+            .panel-box {
+                padding: 12px;
+            }
+
+            /* Compact padding */
+        }
+
+        /* iPad Portrait & Tablets (Wait until < 960px to break layout) */
+        @media (max-width: 960px) {
+            .visual-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .center-column {
+                grid-column: 1 / -1;
+                order: -1;
+                margin-bottom: 20px;
+            }
+
+            /* Center moves to top on tablet */
+        }
+
+        @media (max-width: 700px) {
+            .visual-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* PANEL BOXES (Glassmorphism) */
+        /* INDIVIDUAL PANELS */
+        .panel-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 16px;
+            /* More padding */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-box:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .panel-header {
+            font-size: 15px;
+            /* Larger */
+            font-weight: 800;
+            color: #fff;
+            /* White */
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: transparent;
+            border-left: 4px solid #4CD964;
+            /* Neon accent */
+            padding-left: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-ratings {
+            display: grid;
+            /* Stack vertically and fill width */
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            align-items: center;
+        }
+
+        .panel-ratings label {
+            font-size: 11px;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .panel-ratings input {
+            width: 44px;
+            /* Larger touch target */
+            height: 32px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #4CD964;
+            padding: 4px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .panel-ratings input:focus {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+            outline: none;
+        }
+
+        /* SMART STEPPER UI v2 */
+        .stepper-ui {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Spread Label and Controls */
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 4px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0;
+            width: 100%;
+            /* Fill Container */
+            height: 44px;
+        }
+
+        .st-label {
+            font-size: 11px;
+            color: #aaa;
+            margin: 0 8px 0 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .st-btn {
+            width: 40px;
+            /* Large Hit Area */
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #4CD964;
+            font-size: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: all 0.1s;
+        }
+
+        .st-btn:active {
+            background: #4CD964;
+            color: #000;
+        }
+
+        .st-input {
+            width: 40px !important;
+            border: none !important;
+            background: transparent !important;
+            text-align: center;
+            color: #fff !important;
+            font-size: 18px !important;
+            font-weight: bold;
+            margin: 0;
+            padding: 0 !important;
+            height: 100% !important;
+        }
+
+        /* CHECKLIST TABLES */
+        .checklist-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 2px;
+            margin-top: 10px;
+            table-layout: fixed;
+            /* Force fixed columns */
+        }
+
+        /* Explicit Column Widths */
+        .checklist-table th:nth-child(1) {
+            width: 18%;
+        }
+
+        .checklist-table th:nth-child(2) {
+            width: 64%;
+        }
+
+        .checklist-table th:nth-child(3) {
+            width: 18%;
+        }
+
+        .checklist-table th {
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            padding: 8px 2px;
+            font-size: 10px;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .checklist-table td {
+            padding: 0 2px;
+            border: none;
+            height: 48px;
+            vertical-align: middle;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .checklist-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 8px;
+            width: auto;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ddd;
+            font-weight: 500;
+        }
+
+        /* CUSTOM CHECKBOX (Touch Friendly) */
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            vertical-align: middle;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="checkbox"]:checked {
+            background: #4CD964;
+            border-color: #4CD964;
+            box-shadow: 0 0 10px rgba(76, 217, 100, 0.4);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 6px;
+            height: 12px;
+            border: solid #000;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        input[type="checkbox"]:active {
+            transform: scale(0.92);
+        }
+
+        /* Add row hover effect for easier tracking */
+        .checklist-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* FOOTER */
+        .footer-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .notes-box textarea {
+            width: 100%;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px;
+        }
+
+        /* REBUILT FOOTER CSS */
+        .submit-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 9999;
+            /* Max Z-Index */
+            gap: 12px;
+        }
+
+        .footer-stats {
+            display: flex;
+            flex-direction: column;
+            font-size: 11px;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .footer-input {
+            height: 40px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 0 8px;
+            font-size: 14px;
+        }
+
+        .footer-btn {
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0 16px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .footer-btn.blue {
+            background: #007AFF;
+            color: #fff;
+        }
+
+        .footer-btn.green {
+            background: #4CD964;
+            color: #000;
+        }
+
+        /* Clear old styles */
+        .status-select,
+        .submit-btn {
+            display: none;
+        }
+    </style>
+
+    <script>
+        // CONFIGURATION
+        const CONFIG = {
+            photoFolderId: 'YOUR_FOLDER_ID_HERE'
+        };
+
+        // STATE
+        let selectedPhotos = [];
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDropdowns();
+            // Set date defaults if needed
+        });
+
+        function loadDropdowns() {
+            // Populate Year
+            const yearSelect = document.getElementById('year');
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear + 1; i >= 1990; i--) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = i;
+                yearSelect.add(opt);
+            }
+            // Populate basic Makes (can expand later)
+            const makes = ["Ford", "Chevy", "Dodge/Ram", "Toyota", "Honda", "Nissan", "Hyundai/Kia", "BMW", "Mercedes", "Audi", "VW", "Tesla", "Subaru", "Other"];
+            const makeSelect = document.getElementById('make');
+            makes.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.text = m;
+                makeSelect.add(opt);
+            });
+            // Locations
+            const locs = ["Shop", "Mobile", "Dealership", "Auction"];
+            const locSelect = document.getElementById('location');
+            locs.forEach(l => {
+                const opt = document.createElement('option');
+                opt.value = l;
+                opt.text = l;
+                locSelect.add(opt);
+            });
+            // Insurance
+            const ins = ["State Farm", "Geico", "Progressive", "Allstate", "Liberty Mutual", "Farmers", "Nationwide", "USAA", "Other"];
+            const insSelect = document.getElementById('insuranceCompany');
+            ins.forEach(i => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = i;
+                insSelect.add(opt);
+            });
+        }
+
+        // --- VIN LOGIC ---
+        function updateVinCounter() {
+            const vin = document.getElementById('vin').value;
+            document.getElementById('vinCounter').textContent = `${vin.length}/17`;
+        }
+
+        // --- PHOTO LOGIC ---
+        function openCamera() {
+            document.getElementById('cameraInput').click();
+        }
+
+        // --- INITIALIZATION ---
+        // Convert DC/OS inputs to Smart Steppers
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.panel-ratings input[type="text"]').forEach(input => {
+                const name = input.name;
+                if (name.endsWith('_dc') || name.endsWith('_os')) {
+                    const parentLabel = input.closest('label');
+                    if (parentLabel) {
+                        // Create Wrapper
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'stepper-ui';
+
+                        // Extract Label Text (e.g. "DC:")
+                        // Note: input is inside label, so text content includes input value if not careful
+                        // Using firstChild mostly works if format is "Text <input>"
+                        let labelText = parentLabel.firstChild.textContent.trim().replace(':', '');
+                        if (labelText === "") labelText = name.endsWith('_dc') ? 'DC' : 'OS';
+
+                        wrapper.innerHTML = `
+                            <span class="st-label">${labelText}</span>
+                            <button type="button" class="st-btn" onclick="adjustStepper('${name}', -1)">−</button>
+                        `;
+
+                        // Move input
+                        input.classList.add('st-input');
+                        wrapper.appendChild(input);
+
+                        // Add Plus Button
+                        const plusBtn = document.createElement('button');
+                        plusBtn.type = 'button';
+                        plusBtn.className = 'st-btn';
+                        plusBtn.innerHTML = '+';
+                        plusBtn.onclick = function () { adjustStepper(name, 1); };
+                        wrapper.appendChild(plusBtn);
+
+                        // Replace Label
+                        parentLabel.parentNode.insertBefore(wrapper, parentLabel);
+                        parentLabel.remove();
+                    }
+                }
+            });
+
+            // Camera handler
+            document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
+
+            // Initialize Auto-Save
+            initAutoSave();
+        });
+
+        // --- AUTO-SAVE & SUMMARY ---
+        const DRAFT_KEY = 'dent_pro_scope_draft';
+
+        function initAutoSave() {
+            // Restore if exists
+            const saved = localStorage.getItem(DRAFT_KEY);
+            if (saved) {
+                try {
+                    restoreDraft(JSON.parse(saved));
+                    console.log('Draft restored');
+                } catch (e) {
+                    console.error('Error restoring draft', e);
+                }
+            }
+            updateSummary();
+
+            // Listeners
+            document.getElementById('scopeForm').addEventListener('input', () => {
+                saveDraft();
+                updateSummary();
+            });
+            document.getElementById('scopeForm').addEventListener('change', () => {
+                saveDraft();
+                updateSummary();
+            });
+        }
+
+        function saveDraft() {
+            const data = {};
+            document.querySelectorAll('#scopeForm [name]').forEach(el => {
+                if (el.type === 'checkbox') data[el.name] = el.checked;
+                else data[el.name] = el.value;
+            });
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+            document.getElementById('saveStatus').textContent = 'Saved';
+            setTimeout(() => document.getElementById('saveStatus').textContent = '', 2000);
+        }
+
+        function restoreDraft(data) {
+            Object.keys(data).forEach(name => {
+                const els = document.getElementsByName(name);
+                if (els.length > 0) {
+                    const el = els[0];
+                    if (el.type === 'checkbox') el.checked = data[name];
+                    else el.value = data[name];
+                }
+            });
+        }
+
+        function updateSummary() {
+            const activePanels = new Set();
+            let totalDents = 0;
+            let totalOs = 0;
+
+            document.querySelectorAll('#scopeForm [name]').forEach(el => {
+                if (el.type === 'hidden') return;
+
+                // Track Active Panels
+                if (el.type === 'checkbox' && !el.checked) return;
+                if ((el.type === 'text' || el.type === 'number') && (!el.value || el.value === '0')) return;
+
+                const name = el.name;
+                // Parse Panel Name from "lf_fender_dc" -> "lf_fender"
+                const match = name.match(/^(.+?)_(dc|os|ri|rr)/);
+                if (match) {
+                    activePanels.add(match[1]);
+                }
+
+                // Sum Values
+                if (name.endsWith('_dc')) {
+                    totalDents += parseInt(el.value) || 0;
+                }
+                if (name.endsWith('_os')) {
+                    totalOs += parseInt(el.value) || 0;
+                }
+            });
+
+            // Update UI
+            document.getElementById('livePanelCount').textContent = activePanels.size;
+            document.getElementById('liveDentCount').textContent = totalDents;
+            document.getElementById('liveOsCount').textContent = totalOs;
+        }
+
+        function clearDraft() {
+            localStorage.removeItem(DRAFT_KEY);
+            document.getElementById('scopeForm').reset();
+            updateSummary();
+            // Reset steppers visual? They read input value, so reset() works?
+            // Yes, input value becomes "" or default.
+            // But we might need to manually set steppers to 0 if reset doesn't trigger 'input' event?
+            // Steppers read `input.value`. If `reset()` clears it, the `adjustStepper` reads it next time.
+            // But the Visual `input` needs to update? Browser handles reset of inputs. Smart.
+        }
+
+        function adjustStepper(name, delta) {
+            const input = document.querySelector(`input[name="${name}"]`);
+            if (input) {
+                let val = parseInt(input.value) || 0;
+                val += delta;
+                if (val < 0) val = 0;
+                input.value = val;
+            }
+        }
+
+        function handlePhotoSelect(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+
+            files.forEach(file => {
+                compressImage(file, (compressedBase64, mimeType) => {
+                    selectedPhotos.push({
+                        base64Data: compressedBase64,
+                        mimeType: mimeType,
+                        name: file.name
+                    });
+                    renderPreviews();
+                });
+            });
+            event.target.value = ''; // Reset input
+        }
+
+        function renderPreviews() {
+            const container = document.getElementById('photoPreviews');
+            container.innerHTML = '';
+            selectedPhotos.forEach((photo, idx) => {
+                const div = document.createElement('div');
+                div.className = 'photo-preview';
+                div.style.cssText = `
+                    width: 60px; height: 60px; position: relative; border-radius: 4px; overflow: hidden; border: 1px solid #444; background: #000;
+                    display: inline-block; margin-right: 5px;
+                `;
+                div.innerHTML = `
+                    <img src="data:${photo.mimeType};base64,${photo.base64Data}" style="width:100%; height:100%; object-fit:cover;">
+                    <button onclick="removePhoto(${idx})" style="
+                        position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 20px; height: 20px; cursor: pointer; font-size: 14px; line-height: 1;
+                    ">×</button>
+                `;
+                container.appendChild(div);
+            });
+            // Update Text?
+        }
+
+        function removePhoto(index) {
+            selectedPhotos.splice(index, 1);
+            renderPreviews();
+        }
+
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_SIZE = 1200;
+                    if (width > height) {
+                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                    } else {
+                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(dataUrl.split(',')[1], 'image/jpeg');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- UI HELPER FUNCTIONS ---
+        function scrollToPanel(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a flash effect
+                el.style.transition = 'box-shadow 0.3s ease';
+                el.style.boxShadow = '0 0 20px #4CD964';
+                setTimeout(() => {
+                    el.style.boxShadow = '';
+                }, 1000);
+            }
+        }
+
+        // --- SUBMISSION LOGIC ---
+        function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+
+            // Validate Basics
+            const roNumber = document.getElementById('roNumber').value;
+            if (!roNumber) {
+                alert('RO Number is required');
+                submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
+                return;
+            }
+
+            // Photos
+            if (selectedPhotos.length > 0) {
+                google.script.run
+                    .withSuccessHandler((photoUrls) => {
+                        // photoUrls is an array of strings
+                        submitData(photoUrls);
+                    })
+                    .withFailureHandler(err => {
+                        alert('Photo upload failed: ' + err);
+                        submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
+                    })
+                    .uploadMultiplePhotos(selectedPhotos, roNumber);
+            } else {
+                // Return empty array if no photos
+                submitData([]);
+            }
+        }
+
+        function emailScope() {
+            if (confirm("Send a PDF copy of this scope via email?")) {
+                const subBtn = document.querySelector('button[onclick="emailScope()"]');
+                const origText = subBtn.textContent;
+                subBtn.textContent = 'Sending...';
+                subBtn.disabled = true;
+
+                // Simulate/Call Backend
+                google.script.run
+                    .withSuccessHandler(() => {
+                        alert("✅ PDF Sent Successfully!");
+                        subBtn.textContent = origText;
+                        subBtn.disabled = false;
+                    })
+                    .withFailureHandler((e) => {
+                        alert("Error sending email: " + e); // Backend hook
+                        subBtn.textContent = origText;
+                        subBtn.disabled = false;
+                    })
+                    .sendPdfEmail(document.getElementById('roNumber').value);
+            }
+        }
+
+        // 2. Submit Data Function
+        function submitData(photoUrls) {
+            const submitBtn = document.getElementById('submitBtn'); // Get button reference here
+            // updateStatus('Saving data...'); // Assuming updateStatus is defined elsewhere or removed
+
+            // Base Data
+            const rawData = {
+                roNumber: document.getElementById('roNumber').value,
+                vin: document.getElementById('vin').value.toUpperCase(),
+                year: document.getElementById('year').value,
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                color: document.getElementById('color').value,
+                insurance: document.getElementById('insuranceCompany').value, // Corrected ID
+                claimNumber: document.getElementById('claimNumber').value,
+                location: document.getElementById('location').value,
+                // scoper: document.getElementById('scoper').value, // Not in original form
+                estimator: document.getElementById('estimator').value,
+                // severity: severityRadio.value, // Not in original form
+                // panelCount: document.getElementById('panelCount').value, // Not in original form
+                notes: document.getElementById('notes').value,
+                status: document.getElementById('status').value,
+                photoUrls: photoUrls
+            };
+
+            // Collect and Bundle Panel Data
+            const checklistBundles = {}; // { 'lf_fender_ri': ['Lamp', 'Liner'] }
+
+            // Scan all inputs with names
+            document.querySelectorAll('#scopeForm [name]').forEach(input => {
+                const name = input.name;
+                let value = input.value;
+
+                if (input.type === 'checkbox') {
+                    if (!input.checked) return; // Skip unchecked
+                    value = 'Yes';
+
+                    // Check for R&I / R&R Pattern: {panel}_{ri|rr}_{part}
+                    // Regex: matches anything ending in _ri_{part} or _rr_{part}
+                    // We want to capture the panel name and the type.
+                    const match = name.match(/^(.+)_(ri|rr)_(.+)$/);
+                    if (match) {
+                        const panel = match[1];
+                        const type = match[2]; // ri or rr
+                        const part = match[3];
+                        // Create bundle key: lf_fender_ri
+                        const bundleKey = `${panel}_${type}`;
+
+                        if (!checklistBundles[bundleKey]) checklistBundles[bundleKey] = [];
+                        // Add part name (Capitalized)
+                        checklistBundles[bundleKey].push(part.charAt(0).toUpperCase() + part.slice(1));
+                        return; // handled
+                    }
+
+                    // Other checkboxes (General flags?)
+                    rawData[name] = 'Yes';
+                } else if (input.type === 'radio') {
+                    if (input.checked) rawData[name] = value;
+                } else {
+                    // Text/Number inputs
+                    rawData[name] = value;
+                }
+            });
+
+            // Merge Bundles into Raw Data
+            Object.keys(checklistBundles).forEach(key => {
+                rawData[key] = checklistBundles[key].join(', ');
+            });
+
+            // Submit to Apps Script
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Scope';
+
+                    // Assuming 'result' from Apps Script indicates success/failure
+                    if (result && result.success) {
+                        document.getElementById('successModal').style.display = 'flex'; // Use style.display for visibility
+                        clearDraft(); // Clear local storage on success
+                    } else {
+                        alert('Error: ' + (result ? (result.error || 'Unknown error') : 'Unknown error from server'));
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Scope';
+                    alert('Error submitting form: ' + error.message);
+                })
+                .saveToSheet(rawData);
+        }
+
+        function resetForm() {
+            document.getElementById('scopeForm').reset();
+            selectedPhotos = [];
+            renderPreviews();
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        function startScanner() {
+            alert('VIN Scanner would open here (Requires HTTPS/Library)');
+        }
+    </script>
+</body>
+
+</html>

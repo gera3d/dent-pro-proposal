@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dent Experts - Training Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 16px;
+            padding-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 24px 0;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #4CD964;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 16px;
+            background: rgba(0, 122, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 122, 255, 0.2);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #4CD964;
+            font-size: 16px;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+
+        h3:first-child {
+            margin-top: 0;
+        }
+
+        p {
+            color: #a1a1a6;
+            margin-bottom: 12px;
+        }
+
+        .term-list {
+            list-style: none;
+        }
+
+        .term-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 3px solid #4CD964;
+        }
+
+        .term-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .term-def {
+            color: #a1a1a6;
+            font-size: 14px;
+        }
+
+        .tip-box {
+            background: rgba(0, 122, 255, 0.1);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin: 16px 0;
+        }
+
+        .tip-box .tip-title {
+            color: #007AFF;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .tip-box p {
+            margin: 0;
+            color: #ccc;
+        }
+
+        .warning-box {
+            background: rgba(255, 159, 10, 0.1);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin: 16px 0;
+        }
+
+        .warning-box .warning-title {
+            color: #FF9F0A;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #ccc;
+        }
+
+        .steps-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 16px;
+            color: #ccc;
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            color: #000;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-example {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+
+        .stat-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 16px;
+            min-width: 80px;
+        }
+
+        .stat-demo .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 2px;
+        }
+
+        .stat-demo .value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .stat-demo.green {
+            border-color: rgba(76, 217, 100, 0.3);
+            background: rgba(76, 217, 100, 0.08);
+        }
+
+        .stat-demo.green .value {
+            color: #4CD964;
+        }
+
+        .stat-demo.red {
+            border-color: rgba(255, 59, 48, 0.3);
+            background: rgba(255, 59, 48, 0.08);
+        }
+
+        .stat-demo.red .value {
+            color: #FF3B30;
+        }
+
+        .stat-demo.blue {
+            border-color: rgba(0, 122, 255, 0.3);
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .stat-demo.blue .value {
+            color: #007AFF;
+        }
+
+        .stat-demo.yellow {
+            border-color: rgba(255, 214, 10, 0.4);
+            background: rgba(255, 214, 10, 0.12);
+        }
+
+        .stat-demo.yellow .value {
+            color: #FFD60A;
+        }
+
+        .keyboard-shortcut {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .toc {
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid rgba(76, 217, 100, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .toc-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4CD964;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .toc-list a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .toc-list a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        @media (max-width: 500px) {
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚗 Dent Experts</div>
+            <div class="subtitle">Training Guide & Terminology</div>
+            <a href="Phase1_Custom_Form_HTML.html" class="back-link">← Back to Scope Form</a>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <div class="toc-title">📋 Quick Navigation</div>
+            <ul class="toc-list">
+                <li><a href="#terminology">PDR Terminology</a></li>
+                <li><a href="#form-fields">Form Fields Explained</a></li>
+                <li><a href="#damage-assessment">Damage Assessment</a></li>
+                <li><a href="#parts-checklist">Parts Checklist</a></li>
+                <li><a href="#bottom-stats">Understanding Stats</a></li>
+                <li><a href="#pricing">Pricing & Estimates</a></li>
+                <li><a href="#saving">Saving & Loading Forms</a></li>
+                <li><a href="#workflow">Recommended Workflow</a></li>
+                <li><a href="#tips">Pro Tips</a></li>
+            </ul>
+        </div>
+
+        <!-- PDR Terminology -->
+        <div class="section" id="terminology">
+            <div class="section-title">
+                <span class="icon">📖</span>
+                PDR Terminology
+            </div>
+
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">PDR (Paintless Dent Repair)</div>
+                    <div class="term-def">A technique to remove dents from vehicle body panels without affecting the factory paint finish. Uses specialized tools to massage the metal back to its original shape.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">DC (Dent Count)</div>
+                    <div class="term-def">The total number of individual dents on a specific panel. Each dent is counted separately regardless of size. Used for pricing calculations.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">OS (Oversized)</div>
+                    <div class="term-def">Dents that exceed the standard size threshold (typically larger than a quarter or 25mm). These require additional labor and are priced higher than standard dents.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">R&I (Remove & Install)</div>
+                    <div class="term-def">Temporarily removing a part to access a dent, then reinstalling the same part. The original part is reused. Example: Removing a door panel to access the inner door skin.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">R&R (Remove & Replace)</div>
+                    <div class="term-def">Permanently removing a damaged part and replacing it with a new one. The original part is discarded. Example: Replacing a cracked mirror housing.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">RO# (Repair Order Number)</div>
+                    <div class="term-def">A unique identifier assigned to each job/vehicle. Used for tracking, billing, and communication with insurance companies.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Scope / Scoping</div>
+                    <div class="term-def">The process of inspecting and documenting all damage on a vehicle. A thorough scope ensures accurate estimates and prevents supplements.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Supplement</div>
+                    <div class="term-def">Additional damage discovered after the initial scope. Requires re-inspection and adjustment to the original estimate.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Panel</div>
+                    <div class="term-def">A distinct body section of the vehicle (fender, door, hood, roof, quarter panel, etc.). Each panel is assessed and priced separately.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Molding (Mldg)</div>
+                    <div class="term-def">Decorative or protective trim pieces attached to body panels. May need removal for dent access. Types include belt molding, side molding, and upper molding.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Applique</div>
+                    <div class="term-def">A decorative panel or trim piece, often around windows or pillars. Usually plastic or chrome finish.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Liner</div>
+                    <div class="term-def">Inner fender liner or wheel well liner. Plastic protective covering that may need removal for fender/quarter panel access.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Flare</div>
+                    <div class="term-def">Fender flare or wheel arch extension. Wider trim pieces that extend the wheel opening.</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Form Fields Explained -->
+        <div class="section" id="form-fields">
+            <div class="section-title">
+                <span class="icon">📝</span>
+                Form Fields Explained
+            </div>
+
+            <h3>Header Information</h3>
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">RO# (Required)</div>
+                    <div class="term-def">Enter the shop's repair order number. This is the primary identifier for the job and is used when saving forms locally.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Estimator</div>
+                    <div class="term-def">Select who is performing the scope. Helps track productivity and accountability.</div>
+                </li>
+            </ul>
+
+            <h3>Vehicle Information</h3>
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">Insured</div>
+                    <div class="term-def">The insurance company handling the claim. Important for billing and rate negotiations.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Claim #</div>
+                    <div class="term-def">The insurance claim number. Required for all insurance-paid repairs.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">VIN (Vehicle Identification Number)</div>
+                    <div class="term-def">17-character unique identifier for the vehicle. Used for parts lookup, vehicle history, and insurance verification.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Location</div>
+                    <div class="term-def">Where the work is being performed: Shop, Mobile (on-site), Dealership, or Auction.</div>
+                </li>
+            </ul>
+
+            <h3>Status Options</h3>
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">Complete</div>
+                    <div class="term-def">Full scope completed. All damage has been documented and the estimate is final.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Partial</div>
+                    <div class="term-def">Initial scope in progress. Some areas still need inspection or documentation.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Supplement</div>
+                    <div class="term-def">Additional damage found after initial scope. This form documents newly discovered issues.</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Damage Assessment -->
+        <div class="section" id="damage-assessment">
+            <div class="section-title">
+                <span class="icon">🔍</span>
+                Damage Assessment
+            </div>
+
+            <p>Each vehicle panel has two key measurements:</p>
+
+            <h3>DC (Dent Count)</h3>
+            <p>Count every individual dent on the panel. Use the +/- buttons to increment or decrement the count. Be thorough - missing dents leads to supplements.</p>
+
+            <div class="tip-box">
+                <div class="tip-title">💡 Counting Tips</div>
+                <p>Use a PDR light board or reflection to reveal all dents. Move around the panel viewing from different angles. Small creases and dings all count!</p>
+            </div>
+
+            <h3>OS (Oversized)</h3>
+            <p>Count dents larger than the standard threshold (usually quarter-sized or ~25mm). These are priced at a premium rate.</p>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ Important</div>
+                <p>Oversized dents are counted IN ADDITION to the regular dent count. If you have 10 dents and 2 are oversized, enter DC: 10 and OS: 2.</p>
+            </div>
+
+            <h3>Panel "Done" Checkbox</h3>
+            <p>Each panel has a "Done" toggle in the header. Check this when you've completed inspecting that panel. Helps track progress on large jobs.</p>
+        </div>
+
+        <!-- Parts Checklist -->
+        <div class="section" id="parts-checklist">
+            <div class="section-title">
+                <span class="icon">🔧</span>
+                Parts Checklist (R&I / R&R)
+            </div>
+
+            <p>Each panel includes a checklist of parts that may need attention:</p>
+
+            <h3>R&I Column (Left)</h3>
+            <p>Check parts that need to be <strong>temporarily removed</strong> to access dents. These parts will be reinstalled after repair.</p>
+
+            <h3>R&R Column (Right)</h3>
+            <p>Check parts that are <strong>damaged and need replacement</strong>. New parts will be ordered and installed.</p>
+
+            <h3>Common Parts</h3>
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">Mirror</div>
+                    <div class="term-def">Side mirror assembly. R&I for door skin access, R&R if damaged.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Upper Mldg</div>
+                    <div class="term-def">Upper door/window molding trim.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Belt Mldg</div>
+                    <div class="term-def">Molding along the window belt line (where window meets door).</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Trim Panel</div>
+                    <div class="term-def">Interior door panel. Must be removed for inner door access.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Handle</div>
+                    <div class="term-def">Exterior door handle.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Lamp(s)</div>
+                    <div class="term-def">Headlights, taillights, or marker lights.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Emblem</div>
+                    <div class="term-def">Manufacturer badges or model emblems.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Liner/Flare</div>
+                    <div class="term-def">Wheel well liner or fender flare.</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Understanding the Stats -->
+        <div class="section" id="bottom-stats">
+            <div class="section-title">
+                <span class="icon">📊</span>
+                Understanding the Bottom Stats
+            </div>
+
+            <p>The footer bar shows live statistics as you fill out the form:</p>
+
+            <div class="stat-example">
+                <div class="stat-demo">
+                    <span class="label">Panels</span>
+                    <span class="value">5</span>
+                </div>
+                <div class="stat-demo green">
+                    <span class="label">Dent Count</span>
+                    <span class="value">47</span>
+                </div>
+                <div class="stat-demo red">
+                    <span class="label">Oversized</span>
+                    <span class="value">8</span>
+                </div>
+                <div class="stat-demo blue">
+                    <span class="label">R&I Parts</span>
+                    <span class="value">12</span>
+                </div>
+                <div class="stat-demo blue">
+                    <span class="label">R&R Parts</span>
+                    <span class="value">3</span>
+                </div>
+                <div class="stat-demo yellow">
+                    <span class="label">Est. Total</span>
+                    <span class="value">$2,915</span>
+                </div>
+            </div>
+
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">Panels</div>
+                    <div class="term-def">Number of panels with any data entered (DC, OS, or checked parts). A panel counts as "active" if it has any input.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Dent Count (Green)</div>
+                    <div class="term-def">Total sum of all DC values across all panels. This is the main labor driver for PDR pricing.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Oversized (Red)</div>
+                    <div class="term-def">Total sum of all OS values. Highlighted in red because these add significant cost.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">R&I Parts (Blue)</div>
+                    <div class="term-def">Total count of R&I checkboxes checked. Parts that need removal and reinstallation.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">R&R Parts (Blue)</div>
+                    <div class="term-def">Total count of R&R checkboxes checked. Parts that need full replacement.</div>
+                </li>
+            </ul>
+
+            <div class="tip-box">
+                <div class="tip-title">💡 Quick Quality Check</div>
+                <p>Before submitting, verify your stats look reasonable. If a hail job shows only 2 panels but 50+ dents, you may have missed entering panel data.</p>
+            </div>
+        </div>
+
+        <!-- Pricing & Estimates -->
+        <div class="section" id="pricing">
+            <div class="section-title">
+                <span class="icon">💰</span>
+                Pricing & Real-Time Estimates
+            </div>
+
+            <p>The app calculates a <strong>real-time estimate</strong> as you enter damage information. This uses industry-standard tiered pricing that reflects how most PDR shops and insurance companies calculate repairs.</p>
+
+            <h3>Industry Standard Tiered Pricing</h3>
+            <p>PDR pricing typically uses a <strong>diminishing rate structure</strong> - the more dents, the lower the per-dent rate. This reflects the efficiency gained when working on heavily damaged vehicles:</p>
+
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">Tier 1: Dents 1-15 @ $75/dent</div>
+                    <div class="term-def">First 15 dents are charged at the premium retail rate. This covers small door dings, parking lot damage, and light hail.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Tier 2: Dents 16-30 @ $60/dent</div>
+                    <div class="term-def">Volume discount kicks in. Common for moderate hail damage or multiple-panel incidents.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">Tier 3: Dents 31+ @ $45/dent</div>
+                    <div class="term-def">Heavy hail/storm damage pricing. Insurance matrix rates typically fall in this range for high-count repairs.</div>
+                </li>
+            </ul>
+
+            <h3>Oversized Dent Premium</h3>
+            <p>Dents larger than a quarter (approximately 1 inch / 25mm) are considered <strong>oversized</strong> and charged at <strong>1.5× the tier rate</strong> (50% premium). These require more time, skill, and often multiple push points to repair.</p>
+
+            <h3>R&I and R&R Labor</h3>
+            <ul class="term-list">
+                <li class="term-item">
+                    <div class="term-name">R&I Labor: $40/part</div>
+                    <div class="term-def">Based on typical body shop labor rates ($50-65/hr) and average R&I time (0.3-1.0 hours). Covers removal for access and reinstallation.</div>
+                </li>
+                <li class="term-item">
+                    <div class="term-name">R&R Labor: $55/part</div>
+                    <div class="term-def">Higher rate due to additional work (unpacking new part, transfer of hardware, test fit). Does NOT include part cost.</div>
+                </li>
+            </ul>
+
+            <h3>Example Calculations</h3>
+            
+            <p style="color: #4CD964; font-weight: 600; margin-top: 16px;">Small Job (Door Ding):</p>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; margin: 8px 0 16px 0; font-family: monospace; font-size: 13px; color: #ccc;">
+                <div style="margin-bottom: 8px;"><span style="color: #4CD964;">3 dents</span> × $75 = <strong style="color: #fff;">$225</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #FF3B30;">0 oversized</span></div>
+                <div style="margin-bottom: 8px;"><span style="color: #007AFF;">1 R&I (mirror)</span> × $40 = <strong style="color: #fff;">$40</strong></div>
+                <div style="border-top: 1px solid #444; padding-top: 8px; margin-top: 8px;"><strong style="color: #FFD60A; font-size: 15px;">ESTIMATED TOTAL: $265</strong></div>
+            </div>
+
+            <p style="color: #FF9F0A; font-weight: 600;">Medium Hail Job:</p>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; margin: 8px 0 16px 0; font-family: monospace; font-size: 13px; color: #ccc;">
+                <div style="margin-bottom: 4px;"><span style="color: #4CD964;">25 dents total:</span></div>
+                <div style="margin-bottom: 4px; padding-left: 16px;">15 dents × $75 = <strong style="color: #fff;">$1,125</strong></div>
+                <div style="margin-bottom: 8px; padding-left: 16px;">10 dents × $60 = <strong style="color: #fff;">$600</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #FF3B30;">4 oversized</span> × $33.75 premium = <strong style="color: #fff;">$135</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #007AFF;">6 R&I parts</span> × $40 = <strong style="color: #fff;">$240</strong></div>
+                <div style="border-top: 1px solid #444; padding-top: 8px; margin-top: 8px;"><strong style="color: #FFD60A; font-size: 15px;">ESTIMATED TOTAL: $2,100</strong></div>
+            </div>
+
+            <p style="color: #FF453A; font-weight: 600;">Heavy Hail Job:</p>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; margin: 8px 0 16px 0; font-family: monospace; font-size: 13px; color: #ccc;">
+                <div style="margin-bottom: 4px;"><span style="color: #4CD964;">75 dents total:</span></div>
+                <div style="margin-bottom: 4px; padding-left: 16px;">15 dents × $75 = <strong style="color: #fff;">$1,125</strong></div>
+                <div style="margin-bottom: 4px; padding-left: 16px;">15 dents × $60 = <strong style="color: #fff;">$900</strong></div>
+                <div style="margin-bottom: 8px; padding-left: 16px;">45 dents × $45 = <strong style="color: #fff;">$2,025</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #FF3B30;">12 oversized</span> × $27 premium = <strong style="color: #fff;">$324</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #007AFF;">10 R&I parts</span> × $40 = <strong style="color: #fff;">$400</strong></div>
+                <div style="margin-bottom: 8px;"><span style="color: #007AFF;">2 R&R parts</span> × $55 = <strong style="color: #fff;">$110</strong></div>
+                <div style="border-top: 1px solid #444; padding-top: 8px; margin-top: 8px;"><strong style="color: #FFD60A; font-size: 15px;">ESTIMATED TOTAL: $4,884</strong></div>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ Estimate Disclaimer</div>
+                <p>The real-time estimate is a <strong>guideline based on industry averages</strong>. Actual pricing varies by: insurance company matrix rates, geographic market, vehicle type (aluminum/luxury premiums), panel accessibility, and negotiated shop rates. Always verify with your specific pricing matrix.</p>
+            </div>
+
+            <h3>What's NOT Included</h3>
+            <ul style="color: #a1a1a6; margin: 12px 0 12px 20px;">
+                <li><strong>R&R Parts Cost</strong> - Labor only, not the actual cost of replacement parts</li>
+                <li><strong>Aluminum/Specialty Premiums</strong> - Some vehicles require 25-50% upcharge</li>
+                <li><strong>Paint/Body Work</strong> - Conventional repair costs are separate</li>
+                <li><strong>Blend/Clear Coat</strong> - If paint is damaged</li>
+                <li><strong>Sublet Fees</strong> - Glass, ADAS calibration, etc.</li>
+            </ul>
+
+            <h3>Current Default Rates</h3>
+            <p>These rates can be adjusted in the app's code (PRICING object):</p>
+            <ul style="color: #a1a1a6; margin: 12px 0 12px 20px;">
+                <li>Tier 1 (1-15 dents): <strong style="color: #fff;">$75/dent</strong></li>
+                <li>Tier 2 (16-30 dents): <strong style="color: #fff;">$60/dent</strong></li>
+                <li>Tier 3 (31+ dents): <strong style="color: #fff;">$45/dent</strong></li>
+                <li>Oversized multiplier: <strong style="color: #fff;">1.5× (50% premium)</strong></li>
+                <li>R&I labor per part: <strong style="color: #fff;">$40</strong></li>
+                <li>R&R labor per part: <strong style="color: #fff;">$55</strong></li>
+                <li>Minimum charge: <strong style="color: #fff;">$125</strong></li>
+            </ul>
+
+            <div class="tip-box">
+                <div class="tip-title">💡 Using the Estimate</div>
+                <p>Watch the estimate update as you work. A typical door ding should be $125-300, minor hail $500-1,500, moderate hail $1,500-3,500, and severe hail $3,500-7,000+. If your numbers seem off, double-check your dent counts.</p>
+            </div>
+        </div>
+
+        <!-- Saving & Loading Forms -->
+        <div class="section" id="saving">
+            <div class="section-title">
+                <span class="icon">💾</span>
+                Saving & Loading Forms
+            </div>
+
+            <p>Forms are stored locally on your device using browser storage. This means:</p>
+            <ul style="color: #a1a1a6; margin: 12px 0 12px 20px;">
+                <li>Data stays on this iPad/device only</li>
+                <li>No internet connection required</li>
+                <li>Data persists even if you close the browser</li>
+                <li>Clearing browser data will delete saved forms</li>
+            </ul>
+
+            <h3>Save Button (💾)</h3>
+            <p>Saves the current form using the RO# as the identifier. If a form with the same RO# exists, it will be updated.</p>
+
+            <h3>Saved Forms Dropdown</h3>
+            <p>Select a previously saved form to load it. Shows RO#, vehicle info, and save date.</p>
+
+            <h3>Delete Button (🗑️)</h3>
+            <p>Permanently removes the selected saved form. Cannot be undone!</p>
+
+            <h3>New Button (➕)</h3>
+            <p>Clears all fields to start a fresh scope. Make sure to save first if needed!</p>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ Auto-Save Draft</div>
+                <p>The app automatically saves a working draft as you type. If the browser closes unexpectedly, your work-in-progress will be restored. However, this is separate from the "Save" button which stores named forms.</p>
+            </div>
+        </div>
+
+        <!-- Recommended Workflow -->
+        <div class="section" id="workflow">
+            <div class="section-title">
+                <span class="icon">✅</span>
+                Recommended Workflow
+            </div>
+
+            <ol class="steps-list">
+                <li><strong>Start with vehicle info</strong> - Enter RO#, VIN, Year/Make/Model first. This ensures the form is identifiable if you need to save and return later.</li>
+                <li><strong>Take VIN/Odometer photos</strong> - Use the camera button to capture verification photos before starting the damage inspection.</li>
+                <li><strong>Work systematically</strong> - Start at one corner of the vehicle and work around methodically. Don't jump between panels.</li>
+                <li><strong>Count dents carefully</strong> - Use proper lighting. Count all dents first (DC), then identify oversized ones (OS).</li>
+                <li><strong>Mark "Done" on each panel</strong> - Check the Done box as you complete each panel to track progress.</li>
+                <li><strong>Check R&I/R&R needs</strong> - For each panel with dents, consider what parts need removal for access or replacement if damaged.</li>
+                <li><strong>Take damage photos</strong> - Photograph each damaged area. More photos = fewer disputes later.</li>
+                <li><strong>Review stats before submitting</strong> - Check the bottom bar totals. Do they match what you observed?</li>
+                <li><strong>Save locally, then submit</strong> - Save to local storage first as a backup, then submit to the system.</li>
+            </ol>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="section" id="tips">
+            <div class="section-title">
+                <span class="icon">⭐</span>
+                Pro Tips
+            </div>
+
+            <div class="tip-box">
+                <div class="tip-title">🔦 Lighting is Everything</div>
+                <p>Use a PDR light board or work in conditions with good reflection. Dents are nearly invisible in flat lighting. The best scopes happen with proper lighting setup.</p>
+            </div>
+
+            <div class="tip-box">
+                <div class="tip-title">📱 Save Frequently</div>
+                <p>Hit Save after completing each major section. If you get interrupted or the app crashes, you won't lose your work.</p>
+            </div>
+
+            <div class="tip-box">
+                <div class="tip-title">📸 Photo Documentation</div>
+                <p>Take more photos than you think you need. Include: VIN plate, odometer, overall vehicle shots, and close-ups of each damaged area. Photos protect you during disputes.</p>
+            </div>
+
+            <div class="tip-box">
+                <div class="tip-title">🔍 Check Body Lines</div>
+                <p>Dents along body lines, character lines, and edges are often harder to repair. Note these in the Comments section as they may affect pricing.</p>
+            </div>
+
+            <div class="tip-box">
+                <div class="tip-title">📝 Use Notes Wisely</div>
+                <p>The Notes field is for anything that doesn't fit elsewhere: prior damage, access concerns, customer requests, or unusual conditions.</p>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ Don't Undercount</div>
+                <p>It's better to slightly overcount than undercount. Undercounting leads to supplements, delays, and unhappy customers. When in doubt, count it!</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 24px 0; color: #666; font-size: 13px;">
+            <p>Dent Experts PDR Scope System</p>
+            <p style="margin-top: 8px;">Version 1.0 • Training Guide</p>
+            <a href="Phase1_Custom_Form_HTML.html" class="back-link" style="margin-top: 16px;">← Back to Scope Form</a>
+        </div>
+    </div>
+</body>
+
+</html>

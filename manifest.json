@@ -7,9 +7,9 @@
   "theme_color": "#4CD964",
   "icons": [
     {
-      "src": "logo.webp",
-      "sizes": "192x192",
-      "type": "image/webp"
+      "src": "app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
     }
   ]
 }

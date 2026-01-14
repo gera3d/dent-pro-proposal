@@ -5,6 +5,7 @@
     <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -2382,7 +2383,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadDropdowns();
             loadSavedFormsList();
-            // Set date defaults if needed
+
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            }
         });
 
         // =============================================
@@ -3237,7 +3244,8 @@
         }
 
         function startScanner() {
-            alert('VIN Scanner would open here (Requires HTTPS/Library)');
+            // Trigger the existing camera input
+            document.getElementById('cameraInput').click();
         }
     </script>
 </body>

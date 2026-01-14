@@ -1,0 +1,15 @@
+{
+  "name": "Dent Experts Scoper",
+  "short_name": "Dent Experts",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#4CD964",
+  "icons": [
+    {
+      "src": "logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    }
+  ]
+}

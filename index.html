@@ -767,13 +767,16 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .saved-forms-left {
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .saved-forms-actions {
                 justify-content: stretch;
             }
+
             .saved-btn {
                 flex: 1;
             }
@@ -1581,12 +1584,12 @@
         /* HEADER REDESIGN (Split Layout) */
         .brand-bar {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            justify-content: space-between;
             align-items: center;
             padding: 20px 0;
             margin-bottom: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
         }
 
         .brand-bar .logo {
@@ -2226,6 +2229,7 @@
             border-color: rgba(76, 217, 100, 0.3);
             background: rgba(76, 217, 100, 0.08);
         }
+
         .stat-box.dents .stat-value {
             color: #4CD964;
         }
@@ -2234,6 +2238,7 @@
             border-color: rgba(255, 59, 48, 0.3);
             background: rgba(255, 59, 48, 0.08);
         }
+
         .stat-box.oversized .stat-value {
             color: #FF3B30;
         }
@@ -2242,6 +2247,7 @@
             border-color: rgba(0, 122, 255, 0.3);
             background: rgba(0, 122, 255, 0.08);
         }
+
         .stat-box.parts .stat-value {
             color: #007AFF;
         }
@@ -2251,6 +2257,7 @@
             background: rgba(255, 214, 10, 0.12);
             min-width: 90px;
         }
+
         .stat-box.estimate .stat-value {
             color: #FFD60A;
             font-size: 16px;
@@ -2332,18 +2339,23 @@
             .footer-stats-row {
                 flex-wrap: wrap;
             }
+
             .stat-box {
                 min-width: calc(33% - 8px);
             }
+
             .footer-actions-row {
                 flex-direction: column;
             }
+
             .footer-select {
                 width: 100%;
             }
+
             .footer-buttons {
                 width: 100%;
             }
+
             .footer-btn {
                 flex: 1;
             }
@@ -2389,20 +2401,20 @@
         function loadSavedFormsList() {
             const dropdown = document.getElementById('savedFormsDropdown');
             const forms = getSavedForms();
-            
+
             // Clear existing options except the default
             dropdown.innerHTML = '<option value="">-- Select Saved Form --</option>';
-            
+
             // Sort forms by timestamp (newest first)
             const sortedKeys = Object.keys(forms).sort((a, b) => {
                 return (forms[b].savedAt || 0) - (forms[a].savedAt || 0);
             });
-            
+
             sortedKeys.forEach(key => {
                 const form = forms[key];
                 const opt = document.createElement('option');
                 opt.value = key;
-                
+
                 // Create display label: RO# - Year Make Model - Date
                 const parts = [];
                 if (form.roNumber) parts.push('RO: ' + form.roNumber);
@@ -2413,7 +2425,7 @@
                     const date = new Date(form.savedAt);
                     parts.push(date.toLocaleDateString());
                 }
-                
+
                 opt.text = parts.length > 0 ? parts.join(' • ') : key;
                 dropdown.add(opt);
             });
@@ -2422,39 +2434,51 @@
         function saveCurrentForm() {
             // Get RO number as the primary identifier
             const roNumber = document.getElementById('roNumber').value.trim();
-            
+
             if (!roNumber) {
                 showToast('Please enter an RO# to save the form', 'error');
                 document.getElementById('roNumber').focus();
                 return;
             }
-            
+
             // Collect all form data
             const formData = collectFormData();
             formData.savedAt = Date.now();
-            
+
+            // Add photos to saved data
+            formData.photos = selectedPhotos;
+
             // Get existing forms and add/update this one
             const forms = getSavedForms();
             const key = 'form_' + roNumber;
-            
+
             const isUpdate = forms[key] !== undefined;
             forms[key] = formData;
-            setSavedForms(forms);
-            
-            // Refresh dropdown and select this form
-            loadSavedFormsList();
-            document.getElementById('savedFormsDropdown').value = key;
-            
-            showToast(isUpdate ? '✅ Form updated successfully!' : '✅ Form saved successfully!', 'success');
+
+            try {
+                setSavedForms(forms);
+
+                // Refresh dropdown and select this form
+                loadSavedFormsList();
+                document.getElementById('savedFormsDropdown').value = key;
+
+                showToast(isUpdate ? '✅ Form updated successfully!' : '✅ Form saved successfully!', 'success');
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('⚠️ Storage full! Photos may be too large.', 'error');
+                } else {
+                    showToast('❌ Save failed: ' + e.message, 'error');
+                }
+            }
         }
 
         function collectFormData() {
             const data = {};
-            
+
             // Collect header inputs (outside of form)
             data.roNumber = document.getElementById('roNumber').value;
             data.estimator = document.getElementById('estimator').value;
-            
+
             // Collect all form inputs
             document.querySelectorAll('#scopeForm [name]').forEach(el => {
                 if (el.type === 'checkbox') {
@@ -2465,42 +2489,42 @@
                     data[el.name] = el.value;
                 }
             });
-            
+
             // Also collect standalone IDs that might not have name attributes
-            const standaloneIds = ['insuranceCompany', 'claimNumber', 'year', 'make', 'model', 
-                                   'odometer', 'location', 'vin', 'color', 'notes', 'status'];
+            const standaloneIds = ['insuranceCompany', 'claimNumber', 'year', 'make', 'model',
+                'odometer', 'location', 'vin', 'color', 'notes', 'status'];
             standaloneIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && !data[id]) {
                     data[id] = el.value;
                 }
             });
-            
+
             return data;
         }
 
         function loadSavedForm() {
             const dropdown = document.getElementById('savedFormsDropdown');
             const key = dropdown.value;
-            
+
             if (!key) return; // No selection
-            
+
             const forms = getSavedForms();
             const formData = forms[key];
-            
+
             if (!formData) {
                 showToast('Form not found', 'error');
                 return;
             }
-            
+
             // Restore header inputs
             if (formData.roNumber) document.getElementById('roNumber').value = formData.roNumber;
             if (formData.estimator) document.getElementById('estimator').value = formData.estimator;
-            
+
             // Restore form data
             Object.keys(formData).forEach(name => {
                 if (name === 'savedAt' || name === 'roNumber' || name === 'estimator') return;
-                
+
                 // Try by name first
                 const elsByName = document.getElementsByName(name);
                 if (elsByName.length > 0) {
@@ -2528,32 +2552,41 @@
                     }
                 }
             });
-            
+
+            // Restore photos
+            if (formData.photos && Array.isArray(formData.photos)) {
+                selectedPhotos = formData.photos;
+                renderPreviews();
+            } else {
+                selectedPhotos = [];
+                renderPreviews();
+            }
+
             // Update VIN counter
             updateVinCounter();
-            
+
             // Update summary stats
             updateSummary();
-            
+
             // Also save to draft so auto-save continues
             saveDraft();
-            
+
             showToast('📂 Form loaded successfully!', 'success');
         }
 
         function deleteSavedForm() {
             const dropdown = document.getElementById('savedFormsDropdown');
             const key = dropdown.value;
-            
+
             if (!key) {
                 showToast('Please select a form to delete', 'error');
                 return;
             }
-            
+
             const forms = getSavedForms();
             const formData = forms[key];
             const displayName = formData?.roNumber ? `RO: ${formData.roNumber}` : key;
-            
+
             if (confirm(`Are you sure you want to delete "${displayName}"?\n\nThis cannot be undone.`)) {
                 delete forms[key];
                 setSavedForms(forms);
@@ -2568,26 +2601,26 @@
                 document.getElementById('scopeForm').reset();
                 document.getElementById('roNumber').value = '';
                 document.getElementById('estimator').value = '';
-                
+
                 // Reset dropdown selection
                 document.getElementById('savedFormsDropdown').value = '';
-                
+
                 // Reset photos
                 selectedPhotos = [];
                 renderPreviews();
-                
+
                 // Clear panel complete states
                 document.querySelectorAll('.panel-box.is-complete').forEach(box => {
                     box.classList.remove('is-complete');
                 });
-                
+
                 // Update UI
                 updateVinCounter();
                 updateSummary();
-                
+
                 // Clear draft
                 localStorage.removeItem(DRAFT_KEY);
-                
+
                 showToast('📝 New form started', 'success');
             }
         }
@@ -2597,7 +2630,7 @@
             toast.textContent = message;
             toast.className = 'toast ' + type;
             toast.classList.add('show');
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
@@ -2769,7 +2802,7 @@
                 saveDraft();
                 updateSummary();
             });
-            
+
             // Add explicit listeners to ALL checkboxes for real-time R&I/R&R updates
             document.querySelectorAll('#scopeForm input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
@@ -2863,7 +2896,7 @@
             document.getElementById('liveOsCount').textContent = totalOs;
             document.getElementById('liveRiCount').textContent = totalRi;
             document.getElementById('liveRrCount').textContent = totalRr;
-            
+
             // Calculate and display estimate
             const estimate = calculateEstimate(totalDents, totalOs, totalRi, totalRr, activePanels.size);
             document.getElementById('liveEstimate').textContent = '$' + estimate.toLocaleString();
@@ -2879,66 +2912,66 @@
             secondTierMax: 30,         // Second tier: dents 16-30  
             secondTierRate: 60,        // $60 per dent (volume discount)
             thirdTierRate: 45,         // $45 per dent (31+ dents, hail pricing)
-            
+
             // Oversized dents (larger than quarter/nickel size)
             oversizedMultiplier: 1.5,  // 50% premium on oversized dents
-            
+
             // R&I Labor (typical body shop labor rate ~$50-65/hr, most R&I = 0.3-1.0 hr)
             riLaborPerPart: 40,        // Average R&I labor per part
-            
+
             // R&R Labor only (not including part cost)
             rrLaborPerPart: 55,        // R&R labor is higher due to additional work
-            
+
             // Panel access fees (for difficult access panels like roof w/headliner)
             panelSetupFee: 0,          // Optional - set if you charge per panel
-            
+
             // Minimum job charge
             minimumCharge: 125         // Typical minimum for any PDR job
         };
 
         function calculateEstimate(dents, oversized, riParts, rrParts, panels) {
             let total = 0;
-            
+
             // Tiered dent pricing (industry standard diminishing returns)
             let remainingDents = dents;
-            
+
             // First tier (1-15 dents at premium rate)
             const firstTierDents = Math.min(remainingDents, PRICING.firstTierMax);
             total += firstTierDents * PRICING.firstTierRate;
             remainingDents -= firstTierDents;
-            
+
             // Second tier (16-30 dents at mid rate)
             if (remainingDents > 0) {
                 const secondTierDents = Math.min(remainingDents, PRICING.secondTierMax - PRICING.firstTierMax);
                 total += secondTierDents * PRICING.secondTierRate;
                 remainingDents -= secondTierDents;
             }
-            
+
             // Third tier (31+ dents at volume/hail rate)
             if (remainingDents > 0) {
                 total += remainingDents * PRICING.thirdTierRate;
             }
-            
+
             // Oversized premium (multiplier on base rate for oversized dents)
             // Calculate average rate paid, then add premium portion
             const avgRatePerDent = dents > 0 ? total / dents : PRICING.firstTierRate;
             const oversizedPremium = oversized * (avgRatePerDent * (PRICING.oversizedMultiplier - 1));
             total += oversizedPremium;
-            
+
             // R&I labor
             total += riParts * PRICING.riLaborPerPart;
-            
+
             // R&R labor (parts cost would need to be added separately)
             total += rrParts * PRICING.rrLaborPerPart;
-            
+
             // Panel setup fees (if any)
             total += panels * PRICING.panelSetupFee;
-            
+
             // Apply minimum charge
             if (total > 0 && total < PRICING.minimumCharge) {
                 total = PRICING.minimumCharge;
             }
-            
+
             return Math.round(total);
         }
 
@@ -2960,7 +2993,7 @@
                 val += delta;
                 if (val < 0) val = 0;
                 input.value = val;
-                
+
                 // Trigger real-time update of stats
                 updateSummary();
                 saveDraft();

@@ -3,6 +3,7 @@ const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './logo.webp',
+    './app-icon.png',
     './Option_B_Custom_WebApp/Training_Guide.html',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];

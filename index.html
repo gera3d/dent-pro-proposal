@@ -831,7 +831,11 @@
             <!-- GENERAL INFORMATION (Pro Grid) -->
             <div class="general-info-grid">
                 <div class="info-group col-span-2">
-                    <label>Insured</label>
+                    <label>Insured (Customer Name)</label>
+                    <input type="text" id="insuredName" required placeholder="Customer's full name">
+                </div>
+                <div class="info-group col-span-2">
+                    <label>Insurance Carrier</label>
                     <select id="insuranceCompany" required>
                         <option value="">Select Insurance</option>
                     </select>
@@ -840,6 +844,7 @@
                     <label>Claim #</label>
                     <input type="text" id="claimNumber" required placeholder="e.g. 123-456-789">
                 </div>
+
 
                 <div class="info-group col-span-2">
                     <label>Year / Make / Model</label>
@@ -1496,12 +1501,8 @@
             <div class="submit-bar">
                 <!-- Stats Row -->
                 <div class="footer-stats-row">
-                    <div class="stat-box">
-                        <span class="stat-label">Panels</span>
-                        <span class="stat-value" id="livePanelCount">0</span>
-                    </div>
                     <div class="stat-box dents">
-                        <span class="stat-label">Dent Count</span>
+                        <span class="stat-label">Panels w/Damage</span>
                         <span class="stat-value" id="liveDentCount">0</span>
                     </div>
                     <div class="stat-box oversized">
@@ -1516,11 +1517,12 @@
                         <span class="stat-label">R&R Parts</span>
                         <span class="stat-value" id="liveRrCount">0</span>
                     </div>
-                    <div class="stat-box estimate">
-                        <span class="stat-label">Est. Total</span>
-                        <span class="stat-value" id="liveEstimate">$0</span>
+                    <div class="stat-box" id="saveStatusBox" style="display:none;">
+                        <span class="stat-label">Status</span>
+                        <span class="stat-value" id="saveStatus">Saved</span>
                     </div>
                 </div>
+
 
                 <!-- Actions Row -->
                 <div class="footer-actions-row">
@@ -2061,6 +2063,125 @@
             margin: 0;
             padding: 0 !important;
             height: 100% !important;
+        }
+
+        /* DENT COUNT RANGE BUTTONS */
+        .dc-range-ui {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dc-range-label {
+            font-size: 10px;
+            color: #888;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dc-range-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .dc-range-btn {
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            color: #ccc;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .dc-range-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .dc-range-btn.selected {
+            background: rgba(76, 217, 100, 0.2);
+            border-color: #4CD964;
+            color: #4CD964;
+        }
+
+        /* UPD TOGGLE */
+        .upd-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 149, 0, 0.1);
+            border: 1px solid rgba(255, 149, 0, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upd-toggle:hover {
+            background: rgba(255, 149, 0, 0.15);
+        }
+
+        .upd-toggle.active {
+            background: rgba(255, 149, 0, 0.25);
+            border-color: #FF9500;
+        }
+
+        .upd-toggle input {
+            width: 18px;
+            height: 18px;
+            accent-color: #FF9500;
+        }
+
+        .upd-toggle span {
+            font-size: 11px;
+            font-weight: 600;
+            color: #FF9500;
+        }
+
+        .panel-box.has-upd {
+            border-color: #FF9500 !important;
+            box-shadow: 0 0 12px rgba(255, 149, 0, 0.2);
+        }
+
+        .panel-box.has-upd .panel-header {
+            border-left-color: #FF9500;
+        }
+
+        .upd-notes {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .upd-notes.visible {
+            display: block;
+        }
+
+        .upd-notes textarea {
+            width: 100%;
+            min-height: 60px;
+            background: rgba(255, 149, 0, 0.05);
+            border: 1px solid rgba(255, 149, 0, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            padding: 8px;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .upd-notes textarea::placeholder {
+            color: rgba(255, 149, 0, 0.5);
         }
 
         /* CHECKLIST TABLES */
@@ -2645,15 +2766,16 @@
         }
 
         function loadDropdowns() {
-            // Populate Year
+            // Populate Year (back to 1960)
             const yearSelect = document.getElementById('year');
             const currentYear = new Date().getFullYear();
-            for (let i = currentYear + 1; i >= 1990; i--) {
+            for (let i = currentYear + 1; i >= 1960; i--) {
                 const opt = document.createElement('option');
                 opt.value = i;
                 opt.text = i;
                 yearSelect.add(opt);
             }
+
             // Populate basic Makes (can expand later)
             const makes = ["Ford", "Chevy", "Dodge/Ram", "Toyota", "Honda", "Nissan", "Hyundai/Kia", "BMW", "Mercedes", "Audi", "VW", "Tesla", "Subaru", "Other"];
             const makeSelect = document.getElementById('make');
@@ -2664,7 +2786,7 @@
                 makeSelect.add(opt);
             });
             // Locations
-            const locs = ["Shop", "Mobile", "Dealership", "Auction"];
+            const locs = ["Progressive Cat Drive", "Shop", "Mobile", "Dealership", "Auction"];
             const locSelect = document.getElementById('location');
             locs.forEach(l => {
                 const opt = document.createElement('option');
@@ -2672,6 +2794,7 @@
                 opt.text = l;
                 locSelect.add(opt);
             });
+
             // Insurance
             const ins = ["State Farm", "Geico", "Progressive", "Allstate", "Liberty Mutual", "Farmers", "Nationwide", "USAA", "Other"];
             const insSelect = document.getElementById('insuranceCompany');
@@ -2695,51 +2818,74 @@
         }
 
         // --- INITIALIZATION ---
-        // Convert DC/OS inputs to Smart Steppers
+        // Convert DC to range buttons, OS to steppers, add UPD toggles
+        const DC_RANGES = ['1-5', '6-15', '16-30', '31-50', '51-75', '76-100', '101-150', '151-200', '201-300', '301-400'];
+
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.panel-ratings input[type="text"]').forEach(input => {
                 const name = input.name;
-                if (name.endsWith('_dc') || name.endsWith('_os')) {
-                    const parentLabel = input.closest('label');
-                    if (parentLabel) {
-                        // Create Wrapper
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'stepper-ui';
+                const parentLabel = input.closest('label');
+                if (!parentLabel) return;
 
-                        // Extract Label Text (e.g. "DC:")
-                        // Note: input is inside label, so text content includes input value if not careful
-                        // Using firstChild mostly works if format is "Text <input>"
-                        let labelText = parentLabel.firstChild.textContent.trim().replace(':', '');
-                        if (labelText === "") labelText = name.endsWith('_dc') ? 'DC' : 'OS';
+                if (name.endsWith('_dc')) {
+                    // Convert DC to range buttons
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'dc-range-ui';
+                    wrapper.innerHTML = `
+                        <span class="dc-range-label">Dent Count</span>
+                        <div class="dc-range-buttons">
+                            ${DC_RANGES.map(range => `
+                                <button type="button" class="dc-range-btn" data-range="${range}" data-input="${name}">${range}</button>
+                            `).join('')}
+                        </div>
+                        <input type="hidden" name="${name}" value="">
+                    `;
 
-                        wrapper.innerHTML = `
-                            <span class="st-label">${labelText}</span>
-                            <button type="button" class="st-btn" onclick="adjustStepper('${name}', -1)">−</button>
-                        `;
+                    // Add click handlers
+                    wrapper.querySelectorAll('.dc-range-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            // Deselect siblings
+                            wrapper.querySelectorAll('.dc-range-btn').forEach(b => b.classList.remove('selected'));
+                            // Select this one
+                            btn.classList.add('selected');
+                            // Update hidden input
+                            wrapper.querySelector(`input[name="${name}"]`).value = btn.dataset.range;
+                            // Trigger save and update
+                            updateSummary();
+                            saveDraft();
+                        });
+                    });
 
-                        // Move input
-                        input.classList.add('st-input');
-                        wrapper.appendChild(input);
+                    parentLabel.parentNode.insertBefore(wrapper, parentLabel);
+                    parentLabel.remove();
 
-                        // Add Plus Button
-                        const plusBtn = document.createElement('button');
-                        plusBtn.type = 'button';
-                        plusBtn.className = 'st-btn';
-                        plusBtn.innerHTML = '+';
-                        plusBtn.onclick = function () { adjustStepper(name, 1); };
-                        wrapper.appendChild(plusBtn);
+                } else if (name.endsWith('_os')) {
+                    // Keep OS as stepper
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'stepper-ui';
+                    wrapper.innerHTML = `
+                        <span class="st-label">OS</span>
+                        <button type="button" class="st-btn" onclick="adjustStepper('${name}', -1)">−</button>
+                    `;
+                    input.classList.add('st-input');
+                    wrapper.appendChild(input);
 
-                        // Replace Label
-                        parentLabel.parentNode.insertBefore(wrapper, parentLabel);
-                        parentLabel.remove();
-                    }
+                    const plusBtn = document.createElement('button');
+                    plusBtn.type = 'button';
+                    plusBtn.className = 'st-btn';
+                    plusBtn.innerHTML = '+';
+                    plusBtn.onclick = function () { adjustStepper(name, 1); };
+                    wrapper.appendChild(plusBtn);
+
+                    parentLabel.parentNode.insertBefore(wrapper, parentLabel);
+                    parentLabel.remove();
                 }
             });
 
             // Camera handler
             document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
 
-            // Inject "Done" Toggles
+            // Inject "Done" and "UPD" Toggles
             initPanelToggles();
 
             // Initialize Auto-Save
@@ -2751,37 +2897,61 @@
                 const header = box.querySelector('.panel-header');
                 if (!header) return;
 
-                // Derive a unique name for this panel's done state
-                // Try to find the first input with a name
+                // Derive a unique name for this panel
                 const refInput = box.querySelector('input[name]');
                 let baseName = "panel";
                 if (refInput) {
                     const match = refInput.name.match(/^(.+?)_/);
                     if (match) baseName = match[1];
                 }
-                const toggleName = baseName + "_done";
+                const doneName = baseName + "_done";
+                const updName = baseName + "_upd";
+                const updNotesName = baseName + "_upd_notes";
 
-                // Create Toggle
-                const label = document.createElement('label');
-                label.className = 'panel-done-toggle';
-                label.innerHTML = `<input type="checkbox" name="${toggleName}" class="done-chk"> Done`;
+                // Create Done Toggle
+                const doneLabel = document.createElement('label');
+                doneLabel.className = 'panel-done-toggle';
+                doneLabel.innerHTML = `<input type="checkbox" name="${doneName}" class="done-chk"> Done`;
 
-                // Add Listener
-                const chk = label.querySelector('input');
-                chk.addEventListener('change', () => {
-                    if (chk.checked) box.classList.add('is-complete');
+                const doneChk = doneLabel.querySelector('input');
+                doneChk.addEventListener('change', () => {
+                    if (doneChk.checked) box.classList.add('is-complete');
                     else box.classList.remove('is-complete');
+                    saveDraft();
+                });
+                header.appendChild(doneLabel);
 
-                    // Trigger Auto-Save manually since this is dynamic
+                // Create UPD Toggle + Notes (at end of panel)
+                const updContainer = document.createElement('div');
+                updContainer.className = 'upd-container';
+                updContainer.innerHTML = `
+                    <label class="upd-toggle">
+                        <input type="checkbox" name="${updName}">
+                        <span>⚠️ UPD (Unrelated Prior Damage)</span>
+                    </label>
+                    <div class="upd-notes">
+                        <textarea name="${updNotesName}" placeholder="Describe the unrelated prior damage..."></textarea>
+                    </div>
+                `;
+
+                const updChk = updContainer.querySelector('input[type="checkbox"]');
+                const updNotes = updContainer.querySelector('.upd-notes');
+                const updToggle = updContainer.querySelector('.upd-toggle');
+
+                updChk.addEventListener('change', () => {
+                    if (updChk.checked) {
+                        box.classList.add('has-upd');
+                        updToggle.classList.add('active');
+                        updNotes.classList.add('visible');
+                    } else {
+                        box.classList.remove('has-upd');
+                        updToggle.classList.remove('active');
+                        updNotes.classList.remove('visible');
+                    }
                     saveDraft();
                 });
 
-                // Check initial state (will be handled by restoreDraft, but we need to update visuals after restore)
-                // Actually, restoreDraft runs AFTER this if we call it in order. 
-                // But restoreDraft just sets .checked. It doesn't trigger 'change'.
-                // We need a helper to sync visuals.
-
-                header.appendChild(label);
+                box.appendChild(updContainer);
             });
         }
 
@@ -2826,9 +2996,23 @@
                 if (el.type === 'checkbox') data[el.name] = el.checked;
                 else data[el.name] = el.value;
             });
+            // Also save header inputs not in form
+            const headerIds = ['roNumber', 'estimator', 'insuredName'];
+            headerIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) data[id] = el.value;
+            });
             localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
-            document.getElementById('saveStatus').textContent = 'Saved';
-            setTimeout(() => document.getElementById('saveStatus').textContent = '', 2000);
+            // Show save status briefly
+            const statusBox = document.getElementById('saveStatusBox');
+            const statusEl = document.getElementById('saveStatus');
+            if (statusBox && statusEl) {
+                statusBox.style.display = 'flex';
+                statusEl.textContent = '✓ Saved';
+                setTimeout(() => {
+                    statusBox.style.display = 'none';
+                }, 1500);
+            }
         }
 
         function restoreDraft(data) {
@@ -2838,76 +3022,80 @@
                     const el = els[0];
                     if (el.type === 'checkbox') {
                         el.checked = data[name];
-                        // If this is a "Done" toggle, update the visual state
+                        // Handle Done toggle visual state
                         if (name.endsWith('_done')) {
                             const box = el.closest('.panel-box');
                             if (box && el.checked) box.classList.add('is-complete');
                         }
+                        // Handle UPD toggle visual state
+                        if (name.endsWith('_upd')) {
+                            const box = el.closest('.panel-box');
+                            const updToggle = el.closest('.upd-toggle');
+                            const updNotes = box?.querySelector('.upd-notes');
+                            if (el.checked) {
+                                box?.classList.add('has-upd');
+                                updToggle?.classList.add('active');
+                                updNotes?.classList.add('visible');
+                            }
+                        }
+                    } else if (el.type === 'hidden' && name.endsWith('_dc')) {
+                        // Restore range button selection
+                        el.value = data[name];
+                        const wrapper = el.closest('.dc-range-ui');
+                        if (wrapper && data[name]) {
+                            const btn = wrapper.querySelector(`[data-range="${data[name]}"]`);
+                            if (btn) btn.classList.add('selected');
+                        }
+                    } else {
+                        el.value = data[name];
                     }
-                    else el.value = data[name];
+                }
+                // Restore header inputs by ID
+                const elById = document.getElementById(name);
+                if (elById && !els.length) {
+                    elById.value = data[name];
                 }
             });
         }
 
+
         function updateSummary() {
-            const activePanels = new Set();
-            let totalDents = 0;
+            let panelsWithDamage = 0;
             let totalOs = 0;
             let totalRi = 0;
             let totalRr = 0;
 
             document.querySelectorAll('#scopeForm [name]').forEach(el => {
-                if (el.type === 'hidden') return;
-
                 const name = el.name;
 
                 // Count R&I checkboxes
                 if (el.type === 'checkbox' && name.includes('_ri_') && el.checked) {
                     totalRi++;
-                    const match = name.match(/^(.+?)_ri_/);
-                    if (match) activePanels.add(match[1]);
                     return;
                 }
 
                 // Count R&R checkboxes
                 if (el.type === 'checkbox' && name.includes('_rr_') && el.checked) {
                     totalRr++;
-                    const match = name.match(/^(.+?)_rr_/);
-                    if (match) activePanels.add(match[1]);
                     return;
                 }
 
-                // Skip unchecked checkboxes and empty text inputs for panel tracking
-                if (el.type === 'checkbox' && !el.checked) return;
-                if ((el.type === 'text' || el.type === 'number') && (!el.value || el.value === '0')) return;
-
-                // Parse Panel Name from "lf_fender_dc" -> "lf_fender"
-                const match = name.match(/^(.+?)_(dc|os)/);
-                if (match) {
-                    activePanels.add(match[1]);
-                }
-
-                // Sum Dent Count values
-                if (name.endsWith('_dc')) {
-                    totalDents += parseInt(el.value) || 0;
+                // Count panels with DC range selected
+                if (el.type === 'hidden' && name.endsWith('_dc') && el.value) {
+                    panelsWithDamage++;
                 }
 
                 // Sum Oversized values
-                if (name.endsWith('_os')) {
+                if (name.endsWith('_os') && el.value) {
                     totalOs += parseInt(el.value) || 0;
                 }
             });
 
-            // Update UI
-            document.getElementById('livePanelCount').textContent = activePanels.size;
-            document.getElementById('liveDentCount').textContent = totalDents;
+            // Update UI - use panelsWithDamage as the "Dent Count" display showing # of panels
+            document.getElementById('liveDentCount').textContent = panelsWithDamage;
             document.getElementById('liveOsCount').textContent = totalOs;
             document.getElementById('liveRiCount').textContent = totalRi;
             document.getElementById('liveRrCount').textContent = totalRr;
-
-            // Calculate and display estimate
-            const estimate = calculateEstimate(totalDents, totalOs, totalRi, totalRr, activePanels.size);
-            document.getElementById('liveEstimate').textContent = '$' + estimate.toLocaleString();
         }
 
         // PRICING CONFIGURATION - Based on industry standard PDR matrix pricing

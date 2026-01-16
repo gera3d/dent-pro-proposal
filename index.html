@@ -793,8 +793,8 @@
         <div class="brand-bar">
             <div class="logo"><img src="logo.webp" alt="Dent Experts Logo"></div>
             <div class="brand-bar-right">
-                <button id="updateBtn" class="update-btn hidden" onclick="updateApp()">
-                    🔄 Update Available
+                <button id="appBtn" class="app-btn state-checking" onclick="handleAppButton()">
+                    ⏳ Checking...
                 </button>
                 <a href="Option_B_Custom_WebApp/Training_Guide.html" class="help-link">📖 Training Guide &
                     Terminology</a>
@@ -1644,28 +1644,48 @@
             gap: 12px;
         }
 
-        .update-btn {
+        .app-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 8px 14px;
-            background: linear-gradient(135deg, #FF9F0A 0%, #FF6B00 100%);
             border: none;
             border-radius: 8px;
             color: #fff;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            animation: pulse-update 2s ease-in-out infinite;
             font-family: inherit;
+            transition: all 0.2s ease;
         }
 
-        .update-btn:hover {
+        .app-btn:hover {
             transform: scale(1.05);
         }
 
-        .update-btn.hidden {
-            display: none;
+        .app-btn.state-checking {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: default;
+        }
+
+        .app-btn.state-install {
+            background: linear-gradient(135deg, #007AFF 0%, #0051D4 100%);
+        }
+
+        .app-btn.state-update {
+            background: linear-gradient(135deg, #FF9F0A 0%, #FF6B00 100%);
+            animation: pulse-update 2s ease-in-out infinite;
+        }
+
+        .app-btn.state-current {
+            background: rgba(76, 217, 100, 0.2);
+            border: 1px solid rgba(76, 217, 100, 0.4);
+            color: #4CD964;
+            cursor: default;
+        }
+
+        .app-btn.state-current:hover {
+            transform: none;
         }
 
         @keyframes pulse-update {
@@ -3486,14 +3506,57 @@
             document.getElementById('cameraInput').click();
         }
 
-        // ==================== VERSION CHECK ====================
+        // ==================== APP BUTTON (Install/Update) ====================
         const LOCAL_APP_VERSION = '2026.01.16.1';
+        let deferredInstallPrompt = null;
+        let appButtonState = 'checking'; // checking, install, update, current
+
+        // Capture the install prompt before it's shown
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            console.log('[PWA] Install prompt captured');
+            // If we're still checking, this means we can show install
+            if (appButtonState === 'checking' || appButtonState === 'current') {
+                setAppButtonState('install');
+            }
+        });
+
+        function setAppButtonState(state) {
+            appButtonState = state;
+            const btn = document.getElementById('appBtn');
+            if (!btn) return;
+
+            // Remove all state classes
+            btn.classList.remove('state-checking', 'state-install', 'state-update', 'state-current');
+
+            switch (state) {
+                case 'checking':
+                    btn.classList.add('state-checking');
+                    btn.innerHTML = '⏳ Checking...';
+                    break;
+                case 'install':
+                    btn.classList.add('state-install');
+                    btn.innerHTML = '📥 Install App';
+                    break;
+                case 'update':
+                    btn.classList.add('state-update');
+                    btn.innerHTML = '🔄 Update Available';
+                    break;
+                case 'current':
+                    btn.classList.add('state-current');
+                    btn.innerHTML = '✓ v' + LOCAL_APP_VERSION;
+                    break;
+            }
+        }
 
         async function checkForUpdates() {
             try {
-                // Fetch version.json with cache-busting
                 const response = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
-                if (!response.ok) return;
+                if (!response.ok) {
+                    setAppButtonState('current');
+                    return;
+                }
 
                 const data = await response.json();
                 const serverVersion = data.version;
@@ -3501,54 +3564,60 @@
                 console.log('[Version Check] Local:', LOCAL_APP_VERSION, 'Server:', serverVersion);
 
                 if (serverVersion && serverVersion !== LOCAL_APP_VERSION) {
-                    // Show update button
-                    const updateBtn = document.getElementById('updateBtn');
-                    if (updateBtn) {
-                        updateBtn.classList.remove('hidden');
-                        updateBtn.textContent = '🔄 Update to v' + serverVersion;
-                    }
+                    setAppButtonState('update');
+                } else if (deferredInstallPrompt) {
+                    setAppButtonState('install');
+                } else {
+                    setAppButtonState('current');
                 }
             } catch (err) {
-                console.log('[Version Check] Could not check for updates:', err.message);
+                console.log('[Version Check] Error:', err.message);
+                setAppButtonState('current');
             }
         }
 
-        async function updateApp() {
-            const updateBtn = document.getElementById('updateBtn');
-            if (updateBtn) {
-                updateBtn.textContent = '⏳ Updating...';
-                updateBtn.disabled = true;
-            }
+        async function handleAppButton() {
+            const btn = document.getElementById('appBtn');
 
-            try {
-                // Unregister all service workers
-                const registrations = await navigator.serviceWorker.getRegistrations();
-                for (const registration of registrations) {
-                    await registration.unregister();
+            if (appButtonState === 'install' && deferredInstallPrompt) {
+                // Trigger PWA install
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                console.log('[PWA] Install outcome:', outcome);
+                deferredInstallPrompt = null;
+                if (outcome === 'accepted') {
+                    setAppButtonState('current');
+                }
+            } else if (appButtonState === 'update') {
+                // Clear cache and reload
+                if (btn) {
+                    btn.innerHTML = '⏳ Updating...';
+                    btn.disabled = true;
                 }
 
-                // Clear all caches
-                const cacheNames = await caches.keys();
-                await Promise.all(cacheNames.map(name => caches.delete(name)));
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                    }
 
-                console.log('[Update] Caches cleared, reloading...');
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
 
-                // Force reload from server
-                window.location.reload(true);
-            } catch (err) {
-                console.error('[Update] Error:', err);
-                alert('Update failed. Please try clearing your browser cache manually.');
-                if (updateBtn) {
-                    updateBtn.textContent = '🔄 Update Available';
-                    updateBtn.disabled = false;
+                    console.log('[Update] Caches cleared, reloading...');
+                    window.location.reload(true);
+                } catch (err) {
+                    console.error('[Update] Error:', err);
+                    alert('Update failed. Please clear your browser cache manually.');
+                    setAppButtonState('update');
                 }
             }
+            // If state is 'current' or 'checking', button does nothing
         }
 
         // Check for updates on page load
         window.addEventListener('load', () => {
-            // Give the page a moment to settle, then check
-            setTimeout(checkForUpdates, 2000);
+            setTimeout(checkForUpdates, 1500);
         });
     </script>
 </body>

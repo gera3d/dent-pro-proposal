@@ -626,6 +626,31 @@
             text-align: center;
         }
 
+        .photo-name-input {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4px 6px;
+            background: rgba(0, 0, 0, 0.8);
+            border: none;
+            color: #fff;
+            font-size: 10px;
+            text-align: center;
+            font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .photo-name-input::placeholder {
+            color: #888;
+        }
+
+        .photo-name-input:focus {
+            outline: none;
+            background: rgba(0, 122, 255, 0.3);
+        }
+
         /* SAVED FORMS BAR */
         .saved-forms-bar {
             display: flex;
@@ -3289,18 +3314,27 @@
                 const div = document.createElement('div');
                 div.className = 'photo-preview';
                 div.style.cssText = `
-                    width: 60px; height: 60px; position: relative; border-radius: 4px; overflow: hidden; border: 1px solid #444; background: #000;
-                    display: inline-block; margin-right: 5px;
+                    width: 80px; height: 100px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid #444; background: #000;
+                    display: inline-block; margin-right: 8px; margin-bottom: 8px;
                 `;
+                const displayName = photo.label || '';
                 div.innerHTML = `
-                    <img src="data:${photo.mimeType};base64,${photo.base64Data}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="data:${photo.mimeType};base64,${photo.base64Data}" style="width:100%; height:80px; object-fit:cover;">
                     <button onclick="removePhoto(${idx})" style="
-                        position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 20px; height: 20px; cursor: pointer; font-size: 14px; line-height: 1;
+                        position: absolute; top: 2px; right: 2px; background: rgba(255,69,58,0.9); color: #fff; border: none; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 1; border-radius: 50%;
                     ">×</button>
+                    <input type="text" class="photo-name-input" placeholder="Add label..." value="${displayName}" onchange="updatePhotoName(${idx}, this.value)" onclick="event.stopPropagation()">
                 `;
                 container.appendChild(div);
             });
-            // Update Text?
+            saveDraft();
+        }
+
+        function updatePhotoName(index, name) {
+            if (selectedPhotos[index]) {
+                selectedPhotos[index].label = name;
+                saveDraft();
+            }
         }
 
         function removePhoto(index) {
@@ -3507,7 +3541,7 @@
         }
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.16.3';
+        const LOCAL_APP_VERSION = '2026.01.16.4';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

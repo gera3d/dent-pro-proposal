@@ -3649,78 +3649,7 @@
             }
         }
 
-        // PRICING CONFIGURATION - Based on industry standard PDR matrix pricing
-        // These are typical insurance/retail rates - adjust to match your local market
-        const PRICING = {
-            // Tiered pricing per dent (industry standard uses diminishing rates)
-            // First 1-15 dents at full rate, then decreasing for volume
-            firstTierMax: 15,          // First tier: dents 1-15
-            firstTierRate: 75,         // $75 per dent (first tier - typical retail)
-            secondTierMax: 30,         // Second tier: dents 16-30  
-            secondTierRate: 60,        // $60 per dent (volume discount)
-            thirdTierRate: 45,         // $45 per dent (31+ dents, hail pricing)
-
-            // Oversized dents (larger than quarter/nickel size)
-            oversizedMultiplier: 1.5,  // 50% premium on oversized dents
-
-            // R&I Labor (typical body shop labor rate ~$50-65/hr, most R&I = 0.3-1.0 hr)
-            riLaborPerPart: 40,        // Average R&I labor per part
-
-            // R&R Labor only (not including part cost)
-            rrLaborPerPart: 55,        // R&R labor is higher due to additional work
-
-            // Panel access fees (for difficult access panels like roof w/headliner)
-            panelSetupFee: 0,          // Optional - set if you charge per panel
-
-            // Minimum job charge
-            minimumCharge: 125         // Typical minimum for any PDR job
-        };
-
-        function calculateEstimate(dents, oversized, riParts, rrParts, panels) {
-            let total = 0;
-
-            // Tiered dent pricing (industry standard diminishing returns)
-            let remainingDents = dents;
-
-            // First tier (1-15 dents at premium rate)
-            const firstTierDents = Math.min(remainingDents, PRICING.firstTierMax);
-            total += firstTierDents * PRICING.firstTierRate;
-            remainingDents -= firstTierDents;
-
-            // Second tier (16-30 dents at mid rate)
-            if (remainingDents > 0) {
-                const secondTierDents = Math.min(remainingDents, PRICING.secondTierMax - PRICING.firstTierMax);
-                total += secondTierDents * PRICING.secondTierRate;
-                remainingDents -= secondTierDents;
-            }
-
-            // Third tier (31+ dents at volume/hail rate)
-            if (remainingDents > 0) {
-                total += remainingDents * PRICING.thirdTierRate;
-            }
-
-            // Oversized premium (multiplier on base rate for oversized dents)
-            // Calculate average rate paid, then add premium portion
-            const avgRatePerDent = dents > 0 ? total / dents : PRICING.firstTierRate;
-            const oversizedPremium = oversized * (avgRatePerDent * (PRICING.oversizedMultiplier - 1));
-            total += oversizedPremium;
-
-            // R&I labor
-            total += riParts * PRICING.riLaborPerPart;
-
-            // R&R labor (parts cost would need to be added separately)
-            total += rrParts * PRICING.rrLaborPerPart;
-
-            // Panel setup fees (if any)
-            total += panels * PRICING.panelSetupFee;
-
-            // Apply minimum charge
-            if (total > 0 && total < PRICING.minimumCharge) {
-                total = PRICING.minimumCharge;
-            }
-
-            return Math.round(total);
-        }
+        // NOTE: PRICING moved to DENT WIZARD MATRIX approach (see PANEL_PRICES above)
 
         function clearDraft() {
             localStorage.removeItem(DRAFT_KEY);

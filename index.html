@@ -1726,6 +1726,9 @@
                     </select>
 
                     <div class="footer-buttons">
+                        <button type="button" class="footer-btn orange" onclick="exportToCSV()">
+                            📊 Export
+                        </button>
                         <button type="button" class="footer-btn blue" onclick="nativeShare()">
                             📤 Share
                         </button>
@@ -2811,6 +2814,15 @@
             box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
         }
 
+        .footer-btn.orange {
+            background: linear-gradient(135deg, #FF9F0A 0%, #FF7A00 100%);
+            color: #000;
+        }
+
+        .footer-btn.orange:hover {
+            box-shadow: 0 4px 12px rgba(255, 159, 10, 0.4);
+        }
+
         @media (max-width: 500px) {
             .footer-stats-row {
                 flex-wrap: wrap;
@@ -3830,6 +3842,104 @@
             }
         }
 
+        // ==================== EXPORT TO CSV ====================
+        function exportToCSV() {
+            haptic();
+
+            const formData = collectFormData();
+            const vin = formData.vin || 'Unknown';
+            const roNum = formData.roNumber || 'Unknown';
+            const vehicle = `${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'Unknown';
+
+            // CSV Headers
+            let csv = 'Panel,Dent Count,Coin Size,Oversized,R&I Parts,R&R Parts,Price,UPD,Notes\n';
+
+            // Panel mapping for display names
+            const PANEL_NAMES = {
+                'l_fender': 'Left Fender', 'r_fender': 'Right Fender',
+                'hood': 'Hood', 'roof': 'Roof', 'cowl': 'Cowl',
+                'l_front_door': 'Left Front Door', 'r_front_door': 'Right Front Door',
+                'l_rear_door': 'Left Rear Door', 'r_rear_door': 'Right Rear Door',
+                'l_quarter': 'Left Quarter', 'r_quarter': 'Right Quarter',
+                'decklid': 'Decklid', 'tailgate': 'Tailgate',
+                'l_cab': 'Left Cab Corner', 'r_cab': 'Right Cab Corner',
+                'l_bedside': 'Left Bedside', 'r_bedside': 'Right Bedside'
+            };
+
+            let totalEstimate = 0;
+
+            // Collect panel data
+            document.querySelectorAll('#scopeForm input[type="hidden"][name$="_dc"]').forEach(dcInput => {
+                const dcRange = dcInput.value;
+                if (!dcRange) return;
+
+                const panelKey = dcInput.name.replace('_dc', '');
+                const panelName = PANEL_NAMES[panelKey] || panelKey;
+
+                // Get coin size
+                const coinInput = document.querySelector(`input[name="${panelKey}_coin"]`);
+                const coinSize = coinInput?.value || 'quarter';
+                const coinLabel = COIN_LABELS[coinSize] || coinSize;
+
+                // Get OS count
+                const osInput = document.querySelector(`input[name="${panelKey}_os"]`);
+                const osCount = parseInt(osInput?.value) || 0;
+
+                // Count R&I parts for this panel
+                let riCount = 0;
+                document.querySelectorAll(`input[name*="${panelKey}_ri_"]`).forEach(cb => {
+                    if (cb.checked) riCount++;
+                });
+
+                // Count R&R parts for this panel
+                let rrCount = 0;
+                document.querySelectorAll(`input[name*="${panelKey}_rr_"]`).forEach(cb => {
+                    if (cb.checked) rrCount++;
+                });
+
+                // Get UPD status
+                const updInput = document.querySelector(`input[name="${panelKey}_upd"]`);
+                const hasUpd = updInput?.checked ? 'Yes' : 'No';
+
+                // Get UPD notes
+                const notesInput = document.querySelector(`textarea[name="${panelKey}_upd_notes"]`);
+                const notes = (notesInput?.value || '').replace(/"/g, '""').replace(/\n/g, ' ');
+
+                // Calculate price
+                const category = PANEL_CATEGORY[panelKey] || 'door';
+                const priceTable = PANEL_PRICES[category];
+                let price = 0;
+                if (priceTable && priceTable[dcRange] && priceTable[dcRange][coinSize]) {
+                    price = priceTable[dcRange][coinSize];
+                }
+                price += osCount * OS_PRICE;
+                totalEstimate += price;
+
+                // Add CSV row
+                csv += `"${panelName}","${dcRange}","${coinLabel}",${osCount},${riCount},${rrCount},$${price},"${hasUpd}","${notes}"\n`;
+            });
+
+            // Add summary row
+            csv += `\n"TOTAL ESTIMATE",,,,,,"$${totalEstimate.toLocaleString()}",,\n`;
+            csv += `\n"Vehicle Info:","${vehicle}"\n`;
+            csv += `"VIN:","${vin}"\n`;
+            csv += `"RO#:","${roNum}"\n`;
+            csv += `"Date:","${new Date().toLocaleDateString()}"\n`;
+
+            // Create and download file
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `PDR_Scope_${roNum}_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('📊 CSV exported!', 'success');
+        }
+
         // Native iOS Share Sheet
         async function nativeShare() {
             haptic('heavy');
@@ -4200,7 +4310,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.16.8';
+        const LOCAL_APP_VERSION = '2026.01.16.9';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

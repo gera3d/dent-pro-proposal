@@ -1681,6 +1681,17 @@
             </div>
 
             <div class="submit-bar">
+                <!-- Estimate Display -->
+                <div class="estimate-bar" id="estimateBar">
+                    <div>
+                        <div class="estimate-label">PDR Estimate</div>
+                        <div class="estimate-amount" id="estimateTotal">$0</div>
+                    </div>
+                    <button type="button" class="estimate-toggle" onclick="toggleEstimate()">
+                        👁️ Hide
+                    </button>
+                </div>
+
                 <!-- Stats Row -->
                 <div class="footer-stats-row">
                     <div class="stat-box dents">
@@ -2379,6 +2390,81 @@
             color: #4CD964;
             transform: scale(1.05);
             box-shadow: 0 2px 8px rgba(76, 217, 100, 0.3);
+        }
+
+        /* COIN SIZE BUTTONS */
+        .coin-size-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .coin-btn {
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #999;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .coin-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .coin-btn.selected {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.25) 0%, rgba(0, 122, 255, 0.15) 100%);
+            border-color: #007AFF;
+            color: #007AFF;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+
+        /* ESTIMATE DISPLAY */
+        .estimate-bar {
+            background: linear-gradient(135deg, rgba(255, 159, 10, 0.15) 0%, rgba(255, 159, 10, 0.08) 100%);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .estimate-bar.hidden {
+            display: none;
+        }
+
+        .estimate-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FF9F0A;
+        }
+
+        .estimate-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .estimate-toggle {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #888;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .estimate-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
         }
 
         /* UPD TOGGLE */
@@ -3087,6 +3173,129 @@
         // --- INITIALIZATION ---
         // Convert DC to range buttons, OS to steppers, add UPD toggles
         const DC_RANGES = ['1-5', '6-15', '16-30', '31-50', '51-75', '76-100', '101-150', '151-200', '201-300', '301-400'];
+        const COIN_SIZES = ['dime', 'nickel', 'quarter', 'half'];
+        const COIN_LABELS = { dime: 'Dime', nickel: 'Nickel', quarter: 'Quarter', half: 'Half $' };
+
+        // ==================== DENT WIZARD MATRIX PRICING ====================
+        // Prices by panel type, then by DC range, then by coin size
+        // Format: PANEL_PRICES[panelType][dcRange][coinSize] = price
+        const PANEL_PRICES = {
+            hood: {
+                '1-5': { dime: 100, nickel: 125, quarter: 150, half: 200 },
+                '6-15': { dime: 125, nickel: 150, quarter: 175, half: 240 },
+                '16-30': { dime: 175, nickel: 200, quarter: 250, half: 300 },
+                '31-50': { dime: 225, nickel: 275, quarter: 325, half: 400 },
+                '51-75': { dime: 300, nickel: 350, quarter: 425, half: 500 },
+                '76-100': { dime: 375, nickel: 450, quarter: 550, half: 650 },
+                '101-150': { dime: 475, nickel: 550, quarter: 650, half: 800 },
+                '151-200': { dime: 550, nickel: 650, quarter: 775, half: 950 },
+                '201-300': { dime: 625, nickel: 750, quarter: 900, half: 1100 },
+                '301-400': { dime: 700, nickel: 850, quarter: 1000, half: 1250 }
+            },
+            roof: {
+                '1-5': { dime: 100, nickel: 125, quarter: 150, half: 200 },
+                '6-15': { dime: 175, nickel: 225, quarter: 295, half: 400 },
+                '16-30': { dime: 225, nickel: 300, quarter: 375, half: 475 },
+                '31-50': { dime: 300, nickel: 400, quarter: 475, half: 575 },
+                '51-75': { dime: 375, nickel: 500, quarter: 600, half: 700 },
+                '76-100': { dime: 475, nickel: 600, quarter: 725, half: 850 },
+                '101-150': { dime: 600, nickel: 750, quarter: 900, half: 1050 },
+                '151-200': { dime: 750, nickel: 950, quarter: 1100, half: 1300 },
+                '201-300': { dime: 900, nickel: 1100, quarter: 1300, half: 1500 },
+                '301-400': { dime: 1050, nickel: 1250, quarter: 1500, half: 1750 }
+            },
+            fender: {
+                '1-5': { dime: 75, nickel: 100, quarter: 125, half: 175 },
+                '6-15': { dime: 100, nickel: 125, quarter: 175, half: 225 },
+                '16-30': { dime: 150, nickel: 200, quarter: 250, half: 325 },
+                '31-50': { dime: 200, nickel: 275, quarter: 350, half: 425 },
+                '51-75': { dime: 275, nickel: 350, quarter: 450, half: 550 },
+                '76-100': { dime: 350, nickel: 450, quarter: 550, half: 675 },
+                '101-150': { dime: 450, nickel: 575, quarter: 700, half: 850 },
+                '151-200': { dime: 575, nickel: 725, quarter: 875, half: 1050 },
+                '201-300': { dime: 700, nickel: 875, quarter: 1050, half: 1250 },
+                '301-400': { dime: 825, nickel: 1025, quarter: 1225, half: 1450 }
+            },
+            door: {
+                '1-5': { dime: 75, nickel: 100, quarter: 125, half: 150 },
+                '6-15': { dime: 100, nickel: 125, quarter: 150, half: 200 },
+                '16-30': { dime: 125, nickel: 175, quarter: 225, half: 275 },
+                '31-50': { dime: 175, nickel: 225, quarter: 300, half: 375 },
+                '51-75': { dime: 225, nickel: 300, quarter: 400, half: 475 },
+                '76-100': { dime: 300, nickel: 400, quarter: 500, half: 600 },
+                '101-150': { dime: 400, nickel: 500, quarter: 625, half: 750 },
+                '151-200': { dime: 500, nickel: 625, quarter: 775, half: 925 },
+                '201-300': { dime: 600, nickel: 750, quarter: 925, half: 1100 },
+                '301-400': { dime: 700, nickel: 875, quarter: 1075, half: 1275 }
+            },
+            quarter: {
+                '1-5': { dime: 100, nickel: 125, quarter: 150, half: 175 },
+                '6-15': { dime: 125, nickel: 150, quarter: 175, half: 225 },
+                '16-30': { dime: 175, nickel: 225, quarter: 275, half: 350 },
+                '31-50': { dime: 225, nickel: 300, quarter: 375, half: 475 },
+                '51-75': { dime: 300, nickel: 400, quarter: 500, half: 600 },
+                '76-100': { dime: 400, nickel: 525, quarter: 650, half: 775 },
+                '101-150': { dime: 525, nickel: 675, quarter: 825, half: 1000 },
+                '151-200': { dime: 650, nickel: 825, quarter: 1000, half: 1200 },
+                '201-300': { dime: 775, nickel: 975, quarter: 1175, half: 1400 },
+                '301-400': { dime: 900, nickel: 1125, quarter: 1350, half: 1600 }
+            },
+            decklid: {
+                '1-5': { dime: 75, nickel: 100, quarter: 125, half: 175 },
+                '6-15': { dime: 100, nickel: 150, quarter: 200, half: 250 },
+                '16-30': { dime: 175, nickel: 250, quarter: 325, half: 400 },
+                '31-50': { dime: 250, nickel: 350, quarter: 450, half: 550 },
+                '51-75': { dime: 325, nickel: 450, quarter: 575, half: 700 },
+                '76-100': { dime: 400, nickel: 550, quarter: 700, half: 850 },
+                '101-150': { dime: 500, nickel: 675, quarter: 850, half: 1025 },
+                '151-200': { dime: 600, nickel: 800, quarter: 1000, half: 1200 },
+                '201-300': { dime: 700, nickel: 925, quarter: 1150, half: 1375 },
+                '301-400': { dime: 800, nickel: 1050, quarter: 1300, half: 1550 }
+            },
+            cab: {
+                '1-5': { dime: 75, nickel: 100, quarter: 125, half: 150 },
+                '6-15': { dime: 100, nickel: 125, quarter: 150, half: 200 },
+                '16-30': { dime: 125, nickel: 175, quarter: 225, half: 275 },
+                '31-50': { dime: 175, nickel: 225, quarter: 300, half: 375 },
+                '51-75': { dime: 225, nickel: 300, quarter: 400, half: 475 },
+                '76-100': { dime: 300, nickel: 400, quarter: 500, half: 600 },
+                '101-150': { dime: 400, nickel: 500, quarter: 625, half: 750 },
+                '151-200': { dime: 500, nickel: 625, quarter: 775, half: 925 },
+                '201-300': { dime: 600, nickel: 750, quarter: 925, half: 1100 },
+                '301-400': { dime: 700, nickel: 875, quarter: 1075, half: 1275 }
+            },
+            bedside: {
+                '1-5': { dime: 100, nickel: 125, quarter: 150, half: 200 },
+                '6-15': { dime: 125, nickel: 175, quarter: 225, half: 300 },
+                '16-30': { dime: 200, nickel: 275, quarter: 350, half: 450 },
+                '31-50': { dime: 275, nickel: 375, quarter: 475, half: 600 },
+                '51-75': { dime: 375, nickel: 500, quarter: 625, half: 775 },
+                '76-100': { dime: 475, nickel: 625, quarter: 775, half: 950 },
+                '101-150': { dime: 600, nickel: 775, quarter: 975, half: 1175 },
+                '151-200': { dime: 725, nickel: 925, quarter: 1150, half: 1400 },
+                '201-300': { dime: 850, nickel: 1075, quarter: 1325, half: 1625 },
+                '301-400': { dime: 975, nickel: 1225, quarter: 1500, half: 1850 }
+            }
+        };
+
+        // Map panel names to pricing categories
+        const PANEL_CATEGORY = {
+            'l_fender': 'fender', 'r_fender': 'fender',
+            'hood': 'hood',
+            'roof': 'roof', 'cowl': 'roof',
+            'l_front_door': 'door', 'r_front_door': 'door',
+            'l_rear_door': 'door', 'r_rear_door': 'door',
+            'l_quarter': 'quarter', 'r_quarter': 'quarter',
+            'decklid': 'decklid', 'tailgate': 'decklid',
+            'l_cab': 'cab', 'r_cab': 'cab',
+            'l_bedside': 'bedside', 'r_bedside': 'bedside'
+        };
+
+        // Pricing constants
+        const OS_PRICE = 50;  // Oversized dent
+        const DOS_PRICE = 100; // Double oversized dent
+        let showPricing = true;
+
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.panel-ratings input[type="text"]').forEach(input => {
@@ -3095,7 +3304,8 @@
                 if (!parentLabel) return;
 
                 if (name.endsWith('_dc')) {
-                    // Convert DC to range buttons
+                    // Convert DC to range buttons + coin size selector
+                    const panelKey = name.replace('_dc', '');
                     const wrapper = document.createElement('div');
                     wrapper.className = 'dc-range-ui';
                     wrapper.innerHTML = `
@@ -3106,9 +3316,16 @@
                             `).join('')}
                         </div>
                         <input type="hidden" name="${name}" value="">
+                        <span class="dc-range-label" style="margin-top: 8px;">Coin Size</span>
+                        <div class="coin-size-buttons">
+                            ${COIN_SIZES.map(size => `
+                                <button type="button" class="coin-btn" data-size="${size}" data-panel="${panelKey}">${COIN_LABELS[size]}</button>
+                            `).join('')}
+                        </div>
+                        <input type="hidden" name="${panelKey}_coin" value="">
                     `;
 
-                    // Add click handlers
+                    // Add click handlers for DC range
                     wrapper.querySelectorAll('.dc-range-btn').forEach(btn => {
                         btn.addEventListener('click', () => {
                             // Deselect siblings
@@ -3119,6 +3336,22 @@
                             wrapper.querySelector(`input[name="${name}"]`).value = btn.dataset.range;
                             // Trigger save and update
                             updateSummary();
+                            calculateEstimate();
+                            saveDraft();
+                        });
+                    });
+
+                    // Add click handlers for Coin Size
+                    wrapper.querySelectorAll('.coin-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            // Deselect siblings
+                            wrapper.querySelectorAll('.coin-btn').forEach(b => b.classList.remove('selected'));
+                            // Select this one
+                            btn.classList.add('selected');
+                            // Update hidden input
+                            wrapper.querySelector(`input[name="${panelKey}_coin"]`).value = btn.dataset.size;
+                            // Trigger update
+                            calculateEstimate();
                             saveDraft();
                         });
                     });
@@ -3365,6 +3598,57 @@
             document.getElementById('liveRrCount').textContent = totalRr;
         }
 
+        // ==================== PRICING CALCULATOR ====================
+        function calculateEstimate() {
+            let totalEstimate = 0;
+
+            // Get all panels with DC selected
+            document.querySelectorAll('#scopeForm input[type="hidden"][name$="_dc"]').forEach(dcInput => {
+                const dcRange = dcInput.value;
+                if (!dcRange) return;
+
+                // Get panel name and coin size
+                const panelKey = dcInput.name.replace('_dc', '');
+                const coinInput = document.querySelector(`input[name="${panelKey}_coin"]`);
+                const coinSize = coinInput?.value || 'quarter'; // Default to quarter if not selected
+
+                // Get OS count
+                const osInput = document.querySelector(`input[name="${panelKey}_os"]`);
+                const osCount = parseInt(osInput?.value) || 0;
+
+                // Look up base price
+                const category = PANEL_CATEGORY[panelKey] || 'door';
+                const priceTable = PANEL_PRICES[category];
+
+                if (priceTable && priceTable[dcRange] && priceTable[dcRange][coinSize]) {
+                    const basePrice = priceTable[dcRange][coinSize];
+                    totalEstimate += basePrice;
+                }
+
+                // Add OS pricing
+                totalEstimate += osCount * OS_PRICE;
+            });
+
+            // Update display
+            const estimateEl = document.getElementById('estimateTotal');
+            if (estimateEl) {
+                estimateEl.textContent = '$' + totalEstimate.toLocaleString();
+            }
+        }
+
+        function toggleEstimate() {
+            const bar = document.getElementById('estimateBar');
+            const btn = bar.querySelector('.estimate-toggle');
+
+            if (bar.classList.contains('hidden')) {
+                bar.classList.remove('hidden');
+                btn.textContent = '👁️ Hide';
+            } else {
+                bar.classList.add('hidden');
+                btn.textContent = '👁️ Show';
+            }
+        }
+
         // PRICING CONFIGURATION - Based on industry standard PDR matrix pricing
         // These are typical insurance/retail rates - adjust to match your local market
         const PRICING = {
@@ -3459,6 +3743,7 @@
 
                 // Trigger real-time update of stats
                 updateSummary();
+                calculateEstimate();
                 saveDraft();
             }
         }
@@ -3986,7 +4271,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.16.7';
+        const LOCAL_APP_VERSION = '2026.01.16.8';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

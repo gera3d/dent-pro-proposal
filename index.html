@@ -902,7 +902,8 @@
                     <div class="vin-row">
                         <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()"
                             placeholder="17 Characters">
-                        <button type="button" class="scan-btn" onclick="startScanner()">📷</button>
+                        <button type="button" class="scan-btn" onclick="copyVin()" title="Copy VIN">📋</button>
+                        <button type="button" class="scan-btn" onclick="startScanner()" title="Scan VIN">📷</button>
                     </div>
                 </div>
 
@@ -1565,11 +1566,11 @@
                     </select>
 
                     <div class="footer-buttons">
-                        <button type="button" class="footer-btn blue" onclick="emailScope()">
-                            ✉️ Email PDF
+                        <button type="button" class="footer-btn blue" onclick="nativeShare()">
+                            📤 Share
                         </button>
                         <button type="button" class="footer-btn green" id="submitBtn" onclick="submitForm()">
-                            📤 Submit Scope
+                            ✅ Submit Scope
                         </button>
                     </div>
                 </div>
@@ -3414,27 +3415,139 @@
             }
         }
 
-        function emailScope() {
-            if (confirm("Send a PDF copy of this scope via email?")) {
-                const subBtn = document.querySelector('button[onclick="emailScope()"]');
-                const origText = subBtn.textContent;
-                subBtn.textContent = 'Sending...';
-                subBtn.disabled = true;
+        // ==================== iOS NATIVE FEATURES ====================
 
-                // Simulate/Call Backend
-                google.script.run
-                    .withSuccessHandler(() => {
-                        alert("✅ PDF Sent Successfully!");
-                        subBtn.textContent = origText;
-                        subBtn.disabled = false;
-                    })
-                    .withFailureHandler((e) => {
-                        alert("Error sending email: " + e); // Backend hook
-                        subBtn.textContent = origText;
-                        subBtn.disabled = false;
-                    })
-                    .sendPdfEmail(document.getElementById('roNumber').value);
+        // Haptic feedback (iOS Safari)
+        function haptic(style = 'light') {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(style === 'heavy' ? 50 : 10);
             }
+        }
+
+        // Copy VIN to clipboard
+        async function copyVin() {
+            const vin = document.getElementById('vin').value.trim().toUpperCase();
+            if (!vin) {
+                showToast('Enter a VIN first', 'error');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(vin);
+                haptic();
+                showToast('VIN copied: ' + vin, 'success');
+            } catch (e) {
+                // Fallback for older iOS
+                const input = document.getElementById('vin');
+                input.select();
+                document.execCommand('copy');
+                showToast('VIN copied!', 'success');
+            }
+        }
+
+        // Native iOS Share Sheet
+        async function nativeShare() {
+            haptic('heavy');
+
+            const formData = collectFormData();
+            const roNum = formData.roNumber || 'Unknown';
+            const vehicle = [formData.year, formData.make, formData.model].filter(Boolean).join(' ') || 'Vehicle';
+
+            // Build text summary
+            let summary = `🚗 PDR Scope - RO# ${roNum}\n`;
+            summary += `━━━━━━━━━━━━━━━━━━━━\n`;
+            summary += `📋 ${vehicle}\n`;
+            summary += `VIN: ${formData.vin || 'N/A'}\n`;
+            summary += `Carrier: ${formData.insuranceCompany || 'N/A'}\n`;
+            summary += `Claim: ${formData.claimNumber || 'N/A'}\n`;
+            summary += `━━━━━━━━━━━━━━━━━━━━\n`;
+
+            // Add panel damage summary
+            let panelCount = 0;
+            let totalOS = 0;
+            document.querySelectorAll('.panel-box').forEach(box => {
+                const dcInput = box.querySelector('input[name$="_dc"]');
+                const osInput = box.querySelector('input[name$="_os"]');
+                const dcVal = dcInput ? dcInput.value : '';
+                const osVal = osInput ? parseInt(osInput.value) || 0 : 0;
+                if (dcVal) {
+                    const panelName = box.querySelector('.panel-header')?.textContent?.trim() || 'Panel';
+                    summary += `• ${panelName}: ${dcVal} dents`;
+                    if (osVal > 0) summary += ` (${osVal} OS)`;
+                    summary += '\n';
+                    panelCount++;
+                    totalOS += osVal;
+                }
+            });
+
+            if (panelCount > 0) {
+                summary += `━━━━━━━━━━━━━━━━━━━━\n`;
+                summary += `📊 ${panelCount} panels with damage\n`;
+                if (totalOS > 0) summary += `⚠️ ${totalOS} oversized dents\n`;
+            }
+
+            // Add notes if any
+            const notes = document.getElementById('notes')?.value?.trim();
+            if (notes) {
+                summary += `━━━━━━━━━━━━━━━━━━━━\n`;
+                summary += `📝 Notes: ${notes}\n`;
+            }
+
+            // Check if Web Share API is available
+            if (navigator.share) {
+                try {
+                    // Try to share with files (photos) - iOS 15+
+                    const shareData = {
+                        title: `PDR Scope - RO# ${roNum}`,
+                        text: summary
+                    };
+
+                    // Add photos if available and supported
+                    if (selectedPhotos.length > 0 && navigator.canShare) {
+                        const files = [];
+                        for (let i = 0; i < selectedPhotos.length; i++) {
+                            const photo = selectedPhotos[i];
+                            const blob = base64ToBlob(photo.base64Data, photo.mimeType);
+                            const fileName = photo.label || `photo_${i + 1}`;
+                            files.push(new File([blob], `${fileName}.jpg`, { type: photo.mimeType }));
+                        }
+
+                        if (navigator.canShare({ files })) {
+                            shareData.files = files;
+                        }
+                    }
+
+                    await navigator.share(shareData);
+                    showToast('Shared successfully!', 'success');
+                } catch (e) {
+                    if (e.name !== 'AbortError') {
+                        // User didn't cancel, show fallback
+                        fallbackShare(summary);
+                    }
+                }
+            } else {
+                // Fallback for older browsers
+                fallbackShare(summary);
+            }
+        }
+
+        // Fallback: Copy to clipboard
+        function fallbackShare(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Scope copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Could not share', 'error');
+            });
+        }
+
+        // Helper: Convert base64 to Blob
+        function base64ToBlob(base64, mimeType) {
+            const byteChars = atob(base64);
+            const byteNumbers = new Array(byteChars.length);
+            for (let i = 0; i < byteChars.length; i++) {
+                byteNumbers[i] = byteChars.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], { type: mimeType });
         }
 
         // 2. Submit Data Function
@@ -3541,7 +3654,7 @@
         }
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.16.4';
+        const LOCAL_APP_VERSION = '2026.01.16.5';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

@@ -1449,8 +1449,12 @@
                 <div class="info-group col-span-2">
                     <label>Year / Make / Model</label>
                     <div class="ymb-row">
-                        <select id="year" style="width: 80px"></select>
-                        <select id="make" style="flex:1"></select>
+                        <select id="year" style="width: 80px">
+                            <option value="">Year</option>
+                        </select>
+                        <select id="make" style="flex:1">
+                            <option value="">Make</option>
+                        </select>
                         <input type="text" id="model" placeholder="Model (e.g. F-150)" style="flex:1">
                     </div>
                 </div>
@@ -1462,7 +1466,9 @@
 
                 <div class="info-group col-span-1">
                     <label>Location</label>
-                    <select id="location"></select>
+                    <select id="location">
+                        <option value="">Select Location</option>
+                    </select>
                 </div>
 
                 <div class="info-group col-span-2">
@@ -5349,7 +5355,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.14';
+        const LOCAL_APP_VERSION = '2026.01.18.15';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

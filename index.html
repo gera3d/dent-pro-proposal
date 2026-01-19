@@ -4937,21 +4937,8 @@
                     const fullText = annotations[0].description;
                     console.log('[VIN Scan] Detected text:', fullText);
 
-                    // Clean text for VIN extraction
-                    let cleanText = fullText.toUpperCase()
-                        .replace(/O/g, '0')
-                        .replace(/I/g, '1')
-                        .replace(/Q/g, '0')
-                        .replace(/[^A-Z0-9]/g, '');
-
-                    // Find ALL 17-character candidates
-                    const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
-                    const allMatches = cleanText.match(vinPattern) || [];
-
-                    console.log('[VIN Scan] Found candidates:', allMatches);
-
                     progressFill.style.width = '70%';
-                    progressText.textContent = '🔍 Validating VIN...';
+                    progressText.textContent = '🔍 Searching for VIN...';
 
                     // VIN check digit validation function
                     function validateVinCheckDigit(vin) {
@@ -4976,21 +4963,74 @@
                         return vin[8] === checkDigit;
                     }
 
-                    // Try to find a VIN that passes check digit validation
+                    // Correct a potential VIN (only apply O→0, I→1 to actual VIN candidates)
+                    function correctVin(text) {
+                        return text.toUpperCase()
+                            .replace(/O/g, '0')
+                            .replace(/I/g, '1')
+                            .replace(/Q/g, '0');
+                    }
+
+                    let allMatches = [];
                     let vin = '';
+
+                    // STRATEGY 1: Look at individual word annotations (skip first - it's full text)
+                    // Each annotation after the first is a single word/segment
+                    const wordAnnotations = annotations.slice(1).map(a => a.description);
+                    console.log('[VIN Scan] Word count:', wordAnnotations.length);
+
+                    // Look for exactly 17-character alphanumeric words
+                    for (const word of wordAnnotations) {
+                        const clean = word.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+                        if (clean.length === 17) {
+                            const corrected = correctVin(clean);
+                            if (!allMatches.includes(corrected)) {
+                                allMatches.push(corrected);
+                            }
+                        }
+                    }
+
+                    // STRATEGY 2: Look for VIN after "VIN" label in text
+                    const vinLabelMatch = fullText.match(/VIN[:\s#]*([A-Za-z0-9]{17})/i);
+                    if (vinLabelMatch) {
+                        const candidate = correctVin(vinLabelMatch[1]);
+                        if (!allMatches.includes(candidate)) {
+                            allMatches.unshift(candidate); // Priority - put at front
+                        }
+                    }
+
+                    // STRATEGY 3: Lines that look like VINs (17 chars, starts with valid WMI)
+                    const lines = fullText.split(/[\n\r]+/);
+                    for (const line of lines) {
+                        const clean = line.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+                        if (clean.length >= 17 && clean.length <= 20) {
+                            // Check if it starts with common VIN patterns
+                            // WMI codes: starts with 1-5 (US), J (Japan), K (Korea), S (UK), W (Germany), etc.
+                            if (/^[1-5JKLMNSTUVWXYZ]/.test(clean)) {
+                                const candidate = correctVin(clean.substring(0, 17));
+                                if (!allMatches.includes(candidate)) {
+                                    allMatches.push(candidate);
+                                }
+                            }
+                        }
+                    }
+
+                    console.log('[VIN Scan] Candidates found:', allMatches);
+
+                    // First try check digit validation
                     for (const candidate of allMatches) {
                         if (validateVinCheckDigit(candidate)) {
                             vin = candidate;
-                            console.log('[VIN Scan] ✅ Validated VIN:', vin);
+                            console.log('[VIN Scan] ✅ Validated VIN (checksum):', vin);
                             break;
                         }
                     }
 
-                    // If no validated VIN, try NHTSA to validate each candidate
+                    // If no validated VIN, try NHTSA
                     if (!vin && allMatches.length > 0) {
-                        progressText.textContent = '🔍 Checking candidates with NHTSA...';
+                        progressText.textContent = '🔍 Verifying with NHTSA...';
 
-                        for (const candidate of allMatches.slice(0, 3)) { // Check top 3
+                        for (const candidate of allMatches.slice(0, 5)) {
                             try {
                                 const checkResponse = await fetch(
                                     `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${candidate}?format=json`
@@ -4999,8 +5039,8 @@
 
                                 if (checkData.Results?.[0]) {
                                     const result = checkData.Results[0];
-                                    // If we got a valid make/model, this is likely the real VIN
-                                    if (result.Make && result.Model && result.ModelYear) {
+                                    if (result.Make && result.Model && result.ModelYear &&
+                                        result.ErrorCode !== '1') {
                                         vin = candidate;
                                         console.log('[VIN Scan] ✅ NHTSA validated VIN:', vin);
                                         break;
@@ -5316,7 +5356,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.9';
+        const LOCAL_APP_VERSION = '2026.01.18.10';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

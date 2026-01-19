@@ -1498,14 +1498,44 @@
                         <div class="panel-box">
                             <div class="panel-header">Left Fender</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="lf_fender_dc"></label>
-                                <label>OS: <input type="text" name="lf_fender_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('lf_fender_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="lf_fender_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('lf_fender_dc', 1)">+</button>
+                                        <input type="hidden" name="lf_fender_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="lf_fender_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lf_fender', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('lf_fender', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('lf_fender', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lf_fender', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="lf_fender_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('lf_fender_os', -1)">-</button>
+                                        <div class="stepper-value" id="lf_fender_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('lf_fender_os', 1)">+</button>
+                                        <input type="hidden" name="lf_fender_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="lf_fender_ri_lamp"></td>
@@ -1534,14 +1564,43 @@
                         <div class="panel-box">
                             <div class="panel-header">Left Front Door</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="lf_door_dc"></label>
-                                <label>OS: <input type="text" name="lf_door_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('lf_door_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="lf_door_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('lf_door_dc', 1)">+</button>
+                                        <input type="hidden" name="lf_door_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="lf_door_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lf_door', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lf_door', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('lf_door', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lf_door', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="lf_door_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('lf_door_os', -1)">-</button>
+                                        <div class="stepper-value" id="lf_door_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('lf_door_os', 1)">+</button>
+                                        <input type="hidden" name="lf_door_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="lf_door_ri_mirror"></td>
@@ -1585,14 +1644,43 @@
                         <div class="panel-box">
                             <div class="panel-header">Left Rear Door</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="lr_door_dc"></label>
-                                <label>OS: <input type="text" name="lr_door_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('lr_door_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="lr_door_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('lr_door_dc', 1)">+</button>
+                                        <input type="hidden" name="lr_door_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="lr_door_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lr_door', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lr_door', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('lr_door', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('lr_door', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="lr_door_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('lr_door_os', -1)">-</button>
+                                        <div class="stepper-value" id="lr_door_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('lr_door_os', 1)">+</button>
+                                        <input type="hidden" name="lr_door_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="lr_door_ri_uppermldg"></td>
@@ -1631,14 +1719,44 @@
                         <div class="panel-box">
                             <div class="panel-header">Left Quarter/Bed</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="lr_quarter_dc"></label>
-                                <label>OS: <input type="text" name="lr_quarter_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('lr_quarter_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="lr_quarter_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('lr_quarter_dc', 1)">+</button>
+                                        <input type="hidden" name="lr_quarter_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="lr_quarter_coin_wrapper">
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('lr_quarter', 'dime')" data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('lr_quarter', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('lr_quarter', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('lr_quarter', 'half')" data-size="half">Half $</button>
+                                    <input type="hidden" name="lr_quarter_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('lr_quarter_os', -1)">-</button>
+                                        <div class="stepper-value" id="lr_quarter_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('lr_quarter_os', 1)">+</button>
+                                        <input type="hidden" name="lr_quarter_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="lr_quarter_ri_lamp"></td>
@@ -1667,8 +1785,38 @@
                         <div class="panel-box mini">
                             <div class="panel-header">Left Cab Corner</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="l_cab_dc"></label>
-                                <label>OS: <input type="text" name="l_cab_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('l_cab_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="l_cab_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('l_cab_dc', 1)">+</button>
+                                        <input type="hidden" name="l_cab_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="l_cab_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('l_cab', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="l_cab_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('l_cab_os', -1)">-</button>
+                                        <div class="stepper-value" id="l_cab_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('l_cab_os', 1)">+</button>
+                                        <input type="hidden" name="l_cab_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -1760,14 +1908,42 @@
                         <div class="panel-box" id="section_hood">
                             <div class="panel-header">Hood / Windshield</div>
                             <div class="panel-ratings">
-                                <label>Hood DC: <input type="text" name="hood_dc"></label>
-                                <label>Hood OS: <input type="text" name="hood_os"></label>
+                                <label>Hood DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('hood_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="hood_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('hood_dc', 1)">+</button>
+                                        <input type="hidden" name="hood_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="hood_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('hood', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('hood', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('hood', 'quarter')" data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('hood', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="hood_coin" value="quarter">
+                                </div>
+                                <label>Hood OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('hood_os', -1)">-</button>
+                                        <div class="stepper-value" id="hood_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('hood_os', 1)">+</button>
+                                        <input type="hidden" name="hood_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="hood_ri_windshield"></td>
@@ -1791,14 +1967,42 @@
                         <div class="panel-box" id="section_roof">
                             <div class="panel-header">Roof</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="roof_dc"></label>
-                                <label>OS: <input type="text" name="roof_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('roof_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="roof_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('roof_dc', 1)">+</button>
+                                        <input type="hidden" name="roof_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="roof_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('roof', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('roof', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('roof', 'quarter')" data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('roof', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="roof_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('roof_os', -1)">-</button>
+                                        <div class="stepper-value" id="roof_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('roof_os', 1)">+</button>
+                                        <input type="hidden" name="roof_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="roof_ri_hilamp"></td>
@@ -1843,15 +2047,77 @@
                             <div class="panel-box mini">
                                 <div class="panel-header">Left Rail</div>
                                 <div class="panel-ratings vertical">
-                                    <label>DC: <input type="text" name="l_rail_dc"></label>
-                                    <label>OS: <input type="text" name="l_rail_os"></label>
+                                    <label>DC:
+                                        <div class="stepper-wrapper">
+                                            <button type="button" class="stepper-btn minus"
+                                                onclick="updateDentCount('l_rail_dc', -1)">-</button>
+                                            <div class="stepper-value placeholder" id="l_rail_dc_display">0</div>
+                                            <button type="button" class="stepper-btn plus"
+                                                onclick="updateDentCount('l_rail_dc', 1)">+</button>
+                                            <input type="hidden" name="l_rail_dc" value="" class="stepper-input">
+                                        </div>
+                                    </label>
+                                    <div class="coin-selector disabled" id="l_rail_coin_wrapper">
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('l_rail', 'dime')" data-size="dime">Dime</button>
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('l_rail', 'nickel')"
+                                            data-size="nickel">Nickel</button>
+                                        <button type="button" class="coin-btn selected"
+                                            onclick="updateCoinSize('l_rail', 'quarter')"
+                                            data-size="quarter">Quarter</button>
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('l_rail', 'half')" data-size="half">Half $</button>
+                                        <input type="hidden" name="l_rail_coin" value="quarter">
+                                    </div>
+                                    <label>OS:
+                                        <div class="stepper-wrapper os-stepper">
+                                            <button type="button" class="stepper-btn minus"
+                                                onclick="updateOsCount('l_rail_os', -1)">-</button>
+                                            <div class="stepper-value" id="l_rail_os_display">0</div>
+                                            <button type="button" class="stepper-btn plus"
+                                                onclick="updateOsCount('l_rail_os', 1)">+</button>
+                                            <input type="hidden" name="l_rail_os" value="0" class="stepper-input">
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                             <div class="panel-box mini">
                                 <div class="panel-header">Right Rail</div>
                                 <div class="panel-ratings vertical">
-                                    <label>DC: <input type="text" name="r_rail_dc"></label>
-                                    <label>OS: <input type="text" name="r_rail_os"></label>
+                                    <label>DC:
+                                        <div class="stepper-wrapper">
+                                            <button type="button" class="stepper-btn minus"
+                                                onclick="updateDentCount('r_rail_dc', -1)">-</button>
+                                            <div class="stepper-value placeholder" id="r_rail_dc_display">0</div>
+                                            <button type="button" class="stepper-btn plus"
+                                                onclick="updateDentCount('r_rail_dc', 1)">+</button>
+                                            <input type="hidden" name="r_rail_dc" value="" class="stepper-input">
+                                        </div>
+                                    </label>
+                                    <div class="coin-selector disabled" id="r_rail_coin_wrapper">
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('r_rail', 'dime')" data-size="dime">Dime</button>
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('r_rail', 'nickel')"
+                                            data-size="nickel">Nickel</button>
+                                        <button type="button" class="coin-btn selected"
+                                            onclick="updateCoinSize('r_rail', 'quarter')"
+                                            data-size="quarter">Quarter</button>
+                                        <button type="button" class="coin-btn"
+                                            onclick="updateCoinSize('r_rail', 'half')" data-size="half">Half $</button>
+                                        <input type="hidden" name="r_rail_coin" value="quarter">
+                                    </div>
+                                    <label>OS:
+                                        <div class="stepper-wrapper os-stepper">
+                                            <button type="button" class="stepper-btn minus"
+                                                onclick="updateOsCount('r_rail_os', -1)">-</button>
+                                            <div class="stepper-value" id="r_rail_os_display">0</div>
+                                            <button type="button" class="stepper-btn plus"
+                                                onclick="updateOsCount('r_rail_os', 1)">+</button>
+                                            <input type="hidden" name="r_rail_os" value="0" class="stepper-input">
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -1860,14 +2126,42 @@
                         <div class="panel-box" id="section_deck">
                             <div class="panel-header">Deck / Lid / Gate</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="deck_dc"></label>
-                                <label>OS: <input type="text" name="deck_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('deck_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="deck_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('deck_dc', 1)">+</button>
+                                        <input type="hidden" name="deck_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="deck_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('deck', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('deck', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('deck', 'quarter')" data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('deck', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="deck_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('deck_os', -1)">-</button>
+                                        <div class="stepper-value" id="deck_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('deck_os', 1)">+</button>
+                                        <input type="hidden" name="deck_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="deck_ri_llamp"></td>
@@ -1904,14 +2198,44 @@
                         <div class="panel-box">
                             <div class="panel-header">Right Fender</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="rf_fender_dc"></label>
-                                <label>OS: <input type="text" name="rf_fender_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('rf_fender_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="rf_fender_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('rf_fender_dc', 1)">+</button>
+                                        <input type="hidden" name="rf_fender_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="rf_fender_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rf_fender', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('rf_fender', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('rf_fender', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rf_fender', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="rf_fender_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('rf_fender_os', -1)">-</button>
+                                        <div class="stepper-value" id="rf_fender_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('rf_fender_os', 1)">+</button>
+                                        <input type="hidden" name="rf_fender_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="rf_fender_ri_lamp"></td>
@@ -1940,14 +2264,43 @@
                         <div class="panel-box">
                             <div class="panel-header">Right Front Door</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="rf_door_dc"></label>
-                                <label>OS: <input type="text" name="rf_door_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('rf_door_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="rf_door_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('rf_door_dc', 1)">+</button>
+                                        <input type="hidden" name="rf_door_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="rf_door_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rf_door', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rf_door', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('rf_door', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rf_door', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="rf_door_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('rf_door_os', -1)">-</button>
+                                        <div class="stepper-value" id="rf_door_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('rf_door_os', 1)">+</button>
+                                        <input type="hidden" name="rf_door_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="rf_door_ri_mirror"></td>
@@ -1991,14 +2344,43 @@
                         <div class="panel-box">
                             <div class="panel-header">Right Rear Door</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="rr_door_dc"></label>
-                                <label>OS: <input type="text" name="rr_door_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('rr_door_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="rr_door_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('rr_door_dc', 1)">+</button>
+                                        <input type="hidden" name="rr_door_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="rr_door_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rr_door', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rr_door', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('rr_door', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('rr_door', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="rr_door_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('rr_door_os', -1)">-</button>
+                                        <div class="stepper-value" id="rr_door_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('rr_door_os', 1)">+</button>
+                                        <input type="hidden" name="rr_door_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="rr_door_ri_uppermldg"></td>
@@ -2037,14 +2419,44 @@
                         <div class="panel-box">
                             <div class="panel-header">Right Quarter/Bed</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="rr_quarter_dc"></label>
-                                <label>OS: <input type="text" name="rr_quarter_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('rr_quarter_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="rr_quarter_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('rr_quarter_dc', 1)">+</button>
+                                        <input type="hidden" name="rr_quarter_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="rr_quarter_coin_wrapper">
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('rr_quarter', 'dime')" data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('rr_quarter', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('rr_quarter', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn"
+                                        onclick="updateCoinSize('rr_quarter', 'half')" data-size="half">Half $</button>
+                                    <input type="hidden" name="rr_quarter_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('rr_quarter_os', -1)">-</button>
+                                        <div class="stepper-value" id="rr_quarter_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('rr_quarter_os', 1)">+</button>
+                                        <input type="hidden" name="rr_quarter_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                             <table class="checklist-table">
                                 <tr>
                                     <th>R&I</th>
                                     <th>Part</th>
-                                    <th>R&R</th>
                                 </tr>
                                 <tr>
                                     <td><input type="checkbox" name="rr_quarter_ri_lamp"></td>
@@ -2073,8 +2485,38 @@
                         <div class="panel-box mini">
                             <div class="panel-header">Right Cab Corner</div>
                             <div class="panel-ratings">
-                                <label>DC: <input type="text" name="r_cab_dc"></label>
-                                <label>OS: <input type="text" name="r_cab_os"></label>
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('r_cab_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="r_cab_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('r_cab_dc', 1)">+</button>
+                                        <input type="hidden" name="r_cab_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="r_cab_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('r_cab', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="r_cab_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('r_cab_os', -1)">-</button>
+                                        <div class="stepper-value" id="r_cab_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('r_cab_os', 1)">+</button>
+                                        <input type="hidden" name="r_cab_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -3318,6 +3760,146 @@
         .submit-btn {
             display: none;
         }
+
+        /* Stepper Component Polished */
+        .stepper-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 0;
+            height: 44px;
+            /* Slightly more compact height */
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .stepper-btn {
+            width: 48px;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: #4CD964;
+            font-size: 28px;
+            /* Larger symbol */
+            font-weight: 200;
+            /* Thinner weight for iOS feel */
+            line-height: 1;
+            padding-bottom: 4px;
+            /* Center vertical alignment visually */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .stepper-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stepper-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0.95);
+        }
+
+        .stepper-btn.minus {
+            color: #FF453A;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stepper-btn.plus {
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stepper-value {
+            flex: 1;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            user-select: none;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            transition: transform 0.1s;
+        }
+
+        .stepper-value.placeholder {
+            color: #555;
+            font-weight: 400;
+        }
+
+        .stepper-value.is-off-matrix {
+            color: #FF453A;
+            /* Red warning color */
+            font-size: 13px;
+            /* Smaller to fit */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        /* Hide the actual input but keep it for form submission logic */
+        input[type="hidden"].stepper-input {
+            display: none;
+        }
+
+        /* Adjustment for side labels */
+        .panel-ratings label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Coin Size Selector */
+        .coin-selector {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 2px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            /* Space before OS */
+        }
+
+        .coin-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #888;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .coin-btn.selected {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .coin-selector.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* OS Stepper Styling (Reuse stepper classes but maybe smaller?) */
+        .stepper-wrapper.os-stepper {
+            border-color: rgba(255, 59, 48, 0.3);
+            /* Reddish tint for OS */
+            background: rgba(255, 59, 48, 0.05);
+        }
+
+        .stepper-wrapper.os-stepper .stepper-btn {
+            color: #FF453A;
+        }
     </style>
 
     <script>
@@ -3501,6 +4083,9 @@
                         if (el.value === formData[name]) el.checked = true;
                     } else {
                         el.value = formData[name];
+                        if (name.endsWith('_dc')) updateDentCount(name, 0);
+                        if (name.endsWith('_os')) updateOsCount(name, 0);
+                        if (name.endsWith('_coin')) updateCoinSize(name.replace('_coin', ''), formData[name]);
                     }
                 } else {
                     // Try by ID
@@ -3571,6 +4156,11 @@
                 document.querySelectorAll('.panel-box.is-complete').forEach(box => {
                     box.classList.remove('is-complete');
                 });
+
+                // Reset Steppers
+                document.querySelectorAll('input[name$="_dc"]').forEach(el => updateDentCount(el.name, 0));
+                document.querySelectorAll('input[name$="_os"]').forEach(el => updateOsCount(el.name, 0));
+                document.querySelectorAll('input[name$="_coin"]').forEach(el => updateCoinSize(el.name.replace('_coin', ''), 'quarter'));
 
                 // Update UI
                 updateVinCounter();
@@ -3681,7 +4271,107 @@
 
         // --- INITIALIZATION ---
         // Convert DC to range buttons, OS to steppers, add UPD toggles
-        const DC_RANGES = ['1-5', '6-15', '16-30', '31-50', '51-75', '76-100', '101-150', '151-200', '201-300', '301-400'];
+        // Stepper Steps (Active Matrix + Off Matrix)
+        const DC_STEPS = ['', '1-5', '6-15', '16-30', '31-50', '51-75', '76-100', '101-150', '151-200', '201-300', '301-400', 'Off Matrix'];
+        // Legacy support if needed
+        const DC_RANGES = DC_STEPS.slice(1);
+
+        function updateDentCount(name, direction) {
+            const hiddenInput = document.querySelector(`input[name="${name}"]`);
+            const display = document.getElementById(name + '_display');
+            if (!hiddenInput || !display) return;
+
+            let val = hiddenInput.value;
+            // Treat '0' as empty
+            if (val === '0') val = '';
+
+            let index = DC_STEPS.indexOf(val);
+            if (index === -1) index = 0;
+
+            let newIndex = index + direction;
+
+            // Wrapping Logic:
+            // 0 -> Minus -> Off Matrix
+            // Off Matrix -> Plus -> 0
+            if (newIndex < 0) newIndex = DC_STEPS.length - 1;
+            if (newIndex >= DC_STEPS.length) newIndex = 0;
+
+            const newValue = DC_STEPS[newIndex];
+            hiddenInput.value = newValue;
+
+            // Update UI
+            if (newValue === '') {
+                display.textContent = '0';
+                display.className = 'stepper-value placeholder';
+            } else {
+                display.textContent = newValue;
+                display.className = 'stepper-value';
+
+                // Specific styling for long text or special values
+                if (newValue === 'Off Matrix') {
+                    display.classList.add('is-off-matrix');
+                }
+            }
+
+            toggleCoinVisibility(name, newValue === 'Off Matrix');
+
+            // Trigger change for totals
+            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            if (typeof haptic === 'function') haptic('light');
+        }
+
+        function updateOsCount(name, direction) {
+            const hiddenInput = document.querySelector(`input[name="${name}"]`);
+            const display = document.getElementById(name + '_display');
+            if (!hiddenInput || !display) return;
+
+            let val = parseInt(hiddenInput.value) || 0;
+            let newVal = val + direction;
+
+            if (newVal < 0) newVal = 0; // OS cannot be negative
+
+            hiddenInput.value = newVal;
+            display.textContent = newVal;
+
+            // Trigger change
+            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+            if (typeof haptic === 'function') haptic('light');
+        }
+
+        function updateCoinSize(panelKey, size) {
+            const input = document.querySelector(`input[name="${panelKey}_coin"]`);
+            if (!input) return;
+
+            input.value = size;
+
+            // Update UI
+            const wrapper = document.getElementById(panelKey + '_coin_wrapper');
+            if (wrapper) {
+                wrapper.querySelectorAll('.coin-btn').forEach(btn => {
+                    if (btn.dataset.size === size) btn.classList.add('selected');
+                    else btn.classList.remove('selected');
+                });
+            }
+
+            // Trigger change
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            if (typeof haptic === 'function') haptic('light');
+        }
+
+        function toggleCoinVisibility(name, isOffMatrix) {
+            // panelKey is name minus _dc
+            const panelKey = name.replace('_dc', '');
+            const coinWrapper = document.getElementById(panelKey + '_coin_wrapper');
+            if (coinWrapper) {
+                if (isOffMatrix || document.querySelector(`input[name="${name}"]`).value === '') {
+                    coinWrapper.classList.add('disabled');
+                } else {
+                    coinWrapper.classList.remove('disabled');
+                }
+            }
+        }
+
         const COIN_SIZES = ['dime', 'nickel', 'quarter', 'half'];
         const COIN_LABELS = { dime: 'Dime', nickel: 'Nickel', quarter: 'Quarter', half: 'Half $' };
 

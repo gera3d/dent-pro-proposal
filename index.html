@@ -4817,7 +4817,7 @@
             haptic('light');
         }
 
-        function showVinResult(vinData) {
+        function showVinResult(vinData, debugInfo = {}) {
             const section = document.querySelector('.vin-scan-section');
             const content = document.querySelector('.vin-scan-content');
             const progress = document.getElementById('vinScanProgress');
@@ -4837,7 +4837,7 @@
                 { label: 'Model', value: vinData.model, id: 'model' },
             ];
 
-            resultGrid.innerHTML = fields.map(field => {
+            let html = fields.map(field => {
                 const isFilled = field.value && field.value.trim() !== '';
                 return `
                     <div class="result-item ${isFilled ? 'filled' : 'missing'}">
@@ -4846,6 +4846,29 @@
                     </div>
                 `;
             }).join('');
+
+            // Add debug info if available
+            if (debugInfo.rawText || debugInfo.candidates) {
+                html += `
+                    <div style="grid-column: 1 / -1; margin-top: 16px; padding: 12px; background: rgba(255,100,0,0.1); border-radius: 8px; border-left: 3px solid #FF9500;">
+                        <details>
+                            <summary style="cursor: pointer; font-weight: 600; color: #FF9500;">🔍 Debug Info (tap to expand)</summary>
+                            <div style="margin-top: 12px; font-size: 12px; color: #a1a1a6;">
+                                <div style="margin-bottom: 8px;"><strong>Candidates found:</strong></div>
+                                <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px;">
+                                    ${(debugInfo.candidates || []).map((c, i) => `${i + 1}. ${c}`).join('<br>') || 'None'}
+                                </div>
+                                <div style="margin-top: 12px; margin-bottom: 8px;"><strong>Raw text (first 200 chars):</strong></div>
+                                <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; white-space: pre-wrap;">
+                                    ${(debugInfo.rawText || '').substring(0, 200)}...
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                `;
+            }
+
+            resultGrid.innerHTML = html;
 
             haptic('success');
         }
@@ -5030,8 +5053,8 @@
                         if (model) document.getElementById('model').value = model;
                     }
 
-                    // Show result summary
-                    showVinResult({ vin, year, make, model });
+                    // Show result summary with debug info
+                    showVinResult({ vin, year, make, model }, { rawText: fullText, candidates: allMatches });
 
                 } catch (e) {
                     console.error('[VIN Scan] Error:', e);
@@ -5293,7 +5316,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.8';
+        const LOCAL_APP_VERSION = '2026.01.18.9';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

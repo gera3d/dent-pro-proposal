@@ -4914,35 +4914,92 @@
                     const fullText = annotations[0].description;
                     console.log('[VIN Scan] Detected text:', fullText);
 
-                    // Clean and find VIN
+                    // Clean text for VIN extraction
                     let cleanText = fullText.toUpperCase()
                         .replace(/O/g, '0')
                         .replace(/I/g, '1')
                         .replace(/Q/g, '0')
                         .replace(/[^A-Z0-9]/g, '');
 
+                    // Find ALL 17-character candidates
                     const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
-                    const matches = cleanText.match(vinPattern);
+                    const allMatches = cleanText.match(vinPattern) || [];
+
+                    console.log('[VIN Scan] Found candidates:', allMatches);
 
                     progressFill.style.width = '70%';
-                    progressText.textContent = '🚗 Looking up vehicle...';
+                    progressText.textContent = '🔍 Validating VIN...';
 
-                    let vin = '';
-                    if (matches && matches.length > 0) {
-                        vin = matches[0];
-                    } else {
-                        // Try looser match
-                        const looseMatches = cleanText.match(/[A-HJ-NPR-Z0-9]{15,19}/g);
-                        if (looseMatches) {
-                            vin = looseMatches[0].substring(0, 17);
+                    // VIN check digit validation function
+                    function validateVinCheckDigit(vin) {
+                        const transliteration = {
+                            'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8,
+                            'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'P': 7, 'R': 9,
+                            'S': 2, 'T': 3, 'U': 4, 'V': 5, 'W': 6, 'X': 7, 'Y': 8, 'Z': 9,
+                            '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9
+                        };
+                        const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
+
+                        let sum = 0;
+                        for (let i = 0; i < 17; i++) {
+                            const char = vin[i];
+                            const value = transliteration[char];
+                            if (value === undefined) return false;
+                            sum += value * weights[i];
                         }
+
+                        const remainder = sum % 11;
+                        const checkDigit = remainder === 10 ? 'X' : String(remainder);
+                        return vin[8] === checkDigit;
+                    }
+
+                    // Try to find a VIN that passes check digit validation
+                    let vin = '';
+                    for (const candidate of allMatches) {
+                        if (validateVinCheckDigit(candidate)) {
+                            vin = candidate;
+                            console.log('[VIN Scan] ✅ Validated VIN:', vin);
+                            break;
+                        }
+                    }
+
+                    // If no validated VIN, try NHTSA to validate each candidate
+                    if (!vin && allMatches.length > 0) {
+                        progressText.textContent = '🔍 Checking candidates with NHTSA...';
+
+                        for (const candidate of allMatches.slice(0, 3)) { // Check top 3
+                            try {
+                                const checkResponse = await fetch(
+                                    `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${candidate}?format=json`
+                                );
+                                const checkData = await checkResponse.json();
+
+                                if (checkData.Results?.[0]) {
+                                    const result = checkData.Results[0];
+                                    // If we got a valid make/model, this is likely the real VIN
+                                    if (result.Make && result.Model && result.ModelYear) {
+                                        vin = candidate;
+                                        console.log('[VIN Scan] ✅ NHTSA validated VIN:', vin);
+                                        break;
+                                    }
+                                }
+                            } catch (e) {
+                                console.log('[VIN Scan] Check failed for:', candidate);
+                            }
+                        }
+                    }
+
+                    // Fallback: use first candidate
+                    if (!vin && allMatches.length > 0) {
+                        vin = allMatches[0];
+                        console.log('[VIN Scan] Using first candidate:', vin);
                     }
 
                     if (!vin) {
                         throw new Error('Could not find VIN in image');
                     }
 
-                    console.log('[VIN Scan] Found VIN:', vin);
+                    console.log('[VIN Scan] Final VIN:', vin);
 
                     // Fill VIN field
                     document.getElementById('vin').value = vin;
@@ -5236,7 +5293,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.7';
+        const LOCAL_APP_VERSION = '2026.01.18.8';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

@@ -5041,10 +5041,10 @@
                     // console.log('[VIN Scan] Final VIN:', vin);
 
                     // Fill VIN field
+                    // Fill VIN field
                     const vinEl = document.getElementById('vin');
                     vinEl.value = vin;
                     vinEl.classList.add('auto-filled');
-                    vinEl.addEventListener('input', () => vinEl.classList.remove('auto-filled'), { once: true });
                     updateVinCounter();
 
                     // Decode with NHTSA
@@ -5073,20 +5073,16 @@
                             const el = document.getElementById('year');
                             el.value = year;
                             el.classList.add('auto-filled');
-                            // Remove highlight on change
-                            el.addEventListener('change', () => el.classList.remove('auto-filled'), { once: true });
                         }
                         if (make) {
                             const el = document.getElementById('make');
                             el.value = make;
                             el.classList.add('auto-filled');
-                            el.addEventListener('change', () => el.classList.remove('auto-filled'), { once: true });
                         }
                         if (model) {
                             const el = document.getElementById('model');
                             el.value = model;
                             el.classList.add('auto-filled');
-                            el.addEventListener('input', () => el.classList.remove('auto-filled'), { once: true });
                         }
                     }
 
@@ -5353,7 +5349,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.13';
+        const LOCAL_APP_VERSION = '2026.01.18.14';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 
@@ -5460,6 +5456,32 @@
             }
             // If state is 'current' or 'checking', button does nothing
         }
+
+        // ==================== GLOBAL FIELD HIGHLIGHTING ====================
+        function setupFieldHighlighting() {
+            // Target all relevant inputs in the form
+            const inputs = document.querySelectorAll('#scopeForm input:not([type="hidden"]):not([type="submit"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]), #scopeForm select, #scopeForm textarea');
+
+            function updateHighlight(el) {
+                if (el.value && el.value.trim() !== '') {
+                    el.classList.add('auto-filled');
+                } else {
+                    el.classList.remove('auto-filled');
+                }
+            }
+
+            inputs.forEach(el => {
+                // Initial check
+                updateHighlight(el);
+
+                // Add listeners
+                el.addEventListener('input', () => updateHighlight(el));
+                el.addEventListener('change', () => updateHighlight(el));
+            });
+        }
+
+        // Initialize highlighting
+        document.addEventListener('DOMContentLoaded', setupFieldHighlighting);
 
         // Check for updates on page load
         window.addEventListener('load', () => {

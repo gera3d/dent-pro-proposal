@@ -9,9 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="app-icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Quagga2 for VIN Barcode Scanning -->
-    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
-    <!-- OCR now uses Google Cloud Vision API (configured in JS below) -->
+    <!-- Google Vision OCR for VIN text recognition -->
     <style>
         * {
             box-sizing: border-box;
@@ -780,6 +778,163 @@
             background: rgba(76, 217, 100, 0.25);
         }
 
+        /* VIN Scan Section */
+        .vin-scan-section {
+            background: linear-gradient(135deg, rgba(76, 217, 100, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+            border: 2px solid rgba(76, 217, 100, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .vin-scan-content h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4CD964;
+            margin-bottom: 8px;
+        }
+
+        .vin-scan-content p {
+            font-size: 14px;
+            color: #a1a1a6;
+            margin-bottom: 20px;
+        }
+
+        .vin-scan-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            border: none;
+            border-radius: 14px;
+            color: #000;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 6px 20px rgba(76, 217, 100, 0.4);
+            transition: all 0.2s;
+            margin-right: 12px;
+        }
+
+        .vin-scan-btn:active {
+            transform: scale(0.98);
+        }
+
+        .vin-manual-btn {
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            color: #a1a1a6;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .vin-manual-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .vin-scan-progress {
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .vin-progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto 12px;
+        }
+
+        .vin-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CD964, #30D158);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .vin-scan-progress p {
+            color: #a1a1a6;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .vin-scan-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .vin-scan-result h3 {
+            font-size: 18px;
+            color: #4CD964;
+            margin-bottom: 16px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .result-item.filled {
+            border-left: 3px solid #4CD964;
+        }
+
+        .result-item.missing {
+            border-left: 3px solid #FF9500;
+        }
+
+        .result-item .label {
+            font-size: 11px;
+            color: #a1a1a6;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .result-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .result-item.missing .value {
+            color: #FF9500;
+        }
+
+        .vin-continue-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D4 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+
         /* Toast Notification */
         .toast {
             position: fixed;
@@ -1210,6 +1365,37 @@
                 <button type="button" class="saved-btn save" onclick="saveCurrentForm()">💾 Save</button>
                 <button type="button" class="saved-btn delete" onclick="deleteSavedForm()">🗑️ Delete</button>
                 <button type="button" class="saved-btn new" onclick="startNewForm()">➕ New</button>
+            </div>
+        </div>
+
+        <!-- VIN SCAN TO START Section -->
+        <div class="vin-scan-section">
+            <div class="vin-scan-content">
+                <h2>📸 Scan VIN to Start</h2>
+                <p>Take a photo of the VIN sticker to auto-fill vehicle info</p>
+                <input type="file" id="vinCameraInput" accept="image/*" capture="environment" style="display: none;"
+                    onchange="handleVinScan(event)">
+                <button type="button" class="vin-scan-btn" onclick="document.getElementById('vinCameraInput').click()">
+                    📷 Take Photo of VIN
+                </button>
+                <button type="button" class="vin-manual-btn" onclick="skipVinScan()">
+                    ✍️ Enter Manually
+                </button>
+            </div>
+            <!-- OCR Progress -->
+            <div class="vin-scan-progress" id="vinScanProgress" style="display: none;">
+                <div class="vin-progress-bar">
+                    <div class="vin-progress-fill" id="vinProgressFill"></div>
+                </div>
+                <p id="vinProgressText">Processing...</p>
+            </div>
+            <!-- Result Summary -->
+            <div class="vin-scan-result" id="vinScanResult" style="display: none;">
+                <h3>🚗 Vehicle Found</h3>
+                <div class="result-grid" id="resultGrid"></div>
+                <button type="button" class="vin-continue-btn" onclick="continueToForm()">
+                    ✅ Continue to Form
+                </button>
             </div>
         </div>
 
@@ -4614,11 +4800,197 @@
             }
         }
 
-        // ==================== OCR VIN SCANNING (Google Vision API) ====================
+        // ==================== VIN SCAN FLOW (Google Vision API) ====================
 
-        // IMPORTANT: Set your Google Cloud Vision API key here
-        // Get one at: https://console.cloud.google.com/apis/credentials
         const GOOGLE_VISION_API_KEY = 'AIzaSyDg4XBVSyqv2zhYCiWDX5ewPULx_NCrTRg';
+
+        function skipVinScan() {
+            // Hide VIN scan section and show form
+            document.querySelector('.vin-scan-section').style.display = 'none';
+            showToast('💡 Enter VIN manually - auto-lookup will find Year/Make/Model', 'info');
+            document.getElementById('vin').focus();
+        }
+
+        function continueToForm() {
+            // Hide VIN scan section
+            document.querySelector('.vin-scan-section').style.display = 'none';
+            haptic('light');
+        }
+
+        function showVinResult(vinData) {
+            const section = document.querySelector('.vin-scan-section');
+            const content = document.querySelector('.vin-scan-content');
+            const progress = document.getElementById('vinScanProgress');
+            const result = document.getElementById('vinScanResult');
+            const resultGrid = document.getElementById('resultGrid');
+
+            // Hide content and progress, show result
+            content.style.display = 'none';
+            progress.style.display = 'none';
+            result.style.display = 'block';
+
+            // Build result items
+            const fields = [
+                { label: 'VIN', value: vinData.vin, id: 'vin' },
+                { label: 'Year', value: vinData.year, id: 'year' },
+                { label: 'Make', value: vinData.make, id: 'make' },
+                { label: 'Model', value: vinData.model, id: 'model' },
+            ];
+
+            resultGrid.innerHTML = fields.map(field => {
+                const isFilled = field.value && field.value.trim() !== '';
+                return `
+                    <div class="result-item ${isFilled ? 'filled' : 'missing'}">
+                        <div class="label">${isFilled ? '✅' : '⚠️'} ${field.label}</div>
+                        <div class="value">${isFilled ? field.value : 'Enter manually'}</div>
+                    </div>
+                `;
+            }).join('');
+
+            haptic('success');
+        }
+
+        async function handleVinScan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const content = document.querySelector('.vin-scan-content');
+            const progress = document.getElementById('vinScanProgress');
+            const progressFill = document.getElementById('vinProgressFill');
+            const progressText = document.getElementById('vinProgressText');
+
+            // Check for API key
+            if (!GOOGLE_VISION_API_KEY) {
+                showToast('⚠️ Google Vision API key not configured', 'error');
+                return;
+            }
+
+            // Show progress
+            content.style.display = 'none';
+            progress.style.display = 'block';
+            progressFill.style.width = '10%';
+            progressText.textContent = '📷 Processing image...';
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const base64Image = e.target.result.split(',')[1];
+
+                progressFill.style.width = '20%';
+                progressText.textContent = '🔄 Sending to Google Vision...';
+
+                try {
+                    console.log('[VIN Scan] Sending to Google Vision...');
+
+                    // Call Google Vision API
+                    const response = await fetch(
+                        `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_VISION_API_KEY}`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                requests: [{
+                                    image: { content: base64Image },
+                                    features: [{ type: 'TEXT_DETECTION', maxResults: 10 }]
+                                }]
+                            })
+                        }
+                    );
+
+                    progressFill.style.width = '50%';
+                    progressText.textContent = '🔍 Extracting VIN...';
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || 'API error');
+                    }
+
+                    const data = await response.json();
+                    const annotations = data.responses?.[0]?.textAnnotations;
+
+                    if (!annotations || annotations.length === 0) {
+                        throw new Error('No text found in image');
+                    }
+
+                    const fullText = annotations[0].description;
+                    console.log('[VIN Scan] Detected text:', fullText);
+
+                    // Clean and find VIN
+                    let cleanText = fullText.toUpperCase()
+                        .replace(/O/g, '0')
+                        .replace(/I/g, '1')
+                        .replace(/Q/g, '0')
+                        .replace(/[^A-Z0-9]/g, '');
+
+                    const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
+                    const matches = cleanText.match(vinPattern);
+
+                    progressFill.style.width = '70%';
+                    progressText.textContent = '🚗 Looking up vehicle...';
+
+                    let vin = '';
+                    if (matches && matches.length > 0) {
+                        vin = matches[0];
+                    } else {
+                        // Try looser match
+                        const looseMatches = cleanText.match(/[A-HJ-NPR-Z0-9]{15,19}/g);
+                        if (looseMatches) {
+                            vin = looseMatches[0].substring(0, 17);
+                        }
+                    }
+
+                    if (!vin) {
+                        throw new Error('Could not find VIN in image');
+                    }
+
+                    console.log('[VIN Scan] Found VIN:', vin);
+
+                    // Fill VIN field
+                    document.getElementById('vin').value = vin;
+                    updateVinCounter();
+
+                    // Decode with NHTSA
+                    progressFill.style.width = '85%';
+
+                    const nhtsaResponse = await fetch(
+                        `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vin}?format=json`
+                    );
+                    const nhtsaData = await nhtsaResponse.json();
+
+                    progressFill.style.width = '100%';
+                    progressText.textContent = '✅ Complete!';
+
+                    let year = '', make = '', model = '';
+
+                    if (nhtsaData.Results?.[0]) {
+                        const vehicle = nhtsaData.Results[0];
+                        year = vehicle.ModelYear || '';
+                        make = vehicle.Make || '';
+                        model = vehicle.Model || vehicle.Series || vehicle.Trim || '';
+
+                        // Fill form fields
+                        if (year) document.getElementById('year').value = year;
+                        if (make) document.getElementById('make').value = make;
+                        if (model) document.getElementById('model').value = model;
+                    }
+
+                    // Show result summary
+                    showVinResult({ vin, year, make, model });
+
+                } catch (e) {
+                    console.error('[VIN Scan] Error:', e);
+                    progressFill.style.width = '0%';
+                    progress.style.display = 'none';
+                    content.style.display = 'block';
+                    showToast(`❌ ${e.message}`, 'error');
+                }
+            };
+            reader.readAsDataURL(file);
+
+            // Reset input
+            event.target.value = '';
+        }
+
+        // Keep old handleOcrCapture for modal (backward compat)
 
         async function handleOcrCapture(event) {
             const file = event.target.files[0];
@@ -4864,7 +5236,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.6';
+        const LOCAL_APP_VERSION = '2026.01.18.7';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

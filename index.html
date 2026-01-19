@@ -916,6 +916,9 @@
             font-size: 16px;
             font-weight: 600;
             color: #fff;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
         }
 
         .result-item.missing .value {
@@ -4678,12 +4681,6 @@
                 locator: {
                     halfSample: false,
                     patchSize: 'large'
-                },
-                debug: {
-                    drawBoundingBox: true,
-                    showFrequency: true,
-                    drawScanline: true,
-                    showPattern: true
                 }
             }, function (err) {
                 if (err) {
@@ -4692,16 +4689,9 @@
                     status.className = 'scanner-status error';
                     return;
                 }
-                console.log('[Scanner] Quagga initialized successfully');
+                // console.log('[Scanner] Quagga initialized successfully');
                 status.textContent = '📡 Scanning... Point at VIN barcode';
                 Quagga.start();
-            });
-
-            // Process every frame for debugging
-            Quagga.onProcessed(function (result) {
-                if (result && result.codeResult) {
-                    console.log('[Scanner] Processing:', result.codeResult.code, 'Format:', result.codeResult.format);
-                }
             });
 
             Quagga.onDetected(onBarcodeDetected);
@@ -4709,7 +4699,7 @@
 
         function onBarcodeDetected(result) {
             const code = result.codeResult.code;
-            console.log('[Scanner] Detected:', code);
+            // console.log('[Scanner] Detected:', code);
 
             // VINs are 17 characters, alphanumeric
             if (code && code.length >= 17) {
@@ -4741,7 +4731,7 @@
                     Quagga.offDetected(onBarcodeDetected);
                     Quagga.stop();
                 } catch (e) {
-                    console.log('[Scanner] Stop error:', e);
+                    // console.log('[Scanner] Stop error:', e);
                 }
             }
 
@@ -4817,7 +4807,7 @@
             haptic('light');
         }
 
-        function showVinResult(vinData, debugInfo = {}) {
+        function showVinResult(vinData) {
             const section = document.querySelector('.vin-scan-section');
             const content = document.querySelector('.vin-scan-content');
             const progress = document.getElementById('vinScanProgress');
@@ -4846,27 +4836,6 @@
                     </div>
                 `;
             }).join('');
-
-            // Add debug info if available
-            if (debugInfo.rawText || debugInfo.candidates) {
-                html += `
-                    <div style="grid-column: 1 / -1; margin-top: 16px; padding: 12px; background: rgba(255,100,0,0.1); border-radius: 8px; border-left: 3px solid #FF9500;">
-                        <details>
-                            <summary style="cursor: pointer; font-weight: 600; color: #FF9500;">🔍 Debug Info (tap to expand)</summary>
-                            <div style="margin-top: 12px; font-size: 12px; color: #a1a1a6;">
-                                <div style="margin-bottom: 8px;"><strong>Candidates found:</strong></div>
-                                <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px;">
-                                    ${(debugInfo.candidates || []).map((c, i) => `${i + 1}. ${c}`).join('<br>') || 'None'}
-                                </div>
-                                <div style="margin-top: 12px; margin-bottom: 8px;"><strong>Raw text (first 200 chars):</strong></div>
-                                <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; white-space: pre-wrap;">
-                                    ${(debugInfo.rawText || '').substring(0, 200)}...
-                                </div>
-                            </div>
-                        </details>
-                    </div>
-                `;
-            }
 
             resultGrid.innerHTML = html;
 
@@ -4902,7 +4871,7 @@
                 progressText.textContent = '🔄 Sending to Google Vision...';
 
                 try {
-                    console.log('[VIN Scan] Sending to Google Vision...');
+                    // console.log('[VIN Scan] Sending to Google Vision...');
 
                     // Call Google Vision API
                     const response = await fetch(
@@ -4935,7 +4904,7 @@
                     }
 
                     const fullText = annotations[0].description;
-                    console.log('[VIN Scan] Detected text:', fullText);
+                    // console.log('[VIN Scan] Detected text:', fullText);
 
                     progressFill.style.width = '70%';
                     progressText.textContent = '🔍 Searching for VIN...';
@@ -4977,7 +4946,7 @@
                     // STRATEGY 1: Look at individual word annotations (skip first - it's full text)
                     // Each annotation after the first is a single word/segment
                     const wordAnnotations = annotations.slice(1).map(a => a.description);
-                    console.log('[VIN Scan] Word count:', wordAnnotations.length);
+                    // console.log('[VIN Scan] Word count:', wordAnnotations.length);
 
                     // Look for exactly 17-character alphanumeric words
                     for (const word of wordAnnotations) {
@@ -5015,13 +4984,13 @@
                         }
                     }
 
-                    console.log('[VIN Scan] Candidates found:', allMatches);
+                    // console.log('[VIN Scan] Candidates found:', allMatches);
 
                     // First try check digit validation
                     for (const candidate of allMatches) {
                         if (validateVinCheckDigit(candidate)) {
                             vin = candidate;
-                            console.log('[VIN Scan] ✅ Validated VIN (checksum):', vin);
+                            // console.log('[VIN Scan] ✅ Validated VIN (checksum):', vin);
                             break;
                         }
                     }
@@ -5042,7 +5011,7 @@
                                     if (result.Make && result.Model && result.ModelYear &&
                                         result.ErrorCode !== '1') {
                                         vin = candidate;
-                                        console.log('[VIN Scan] ✅ NHTSA validated VIN:', vin);
+                                        // console.log('[VIN Scan] ✅ NHTSA validated VIN:', vin);
                                         break;
                                     }
                                 }
@@ -5055,14 +5024,14 @@
                     // Fallback: use first candidate
                     if (!vin && allMatches.length > 0) {
                         vin = allMatches[0];
-                        console.log('[VIN Scan] Using first candidate:', vin);
+                        // console.log('[VIN Scan] Using first candidate:', vin);
                     }
 
                     if (!vin) {
                         throw new Error('Could not find VIN in image');
                     }
 
-                    console.log('[VIN Scan] Final VIN:', vin);
+                    // console.log('[VIN Scan] Final VIN:', vin);
 
                     // Fill VIN field
                     document.getElementById('vin').value = vin;
@@ -5083,6 +5052,8 @@
 
                     if (nhtsaData.Results?.[0]) {
                         const vehicle = nhtsaData.Results[0];
+                        // console.log('[VIN Decode] Full response:', vehicle);
+
                         year = vehicle.ModelYear || '';
                         make = vehicle.Make || '';
                         model = vehicle.Model || vehicle.Series || vehicle.Trim || '';
@@ -5093,8 +5064,8 @@
                         if (model) document.getElementById('model').value = model;
                     }
 
-                    // Show result summary with debug info
-                    showVinResult({ vin, year, make, model }, { rawText: fullText, candidates: allMatches });
+                    // Show result summary
+                    showVinResult({ vin, year, make, model });
 
                 } catch (e) {
                     console.error('[VIN Scan] Error:', e);
@@ -5144,7 +5115,7 @@
                 status.textContent = '🔄 Processing with Google AI...';
 
                 try {
-                    console.log('[Vision API] Sending image to Google Vision...');
+                    // console.log('[Vision API] Sending image to Google Vision...');
 
                     // Call Google Vision API
                     const response = await fetch(
@@ -5173,7 +5144,7 @@
                     }
 
                     const data = await response.json();
-                    console.log('[Vision API] Full response:', data);
+                    // console.log('[Vision API] Full response:', data);
 
                     progressFill.style.width = '80%';
                     progressText.textContent = 'Searching for VIN...';
@@ -5189,7 +5160,7 @@
 
                     // First annotation contains all detected text
                     const fullText = annotations[0].description;
-                    console.log('[Vision API] Detected text:', fullText);
+                    // console.log('[Vision API] Detected text:', fullText);
 
                     // Clean text for VIN extraction
                     let cleanText = fullText.toUpperCase()
@@ -5198,7 +5169,7 @@
                         .replace(/Q/g, '0')  // Q -> 0 (no Q in VINs)
                         .replace(/[^A-Z0-9]/g, '');
 
-                    console.log('[Vision API] Cleaned text:', cleanText);
+                    // console.log('[Vision API] Cleaned text:', cleanText);
 
                     progressFill.style.width = '100%';
 
@@ -5208,7 +5179,7 @@
 
                     if (matches && matches.length > 0) {
                         const vin = matches[0];
-                        console.log('[Vision API] ✅ Found VIN:', vin);
+                        // console.log('[Vision API] ✅ Found VIN:', vin);
 
                         haptic('heavy');
                         closeScanner();
@@ -5277,7 +5248,7 @@
                     const vehicle = data.Results[0];
 
                     // Log full response for debugging
-                    console.log('[VIN Decode] Full response:', vehicle);
+                    // console.log('[VIN Decode] Full response:', vehicle);
 
                     // Extract values with fallbacks
                     const year = vehicle.ModelYear || '';
@@ -5356,7 +5327,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.10';
+        const LOCAL_APP_VERSION = '2026.01.18.12';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

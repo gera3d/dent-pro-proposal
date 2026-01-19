@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Quagga2 for VIN Barcode Scanning -->
     <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
+    <!-- Tesseract.js for OCR VIN Text Recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -999,6 +1001,140 @@
             text-align: center;
         }
 
+        /* Scanner Tabs */
+        .scanner-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scanner-tab {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .scanner-tab.active {
+            color: #4CD964;
+            border-bottom-color: #4CD964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+
+        .scanner-view {
+            display: none;
+        }
+
+        .scanner-view.active {
+            display: block;
+        }
+
+        /* OCR Capture Area */
+        .ocr-capture-area {
+            padding: 20px;
+            background: #111;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .ocr-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .ocr-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ocr-placeholder {
+            text-align: center;
+            color: #666;
+        }
+
+        .ocr-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .ocr-placeholder p {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .ocr-placeholder small {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .ocr-capture-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(76, 217, 100, 0.4);
+            transition: all 0.2s;
+        }
+
+        .ocr-capture-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* OCR Progress */
+        .ocr-progress {
+            padding: 20px;
+            background: #111;
+            text-align: center;
+        }
+
+        .ocr-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .ocr-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CD964, #30D158);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .ocr-progress p {
+            color: #a1a1a6;
+            font-size: 14px;
+        }
+
         .scanner-actions {
             display: flex;
             gap: 12px;
@@ -1835,51 +1971,59 @@
     <!-- VIN Scanner Modal -->
     <div id="scannerModal" class="scanner-modal" style="display: none;">
         <div class="scanner-header">
-            <h3>📷 Scan VIN Barcode</h3>
+            <h3>📷 Scan VIN</h3>
             <button type="button" onclick="closeScanner()" class="scanner-close">✕</button>
         </div>
-        <div class="scanner-viewport">
-            <div id="scannerCamera"></div>
-            <div class="scanner-guide">
-                <div class="guide-box"></div>
-                <p>Align barcode within the frame</p>
-            </div>
-        </div>
-        <div class="scanner-status" id="scannerStatus">Initializing camera...</div>
 
-        <!-- Scanning Tips -->
-        <div class="scanner-tips">
-            <div class="tips-toggle" onclick="toggleScannerTips()">
-                <span>💡 Tips for better scanning</span>
-                <span class="tips-arrow" id="tipsArrow">▼</span>
-            </div>
-            <div class="tips-content" id="tipsContent">
-                <div class="tip-item">
-                    <span class="tip-icon">☀️</span>
-                    <span>Good lighting - avoid shadows on barcode</span>
-                </div>
-                <div class="tip-item">
-                    <span class="tip-icon">📏</span>
-                    <span>Hold 4-8 inches from barcode</span>
-                </div>
-                <div class="tip-item">
-                    <span class="tip-icon">📐</span>
-                    <span>Keep camera parallel, not angled</span>
-                </div>
-                <div class="tip-item">
-                    <span class="tip-icon">🔍</span>
-                    <span>Door jamb sticker has the barcode</span>
-                </div>
-                <div class="tip-item">
-                    <span class="tip-icon">✋</span>
-                    <span>Hold steady for 2-3 seconds</span>
+        <!-- Method Tabs -->
+        <div class="scanner-tabs">
+            <button type="button" class="scanner-tab active" id="tabBarcode" onclick="switchScannerTab('barcode')">📊
+                Barcode</button>
+            <button type="button" class="scanner-tab" id="tabPhoto" onclick="switchScannerTab('photo')">📸 Photo
+                OCR</button>
+        </div>
+
+        <!-- Barcode Scanner View -->
+        <div id="barcodeView" class="scanner-view active">
+            <div class="scanner-viewport">
+                <div id="scannerCamera"></div>
+                <div class="scanner-guide">
+                    <div class="guide-box"></div>
+                    <p>Align barcode within the frame</p>
                 </div>
             </div>
         </div>
+
+        <!-- OCR Photo View -->
+        <div id="photoView" class="scanner-view" style="display: none;">
+            <div class="ocr-capture-area">
+                <div class="ocr-preview" id="ocrPreview">
+                    <div class="ocr-placeholder">
+                        <span class="ocr-icon">📸</span>
+                        <p>Take a photo of the VIN sticker</p>
+                        <small>Works with text - no barcode needed!</small>
+                    </div>
+                </div>
+                <input type="file" id="ocrCameraInput" accept="image/*" capture="environment" style="display: none;"
+                    onchange="handleOcrCapture(event)">
+                <button type="button" class="ocr-capture-btn"
+                    onclick="document.getElementById('ocrCameraInput').click()">
+                    📷 Take Photo
+                </button>
+            </div>
+            <div class="ocr-progress" id="ocrProgress" style="display: none;">
+                <div class="ocr-progress-bar">
+                    <div class="ocr-progress-fill" id="ocrProgressFill"></div>
+                </div>
+                <p id="ocrProgressText">Initializing OCR...</p>
+            </div>
+        </div>
+
+        <div class="scanner-status" id="scannerStatus">Choose a method above</div>
 
         <div class="scanner-actions">
             <button type="button" onclick="closeScanner()" class="scanner-btn cancel">Cancel</button>
-            <button type="button" onclick="manualVinEntry()" class="scanner-btn manual">✍️ Type VIN Instead</button>
+            <button type="button" onclick="manualVinEntry()" class="scanner-btn manual">✍️ Type VIN</button>
         </div>
     </div>
 
@@ -4415,13 +4559,183 @@
                     console.log('[Scanner] Stop error:', e);
                 }
             }
+
+            // Reset OCR view
+            resetOcrView();
         }
 
-        function toggleScannerTips() {
-            const content = document.getElementById('tipsContent');
-            const arrow = document.getElementById('tipsArrow');
-            content.classList.toggle('expanded');
-            arrow.classList.toggle('expanded');
+        function resetOcrView() {
+            const preview = document.getElementById('ocrPreview');
+            preview.innerHTML = `
+                <div class="ocr-placeholder">
+                    <span class="ocr-icon">📸</span>
+                    <p>Take a photo of the VIN sticker</p>
+                    <small>Works with text - no barcode needed!</small>
+                </div>
+            `;
+            document.getElementById('ocrProgress').style.display = 'none';
+            document.getElementById('ocrProgressFill').style.width = '0%';
+        }
+
+        function switchScannerTab(tab) {
+            const barcodeTab = document.getElementById('tabBarcode');
+            const photoTab = document.getElementById('tabPhoto');
+            const barcodeView = document.getElementById('barcodeView');
+            const photoView = document.getElementById('photoView');
+            const status = document.getElementById('scannerStatus');
+
+            if (tab === 'barcode') {
+                barcodeTab.classList.add('active');
+                photoTab.classList.remove('active');
+                barcodeView.classList.add('active');
+                barcodeView.style.display = 'block';
+                photoView.classList.remove('active');
+                photoView.style.display = 'none';
+                status.textContent = 'Point camera at VIN barcode';
+
+                // Restart barcode scanner
+                if (!scannerActive) {
+                    startScanner();
+                }
+            } else {
+                barcodeTab.classList.remove('active');
+                photoTab.classList.add('active');
+                barcodeView.classList.remove('active');
+                barcodeView.style.display = 'none';
+                photoView.classList.add('active');
+                photoView.style.display = 'block';
+                status.textContent = 'Take a photo of VIN text';
+
+                // Stop barcode scanner
+                if (typeof Quagga !== 'undefined') {
+                    try {
+                        Quagga.stop();
+                    } catch (e) { }
+                }
+            }
+        }
+
+        // ==================== OCR VIN SCANNING ====================
+        async function handleOcrCapture(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const preview = document.getElementById('ocrPreview');
+            const progress = document.getElementById('ocrProgress');
+            const progressFill = document.getElementById('ocrProgressFill');
+            const progressText = document.getElementById('ocrProgressText');
+            const status = document.getElementById('scannerStatus');
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="VIN Photo">`;
+            };
+            reader.readAsDataURL(file);
+
+            // Show progress
+            progress.style.display = 'block';
+            progressFill.style.width = '10%';
+            progressText.textContent = 'Loading OCR engine...';
+            status.textContent = '🔄 Processing image...';
+
+            try {
+                console.log('[OCR] Starting Tesseract.js...');
+
+                // Create a canvas for image preprocessing
+                const img = new Image();
+                img.onload = async function () {
+                    // Preprocess image for better OCR
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    // Draw original
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert to grayscale and increase contrast
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        // Grayscale
+                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                        // Increase contrast
+                        const contrast = 1.5;
+                        const adjusted = ((avg - 128) * contrast) + 128;
+                        data[i] = data[i + 1] = data[i + 2] = Math.max(0, Math.min(255, adjusted));
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+
+                    progressFill.style.width = '30%';
+                    progressText.textContent = 'Recognizing text...';
+
+                    // Run OCR
+                    const result = await Tesseract.recognize(canvas, 'eng', {
+                        logger: (m) => {
+                            if (m.status === 'recognizing text') {
+                                const pct = Math.round(30 + (m.progress * 60));
+                                progressFill.style.width = pct + '%';
+                                progressText.textContent = `Reading text... ${Math.round(m.progress * 100)}%`;
+                            }
+                        }
+                    });
+
+                    progressFill.style.width = '95%';
+                    progressText.textContent = 'Searching for VIN...';
+
+                    console.log('[OCR] Raw text:', result.data.text);
+
+                    // Extract VIN using regex
+                    const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
+                    const text = result.data.text.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    const matches = text.match(vinPattern);
+
+                    progressFill.style.width = '100%';
+
+                    if (matches && matches.length > 0) {
+                        const vin = matches[0];
+                        console.log('[OCR] Found VIN:', vin);
+
+                        // Valid VIN found!
+                        haptic('heavy');
+                        closeScanner();
+                        document.getElementById('vin').value = vin;
+                        updateVinCounter();
+                        decodeVin(vin);
+                        showToast(`✅ VIN detected: ${vin}`, 'success');
+                    } else {
+                        // No VIN found - try alternative patterns
+                        // Sometimes OCR misreads characters
+                        const loosePattern = /[A-Z0-9]{15,19}/g;
+                        const looseMatches = text.match(loosePattern);
+
+                        if (looseMatches && looseMatches.length > 0) {
+                            const possibleVin = looseMatches[0].substring(0, 17);
+                            status.textContent = `⚠️ Possible VIN: ${possibleVin} (verify manually)`;
+                            showToast(`⚠️ Possible VIN found - needs verification`, 'error');
+                        } else {
+                            status.textContent = '❌ No VIN found - try again';
+                            showToast('❌ Could not find VIN in image', 'error');
+                        }
+
+                        // Reset for retry
+                        setTimeout(() => {
+                            resetOcrView();
+                        }, 3000);
+                    }
+                };
+                img.src = URL.createObjectURL(file);
+
+            } catch (e) {
+                console.error('[OCR] Error:', e);
+                status.textContent = '❌ OCR failed';
+                showToast('❌ OCR processing failed', 'error');
+                resetOcrView();
+            }
+
+            // Reset file input
+            event.target.value = '';
         }
 
         function manualVinEntry() {
@@ -4525,7 +4839,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.3';
+        const LOCAL_APP_VERSION = '2026.01.18.4';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

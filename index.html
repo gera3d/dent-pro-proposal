@@ -921,6 +921,13 @@
             word-break: break-all;
         }
 
+        .auto-filled {
+            border: 1px solid #4CD964 !important;
+            background-color: rgba(76, 217, 100, 0.1) !important;
+            box-shadow: 0 0 10px rgba(76, 217, 100, 0.2);
+            transition: all 0.3s ease;
+        }
+
         .result-item.missing .value {
             color: #FF9500;
         }
@@ -5034,7 +5041,10 @@
                     // console.log('[VIN Scan] Final VIN:', vin);
 
                     // Fill VIN field
-                    document.getElementById('vin').value = vin;
+                    const vinEl = document.getElementById('vin');
+                    vinEl.value = vin;
+                    vinEl.classList.add('auto-filled');
+                    vinEl.addEventListener('input', () => vinEl.classList.remove('auto-filled'), { once: true });
                     updateVinCounter();
 
                     // Decode with NHTSA
@@ -5058,10 +5068,26 @@
                         make = vehicle.Make || '';
                         model = vehicle.Model || vehicle.Series || vehicle.Trim || '';
 
-                        // Fill form fields
-                        if (year) document.getElementById('year').value = year;
-                        if (make) document.getElementById('make').value = make;
-                        if (model) document.getElementById('model').value = model;
+                        // Fill form fields and highlight
+                        if (year) {
+                            const el = document.getElementById('year');
+                            el.value = year;
+                            el.classList.add('auto-filled');
+                            // Remove highlight on change
+                            el.addEventListener('change', () => el.classList.remove('auto-filled'), { once: true });
+                        }
+                        if (make) {
+                            const el = document.getElementById('make');
+                            el.value = make;
+                            el.classList.add('auto-filled');
+                            el.addEventListener('change', () => el.classList.remove('auto-filled'), { once: true });
+                        }
+                        if (model) {
+                            const el = document.getElementById('model');
+                            el.value = model;
+                            el.classList.add('auto-filled');
+                            el.addEventListener('input', () => el.classList.remove('auto-filled'), { once: true });
+                        }
                     }
 
                     // Show result summary
@@ -5327,7 +5353,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.12';
+        const LOCAL_APP_VERSION = '2026.01.18.13';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

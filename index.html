@@ -4660,18 +4660,20 @@
                     for (let i = 0; i < data.length; i += 4) {
                         // Grayscale
                         const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                        // Increase contrast
-                        const contrast = 1.5;
-                        const adjusted = ((avg - 128) * contrast) + 128;
-                        data[i] = data[i + 1] = data[i + 2] = Math.max(0, Math.min(255, adjusted));
+                        // Binary threshold (Otsu-like) for cleaner text
+                        const threshold = 140;
+                        const bw = avg > threshold ? 255 : 0;
+                        data[i] = data[i + 1] = data[i + 2] = bw;
                     }
                     ctx.putImageData(imageData, 0, 0);
 
                     progressFill.style.width = '30%';
                     progressText.textContent = 'Recognizing text...';
 
-                    // Run OCR
+                    // Run OCR with VIN-optimized settings
                     const result = await Tesseract.recognize(canvas, 'eng', {
+                        tessedit_char_whitelist: 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789',
+                        tessedit_pageseg_mode: '6', // Assume uniform block of text
                         logger: (m) => {
                             if (m.status === 'recognizing text') {
                                 const pct = Math.round(30 + (m.progress * 60));
@@ -4686,9 +4688,24 @@
 
                     console.log('[OCR] Raw text:', result.data.text);
 
-                    // Extract VIN using regex
+                    // Clean and correct common OCR mistakes for VINs
+                    let text = result.data.text.toUpperCase();
+
+                    // Common OCR substitutions for VIN characters
+                    text = text
+                        .replace(/O/g, '0')  // O -> 0 (no O in VINs)
+                        .replace(/I/g, '1')  // I -> 1 (no I in VINs)
+                        .replace(/Q/g, '0')  // Q -> 0 (no Q in VINs)
+                        .replace(/\$/g, 'S')
+                        .replace(/\(/g, 'C')
+                        .replace(/\)/g, 'D')
+                        .replace(/!/g, '1')
+                        .replace(/[^A-Z0-9]/g, ''); // Remove non-alphanumeric
+
+                    console.log('[OCR] Cleaned text:', text);
+
+                    // Extract VIN using regex - exactly 17 alphanumeric (excluding I, O, Q)
                     const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
-                    const text = result.data.text.toUpperCase().replace(/[^A-Z0-9]/g, '');
                     const matches = text.match(vinPattern);
 
                     progressFill.style.width = '100%';
@@ -4705,24 +4722,45 @@
                         decodeVin(vin);
                         showToast(`✅ VIN detected: ${vin}`, 'success');
                     } else {
-                        // No VIN found - try alternative patterns
-                        // Sometimes OCR misreads characters
-                        const loosePattern = /[A-Z0-9]{15,19}/g;
+                        // Try to find any sequence of 15-19 alphanumeric chars
+                        const loosePattern = /[A-HJ-NPR-Z0-9]{15,19}/g;
                         const looseMatches = text.match(loosePattern);
 
                         if (looseMatches && looseMatches.length > 0) {
+                            // Take the first 17 characters
                             const possibleVin = looseMatches[0].substring(0, 17);
-                            status.textContent = `⚠️ Possible VIN: ${possibleVin} (verify manually)`;
-                            showToast(`⚠️ Possible VIN found - needs verification`, 'error');
-                        } else {
-                            status.textContent = '❌ No VIN found - try again';
-                            showToast('❌ Could not find VIN in image', 'error');
-                        }
+                            console.log('[OCR] Possible VIN:', possibleVin);
 
-                        // Reset for retry
-                        setTimeout(() => {
-                            resetOcrView();
-                        }, 3000);
+                            // Auto-fill with the possible VIN
+                            document.getElementById('vin').value = possibleVin;
+                            updateVinCounter();
+
+                            status.textContent = `⚠️ Found: ${possibleVin}`;
+                            showToast(`⚠️ VIN may need verification: ${possibleVin}`, 'error');
+
+                            // Try to decode anyway
+                            decodeVin(possibleVin);
+
+                            setTimeout(() => {
+                                closeScanner();
+                            }, 1500);
+                        } else if (text.length >= 10) {
+                            // Show what we found for debugging
+                            console.log('[OCR] Partial text found:', text);
+                            status.textContent = `⚠️ Partial read: ${text.substring(0, 20)}...`;
+                            showToast('⚠️ Could not find complete VIN - try again', 'error');
+
+                            setTimeout(() => {
+                                resetOcrView();
+                            }, 3000);
+                        } else {
+                            status.textContent = '❌ No text found - try again';
+                            showToast('❌ Could not read image', 'error');
+
+                            setTimeout(() => {
+                                resetOcrView();
+                            }, 3000);
+                        }
                     }
                 };
                 img.src = URL.createObjectURL(file);
@@ -4839,7 +4877,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.4';
+        const LOCAL_APP_VERSION = '2026.01.18.5';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

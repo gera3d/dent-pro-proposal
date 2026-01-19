@@ -4445,11 +4445,20 @@
                 if (data.Results && data.Results.length > 0) {
                     const vehicle = data.Results[0];
 
-                    // Extract values
+                    // Log full response for debugging
+                    console.log('[VIN Decode] Full response:', vehicle);
+
+                    // Extract values with fallbacks
                     const year = vehicle.ModelYear || '';
                     const make = vehicle.Make || '';
-                    const model = vehicle.Model || '';
+                    // Model has fallbacks: Model -> Series -> Trim -> BodyClass
+                    let model = vehicle.Model || vehicle.Series || vehicle.Trim || '';
                     const bodyClass = vehicle.BodyClass || '';
+
+                    // If still no model but we have body class, use it
+                    if (!model && bodyClass) {
+                        model = bodyClass;
+                    }
 
                     // Auto-fill Year
                     if (year) {
@@ -4465,10 +4474,12 @@
                     // Auto-fill Make
                     if (make) {
                         const makeSelect = document.getElementById('make');
-                        // Try to find exact match
+                        // Try to find exact match (case-insensitive)
                         let found = false;
+                        const makeLower = make.toLowerCase();
                         for (let i = 0; i < makeSelect.options.length; i++) {
-                            if (makeSelect.options[i].value.toLowerCase() === make.toLowerCase()) {
+                            if (makeSelect.options[i].value.toLowerCase() === makeLower ||
+                                makeSelect.options[i].textContent.toLowerCase() === makeLower) {
                                 makeSelect.selectedIndex = i;
                                 found = true;
                                 break;
@@ -4477,10 +4488,12 @@
                         // If not found, add it as new option
                         if (!found && make) {
                             const opt = document.createElement('option');
-                            opt.value = make;
-                            opt.textContent = make;
+                            // Capitalize properly
+                            const formattedMake = make.charAt(0).toUpperCase() + make.slice(1).toLowerCase();
+                            opt.value = formattedMake;
+                            opt.textContent = formattedMake;
                             makeSelect.appendChild(opt);
-                            makeSelect.value = make;
+                            makeSelect.value = formattedMake;
                         }
                     }
 
@@ -4490,20 +4503,29 @@
                     }
 
                     haptic();
-                    showToast(`✅ ${year} ${make} ${model}`, 'success');
+
+                    // Show appropriate success message
+                    if (year && make && model) {
+                        showToast(`✅ ${year} ${make} ${model}`, 'success');
+                    } else if (year && make) {
+                        showToast(`✅ ${year} ${make} (model not in database)`, 'success');
+                    } else {
+                        showToast(`⚠️ Partial data: ${year || 'No year'} ${make || 'No make'}`, 'error');
+                    }
+
                     saveDraft();
                 } else {
                     showToast('⚠️ VIN not found in database', 'error');
                 }
             } catch (e) {
                 console.error('[VIN Decode] Error:', e);
-                showToast('⚠️ Could not decode VIN', 'error');
+                showToast('⚠️ Could not decode VIN - check connection', 'error');
             }
         }
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.2';
+        const LOCAL_APP_VERSION = '2026.01.18.3';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

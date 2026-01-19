@@ -883,9 +883,36 @@
         .guide-box {
             width: 80%;
             height: 80px;
-            border: 3px solid #007AFF;
+            border: 3px solid #4CD964;
             border-radius: 8px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #4CD964, transparent);
+            animation: scanLine 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scanLine {
+
+            0%,
+            100% {
+                top: 0;
+                opacity: 0.5;
+            }
+
+            50% {
+                top: calc(100% - 3px);
+                opacity: 1;
+            }
         }
 
         .scanner-guide p {
@@ -3172,9 +3199,42 @@
         }
 
         // --- VIN LOGIC ---
+        let lastDecodedVin = '';
+        let vinDecodeTimeout = null;
+
         function updateVinCounter() {
-            const vin = document.getElementById('vin').value;
-            document.getElementById('vinCounter').textContent = `${vin.length}/17`;
+            const vinInput = document.getElementById('vin');
+            const vin = vinInput.value.toUpperCase();
+
+            // Auto-uppercase while typing
+            if (vinInput.value !== vin) {
+                vinInput.value = vin;
+            }
+
+            // Update counter display
+            const counter = document.getElementById('vinCounter');
+            counter.textContent = `${vin.length}/17`;
+
+            // Update counter styling
+            if (vin.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                counter.classList.add('valid');
+                counter.classList.remove('invalid');
+
+                // Auto-decode if this is a new valid VIN
+                if (vin !== lastDecodedVin) {
+                    // Debounce to avoid rapid API calls while typing
+                    clearTimeout(vinDecodeTimeout);
+                    vinDecodeTimeout = setTimeout(() => {
+                        lastDecodedVin = vin;
+                        decodeVin(vin);
+                    }, 500);
+                }
+            } else if (vin.length > 0) {
+                counter.classList.remove('valid');
+                counter.classList.add('invalid');
+            } else {
+                counter.classList.remove('valid', 'invalid');
+            }
         }
 
         // --- PHOTO LOGIC ---
@@ -4169,27 +4229,58 @@
                     target: document.getElementById('scannerCamera'),
                     constraints: {
                         facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { min: 640, ideal: 1920, max: 1920 },
+                        height: { min: 480, ideal: 1080, max: 1080 },
+                        aspectRatio: { min: 1, max: 2 }
+                    },
+                    area: {
+                        top: "20%",
+                        right: "10%",
+                        left: "10%",
+                        bottom: "20%"
                     }
                 },
+                frequency: 10, // Scan 10 times per second
+                numOfWorkers: navigator.hardwareConcurrency || 4,
                 decoder: {
-                    readers: ['code_39_reader', 'code_128_reader', 'i2of5_reader']
+                    readers: [
+                        'code_39_reader',
+                        'code_128_reader',
+                        'code_39_vin_reader',
+                        'ean_reader',
+                        'ean_8_reader',
+                        'i2of5_reader'
+                    ],
+                    multiple: false
                 },
                 locate: true,
                 locator: {
-                    halfSample: true,
-                    patchSize: 'medium'
+                    halfSample: false,
+                    patchSize: 'large'
+                },
+                debug: {
+                    drawBoundingBox: true,
+                    showFrequency: true,
+                    drawScanline: true,
+                    showPattern: true
                 }
             }, function (err) {
                 if (err) {
                     console.error('[Scanner] Init error:', err);
-                    status.textContent = 'Camera access denied. Tap "Enter Manually".';
+                    status.textContent = 'Camera error: ' + (err.message || err.name || 'Unknown');
                     status.className = 'scanner-status error';
                     return;
                 }
-                status.textContent = 'Scanning for VIN barcode...';
+                console.log('[Scanner] Quagga initialized successfully');
+                status.textContent = '📡 Scanning... Point at VIN barcode';
                 Quagga.start();
+            });
+
+            // Process every frame for debugging
+            Quagga.onProcessed(function (result) {
+                if (result && result.codeResult) {
+                    console.log('[Scanner] Processing:', result.codeResult.code, 'Format:', result.codeResult.format);
+                }
             });
 
             Quagga.onDetected(onBarcodeDetected);
@@ -4242,6 +4333,9 @@
 
         // NHTSA VIN Decoder API (Free)
         async function decodeVin(vin) {
+            // Track this VIN to prevent duplicate lookups
+            lastDecodedVin = vin;
+
             const status = document.getElementById('scannerStatus');
             showToast('🔍 Looking up vehicle...', 'info');
 
@@ -4310,7 +4404,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.16.9';
+        const LOCAL_APP_VERSION = '2026.01.18.1';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

@@ -938,6 +938,67 @@
             color: #FF453A;
         }
 
+        /* Scanner Tips */
+        .scanner-tips {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tips-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            color: #FFD60A;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tips-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tips-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .tips-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .tips-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .tips-content.expanded {
+            max-height: 300px;
+            padding: 0 20px 16px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: #a1a1a6;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tip-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+
         .scanner-actions {
             display: flex;
             gap: 12px;
@@ -1785,9 +1846,40 @@
             </div>
         </div>
         <div class="scanner-status" id="scannerStatus">Initializing camera...</div>
+
+        <!-- Scanning Tips -->
+        <div class="scanner-tips">
+            <div class="tips-toggle" onclick="toggleScannerTips()">
+                <span>💡 Tips for better scanning</span>
+                <span class="tips-arrow" id="tipsArrow">▼</span>
+            </div>
+            <div class="tips-content" id="tipsContent">
+                <div class="tip-item">
+                    <span class="tip-icon">☀️</span>
+                    <span>Good lighting - avoid shadows on barcode</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">📏</span>
+                    <span>Hold 4-8 inches from barcode</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">📐</span>
+                    <span>Keep camera parallel, not angled</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🔍</span>
+                    <span>Door jamb sticker has the barcode</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✋</span>
+                    <span>Hold steady for 2-3 seconds</span>
+                </div>
+            </div>
+        </div>
+
         <div class="scanner-actions">
             <button type="button" onclick="closeScanner()" class="scanner-btn cancel">Cancel</button>
-            <button type="button" onclick="manualVinEntry()" class="scanner-btn manual">Enter Manually</button>
+            <button type="button" onclick="manualVinEntry()" class="scanner-btn manual">✍️ Type VIN Instead</button>
         </div>
     </div>
 
@@ -4325,10 +4417,17 @@
             }
         }
 
+        function toggleScannerTips() {
+            const content = document.getElementById('tipsContent');
+            const arrow = document.getElementById('tipsArrow');
+            content.classList.toggle('expanded');
+            arrow.classList.toggle('expanded');
+        }
+
         function manualVinEntry() {
             closeScanner();
             document.getElementById('vin').focus();
-            showToast('Enter VIN manually', 'info');
+            showToast('💡 Type VIN - auto-lookup will find Year/Make/Model', 'info');
         }
 
         // NHTSA VIN Decoder API (Free)
@@ -4404,7 +4503,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.1';
+        const LOCAL_APP_VERSION = '2026.01.18.2';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 

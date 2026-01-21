@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <!-- Build Version: 2026-01-16 T14:46:00 -->
+    <!-- Build Version: 2026-01-19 T15:45:00 - Polish Round -->
     <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1346,7 +1346,168 @@
                 flex: 1;
             }
         }
+
+        /* PDF Export Styles */
+        .export-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .export-options {
+            margin-bottom: 16px;
+        }
+
+        .export-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .export-checkbox:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .export-checkbox.selected {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+        }
+
+        .export-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            accent-color: #4CD964;
+            cursor: pointer;
+        }
+
+        .export-checkbox label {
+            margin: 0;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .photo-mode-toggle {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .photo-mode-option {
+            flex: 1;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: #a1a1a6;
+        }
+
+        .photo-mode-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .photo-mode-option.active {
+            background: rgba(76, 217, 100, 0.15);
+            border-color: #4CD964;
+            color: #4CD964;
+        }
+
+        .export-btn {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D4 100%);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        .export-btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        /* Hidden PDF Template */
+        #pdfTemplate {
+            position: fixed;
+            left: -99999px;
+            width: 612px;
+            height: 792px;
+            background: white;
+            padding: 36px;
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
+            color: black;
+            overflow: hidden;
+        }
+
+        #pdfTemplate h1 {
+            margin: 0;
+            font-size: 18pt;
+            color: #000;
+        }
+
+        #pdfTemplate h3 {
+            margin: 0 0 6px 0;
+            font-size: 10pt;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+        }
+
+        #pdfTemplate table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+        }
+
+        #pdfTemplate th,
+        #pdfTemplate td {
+            border: 1px solid #ccc;
+            padding: 3px;
+        }
+
+        #pdfTemplate th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
     </style>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -1433,6 +1594,14 @@
                 <div class="info-group col-span-2">
                     <label>Insured (Customer Name)</label>
                     <input type="text" id="insuredName" required placeholder="Customer's full name">
+                </div>
+                <div class="info-group col-span-1">
+                    <label>Customer Email</label>
+                    <input type="email" id="customerEmail" placeholder="email@example.com">
+                </div>
+                <div class="info-group col-span-1">
+                    <label>Customer Phone</label>
+                    <input type="tel" id="customerPhone" placeholder="(555) 123-4567">
                 </div>
                 <div class="info-group col-span-2">
                     <label>Carrier</label>
@@ -2558,6 +2727,39 @@
                 </div>
             </div>
 
+            <!-- PDF EXPORT SECTION -->
+            <div class="section export-section">
+                <div class="section-title">📄 PDF Export Options</div>
+
+                <div class="export-options">
+                    <!-- Include Text Toggle -->
+                    <div class="export-checkbox selected" onclick="toggleExportCheckbox(this)">
+                        <input type="checkbox" id="includeTextVersion" checked>
+                        <label for="includeTextVersion">Include detailed damage table</label>
+                    </div>
+
+                    <!-- Photo Handling -->
+                    <div class="form-group">
+                        <label>Photo Handling</label>
+                        <div class="photo-mode-toggle">
+                            <div class="photo-mode-option" data-mode="thumbnails"
+                                onclick="selectPhotoMode('thumbnails')">
+                                🖼️ Thumbnails in PDF
+                            </div>
+                            <div class="photo-mode-option active" data-mode="attached"
+                                onclick="selectPhotoMode('attached')">
+                                📎 Photos Attached Separately
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Button -->
+                <button type="button" class="export-btn" onclick="generatePDF()">
+                    <span>📄</span> Export as PDF
+                </button>
+            </div>
+
             <div class="submit-bar">
                 <!-- Estimate Display -->
                 <div class="estimate-bar" id="estimateBar">
@@ -2617,6 +2819,72 @@
                 </div>
             </div>
         </form>
+
+        <!-- HIDDEN PDF TEMPLATE -->
+        <div id="pdfTemplate">
+            <!-- HEADER -->
+            <div
+                style="text-align: center; border-bottom: 2px solid #4CD964; padding-bottom: 8px; margin-bottom: 12px;">
+                <h1>DENT EXPERTS PDR SCOPE</h1>
+                <p style="margin: 4px 0 0 0; font-size: 8pt; color: #666;">
+                    RO#: <span id="pdf-ro"></span> | Estimator: <span id="pdf-estimator"></span> | Date: <span
+                        id="pdf-date"></span>
+                </p>
+            </div>
+
+            <!-- VEHICLE INFO (2-column grid) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 8pt;">
+                <div><strong>VIN:</strong> <span id="pdf-vin"></span></div>
+                <div><strong>Year:</strong> <span id="pdf-year"></span></div>
+                <div><strong>Make:</strong> <span id="pdf-make"></span></div>
+                <div><strong>Model:</strong> <span id="pdf-model"></span></div>
+                <div><strong>Color:</strong> <span id="pdf-color"></span></div>
+                <div><strong>Trim:</strong> <span id="pdf-trim"></span></div>
+                <div><strong>Insured:</strong> <span id="pdf-insured"></span></div>
+                <div><strong>Carrier:</strong> <span id="pdf-carrier"></span></div>
+                <div><strong>Claim #:</strong> <span id="pdf-claim"></span></div>
+                <div><strong>Odometer:</strong> <span id="pdf-odometer"></span></div>
+            </div>
+
+            <!-- DAMAGE ASSESSMENT TABLE -->
+            <div id="pdf-damage-section" style="margin-bottom: 12px;">
+                <h3>Damage Assessment</h3>
+                <table>
+                    <thead>
+                        <tr style="background: #f0f0f0;">
+                            <th style="text-align: left;">Panel</th>
+                            <th style="text-align: center; width: 50px;">DC</th>
+                            <th style="text-align: center; width: 50px;">OS</th>
+                            <th style="text-align: left;">R&I</th>
+                            <th style="text-align: center; width: 40px;">R&R</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pdf-panel-rows">
+                        <!-- Rows inserted via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PHOTOS -->
+            <div id="pdf-photos-section" style="margin-bottom: 12px;">
+                <h3>Photos</h3>
+                <div id="pdf-photo-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                    <!-- Photos or message inserted via JS -->
+                </div>
+            </div>
+
+            <!-- NOTES -->
+            <div id="pdf-notes-section" style="margin-bottom: 12px;">
+                <h3>Notes</h3>
+                <p id="pdf-notes-text" style="font-size: 8pt; margin: 0; white-space: pre-wrap;"></p>
+            </div>
+
+            <!-- FOOTER -->
+            <div
+                style="position: absolute; bottom: 24px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: #999; border-top: 1px solid #ddd; padding-top: 6px;">
+                Generated by Dent Experts PDR Scope App | <span id="pdf-timestamp"></span>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -3911,6 +4179,458 @@
         .stepper-wrapper.os-stepper .stepper-btn {
             color: #FF453A;
         }
+
+        /* =========================================
+           POLISH ROUND - Enhanced Micro-Interactions
+           ========================================= */
+
+        /* --- Stepper Enhancements --- */
+        .stepper-wrapper {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stepper-wrapper:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .stepper-wrapper:focus-within {
+            border-color: rgba(76, 217, 100, 0.4);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(76, 217, 100, 0.15);
+        }
+
+        .stepper-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ripple effect on button click */
+        .stepper-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .stepper-btn:active::before {
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+        }
+
+        /* Value pop animation */
+        .stepper-value {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease;
+        }
+
+        .stepper-value.pop {
+            transform: scale(1.15);
+        }
+
+        /* --- Coin Selector Polish --- */
+        .coin-selector {
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .coin-selector.disabled {
+            opacity: 0.25;
+            transform: scale(0.98);
+        }
+
+        .coin-btn {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .coin-btn:hover:not(.selected) {
+            background: rgba(255, 255, 255, 0.08);
+            color: #bbb;
+        }
+
+        .coin-btn.selected {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.25) 0%, rgba(0, 122, 255, 0.15) 100%);
+            color: #4FC3F7;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+        .coin-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* --- Panel Box Enhancements --- */
+        .panel-box {
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .panel-box:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.045);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .panel-box.is-complete {
+            border-color: rgba(76, 217, 100, 0.5);
+            background: rgba(76, 217, 100, 0.06);
+            box-shadow: 0 0 20px rgba(76, 217, 100, 0.12), 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-box.has-upd {
+            animation: upd-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes upd-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px rgba(255, 149, 0, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 149, 0, 0.35);
+            }
+        }
+
+        /* Panel header glow on data entry */
+        .panel-box.has-data .panel-header {
+            border-left-color: #4CD964;
+            text-shadow: 0 0 10px rgba(76, 217, 100, 0.3);
+        }
+
+        /* --- Footer Stats Animation --- */
+        .stat-box {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stat-value.updated {
+            animation: stat-pop 0.3s ease;
+        }
+
+        @keyframes stat-pop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* --- Button Enhancements --- */
+        .footer-btn,
+        .saved-btn,
+        .vin-scan-btn,
+        .photo-btn,
+        .export-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-btn::after,
+        .saved-btn::after,
+        .photo-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .footer-btn:hover::after,
+        .saved-btn:hover::after,
+        .photo-btn:hover::after {
+            left: 100%;
+        }
+
+        /* --- Form Input Polish --- */
+        .general-info-grid input,
+        .general-info-grid select,
+        .toolbar-input {
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .general-info-grid input:focus,
+        .general-info-grid select:focus {
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.08);
+            box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.12);
+        }
+
+        /* Auto-filled state enhancement */
+        .auto-filled {
+            border-color: #4CD964 !important;
+            background: rgba(76, 217, 100, 0.12) !important;
+            box-shadow: 0 0 12px rgba(76, 217, 100, 0.25);
+            animation: auto-fill-glow 0.5s ease;
+        }
+
+        @keyframes auto-fill-glow {
+            0% {
+                box-shadow: 0 0 0 rgba(76, 217, 100, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(76, 217, 100, 0.5);
+            }
+
+            100% {
+                box-shadow: 0 0 12px rgba(76, 217, 100, 0.25);
+            }
+        }
+
+        /* --- VIN Scan Section Polish --- */
+        .vin-scan-section {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .vin-scan-section:hover {
+            border-color: rgba(76, 217, 100, 0.4);
+            box-shadow: 0 0 30px rgba(76, 217, 100, 0.1);
+        }
+
+        .vin-scan-btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .vin-scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 217, 100, 0.5);
+        }
+
+        /* Result grid enhancement */
+        .result-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-item.filled {
+            animation: result-slide-in 0.3s ease forwards;
+        }
+
+        @keyframes result-slide-in {
+            from {
+                transform: translateX(-10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* --- Saved Forms Bar Polish --- */
+        .saved-forms-bar {
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .saved-forms-bar:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .saved-forms-select {
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .saved-forms-select:focus {
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+        }
+
+        /* --- Export Section Polish --- */
+        .photo-mode-option {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .photo-mode-option:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .photo-mode-option.active {
+            transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(76, 217, 100, 0.25);
+        }
+
+        .export-btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .export-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+        }
+
+        .export-btn:disabled {
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading state for export button */
+        .export-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .export-btn.loading span {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        /* --- Checkbox Enhancements --- */
+        .checklist-table input[type="checkbox"] {
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .checklist-table input[type="checkbox"]:hover {
+            border-color: rgba(76, 217, 100, 0.5);
+            box-shadow: 0 0 8px rgba(76, 217, 100, 0.2);
+        }
+
+        .checklist-table input[type="checkbox"]:checked {
+            animation: checkbox-check 0.2s ease;
+        }
+
+        @keyframes checkbox-check {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* --- Toast Enhancements --- */
+        .toast {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .toast.success {
+            border-color: rgba(76, 217, 100, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(76, 217, 100, 0.2);
+        }
+
+        .toast.error {
+            border-color: rgba(255, 69, 58, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 69, 58, 0.2);
+        }
+
+        /* --- Scrollbar Polish (for non-hidden areas) --- */
+        .panel-box::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .panel-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .panel-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        .panel-box::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* --- Estimate Bar Enhancement --- */
+        .estimate-bar {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .estimate-bar:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(255, 159, 10, 0.2);
+        }
+
+        .estimate-amount {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* --- Grid Header Enhancement --- */
+        .grid-header {
+            transition: background 0.2s ease;
+            background: linear-gradient(135deg, rgba(76, 217, 100, 0.15) 0%, rgba(51, 51, 51, 0.8) 100%);
+        }
+
+        /* --- Photo Preview Enhancement --- */
+        .photo-preview {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .photo-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .photo-preview .remove-photo {
+            transition: transform 0.15s ease, background 0.2s ease;
+        }
+
+        .photo-preview:hover .remove-photo {
+            transform: scale(1.1);
+        }
+
+        /* --- Brand Bar Polish --- */
+        .brand-bar .logo img {
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .brand-bar .logo:hover img {
+            transform: scale(1.05);
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(76, 217, 100, 0.4));
+        }
+
+        /* --- Help Link Polish --- */
+        .help-link {
+            transition: all 0.2s ease;
+        }
+
+        .help-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+        }
+
+        /* --- UPD Toggle Enhancement --- */
+        .upd-toggle {
+            transition: all 0.2s ease;
+        }
+
+        .upd-toggle:hover {
+            transform: translateX(2px);
+        }
+
+        .upd-toggle.active {
+            box-shadow: 0 0 15px rgba(255, 149, 0, 0.25);
+        }
     </style>
 
     <script>
@@ -4324,7 +5044,23 @@
                 }
             }
 
+            // Pop animation for visual feedback
+            if (direction !== 0) {
+                display.classList.add('pop');
+                setTimeout(() => display.classList.remove('pop'), 150);
+            }
+
             toggleCoinVisibility(name, newValue === 'Off Matrix');
+
+            // Toggle has-data class on parent panel for visual feedback
+            const panelBox = hiddenInput.closest('.panel-box');
+            if (panelBox) {
+                if (newValue && newValue !== '') {
+                    panelBox.classList.add('has-data');
+                } else {
+                    panelBox.classList.remove('has-data');
+                }
+            }
 
             // Trigger change for totals
             hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -4344,6 +5080,12 @@
 
             hiddenInput.value = newVal;
             display.textContent = newVal;
+
+            // Pop animation for visual feedback
+            if (direction !== 0) {
+                display.classList.add('pop');
+                setTimeout(() => display.classList.remove('pop'), 150);
+            }
 
             // Trigger change
             hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -4802,10 +5544,24 @@
             });
 
             // Update UI - use panelsWithDamage as the "Dent Count" display showing # of panels
-            document.getElementById('liveDentCount').textContent = panelsWithDamage;
-            document.getElementById('liveOsCount').textContent = totalOs;
-            document.getElementById('liveRiCount').textContent = totalRi;
-            document.getElementById('liveRrCount').textContent = totalRr;
+            const dentEl = document.getElementById('liveDentCount');
+            const osEl = document.getElementById('liveOsCount');
+            const riEl = document.getElementById('liveRiCount');
+            const rrEl = document.getElementById('liveRrCount');
+
+            // Helper to animate stat changes
+            function animateStat(el, newValue) {
+                if (el && el.textContent !== String(newValue)) {
+                    el.textContent = newValue;
+                    el.classList.add('updated');
+                    setTimeout(() => el.classList.remove('updated'), 300);
+                }
+            }
+
+            animateStat(dentEl, panelsWithDamage);
+            animateStat(osEl, totalOs);
+            animateStat(riEl, totalRi);
+            animateStat(rrEl, totalRr);
         }
 
         // ==================== PRICING CALCULATOR ====================
@@ -5244,95 +6000,535 @@
             return new Blob([byteArray], { type: mimeType });
         }
 
+        // =============================================
+        // PDF EXPORT FUNCTIONALITY
+        // =============================================
+
+        // Global config for PDF export
+        let pdfPhotoMode = 'attached'; // 'thumbnails' or 'attached'
+
+        // Toggle export checkbox visual state
+        function toggleExportCheckbox(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            element.classList.toggle('selected', checkbox.checked);
+        }
+
+        // Select photo mode
+        function selectPhotoMode(mode) {
+            pdfPhotoMode = mode;
+            document.querySelectorAll('.photo-mode-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.mode === mode);
+            });
+        }
+
+        // Main PDF generation function
+        async function generatePDF() {
+            try {
+                haptic('medium');
+
+                // Disable button and show loading
+                const exportBtn = document.querySelector('.export-btn');
+                const originalHTML = exportBtn.innerHTML;
+                exportBtn.disabled = true;
+                exportBtn.innerHTML = '<span class="spinner"></span> Generating PDF...';
+
+                // Collect form data
+                const formData = collectFormData();
+
+                // Check if jsPDF is loaded
+                if (typeof window.jspdf === 'undefined') {
+                    throw new Error('PDF library not loaded. Please refresh the page.');
+                }
+
+                // Populate the hidden template
+                populatePDFTemplate(formData);
+
+                // Wait a bit for DOM to update
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // Render template to canvas
+                const template = document.getElementById('pdfTemplate');
+                const canvas = await html2canvas(template, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: 612,
+                    height: 792
+                });
+
+                // Create PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'pt',
+                    format: 'letter'
+                });
+
+                // Add rendered image to PDF
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, 612, 792);
+
+                // Share or download PDF
+                await sharePDF(pdf, formData);
+
+                // Reset button
+                exportBtn.disabled = false;
+                exportBtn.innerHTML = originalHTML;
+
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                showToast('❌ PDF generation failed: ' + error.message, 'error');
+
+                // Reset button
+                const exportBtn = document.querySelector('.export-btn');
+                exportBtn.disabled = false;
+                exportBtn.innerHTML = '<span>📄</span> Export as PDF';
+            }
+        }
+
+        // Populate PDF template with form data
+        function populatePDFTemplate(formData) {
+            // Header info
+            document.getElementById('pdf-ro').textContent = formData.roNumber || 'N/A';
+            document.getElementById('pdf-estimator').textContent = formData.estimator || 'N/A';
+            document.getElementById('pdf-date').textContent = new Date().toLocaleDateString();
+
+            // Vehicle info
+            document.getElementById('pdf-vin').textContent = formData.vin || '';
+            document.getElementById('pdf-year').textContent = formData.year || '';
+            document.getElementById('pdf-make').textContent = formData.make || '';
+            document.getElementById('pdf-model').textContent = formData.model || '';
+            document.getElementById('pdf-color').textContent = formData.color || '';
+            document.getElementById('pdf-trim').textContent = formData.trim || '';
+            document.getElementById('pdf-insured').textContent = formData.insuredName || '';
+            document.getElementById('pdf-carrier').textContent = formData.insuranceCompany || '';
+            document.getElementById('pdf-claim').textContent = formData.claimNumber || '';
+            document.getElementById('pdf-odometer').textContent = formData.odometer || '';
+
+            // Damage assessment table
+            const includeTable = document.getElementById('includeTextVersion').checked;
+            const damageSection = document.getElementById('pdf-damage-section');
+
+            if (includeTable) {
+                damageSection.style.display = 'block';
+                const tbody = document.getElementById('pdf-panel-rows');
+                tbody.innerHTML = '';
+
+                // Get all panels with damage
+                const panels = [];
+                document.querySelectorAll('.panel-box').forEach(box => {
+                    const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
+                    const dcInput = box.querySelector('input[name$="_dc"]');
+                    const osInput = box.querySelector('input[name$="_os"]');
+                    const dcVal = dcInput ? dcInput.value : '';
+                    const osVal = osInput ? osInput.value : '';
+
+                    // Get R&I items
+                    const riItems = [];
+                    box.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
+                        const label = cb.closest('.checkbox-item')?.querySelector('span')?.textContent?.trim();
+                        if (label && !label.includes('R&R')) {
+                            riItems.push(label);
+                        }
+                    });
+
+                    // Get R&R status
+                    const rrCheckbox = box.querySelector('input[name$="_rr"]');
+                    const rrChecked = rrCheckbox ? rrCheckbox.checked : false;
+
+                    // Only add panels with some damage
+                    if (dcVal || osVal || riItems.length > 0 || rrChecked) {
+                        panels.push({
+                            name: panelName,
+                            dc: dcVal || '-',
+                            os: osVal || '-',
+                            ri: riItems.join(', ') || '-',
+                            rr: rrChecked ? '✓' : ''
+                        });
+                    }
+                });
+
+                // Add rows to table
+                panels.forEach(panel => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${panel.name}</td>
+                        <td style="text-align: center;">${panel.dc}</td>
+                        <td style="text-align: center;">${panel.os}</td>
+                        <td>${panel.ri}</td>
+                        <td style="text-align: center;">${panel.rr}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // If no panels, add a note
+                if (panels.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No damage recorded</td></tr>';
+                }
+            } else {
+                damageSection.style.display = 'none';
+            }
+
+            // Photos section
+            const photosSection = document.getElementById('pdf-photos-section');
+            const photoGrid = document.getElementById('pdf-photo-grid');
+
+            if (pdfPhotoMode === 'thumbnails' && selectedPhotos.length > 0) {
+                photosSection.style.display = 'block';
+                photoGrid.innerHTML = '';
+
+                // Add up to 6 photos as thumbnails
+                const photosToShow = selectedPhotos.slice(0, 6);
+                photosToShow.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.data;
+                    img.style.width = '100%';
+                    img.style.height = '80px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '4px';
+                    photoGrid.appendChild(img);
+                });
+            } else if (selectedPhotos.length > 0) {
+                photosSection.style.display = 'block';
+                photoGrid.innerHTML = `<p style="font-size: 8pt; color: #666; margin: 0;">${selectedPhotos.length} photo(s) attached separately</p>`;
+            } else {
+                photosSection.style.display = 'none';
+            }
+
+            // Notes
+            const notesSection = document.getElementById('pdf-notes-section');
+            const notesText = document.getElementById('pdf-notes-text');
+            const notes = document.getElementById('notes')?.value?.trim() || '';
+
+            if (notes) {
+                notesSection.style.display = 'block';
+                notesText.textContent = notes;
+            } else {
+                notesSection.style.display = 'none';
+            }
+
+            // Timestamp
+            document.getElementById('pdf-timestamp').textContent = new Date().toLocaleString();
+        }
+
+        // Share PDF using iOS Share Sheet or download
+        async function sharePDF(pdf, formData) {
+            // Create filename
+            const timestamp = new Date().toISOString().slice(0, 10);
+            const roNum = formData.roNumber || 'draft';
+            const fileName = `DentScope_${roNum}_${timestamp}.pdf`;
+
+            // Convert PDF to Blob
+            const pdfBlob = pdf.output('blob');
+            const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+            // Check if Web Share API is supported
+            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                try {
+                    const filesToShare = [pdfFile];
+
+                    // If photos attached mode, add photo files
+                    if (pdfPhotoMode === 'attached' && selectedPhotos.length > 0) {
+                        for (let i = 0; i < selectedPhotos.length; i++) {
+                            const photo = selectedPhotos[i];
+                            // Convert base64 to File
+                            const photoFile = base64ToFile(
+                                photo.data,
+                                photo.name || `Photo_${i + 1}.jpg`,
+                                'image/jpeg'
+                            );
+                            filesToShare.push(photoFile);
+                        }
+                    }
+
+                    // Open iOS Share Sheet
+                    await navigator.share({
+                        title: `Dent Scope - ${roNum}`,
+                        text: `PDR Scope for ${formData.insuredName || 'Customer'}`,
+                        files: filesToShare
+                    });
+
+                    showToast('✅ PDF shared successfully!', 'success');
+                    haptic('success');
+
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Share failed:', error);
+                        // Fallback to download
+                        fallbackDownloadPDF(pdf, fileName);
+                    }
+                    // If AbortError, user cancelled - do nothing
+                }
+            } else {
+                // Fallback for non-supporting browsers
+                fallbackDownloadPDF(pdf, fileName);
+            }
+        }
+
+        // Fallback: Download PDF
+        function fallbackDownloadPDF(pdf, fileName) {
+            pdf.save(fileName);
+            showToast('📥 PDF downloaded', 'success');
+            haptic('success');
+        }
+
+        // Helper: Convert base64 to File object
+        function base64ToFile(base64Data, filename, mimeType) {
+            // Remove data URL prefix if present
+            const base64 = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
+
+            // Decode base64
+            const byteString = atob(base64);
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            for (let i = 0; i < byteString.length; i++) {
+                uint8Array[i] = byteString.charCodeAt(i);
+            }
+
+            // Create File
+            return new File([uint8Array], filename, { type: mimeType });
+        }
+
+
         // 2. Submit Data Function
-        function submitData(photoUrls) {
-            const submitBtn = document.getElementById('submitBtn'); // Get button reference here
-            // updateStatus('Saving data...'); // Assuming updateStatus is defined elsewhere or removed
+        // ==================== GHL API CONFIGURATION ====================
+        const GHL_CONFIG = {
+            accessToken: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+            locationId: 'AAzBZNLXS4rdwhG76MLi',
+            baseUrl: 'https://services.leadconnectorhq.com',
+            pipelines: {
+                production: {
+                    id: 'JptjUQHom2aW3y3MGc2g',
+                    startStage: 'abf22448-51ea-474f-bac1-e4edd981f8e3'
+                },
+                expert_path: {
+                    id: 'zLqAUFVD2Bfub4EP54lL',
+                    startStage: 'f62deed6-d81c-4e31-98aa-af54d5646596'
+                }
+            },
+            customFields: {
+                vin: 'Au75x5FoMof3Bsjexmj3',
+                year: 'tRnwHMSfBWl329vr1jsd',
+                make: 's49iwLf4IDkUgKKcQAQ0',
+                model: 'GXMUoOOiBFliQxuAGuzk',
+                insurance_company: 'YVIvG2P73p9IltxLHm5v',
+                claim_number: 'Qcsf5Kk2MrNp1UP9kdDt',
+                technician_name: 'XOdGZsGCmyjFmZO1eHsw'
+            }
+        };
+
+        // ==================== GHL API FUNCTIONS ====================
+        async function submitToGHL(formData) {
+            try {
+                // Step 1: Create or find contact
+                const contact = await upsertGHLContact(formData);
+                if (!contact.success) {
+                    throw new Error(contact.error || 'Failed to create contact');
+                }
+
+                // Step 2: Create opportunity
+                const opportunity = await createGHLOpportunity(formData, contact.contactId);
+
+                return {
+                    success: true,
+                    contactId: contact.contactId,
+                    opportunityId: opportunity.opportunityId
+                };
+            } catch (error) {
+                console.error('GHL Error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function upsertGHLContact(formData) {
+            const email = formData.customerEmail;
+            const phone = formData.customerPhone;
+
+            if (!email && !phone) {
+                return { success: false, error: 'Email or phone required' };
+            }
+
+            // Search for existing contact
+            const searchQuery = email || phone;
+            try {
+                const searchResponse = await fetch(
+                    `${GHL_CONFIG.baseUrl}/contacts/search?locationId=${GHL_CONFIG.locationId}&query=${encodeURIComponent(searchQuery)}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28'
+                        }
+                    }
+                );
+
+                const searchResult = await searchResponse.json();
+
+                if (searchResult.contacts && searchResult.contacts.length > 0) {
+                    console.log('Found existing contact:', searchResult.contacts[0].id);
+                    return { success: true, contactId: searchResult.contacts[0].id };
+                }
+            } catch (e) {
+                console.log('Search failed, creating new contact');
+            }
+
+            // Create new contact
+            const nameParts = (formData.insuredName || '').split(' ');
+            const firstName = nameParts[0] || 'Customer';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            const createResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                    'Version': '2021-07-28',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    locationId: GHL_CONFIG.locationId,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email || undefined,
+                    phone: phone || undefined,
+                    source: 'Dent Experts Form'
+                })
+            });
+
+            const createResult = await createResponse.json();
+
+            if (createResult.contact && createResult.contact.id) {
+                console.log('Created contact:', createResult.contact.id);
+                return { success: true, contactId: createResult.contact.id };
+            }
+
+            return { success: false, error: 'Failed to create contact in GHL' };
+        }
+
+        async function createGHLOpportunity(formData, contactId) {
+            const pipeline = GHL_CONFIG.pipelines.production;
+            const title = `Repair: ${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'New Repair';
+
+            const customFields = [];
+            if (formData.vin) customFields.push({ id: GHL_CONFIG.customFields.vin, value: formData.vin });
+            if (formData.year) customFields.push({ id: GHL_CONFIG.customFields.year, value: formData.year });
+            if (formData.make) customFields.push({ id: GHL_CONFIG.customFields.make, value: formData.make });
+            if (formData.model) customFields.push({ id: GHL_CONFIG.customFields.model, value: formData.model });
+            if (formData.insurance) customFields.push({ id: GHL_CONFIG.customFields.insurance_company, value: formData.insurance });
+            if (formData.claimNumber) customFields.push({ id: GHL_CONFIG.customFields.claim_number, value: formData.claimNumber });
+            if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
+
+            const response = await fetch(`${GHL_CONFIG.baseUrl}/opportunities/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                    'Version': '2021-07-28',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    pipelineId: pipeline.id,
+                    pipelineStageId: pipeline.startStage,
+                    locationId: GHL_CONFIG.locationId,
+                    name: title,
+                    contactId: contactId,
+                    status: 'open',
+                    customFields: customFields
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.opportunity && result.opportunity.id) {
+                console.log('Created opportunity:', result.opportunity.id);
+                return { success: true, opportunityId: result.opportunity.id };
+            }
+
+            return { success: false, error: 'Failed to create opportunity' };
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        async function submitData(photoUrls) {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '⏳ Submitting to GHL...';
+            submitBtn.disabled = true;
 
             // Base Data
             const rawData = {
                 roNumber: document.getElementById('roNumber').value,
+                insuredName: document.getElementById('insuredName').value,
+                customerEmail: document.getElementById('customerEmail').value,
+                customerPhone: document.getElementById('customerPhone').value,
                 vin: document.getElementById('vin').value.toUpperCase(),
                 year: document.getElementById('year').value,
                 make: document.getElementById('make').value,
                 model: document.getElementById('model').value,
                 color: document.getElementById('color').value,
-                insurance: document.getElementById('insuranceCompany').value, // Corrected ID
+                insurance: document.getElementById('insuranceCompany').value,
                 claimNumber: document.getElementById('claimNumber').value,
                 location: document.getElementById('location').value,
-                // scoper: document.getElementById('scoper').value, // Not in original form
                 estimator: document.getElementById('estimator').value,
-                // severity: severityRadio.value, // Not in original form
-                // panelCount: document.getElementById('panelCount').value, // Not in original form
                 notes: document.getElementById('notes').value,
                 status: document.getElementById('status').value,
                 photoUrls: photoUrls
             };
 
             // Collect and Bundle Panel Data
-            const checklistBundles = {}; // { 'lf_fender_ri': ['Lamp', 'Liner'] }
+            const checklistBundles = {};
 
-            // Scan all inputs with names
             document.querySelectorAll('#scopeForm [name]').forEach(input => {
                 const name = input.name;
                 let value = input.value;
 
                 if (input.type === 'checkbox') {
-                    if (!input.checked) return; // Skip unchecked
+                    if (!input.checked) return;
                     value = 'Yes';
 
-                    // Check for R&I / R&R Pattern: {panel}_{ri|rr}_{part}
-                    // Regex: matches anything ending in _ri_{part} or _rr_{part}
-                    // We want to capture the panel name and the type.
                     const match = name.match(/^(.+)_(ri|rr)_(.+)$/);
                     if (match) {
                         const panel = match[1];
-                        const type = match[2]; // ri or rr
+                        const type = match[2];
                         const part = match[3];
-                        // Create bundle key: lf_fender_ri
                         const bundleKey = `${panel}_${type}`;
 
                         if (!checklistBundles[bundleKey]) checklistBundles[bundleKey] = [];
-                        // Add part name (Capitalized)
                         checklistBundles[bundleKey].push(part.charAt(0).toUpperCase() + part.slice(1));
-                        return; // handled
+                        return;
                     }
 
-                    // Other checkboxes (General flags?)
                     rawData[name] = 'Yes';
                 } else if (input.type === 'radio') {
                     if (input.checked) rawData[name] = value;
                 } else {
-                    // Text/Number inputs
                     rawData[name] = value;
                 }
             });
 
-            // Merge Bundles into Raw Data
             Object.keys(checklistBundles).forEach(key => {
                 rawData[key] = checklistBundles[key].join(', ');
             });
 
-            // Submit to Apps Script
-            google.script.run
-                .withSuccessHandler(function (result) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Submit Scope';
+            // Submit to GHL
+            try {
+                const ghlResult = await submitToGHL(rawData);
 
-                    // Assuming 'result' from Apps Script indicates success/failure
-                    if (result && result.success) {
-                        document.getElementById('successModal').style.display = 'flex'; // Use style.display for visibility
-                        clearDraft(); // Clear local storage on success
-                    } else {
-                        alert('Error: ' + (result ? (result.error || 'Unknown error') : 'Unknown error from server'));
-                    }
-                })
-                .withFailureHandler(function (error) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Submit Scope';
-                    alert('Error submitting form: ' + error.message);
-                })
-                .saveToSheet(rawData);
+                if (ghlResult.success) {
+                    showToast(`✅ Sent to GHL! Contact: ${ghlResult.contactId}`, 'success');
+                    console.log('GHL Success:', ghlResult);
+
+                    // Show success modal
+                    document.getElementById('successModal').style.display = 'flex';
+                    clearDraft();
+                } else {
+                    showToast(`⚠️ GHL Error: ${ghlResult.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                showToast(`❌ Error: ${error.message}`, 'error');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Submit Scope';
         }
 
         function resetForm() {

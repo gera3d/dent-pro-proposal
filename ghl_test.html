@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GHL API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        pre {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            color: #4CD964;
+        }
+
+        .error {
+            color: #FF453A;
+        }
+
+        h2 {
+            color: #4CD964;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GHL API Configuration Test</h1>
+    <p>This page tests your GoHighLevel API connection and custom field mapping.</p>
+
+    <button onclick="testCreateContact()">Test 1: Create Test Contact</button>
+    <button onclick="testCreateOpportunity()">Test 2: Create Test Opportunity</button>
+    <button onclick="listCustomFields()">Test 3: List Custom Fields</button>
+
+    <h2>Results:</h2>
+    <pre id="output">Click a button to run a test...</pre>
+
+    <script>
+        const GHL_CONFIG = {
+            accessToken: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+            locationId: 'AAzBZNLXS4rdwhG76MLi',
+            baseUrl: 'https://services.leadconnectorhq.com',
+            pipelines: {
+                expert_path: {
+                    id: 'zLqAUFVD2Bfub4EP54lL',
+                    startStage: 'f62deed6-d81c-4e31-98aa-af54d5646596'
+                }
+            },
+            customFields: {
+                vin: 'qKQntVqCwKdmmPaHLnr6',
+                year_make_model: 'IEQTtksAvzxZMTR2EeHJ',
+                insurance_company: 'wcjFn8HG8fhssQWn0TFM',
+                claim_number: 'Y8BZnpg3SgTCaF6eNcwt',
+                technician_name: 'XOdGZsGCmyjFmZO1eHsw',
+                ro_number: 'cHqj3TzHR1qipS5zXv4L'
+            }
+        };
+
+        const output = document.getElementById('output');
+
+        function log(msg, isError = false) {
+            output.innerHTML = `<span class="${isError ? 'error' : 'success'}">${msg}</span>`;
+        }
+
+        async function testCreateContact() {
+            log('Creating test contact...');
+
+            const timestamp = Date.now();
+            const customFields = [
+                { id: GHL_CONFIG.customFields.vin, value: 'TEST-VIN-123456789' },
+                { id: GHL_CONFIG.customFields.year_make_model, value: '2024 Test Make Model' },
+                { id: GHL_CONFIG.customFields.insurance_company, value: 'Test Insurance' },
+                { id: GHL_CONFIG.customFields.claim_number, value: 'TEST-CLAIM-001' },
+                { id: GHL_CONFIG.customFields.ro_number, value: 'TEST-RO-001' }
+            ];
+
+            try {
+                const response = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        locationId: GHL_CONFIG.locationId,
+                        firstName: 'API',
+                        lastName: `Test_${timestamp}`,
+                        email: `apitest_${timestamp}@test.com`,
+                        phone: '+15555550001',
+                        source: 'API Test Page',
+                        customFields: customFields
+                    })
+                });
+
+                const result = await response.json();
+
+                output.innerHTML = `<span class="success">CONTACT CREATION RESULT:</span>\n\n` +
+                    `Status: ${response.status}\n` +
+                    `Custom Fields Sent:\n${JSON.stringify(customFields, null, 2)}\n\n` +
+                    `Response:\n${JSON.stringify(result, null, 2)}`;
+
+                if (result.contact) {
+                    window.testContactId = result.contact.id;
+                    output.innerHTML += `\n\n<span class="success">✅ Contact created! ID: ${result.contact.id}</span>`;
+                }
+            } catch (err) {
+                log(`Error: ${err.message}`, true);
+            }
+        }
+
+        async function testCreateOpportunity() {
+            if (!window.testContactId) {
+                log('⚠️ Please run Test 1 first to create a contact!', true);
+                return;
+            }
+
+            log('Creating test opportunity...');
+
+            const customFields = [
+                { id: GHL_CONFIG.customFields.vin, value: 'OPP-VIN-999888777' },
+                { id: GHL_CONFIG.customFields.year_make_model, value: '2025 Opportunity Test Car' },
+                { id: GHL_CONFIG.customFields.insurance_company, value: 'Opportunity Insurance Co' },
+                { id: GHL_CONFIG.customFields.claim_number, value: 'OPP-CLAIM-999' },
+                { id: GHL_CONFIG.customFields.ro_number, value: 'OPP-RO-999' }
+            ];
+
+            try {
+                const response = await fetch(`${GHL_CONFIG.baseUrl}/opportunities/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pipelineId: GHL_CONFIG.pipelines.expert_path.id,
+                        pipelineStageId: GHL_CONFIG.pipelines.expert_path.startStage,
+                        locationId: GHL_CONFIG.locationId,
+                        name: 'Repair: API Test Opportunity',
+                        contactId: window.testContactId,
+                        status: 'open',
+                        customFields: customFields
+                    })
+                });
+
+                const result = await response.json();
+
+                output.innerHTML = `<span class="success">OPPORTUNITY CREATION RESULT:</span>\n\n` +
+                    `Status: ${response.status}\n` +
+                    `Custom Fields Sent:\n${JSON.stringify(customFields, null, 2)}\n\n` +
+                    `Response:\n${JSON.stringify(result, null, 2)}`;
+
+                if (result.opportunity) {
+                    output.innerHTML += `\n\n<span class="success">✅ Opportunity created! ID: ${result.opportunity.id}</span>`;
+                }
+            } catch (err) {
+                log(`Error: ${err.message}`, true);
+            }
+        }
+
+        async function listCustomFields() {
+            log('Fetching custom fields from GHL...');
+
+            try {
+                const response = await fetch(`${GHL_CONFIG.baseUrl}/locations/${GHL_CONFIG.locationId}/customFields`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28'
+                    }
+                });
+
+                const result = await response.json();
+
+                output.innerHTML = `<span class="success">CUSTOM FIELDS IN GHL:</span>\n\n` +
+                    `Status: ${response.status}\n\n` +
+                    `Response:\n${JSON.stringify(result, null, 2)}`;
+
+            } catch (err) {
+                log(`Error: ${err.message}`, true);
+            }
+        }
+    </script>
+</body>
+
+</html>

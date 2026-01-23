@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <!-- Build Version: 2026-01-19 T15:45:00 - Polish Round -->
+    <!-- Build Version: 2026-01-22 T15:30:00 - Contact Sync Fix -->
     <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -400,6 +400,46 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+        }
+
+        /* Validation Error Styles */
+        .validation-error {
+            border-color: #FF453A !important;
+            background: rgba(255, 69, 58, 0.1) !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .validation-error-label {
+            color: #FF453A !important;
+        }
+
+        .validation-hint {
+            font-size: 11px;
+            color: #FF9F0A;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .validation-hint.show {
+            display: block;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
         }
 
         /* Success Modal */
@@ -1585,6 +1625,13 @@
                     <option value="Jane">Jane</option>
                 </select>
             </div>
+            <div class="meta-group">
+                <label>Pipeline</label>
+                <select id="pipelineSelect" class="toolbar-input">
+                    <option value="production">Repair Tracker</option>
+                    <option value="expert_path">Expert Path</option>
+                </select>
+            </div>
         </div>
 
         <form id="scopeForm">
@@ -1596,12 +1643,14 @@
                     <input type="text" id="insuredName" required placeholder="Customer's full name">
                 </div>
                 <div class="info-group col-span-1">
-                    <label>Customer Email</label>
+                    <label id="emailLabel">Customer Email <span class="required">*</span></label>
                     <input type="email" id="customerEmail" placeholder="email@example.com">
+                    <div id="emailHint" class="validation-hint">📧 Email or phone required for GHL</div>
                 </div>
                 <div class="info-group col-span-1">
-                    <label>Customer Phone</label>
+                    <label id="phoneLabel">Customer Phone <span class="required">*</span></label>
                     <input type="tel" id="customerPhone" placeholder="(555) 123-4567">
+                    <div id="phoneHint" class="validation-hint">📱 Email or phone required for GHL</div>
                 </div>
                 <div class="info-group col-span-2">
                     <label>Carrier</label>
@@ -5738,34 +5787,100 @@
         // --- SUBMISSION LOGIC ---
         function submitForm() {
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.textContent = 'Processing...';
-            submitBtn.disabled = true;
 
-            // Validate Basics
-            const roNumber = document.getElementById('roNumber').value;
+            // Clear previous validation errors
+            clearValidationErrors();
+
+            // Validate RO Number
+            const roNumber = document.getElementById('roNumber').value.trim();
             if (!roNumber) {
-                alert('RO Number is required');
-                submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
+                showValidationError('roNumber', 'RO Number is required');
+                showToast('⚠️ RO Number is required', 'error');
                 return;
             }
 
-            // Photos
-            if (selectedPhotos.length > 0) {
+            // Validate Email or Phone (required for GHL)
+            const email = document.getElementById('customerEmail').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+
+            if (!email && !phone) {
+                showValidationError('customerEmail', 'Email or phone required');
+                showValidationError('customerPhone', 'Email or phone required');
+                document.getElementById('emailHint').classList.add('show');
+                document.getElementById('phoneHint').classList.add('show');
+                showToast('⚠️ Email or Phone is required for GHL submission', 'error');
+                // Scroll to the fields
+                document.getElementById('customerEmail').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // All validation passed - proceed with submission
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+
+            // Photos - skip Google Apps Script if not available (standalone PWA mode)
+            if (selectedPhotos.length > 0 && typeof google !== 'undefined' && google.script) {
                 google.script.run
                     .withSuccessHandler((photoUrls) => {
-                        // photoUrls is an array of strings
                         submitData(photoUrls);
                     })
                     .withFailureHandler(err => {
-                        alert('Photo upload failed: ' + err);
+                        showToast('⚠️ Photo upload failed: ' + err, 'error');
                         submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
                     })
                     .uploadMultiplePhotos(selectedPhotos, roNumber);
             } else {
-                // Return empty array if no photos
+                // PWA mode or no photos - submit without photo upload
                 submitData([]);
             }
         }
+
+        // Validation helper functions
+        function showValidationError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.add('validation-error');
+                // Also highlight the label
+                const label = field.previousElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    label.classList.add('validation-error-label');
+                }
+            }
+        }
+
+        function clearValidationErrors() {
+            // Remove all validation error classes
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.classList.remove('validation-error');
+            });
+            document.querySelectorAll('.validation-error-label').forEach(el => {
+                el.classList.remove('validation-error-label');
+            });
+            document.querySelectorAll('.validation-hint').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+
+        // Clear validation when user starts typing in error fields
+        document.addEventListener('DOMContentLoaded', function () {
+            ['customerEmail', 'customerPhone', 'roNumber'].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.addEventListener('input', function () {
+                        this.classList.remove('validation-error');
+                        const label = this.previousElementSibling;
+                        if (label && label.tagName === 'LABEL') {
+                            label.classList.remove('validation-error-label');
+                        }
+                        // Hide hints when user starts typing
+                        const hint = this.nextElementSibling;
+                        if (hint && hint.classList.contains('validation-hint')) {
+                            hint.classList.remove('show');
+                        }
+                    });
+                }
+            });
+        });
 
         // ==================== iOS NATIVE FEATURES ====================
 
@@ -6309,18 +6424,17 @@
                 }
             },
             customFields: {
-                vin: 'Au75x5FoMof3Bsjexmj3',
-                year: 'tRnwHMSfBWl329vr1jsd',
-                make: 's49iwLf4IDkUgKKcQAQ0',
-                model: 'GXMUoOOiBFliQxuAGuzk',
-                insurance_company: 'YVIvG2P73p9IltxLHm5v',
-                claim_number: 'Qcsf5Kk2MrNp1UP9kdDt',
-                technician_name: 'XOdGZsGCmyjFmZO1eHsw'
+                vin: 'qKQntVqCwKdmmPaHLnr6',
+                year_make_model: 'IEQTtksAvzxZMTR2EeHJ',
+                insurance_company: 'wcjFn8HG8fhssQWn0TFM',
+                claim_number: 'Y8BZnpg3SgTCaF6eNcwt',
+                technician_name: 'XOdGZsGCmyjFmZO1eHsw',
+                ro_number: 'cHqj3TzHR1qipS5zXv4L'
             }
         };
 
         // ==================== GHL API FUNCTIONS ====================
-        async function submitToGHL(formData) {
+        async function submitToGHL(formData, pipelineKey = 'production') {
             try {
                 // Step 1: Create or find contact
                 const contact = await upsertGHLContact(formData);
@@ -6329,7 +6443,7 @@
                 }
 
                 // Step 2: Create opportunity
-                const opportunity = await createGHLOpportunity(formData, contact.contactId);
+                const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
 
                 return {
                     success: true,
@@ -6342,6 +6456,24 @@
             }
         }
 
+
+
+        function getGHLCustomFields(formData) {
+            const customFields = [];
+            if (formData.vin) customFields.push({ id: GHL_CONFIG.customFields.vin, value: formData.vin });
+
+            // Combined Year Make Model
+            const ymm = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
+            if (ymm) customFields.push({ id: GHL_CONFIG.customFields.year_make_model, value: ymm });
+
+            if (formData.insurance) customFields.push({ id: GHL_CONFIG.customFields.insurance_company, value: formData.insurance });
+            if (formData.claimNumber) customFields.push({ id: GHL_CONFIG.customFields.claim_number, value: formData.claimNumber });
+            if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
+            if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
+
+            return customFields;
+        }
+
         async function upsertGHLContact(formData) {
             const email = formData.customerEmail;
             const phone = formData.customerPhone;
@@ -6349,6 +6481,21 @@
             if (!email && !phone) {
                 return { success: false, error: 'Email or phone required' };
             }
+
+            const nameParts = (formData.insuredName || '').split(' ');
+            const firstName = nameParts[0] || 'Customer';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            const customFields = getGHLCustomFields(formData);
+
+            const contactPayload = {
+                locationId: GHL_CONFIG.locationId,
+                firstName: firstName,
+                lastName: lastName,
+                email: email || undefined,
+                phone: phone || undefined,
+                source: 'Dent Experts Form',
+                customFields: customFields
+            };
 
             // Search for existing contact
             const searchQuery = email || phone;
@@ -6367,18 +6514,29 @@
                 const searchResult = await searchResponse.json();
 
                 if (searchResult.contacts && searchResult.contacts.length > 0) {
-                    console.log('Found existing contact:', searchResult.contacts[0].id);
-                    return { success: true, contactId: searchResult.contacts[0].id };
+                    const existingId = searchResult.contacts[0].id;
+                    console.log('Found existing contact, updating:', existingId);
+
+                    // UPDATE existing contact
+                    const updateResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${existingId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(contactPayload)
+                    });
+                    const updateResult = await updateResponse.json();
+                    console.log('Contact Update Response:', updateResult);
+
+                    return { success: true, contactId: existingId };
                 }
             } catch (e) {
-                console.log('Search failed, creating new contact');
+                console.error('Search/Update failed, creating new contact', e);
             }
 
             // Create new contact
-            const nameParts = (formData.insuredName || '').split(' ');
-            const firstName = nameParts[0] || 'Customer';
-            const lastName = nameParts.slice(1).join(' ') || '';
-
             const createResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
                 method: 'POST',
                 headers: {
@@ -6386,17 +6544,11 @@
                     'Version': '2021-07-28',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    locationId: GHL_CONFIG.locationId,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email || undefined,
-                    phone: phone || undefined,
-                    source: 'Dent Experts Form'
-                })
+                body: JSON.stringify(contactPayload)
             });
 
             const createResult = await createResponse.json();
+            console.log('Contact Create Response:', createResult);
 
             if (createResult.contact && createResult.contact.id) {
                 console.log('Created contact:', createResult.contact.id);
@@ -6406,18 +6558,14 @@
             return { success: false, error: 'Failed to create contact in GHL' };
         }
 
-        async function createGHLOpportunity(formData, contactId) {
-            const pipeline = GHL_CONFIG.pipelines.production;
+        async function createGHLOpportunity(formData, contactId, pipelineKey = 'production') {
+            const pipeline = GHL_CONFIG.pipelines[pipelineKey] || GHL_CONFIG.pipelines.production;
             const title = `Repair: ${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'New Repair';
 
-            const customFields = [];
-            if (formData.vin) customFields.push({ id: GHL_CONFIG.customFields.vin, value: formData.vin });
-            if (formData.year) customFields.push({ id: GHL_CONFIG.customFields.year, value: formData.year });
-            if (formData.make) customFields.push({ id: GHL_CONFIG.customFields.make, value: formData.make });
-            if (formData.model) customFields.push({ id: GHL_CONFIG.customFields.model, value: formData.model });
-            if (formData.insurance) customFields.push({ id: GHL_CONFIG.customFields.insurance_company, value: formData.insurance });
-            if (formData.claimNumber) customFields.push({ id: GHL_CONFIG.customFields.claim_number, value: formData.claimNumber });
-            if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
+            const customFields = getGHLCustomFields(formData);
+
+            // Note: GHL Opportunities API does not accept a "notes" field directly
+            // Custom fields are used for additional data instead
 
             const response = await fetch(`${GHL_CONFIG.baseUrl}/opportunities/`, {
                 method: 'POST',
@@ -6438,6 +6586,8 @@
             });
 
             const result = await response.json();
+            console.log('Opportunity Create Response:', result);
+            console.log('Custom Fields Sent:', customFields);
 
             if (result.opportunity && result.opportunity.id) {
                 console.log('Created opportunity:', result.opportunity.id);
@@ -6510,7 +6660,8 @@
 
             // Submit to GHL
             try {
-                const ghlResult = await submitToGHL(rawData);
+                const pipelineKey = document.getElementById('pipelineSelect')?.value || 'production';
+                const ghlResult = await submitToGHL(rawData, pipelineKey);
 
                 if (ghlResult.success) {
                     showToast(`✅ Sent to GHL! Contact: ${ghlResult.contactId}`, 'success');

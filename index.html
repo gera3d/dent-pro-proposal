@@ -1058,7 +1058,212 @@
             border-color: rgba(255, 69, 58, 0.5);
         }
 
+        /* Photo Camera Modal (Continuous Capture) */
+        .camera-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10;
+        }
+
+        .camera-header h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .camera-close,
+        .camera-flip-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .camera-close:hover,
+        .camera-flip-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .camera-viewport {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .camera-viewport video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-viewport-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+
+        .camera-viewport-flash.flash {
+            opacity: 0.6;
+        }
+
+        .camera-strip {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.85);
+            overflow-x: auto;
+            min-height: 84px;
+            align-items: center;
+        }
+
+        .camera-strip:empty::after {
+            content: 'Photos will appear here';
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .camera-strip-item {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(76, 217, 100, 0.8);
+            animation: photoPopIn 0.3s ease;
+        }
+
+        @keyframes photoPopIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .camera-strip-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-strip-item .remove-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 69, 58, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 40px;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .camera-count {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            min-width: 80px;
+        }
+
+        .camera-shutter {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s;
+        }
+
+        .camera-shutter:active {
+            transform: scale(0.9);
+        }
+
+        .camera-shutter::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #fff;
+            transition: background 0.1s;
+        }
+
+        .camera-shutter:active::after {
+            background: #e0e0e0;
+        }
+
+        .camera-done-btn {
+            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            border: none;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 80px;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+
+        .camera-done-btn:active {
+            transform: scale(0.95);
+        }
+
         /* VIN Scanner Modal */
+
         .scanner-modal {
             position: fixed;
             top: 0;
@@ -3066,7 +3271,31 @@
         </div>
     </div>
 
+    <!-- Photo Camera Modal (Continuous Capture) -->
+    <div id="photoCameraModal" class="camera-modal" style="display: none;">
+        <div class="camera-header">
+            <button type="button" class="camera-flip-btn" onclick="flipCamera()" title="Switch Camera">🔄</button>
+            <h3>📷 Capture Photos</h3>
+            <button type="button" onclick="closeCameraModal(false)" class="camera-close" title="Cancel">✕</button>
+        </div>
+
+        <div class="camera-viewport">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <div class="camera-viewport-flash" id="cameraFlash"></div>
+        </div>
+
+        <!-- Photo Strip Preview -->
+        <div class="camera-strip" id="cameraStrip"></div>
+
+        <div class="camera-controls">
+            <div class="camera-count" id="cameraCount">0 photos</div>
+            <button type="button" class="camera-shutter" onclick="capturePhoto()" title="Take Photo"></button>
+            <button type="button" class="camera-done-btn" onclick="closeCameraModal(true)">Done</button>
+        </div>
+    </div>
+
     <!-- Modal and Scripts -->
+
     <div class="modal-overlay" id="successModal">
         <div class="modal">
             <div class="modal-icon">✓</div>
@@ -4769,6 +4998,35 @@
         let selectedPhotos = [];
         const SAVED_FORMS_KEY = 'dent_pro_saved_forms';
 
+        // ==================== CAMERA MANAGER ====================
+        // Manages camera access to prevent conflicts between VIN scanner and photo capture
+        const cameraManager = {
+            activeUser: null, // 'scanner' | 'photo' | null
+
+            acquire(user) {
+                if (this.activeUser && this.activeUser !== user) {
+                    // Another feature is using the camera, close it first
+                    if (this.activeUser === 'scanner') {
+                        closeScanner();
+                    } else if (this.activeUser === 'photo') {
+                        closeCameraModal(false); // false = don't add photos
+                    }
+                }
+                this.activeUser = user;
+                return true;
+            },
+
+            release(user) {
+                if (this.activeUser === user) {
+                    this.activeUser = null;
+                }
+            },
+
+            isAvailable() {
+                return this.activeUser === null;
+            }
+        };
+
         // INITIALIZATION
         document.addEventListener('DOMContentLoaded', () => {
             loadDropdowns();
@@ -5121,12 +5379,167 @@
             }
         }
 
-        // --- PHOTO LOGIC ---
+        // ==================== CONTINUOUS CAMERA ====================
+        let photoCameraStream = null;
+        let photoFacingMode = 'environment'; // 'environment' = rear, 'user' = front
+        let sessionPhotos = []; // Photos captured in this session
+
         function openCamera() {
-            document.getElementById('cameraInput').click();
+            // Use camera manager to prevent conflicts
+            cameraManager.acquire('photo');
+
+            const modal = document.getElementById('photoCameraModal');
+            modal.style.display = 'flex';
+            sessionPhotos = [];
+            renderCameraStrip();
+            startPhotoCameraStream();
+        }
+
+        async function startPhotoCameraStream() {
+            const video = document.getElementById('cameraVideo');
+
+            try {
+                // Stop any existing stream first
+                stopPhotoCameraStream();
+
+                photoCameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: photoFacingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                });
+
+                video.srcObject = photoCameraStream;
+                await video.play();
+            } catch (err) {
+                console.error('Camera error:', err);
+
+                let errorMsg = 'Camera access denied.';
+                if (err.name === 'NotAllowedError') {
+                    errorMsg = 'Camera permission denied. Please enable in settings.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMsg = 'No camera found on this device.';
+                } else if (err.name === 'NotReadableError') {
+                    errorMsg = 'Camera is in use by another app.';
+                }
+
+                showToast(errorMsg, 'error');
+                closeCameraModal(false);
+            }
+        }
+
+        function stopPhotoCameraStream() {
+            if (photoCameraStream) {
+                photoCameraStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                photoCameraStream = null;
+            }
+
+            const video = document.getElementById('cameraVideo');
+            if (video) {
+                video.srcObject = null;
+            }
+        }
+
+        function flipCamera() {
+            photoFacingMode = photoFacingMode === 'environment' ? 'user' : 'environment';
+            startPhotoCameraStream();
+            if (typeof haptic === 'function') haptic('light');
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            if (!video || !video.srcObject) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+
+            // Flip horizontally if using front camera (mirror effect)
+            if (photoFacingMode === 'user') {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+
+            ctx.drawImage(video, 0, 0);
+
+            // Compress to JPEG
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            const base64Data = dataUrl.split(',')[1];
+
+            const photo = {
+                base64Data: base64Data,
+                mimeType: 'image/jpeg',
+                name: `Photo_${Date.now()}.jpg`,
+                label: ''
+            };
+
+            sessionPhotos.push(photo);
+            renderCameraStrip();
+
+            // Haptic feedback
+            if (typeof haptic === 'function') haptic('medium');
+
+            // Flash effect
+            const flash = document.getElementById('cameraFlash');
+            flash.classList.add('flash');
+            setTimeout(() => flash.classList.remove('flash'), 150);
+        }
+
+        function removeSessionPhoto(index) {
+            sessionPhotos.splice(index, 1);
+            renderCameraStrip();
+        }
+
+        function renderCameraStrip() {
+            const strip = document.getElementById('cameraStrip');
+            const countEl = document.getElementById('cameraCount');
+
+            if (sessionPhotos.length === 0) {
+                strip.innerHTML = '';
+            } else {
+                strip.innerHTML = sessionPhotos.map((photo, idx) => `
+                    <div class="camera-strip-item">
+                        <img src="data:${photo.mimeType};base64,${photo.base64Data}" alt="Photo ${idx + 1}">
+                        <button type="button" class="remove-btn" onclick="removeSessionPhoto(${idx})">×</button>
+                    </div>
+                `).join('');
+            }
+
+            countEl.textContent = `${sessionPhotos.length} photo${sessionPhotos.length !== 1 ? 's' : ''}`;
+
+            // Scroll to end of strip to show newest photo
+            setTimeout(() => {
+                strip.scrollLeft = strip.scrollWidth;
+            }, 50);
+        }
+
+        function closeCameraModal(savePhotos = true) {
+            const modal = document.getElementById('photoCameraModal');
+            modal.style.display = 'none';
+
+            // Stop camera stream
+            stopPhotoCameraStream();
+
+            // Release camera manager
+            cameraManager.release('photo');
+
+            // Add session photos to main selectedPhotos array
+            if (savePhotos && sessionPhotos.length > 0) {
+                selectedPhotos = selectedPhotos.concat(sessionPhotos);
+                renderPreviews();
+                showToast(`✅ ${sessionPhotos.length} photo${sessionPhotos.length !== 1 ? 's' : ''} added!`, 'success');
+            }
+
+            sessionPhotos = [];
         }
 
         // --- INITIALIZATION ---
+
         // Convert DC to range buttons, OS to steppers, add UPD toggles
         // Stepper Steps (Active Matrix + Off Matrix)
         const DC_STEPS = ['', '1-5', '6-15', '16-30', '31-50', '51-75', '76-100', '101-150', '151-200', '201-300', '301-400', 'Off Matrix'];
@@ -7521,6 +7934,9 @@
         let scannerActive = false;
 
         function startScanner() {
+            // Use camera manager to prevent conflicts
+            cameraManager.acquire('scanner');
+
             const modal = document.getElementById('scannerModal');
             const status = document.getElementById('scannerStatus');
             modal.style.display = 'flex';
@@ -7623,6 +8039,9 @@
                     // console.log('[Scanner] Stop error:', e);
                 }
             }
+
+            // Release camera manager
+            cameraManager.release('scanner');
 
             // Reset OCR view
             resetOcrView();

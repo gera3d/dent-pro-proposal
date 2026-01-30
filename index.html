@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="app-icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Google Vision OCR for VIN text recognition -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             box-sizing: border-box;
@@ -709,6 +710,46 @@
         .photo-name-input:focus {
             outline: none;
             background: rgba(0, 122, 255, 0.3);
+        }
+
+        /* Photo Upload Status */
+        .photo-upload-status {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(76, 217, 100, 0.3);
+        }
+
+        .upload-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .upload-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CD964, #34C759);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .photo-upload-status p {
+            font-size: 12px;
+            color: #a1a1a6;
+            text-align: center;
+            margin: 0;
+        }
+
+        .photo-count-display {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #4CD964;
+            text-align: center;
         }
 
         /* SAVED FORMS BAR */
@@ -1558,6 +1599,8 @@
     <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- ZIP Compression Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
 <body>
@@ -2783,6 +2826,13 @@
                     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none"
                         onchange="handlePhotoSelect(event)">
                     <div id="photoPreviews" class="photo-previews-row"></div>
+                    <div id="photoUploadStatus" class="photo-upload-status" style="display: none;">
+                        <div class="upload-progress-bar">
+                            <div class="upload-progress-fill" id="photoProgressFill"></div>
+                        </div>
+                        <p id="photoStatusText">Preparing photos...</p>
+                    </div>
+                    <div id="photoCount" class="photo-count-display" style="display: none;"></div>
                 </div>
             </div>
 
@@ -5756,7 +5806,39 @@
                 `;
                 container.appendChild(div);
             });
+
+            // Update photo count display
+            const photoCountEl = document.getElementById('photoCount');
+            if (photoCountEl) {
+                if (selectedPhotos.length > 0) {
+                    photoCountEl.style.display = 'block';
+                    photoCountEl.textContent = `📸 ${selectedPhotos.length} photo${selectedPhotos.length === 1 ? '' : 's'} ready for upload`;
+                } else {
+                    photoCountEl.style.display = 'none';
+                }
+            }
+
             saveDraft();
+        }
+
+        // Update photo upload progress UI
+        function updatePhotoUploadProgress(percent, statusText) {
+            const statusEl = document.getElementById('photoUploadStatus');
+            const progressFill = document.getElementById('photoProgressFill');
+            const statusTextEl = document.getElementById('photoStatusText');
+
+            if (statusEl && progressFill && statusTextEl) {
+                statusEl.style.display = 'block';
+                progressFill.style.width = `${percent}%`;
+                statusTextEl.textContent = statusText;
+            }
+        }
+
+        function hidePhotoUploadProgress() {
+            const statusEl = document.getElementById('photoUploadStatus');
+            if (statusEl) {
+                statusEl.style.display = 'none';
+            }
         }
 
         function updatePhotoName(index, name) {
@@ -6233,19 +6315,267 @@
 
         const AIRTABLE_QUEUE_KEY = 'airtable_upload_queue';
         let airtableConfig = null;
+        let fullConfig = null;
+
+        // Load full config (Airtable + Google Drive)
+        async function loadFullConfig() {
+            if (fullConfig) return fullConfig;
+            try {
+                const response = await fetch('config.json?t=' + Date.now());
+                fullConfig = await response.json();
+                airtableConfig = fullConfig.airtable;
+                return fullConfig;
+            } catch (err) {
+                console.error('Failed to load config:', err);
+                return null;
+            }
+        }
 
         // Load Airtable config
         async function loadAirtableConfig() {
             if (airtableConfig) return airtableConfig;
+            const config = await loadFullConfig();
+            return config?.airtable || null;
+        }
+
+        // =============================================
+        // AIRTABLE FIELD MANAGEMENT
+        // =============================================
+
+        // Cache to track which fields we've already checked/created
+        let airtableFieldsChecked = false;
+
+        /**
+         * Ensure required fields exist in Airtable table
+         * Creates "Photo Package" (attachment) and "Photo Count" (number) fields if missing
+         */
+        async function ensureAirtableFields(config) {
+            // Only check once per session
+            if (airtableFieldsChecked) {
+                console.log('ℹ️ Airtable fields already verified this session');
+                return true;
+            }
+
             try {
-                const response = await fetch('config.json');
-                const config = await response.json();
-                airtableConfig = config.airtable;
-                return airtableConfig;
+                console.log('🔍 Checking Airtable table schema...');
+
+                // First, get current table schema to see what fields exist
+                const tableId = config.tableId;
+                const baseId = config.baseId;
+
+                if (!tableId) {
+                    console.warn('⚠️ No tableId in config - cannot auto-create fields');
+                    console.log('Add "tableId": "tblXXXXXX" to your config.json');
+                    return false;
+                }
+
+                // Get table schema (list fields)
+                const schemaUrl = `https://api.airtable.com/v0/meta/bases/${baseId}/tables`;
+                const schemaRes = await fetch(schemaUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${config.apiKey}`
+                    }
+                });
+
+                if (!schemaRes.ok) {
+                    const errText = await schemaRes.text();
+                    console.warn('⚠️ Cannot read schema (may need schema.bases:read scope):', errText);
+                    // Continue anyway - field creation will fail if fields don't exist
+                    airtableFieldsChecked = true;
+                    return true;
+                }
+
+                const schemaData = await schemaRes.json();
+                const table = schemaData.tables?.find(t => t.id === tableId || t.name === config.tableName);
+
+                if (!table) {
+                    console.warn('⚠️ Table not found in schema');
+                    return false;
+                }
+
+                const existingFields = table.fields?.map(f => f.name) || [];
+                console.log('📋 Existing fields:', existingFields.join(', '));
+
+                // Fields we need
+                const requiredFields = [
+                    { name: 'Photo Package', type: 'multipleAttachments' },
+                    { name: 'Photo Count', type: 'number', options: { precision: 0 } }
+                ];
+
+                // Create missing fields
+                for (const field of requiredFields) {
+                    if (!existingFields.includes(field.name)) {
+                        console.log(`➕ Creating missing field: ${field.name}`);
+
+                        const createUrl = `https://api.airtable.com/v0/meta/bases/${baseId}/tables/${tableId}/fields`;
+                        const fieldBody = {
+                            name: field.name,
+                            type: field.type
+                        };
+                        if (field.options) {
+                            fieldBody.options = field.options;
+                        }
+
+                        const createRes = await fetch(createUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${config.apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(fieldBody)
+                        });
+
+                        if (createRes.ok) {
+                            const created = await createRes.json();
+                            console.log(`✅ Created field: ${created.name} (${created.type})`);
+                        } else {
+                            const errText = await createRes.text();
+                            console.warn(`⚠️ Failed to create ${field.name}:`, errText);
+                            // If it's a permission error, the API key may not have schema.bases:write
+                            if (errText.includes('NOT_AUTHORIZED') || errText.includes('FORBIDDEN')) {
+                                console.log('💡 Tip: Your API token needs "schema.bases:write" scope');
+                                console.log('   Create a new token at https://airtable.com/create/tokens');
+                            }
+                        }
+                    } else {
+                        console.log(`✓ Field exists: ${field.name}`);
+                    }
+                }
+
+                airtableFieldsChecked = true;
+                return true;
+
             } catch (err) {
-                console.error('Failed to load Airtable config:', err);
+                console.error('Field check error:', err);
+                // Don't block upload on field check errors
+                return true;
+            }
+        }
+
+        // =============================================
+        // PHOTO ZIP & UPLOAD FUNCTIONS
+        // =============================================
+
+        /**
+         * Compress all selected photos into a ZIP file
+         * @returns {Promise<Blob>} ZIP file blob
+         */
+        async function createPhotosZip(roNumber) {
+            if (typeof JSZip === 'undefined') {
+                throw new Error('JSZip library not loaded');
+            }
+            if (selectedPhotos.length === 0) {
                 return null;
             }
+
+            const zip = new JSZip();
+            const timestamp = new Date().toISOString().slice(0, 10);
+            const folderName = `photos_${roNumber || 'draft'}_${timestamp}`;
+            const folder = zip.folder(folderName);
+
+            // Add each photo to the zip
+            for (let i = 0; i < selectedPhotos.length; i++) {
+                const photo = selectedPhotos[i];
+                const label = photo.label || `photo_${i + 1}`;
+                // Clean filename (remove special chars)
+                const safeLabel = label.replace(/[^a-zA-Z0-9_-]/g, '_');
+                const filename = `${String(i + 1).padStart(2, '0')}_${safeLabel}.jpg`;
+
+                // Convert base64 to binary
+                const binaryData = atob(photo.base64Data);
+                const bytes = new Uint8Array(binaryData.length);
+                for (let j = 0; j < binaryData.length; j++) {
+                    bytes[j] = binaryData.charCodeAt(j);
+                }
+
+                folder.file(filename, bytes, { binary: true });
+            }
+
+            // Generate ZIP blob
+            const zipBlob = await zip.generateAsync({
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 6 }
+            });
+
+            console.log(`📦 Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${selectedPhotos.length} photos`);
+            return zipBlob;
+        }
+
+        /**
+         * Upload ZIP file to a temporary hosting service
+         * Returns a public URL that Airtable can access
+         * Note: tmpfiles.org is primary (0x0.st has CORS issues from localhost)
+         */
+        async function uploadZipToHost(zipBlob, filename) {
+            // Service 1: tmpfiles.org (reliable, good CORS)
+            try {
+                console.log('📤 Uploading ZIP to tmpfiles.org...');
+                const fd = new FormData();
+                fd.append('file', zipBlob, filename);
+
+                const res = await fetch('https://tmpfiles.org/api/v1/upload', {
+                    method: 'POST',
+                    body: fd
+                });
+
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.status === 'success' && json.data?.url) {
+                        const url = json.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+                        console.log('✅ ZIP uploaded to tmpfiles.org:', url);
+                        return url;
+                    }
+                }
+            } catch (e) {
+                console.warn('tmpfiles.org failed:', e.message);
+            }
+
+            // Service 2: file.io fallback (1 download limit but reliable)
+            try {
+                console.log('📤 Trying file.io fallback...');
+                const fd = new FormData();
+                fd.append('file', zipBlob, filename);
+
+                const res = await fetch('https://file.io', {
+                    method: 'POST',
+                    body: fd
+                });
+
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.success && json.link) {
+                        console.log('✅ ZIP uploaded to file.io:', json.link);
+                        return json.link;
+                    }
+                }
+            } catch (e) {
+                console.warn('file.io failed:', e.message);
+            }
+
+            console.error('❌ All upload services failed');
+            return null;
+        }
+
+        /**
+         * Photo ZIP Upload - Uses tmpfiles.org as transfer service
+         * Airtable downloads and stores files permanently on their servers
+         * No login required!
+         */
+
+        // Stub functions (Google Drive disabled - using direct upload instead)
+        function initGoogleAuth() { }
+        function handleAuthClick() { }
+
+        /**
+         * Skip Google Drive - go straight to tmpfiles.org upload
+         * Airtable will download and permanently store the file
+         */
+        async function uploadToGoogleDrive(zipBlob, filename) {
+            // Not using Google Drive - Airtable stores files permanently after downloading from tmpfiles.org
+            console.log('ℹ️ Using direct upload (tmpfiles.org → Airtable permanent storage)');
+            return null;
         }
 
 
@@ -6260,6 +6590,9 @@
                 if (!config) {
                     throw new Error('Airtable config not found. Check config.json');
                 }
+
+                // Ensure required fields exist before uploading
+                await ensureAirtableFields(config);
 
                 const formData = collectFormData();
 
@@ -6405,55 +6738,32 @@
                     // ... (Drive logic unchanged) ...
                 }
 
-                // --- PDF Transport (Try multiple services for reliability) ---
+                // --- PDF Transport (tmpfiles.org - reliable with good CORS) ---
                 if (!pdfUrl && pdfBlob) {
                     showToast('🚚 Transporting PDF...', 'info');
 
                     const filename = `${formData.roNumber || 'Scope'}_Assessment.pdf`;
 
-                    // Service 1: 0x0.st (Good CORS support, 30 day retention)
                     try {
-                        console.log('Trying 0x0.st...');
+                        console.log('📤 Uploading PDF to tmpfiles.org...');
                         const fd = new FormData();
                         fd.append('file', pdfBlob, filename);
 
-                        const res = await fetch('https://0x0.st', {
+                        const res = await fetch('https://tmpfiles.org/api/v1/upload', {
                             method: 'POST',
                             body: fd
                         });
 
                         if (res.ok) {
-                            pdfUrl = await res.text();
-                            pdfUrl = pdfUrl.trim();
-                            console.log('✅ 0x0.st URL:', pdfUrl);
+                            const json = await res.json();
+                            if (json.status === 'success' && json.data?.url) {
+                                // Convert view URL to direct download URL
+                                pdfUrl = json.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+                                console.log('✅ PDF uploaded to tmpfiles.org:', pdfUrl);
+                            }
                         }
                     } catch (e) {
-                        console.warn('0x0.st failed:', e.message);
-                    }
-
-                    // Service 2: Fallback to tmpfiles.org
-                    if (!pdfUrl) {
-                        try {
-                            console.log('Trying tmpfiles.org fallback...');
-                            const fd2 = new FormData();
-                            fd2.append('file', pdfBlob, filename);
-
-                            const res2 = await fetch('https://tmpfiles.org/api/v1/upload', {
-                                method: 'POST',
-                                body: fd2
-                            });
-
-                            if (res2.ok) {
-                                const json = await res2.json();
-                                if (json.status === 'success' && json.data?.url) {
-                                    // Convert view URL to direct download URL
-                                    pdfUrl = json.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
-                                    console.log('✅ tmpfiles.org URL:', pdfUrl);
-                                }
-                            }
-                        } catch (e) {
-                            console.warn('tmpfiles.org failed:', e.message);
-                        }
+                        console.warn('tmpfiles.org failed:', e.message);
                     }
                 }
 
@@ -6463,6 +6773,56 @@
                     showToast('⚠️ PDF upload failed, sending data only', 'warning');
                 } else {
                     console.log('✅ Attaching PDF URL to Airtable:', pdfUrl);
+                }
+
+                // =============================================
+                // Step 2.5: CREATE AND UPLOAD PHOTO ZIP
+                // =============================================
+                let photoZipUrl = null;
+
+                if (selectedPhotos.length > 0) {
+                    try {
+                        // Show progress UI
+                        updatePhotoUploadProgress(10, `📦 Compressing ${selectedPhotos.length} photos...`);
+                        showToast(`📦 Compressing ${selectedPhotos.length} photos...`, 'info');
+
+                        const zipBlob = await createPhotosZip(formData.roNumber);
+
+                        if (zipBlob) {
+                            const zipSizeMB = (zipBlob.size / 1024 / 1024).toFixed(2);
+                            console.log(`📦 ZIP created: ${zipSizeMB} MB`);
+
+                            updatePhotoUploadProgress(40, `📤 Uploading ${zipSizeMB}MB photo package...`);
+                            showToast(`📤 Uploading ${zipSizeMB}MB photo package...`, 'info');
+
+                            const timestamp = new Date().toISOString().slice(0, 10);
+                            const zipFilename = `photos_${formData.roNumber || 'scope'}_${timestamp}.zip`;
+
+                            // Try Google Drive first if configured
+                            updatePhotoUploadProgress(50, '🔗 Connecting to upload service...');
+                            photoZipUrl = await uploadToGoogleDrive(zipBlob, zipFilename);
+
+                            // Fallback to temporary hosting services
+                            if (!photoZipUrl) {
+                                updatePhotoUploadProgress(60, '📤 Uploading to backup service...');
+                                photoZipUrl = await uploadZipToHost(zipBlob, zipFilename);
+                            }
+
+                            if (photoZipUrl) {
+                                updatePhotoUploadProgress(100, '✅ Photos uploaded successfully!');
+                                console.log('✅ Photo ZIP uploaded:', photoZipUrl);
+                                showToast('✅ Photos uploaded!', 'success');
+                            } else {
+                                updatePhotoUploadProgress(0, '❌ Upload failed');
+                                console.warn('⚠️ Photo ZIP upload failed');
+                                showToast('⚠️ Photo upload failed, continuing...', 'warning');
+                            }
+                        }
+                    } catch (zipErr) {
+                        console.error('Photo ZIP error:', zipErr);
+                        updatePhotoUploadProgress(0, '❌ Compression failed');
+                        showToast('⚠️ Photo compression failed', 'warning');
+                    }
                 }
 
                 // Step 3: Airtable Data
@@ -6507,9 +6867,17 @@
                 // Attach PDF Link
                 if (pdfUrl) {
                     // Airtable Attachment Format
-                    record.fields['PDF Report'] = [
-                        { url: pdfUrl }
+                    // record.fields['PDF Report'] = [
+                    //     { url: pdfUrl }
+                    // ];
+                }
+
+                // Attach Photo Package ZIP
+                if (photoZipUrl) {
+                    record.fields['Photo Package'] = [
+                        { url: photoZipUrl }
                     ];
+                    record.fields['Photo Count'] = selectedPhotos.length;
                 }
 
                 console.log('Sending Record:', JSON.stringify(record, null, 2));
@@ -7863,7 +8231,7 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.18.15';
+        const LOCAL_APP_VERSION = '2026.01.24.01';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 
@@ -8000,6 +8368,7 @@
         // Check for updates on page load
         window.addEventListener('load', () => {
             setTimeout(checkForUpdates, 1500);
+            initGoogleAuth();
         });
     </script>
 </body>

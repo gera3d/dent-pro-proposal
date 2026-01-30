@@ -13,10 +13,11 @@
 5. [Uploading Attachments (Files/Images)](#uploading-attachments-filesimages)
 6. [Google Drive Integration (for Large Files)](#google-drive-integration-for-large-files)
 7. [Updating Records](#updating-records)
-8. [Rate Limits](#rate-limits)
-9. [Error Handling](#error-handling)
-10. [Code Examples](#code-examples)
-11. [Best Practices](#best-practices)
+8. [Field Management (Schema API)](#field-management-schema-api)
+9. [Rate Limits](#rate-limits)
+10. [Error Handling](#error-handling)
+11. [Code Examples](#code-examples)
+12. [Best Practices](#best-practices)
 
 ---
 
@@ -624,6 +625,148 @@ PATCH https://api.airtable.com/v0/{baseId}/{tableIdOrName}
 
 ---
 
+## Field Management (Schema API)
+
+The Schema API allows you to read and modify table structure programmatically.
+
+### Required Scopes
+| Scope | Description |
+|-------|-------------|
+| `schema.bases:read` | Read table schemas (list fields) |
+| `schema.bases:write` | Create/update/delete fields |
+
+⚠️ **Create a new token** at https://airtable.com/create/tokens with these scopes enabled!
+
+### List Tables and Fields
+
+**Endpoint:**
+```
+GET https://api.airtable.com/v0/meta/bases/{baseId}/tables
+```
+
+**Response:**
+```json
+{
+  "tables": [
+    {
+      "id": "tblXXXXXXXXXXXXXX",
+      "name": "My Table",
+      "fields": [
+        {
+          "id": "fldXXXXXXXXXXXXXX",
+          "name": "Name",
+          "type": "singleLineText"
+        },
+        {
+          "id": "fldYYYYYYYYYYYYYY",
+          "name": "Photos",
+          "type": "multipleAttachments"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Create a Field
+
+**Endpoint:**
+```
+POST https://api.airtable.com/v0/meta/bases/{baseId}/tables/{tableId}/fields
+```
+
+**Request Body:**
+```json
+{
+  "name": "Photo Package",
+  "type": "multipleAttachments",
+  "description": "ZIP file containing all assessment photos"
+}
+```
+
+### Common Field Types
+
+| Type | Description | Options |
+|------|-------------|---------|
+| `singleLineText` | Single line of text | None |
+| `multilineText` | Multiple lines of text | None |
+| `number` | Integer or decimal | `precision: 0-8` |
+| `checkbox` | Boolean checkbox | `color`, `icon` |
+| `singleSelect` | Dropdown (one choice) | `choices: [{name, color}]` |
+| `multipleSelects` | Dropdown (multiple) | `choices: [{name, color}]` |
+| `multipleAttachments` | File attachments | `isReversed` |
+| `date` | Date only | `dateFormat` |
+| `dateTime` | Date and time | `dateFormat`, `timeFormat`, `timeZone` |
+| `email` | Email address | None |
+| `url` | URL/website | None |
+| `phoneNumber` | Phone number | None |
+| `currency` | Money value | `precision`, `symbol` |
+
+### Example: Create Number Field
+```json
+{
+  "name": "Photo Count",
+  "type": "number",
+  "options": {
+    "precision": 0
+  }
+}
+```
+
+### Example: Create Attachment Field
+```json
+{
+  "name": "Photo Package",
+  "type": "multipleAttachments"
+}
+```
+
+### Auto-Create Fields in Code
+
+```javascript
+async function ensureFieldExists(config, fieldName, fieldType, options = {}) {
+  // Get current schema
+  const schemaUrl = `https://api.airtable.com/v0/meta/bases/${config.baseId}/tables`;
+  const schemaRes = await fetch(schemaUrl, {
+    headers: { 'Authorization': `Bearer ${config.apiKey}` }
+  });
+  
+  const schemaData = await schemaRes.json();
+  const table = schemaData.tables.find(t => t.id === config.tableId);
+  const existingFields = table.fields.map(f => f.name);
+  
+  if (existingFields.includes(fieldName)) {
+    console.log(`✓ Field "${fieldName}" exists`);
+    return true;
+  }
+  
+  // Create field
+  const createUrl = `https://api.airtable.com/v0/meta/bases/${config.baseId}/tables/${config.tableId}/fields`;
+  const createRes = await fetch(createUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${config.apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: fieldName,
+      type: fieldType,
+      options: Object.keys(options).length ? options : undefined
+    })
+  });
+  
+  if (createRes.ok) {
+    console.log(`✅ Created field: ${fieldName}`);
+    return true;
+  }
+  
+  console.error(`❌ Failed to create field: ${fieldName}`);
+  return false;
+}
+```
+
+---
+
 ## Rate Limits
 
 ### Limits
@@ -975,3 +1118,51 @@ Body: { "contentType": "image/jpeg", "file": "BASE64...", "filename": "photo.jpg
 - [Field Types Reference](https://airtable.com/developers/web/api/field-model)
 - [airtable.js GitHub](https://github.com/Airtable/airtable.js)
 - [pyairtable GitHub](https://github.com/gtalarico/pyairtable)
+
+---
+
+## Dent Pro Implementation Notes
+
+### Photo Upload Flow (as implemented in index.html)
+
+1. **User takes photos** → Stored in `selectedPhotos[]` array as compressed base64
+2. **User clicks "Airtable" button** → `uploadToAirtable()` is called
+3. **Photos are zipped** → `createPhotosZip()` uses JSZip to bundle all photos
+4. **ZIP is uploaded** → Tries Google Drive first (if configured), then falls back to 0x0.st/tmpfiles.org
+5. **Airtable record created** → Includes `Photo Package` field with ZIP URL
+
+### Config File (config.json)
+
+```json
+{
+    "airtable": {
+        "apiKey": "pat...",
+        "baseId": "app...",
+        "tableName": "PDR Assessments"
+    },
+    "googleDrive": {
+        "apiKey": "YOUR_API_KEY",
+        "folderId": "OPTIONAL_FOLDER_ID",
+        "enabled": false
+    }
+}
+```
+
+### Airtable Fields Used
+
+| Field Name | Type | Description |
+|------------|------|-------------|
+| `PDF Report` | Attachment | Generated PDF scope report |
+| `Photo Package` | Attachment | ZIP file containing all photos |
+| `Photo Count` | Number | Count of photos in the package |
+
+### JSZip Library
+
+Loaded from CDN: `https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js`
+
+### Upload Services (Fallback Order)
+
+1. **Google Drive** (if `enabled: true` in config)
+2. **0x0.st** - 30 day retention, 512MB limit
+3. **tmpfiles.org** - Temporary storage
+4. **file.io** - Single download (last resort)

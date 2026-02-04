@@ -18,6 +18,29 @@
             padding: 0;
         }
 
+        /* ==================== STATUS COLOR TOKENS ==================== */
+        :root {
+            /* Status Colors */
+            --status-not-ordered: #FF453A;
+            --status-ordered: #FFD60A;
+            /* Yellow - less problematic */
+            --status-delayed: #FF9F0A;
+            /* Orange - attention/warning */
+            --status-received: #00A3CC;
+            /* Green - in transit */
+            --status-complete: #00D1FF;
+            /* Neon Blue - done */
+            --status-complete-secondary: #00A3CC;
+
+            /* Complete State Gradients */
+            --complete-gradient: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
+            --complete-gradient-90: linear-gradient(90deg, #00D1FF, #00C4E8);
+
+            /* Brand Accent (updated to neon blue per Judah's branding) */
+            --brand-accent: #00D1FF;
+            --brand-accent-secondary: #00A3CC;
+        }
+
         /* Hide scrollbar for iOS PWA feel */
         ::-webkit-scrollbar {
             display: none;
@@ -77,7 +100,7 @@
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #4CD964;
+            color: #00D1FF;
             margin-bottom: 16px;
             font-weight: 600;
         }
@@ -120,7 +143,7 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.1);
         }
 
@@ -141,6 +164,269 @@
         select option {
             background: #1a1a1a;
             color: #fff;
+        }
+
+        /* Enhanced optgroup styling for native selects */
+        select optgroup {
+            font-weight: 700;
+            font-size: 13px;
+            color: #00D1FF;
+            background: #0d0d0d;
+            padding: 8px 0;
+        }
+
+        select optgroup option {
+            font-weight: 400;
+            padding-left: 12px;
+            color: #e0e0e0;
+            background: #1a1a1a;
+        }
+
+        /* Custom Searchable Dropdown Component */
+        .searchable-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .searchable-select-trigger {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .searchable-select-trigger::after {
+            content: '';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #a1a1a6;
+            transition: transform 0.25s ease;
+        }
+
+        .searchable-select-wrapper.open .searchable-select-trigger::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .searchable-select-trigger:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .searchable-select-wrapper.open .searchable-select-trigger {
+            border-color: #00D1FF;
+            background: rgba(0, 209, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(0, 209, 255, 0.15);
+        }
+
+        .searchable-select-trigger.placeholder {
+            color: #666;
+        }
+
+        .searchable-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            max-height: 380px;
+            background: rgba(20, 20, 22, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(0.98);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .searchable-select-wrapper.open .searchable-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-search-wrapper {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .dropdown-search-wrapper::before {
+            content: '🔍';
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            opacity: 0.5;
+        }
+
+        .dropdown-search {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .dropdown-search::placeholder {
+            color: #666;
+        }
+
+        .dropdown-search:focus {
+            outline: none;
+            border-color: #00D1FF;
+            background: rgba(0, 209, 255, 0.06);
+        }
+
+        .dropdown-options {
+            overflow-y: auto;
+            flex: 1;
+            padding: 8px 0;
+        }
+
+        .dropdown-options::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .dropdown-options::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .dropdown-options::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+
+        .dropdown-options::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .dropdown-category {
+            padding: 10px 16px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 3px solid transparent;
+            margin-top: 4px;
+        }
+
+        .dropdown-category:first-child {
+            margin-top: 0;
+        }
+
+        .dropdown-category-icon {
+            font-size: 13px;
+        }
+
+        /* Category colors */
+        .dropdown-category.cat-primary {
+            border-left-color: #00D1FF;
+            color: rgba(0, 209, 255, 0.8);
+        }
+
+        .dropdown-category.cat-regional {
+            border-left-color: #a855f7;
+            color: rgba(168, 85, 247, 0.8);
+        }
+
+        .dropdown-category.cat-commercial {
+            border-left-color: #f59e0b;
+            color: rgba(245, 158, 11, 0.8);
+        }
+
+        .dropdown-category.cat-niche {
+            border-left-color: #ef4444;
+            color: rgba(239, 68, 68, 0.8);
+        }
+
+        .dropdown-category.cat-rental {
+            border-left-color: #22c55e;
+            color: rgba(34, 197, 94, 0.8);
+        }
+
+        .dropdown-category.cat-international {
+            border-left-color: #3b82f6;
+            color: rgba(59, 130, 246, 0.8);
+        }
+
+        .dropdown-category.cat-other {
+            border-left-color: #6b7280;
+            color: rgba(107, 114, 128, 0.8);
+        }
+
+        .dropdown-option {
+            padding: 12px 16px 12px 24px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #e0e0e0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-option:hover,
+        .dropdown-option.highlighted {
+            background: rgba(0, 209, 255, 0.1);
+            color: #fff;
+        }
+
+        .dropdown-option.selected {
+            background: rgba(0, 209, 255, 0.15);
+            color: #00D1FF;
+            font-weight: 600;
+        }
+
+        .dropdown-option.selected::before {
+            content: '✓';
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        .dropdown-no-results {
+            padding: 24px 16px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .dropdown-no-results-icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.5;
         }
 
         textarea {
@@ -183,13 +469,13 @@
 
         .checkbox-item.selected {
             background: rgba(76, 217, 100, 0.15);
-            border-color: #4CD964;
+            border-color: #00D1FF;
         }
 
         .checkbox-item input {
             width: auto;
             margin-right: 8px;
-            accent-color: #4CD964;
+            accent-color: #00D1FF;
         }
 
         .checkbox-item span {
@@ -222,7 +508,7 @@
 
         .rating-option.selected {
             background: rgba(76, 217, 100, 0.15);
-            border-color: #4CD964;
+            border-color: #00D1FF;
         }
 
         .rating-option input {
@@ -253,7 +539,7 @@
 
         .toggle-item.active {
             background: rgba(76, 217, 100, 0.15);
-            border-color: #4CD964;
+            border-color: #00D1FF;
         }
 
         .toggle-switch {
@@ -267,7 +553,7 @@
         }
 
         .toggle-switch.active {
-            background: #4CD964;
+            background: #00D1FF;
         }
 
         .toggle-switch::after {
@@ -325,7 +611,7 @@
         }
 
         .severity-option.light .severity-dot {
-            background: #30D158;
+            background: #00A3CC;
         }
 
         .severity-option.moderate .severity-dot {
@@ -341,7 +627,7 @@
         }
 
         .severity-option.light.selected {
-            --severity-color: #30D158;
+            --severity-color: #00A3CC;
             --severity-rgb: 48, 209, 88;
         }
 
@@ -376,7 +662,7 @@
             margin: 0 auto;
             display: block;
             padding: 18px 32px;
-            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            background: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
             border: none;
             border-radius: 14px;
             color: #000;
@@ -475,7 +761,7 @@
         .modal-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            background: var(--complete-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -534,7 +820,7 @@
         }
 
         .vin-counter.valid {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .vin-counter.invalid {
@@ -553,12 +839,12 @@
         }
 
         .photo-upload-area:hover {
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.05);
         }
 
         .photo-upload-area.dragover {
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.1);
         }
 
@@ -573,7 +859,7 @@
         }
 
         .photo-upload-text strong {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .photo-buttons {
@@ -673,7 +959,7 @@
         }
 
         .photo-preview .upload-status.uploaded {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .photo-preview .upload-status.error {
@@ -732,7 +1018,7 @@
 
         .upload-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CD964, #34C759);
+            background: linear-gradient(90deg, #00D1FF, #00C4E8);
             border-radius: 3px;
             width: 0%;
             transition: width 0.3s ease;
@@ -748,7 +1034,7 @@
         .photo-count-display {
             margin-top: 8px;
             font-size: 12px;
-            color: #4CD964;
+            color: #00D1FF;
             text-align: center;
         }
 
@@ -851,7 +1137,7 @@
 
         .saved-btn.new {
             background: rgba(76, 217, 100, 0.15);
-            color: #4CD964;
+            color: #00D1FF;
             border: 1px solid rgba(76, 217, 100, 0.25);
         }
 
@@ -872,7 +1158,7 @@
         .vin-scan-content h2 {
             font-size: 22px;
             font-weight: 700;
-            color: #4CD964;
+            color: #00D1FF;
             margin-bottom: 8px;
         }
 
@@ -887,7 +1173,7 @@
             align-items: center;
             gap: 8px;
             padding: 18px 36px;
-            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
             border: none;
             border-radius: 14px;
             color: #000;
@@ -940,7 +1226,7 @@
         .vin-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #4CD964, #30D158);
+            background: linear-gradient(90deg, #00D1FF, #00A3CC);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -960,7 +1246,7 @@
 
         .vin-scan-result h3 {
             font-size: 18px;
-            color: #4CD964;
+            color: #00D1FF;
             margin-bottom: 16px;
         }
 
@@ -979,7 +1265,7 @@
         }
 
         .result-item.filled {
-            border-left: 3px solid #4CD964;
+            border-left: 3px solid #00D1FF;
         }
 
         .result-item.missing {
@@ -1003,7 +1289,7 @@
         }
 
         .auto-filled {
-            border: 1px solid #4CD964 !important;
+            border: 1px solid #00D1FF !important;
             background-color: rgba(76, 217, 100, 0.1) !important;
             box-shadow: 0 0 10px rgba(76, 217, 100, 0.2);
             transition: all 0.3s ease;
@@ -1246,7 +1532,7 @@
         }
 
         .camera-done-btn {
-            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
             border: none;
             color: #fff;
             padding: 12px 24px;
@@ -1335,7 +1621,7 @@
         .guide-box {
             width: 80%;
             height: 80px;
-            border: 3px solid #4CD964;
+            border: 3px solid #00D1FF;
             border-radius: 8px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
             position: relative;
@@ -1349,7 +1635,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #4CD964, transparent);
+            background: linear-gradient(90deg, transparent, #00D1FF, transparent);
             animation: scanLine 1.5s ease-in-out infinite;
         }
 
@@ -1383,7 +1669,7 @@
         }
 
         .scanner-status.success {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .scanner-status.error {
@@ -1473,8 +1759,8 @@
         }
 
         .scanner-tab.active {
-            color: #4CD964;
-            border-bottom-color: #4CD964;
+            color: #00D1FF;
+            border-bottom-color: #00D1FF;
             background: rgba(76, 217, 100, 0.1);
         }
 
@@ -1540,7 +1826,7 @@
 
         .ocr-capture-btn {
             padding: 16px 32px;
-            background: linear-gradient(135deg, #4CD964 0%, #34C759 100%);
+            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
             border: none;
             border-radius: 12px;
             color: #000;
@@ -1575,7 +1861,7 @@
         .ocr-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #4CD964, #30D158);
+            background: linear-gradient(90deg, #00D1FF, #00A3CC);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -1664,14 +1950,14 @@
 
         .export-checkbox.selected {
             background: rgba(76, 217, 100, 0.15);
-            border-color: #4CD964;
+            border-color: #00D1FF;
         }
 
         .export-checkbox input[type="checkbox"] {
             width: 20px;
             height: 20px;
             margin-right: 12px;
-            accent-color: #4CD964;
+            accent-color: #00D1FF;
             cursor: pointer;
         }
 
@@ -1707,8 +1993,8 @@
 
         .photo-mode-option.active {
             background: rgba(76, 217, 100, 0.15);
-            border-color: #4CD964;
-            color: #4CD964;
+            border-color: #00D1FF;
+            color: #00D1FF;
         }
 
         .export-btn {
@@ -1831,7 +2117,7 @@
         }
 
         .mode-btn.active {
-            background: linear-gradient(135deg, #4CD964, #32B84A);
+            background: linear-gradient(135deg, #00D1FF, #00B5D9);
             color: #000;
             font-weight: 700;
             box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
@@ -1907,7 +2193,7 @@
         .parts-filters input:focus,
         .parts-filters select:focus {
             outline: none;
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.08);
             box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.15);
         }
@@ -2007,18 +2293,18 @@
         }
 
         .summary-card.complete {
-            background: linear-gradient(165deg, rgba(76, 217, 100, 0.18), rgba(76, 217, 100, 0.06));
-            border: 1px solid rgba(76, 217, 100, 0.25);
+            background: linear-gradient(165deg, rgba(0, 209, 255, 0.18), rgba(0, 209, 255, 0.06));
+            border: 1px solid rgba(0, 209, 255, 0.25);
         }
 
         .summary-card.complete::before {
-            background: linear-gradient(90deg, #4CD964, #6ee382);
+            background: var(--complete-gradient-90);
         }
 
         .summary-card.complete.active {
-            background: linear-gradient(165deg, rgba(76, 217, 100, 0.28), rgba(76, 217, 100, 0.12));
-            border: 1px solid rgba(76, 217, 100, 0.6);
-            box-shadow: 0 0 30px rgba(76, 217, 100, 0.2);
+            background: linear-gradient(165deg, rgba(0, 209, 255, 0.28), rgba(0, 209, 255, 0.12));
+            border: 1px solid rgba(0, 209, 255, 0.6);
+            box-shadow: 0 0 30px rgba(0, 209, 255, 0.2);
         }
 
         .summary-number {
@@ -2042,7 +2328,7 @@
         }
 
         .summary-card.complete .summary-number {
-            color: #4CD964;
+            color: var(--status-complete);
         }
 
         .summary-label {
@@ -2083,7 +2369,7 @@
         }
 
         .vehicle-card.all-done {
-            border-left: 5px solid #4CD964;
+            border-left: 5px solid var(--status-complete);
         }
 
         .card-header {
@@ -2098,7 +2384,7 @@
         .card-ro {
             font-size: 19px;
             font-weight: 700;
-            color: #4CD964;
+            color: #00D1FF;
             letter-spacing: 0.5px;
         }
 
@@ -2184,15 +2470,15 @@
         }
 
         .progress-seg.done {
-            background: linear-gradient(90deg, #4CD964, #3cc356);
+            background: var(--complete-gradient-90);
         }
 
         .progress-seg.received {
-            background: linear-gradient(90deg, #30D158, #28b34a);
+            background: linear-gradient(90deg, var(--status-received), #28b34a);
         }
 
         .progress-seg.ordered {
-            background: linear-gradient(90deg, #FF9F0A, #e88f00);
+            background: linear-gradient(90deg, var(--status-ordered), #e5c000);
         }
 
         .progress-seg.pending {
@@ -2211,7 +2497,7 @@
         }
 
         .card-parts-count.all-done {
-            color: #4CD964;
+            color: var(--status-complete);
         }
 
         .vehicle-main {
@@ -2228,7 +2514,7 @@
         }
 
         .vehicle-ro {
-            color: #4CD964;
+            color: #00D1FF;
             font-weight: 600;
             font-size: 13px;
         }
@@ -2446,7 +2732,7 @@
 
         /* Save Changes Button */
         .save-changes-btn {
-            background: linear-gradient(135deg, #4CD964, #34C759);
+            background: linear-gradient(135deg, #00D1FF, #00C4E8);
             border: none;
             color: #fff;
             padding: 12px 24px;
@@ -2550,15 +2836,15 @@
         }
 
         .progress-stat.ordered .count {
-            color: #FF9F0A;
+            color: var(--status-ordered);
         }
 
         .progress-stat.received .count {
-            color: #30D158;
+            color: #00A3CC;
         }
 
         .progress-stat.replaced .count {
-            color: #4CD964;
+            color: var(--status-complete);
         }
 
         .progress-bar-container {
@@ -2575,15 +2861,15 @@
         }
 
         .progress-segment.replaced {
-            background: #4CD964;
+            background: var(--status-complete);
         }
 
         .progress-segment.received {
-            background: #30D158;
+            background: #00A3CC;
         }
 
         .progress-segment.ordered {
-            background: #FF9F0A;
+            background: var(--status-ordered);
         }
 
         .progress-segment.not-ordered {
@@ -2764,9 +3050,9 @@
         }
 
         .status-badge.complete {
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.25), rgba(76, 217, 100, 0.12));
-            color: #6ee382;
-            border: 1px solid rgba(76, 217, 100, 0.3);
+            background: linear-gradient(135deg, rgba(0, 209, 255, 0.25), rgba(0, 209, 255, 0.12));
+            color: #00D1FF;
+            border: 1px solid rgba(0, 209, 255, 0.3);
         }
 
         /* Record Detail Modal - Premium */
@@ -2793,7 +3079,7 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: #4CD964;
+            color: #00D1FF;
             margin: 0 0 16px 0;
             font-weight: 700;
         }
@@ -2842,7 +3128,7 @@
         .load-to-form-btn {
             flex: 1;
             padding: 14px 20px;
-            background: linear-gradient(135deg, #4CD964, #34C759);
+            background: linear-gradient(135deg, #00D1FF, #00C4E8);
             border: none;
             border-radius: 10px;
             color: #000;
@@ -3429,7 +3715,7 @@
                                 <style>
                                     .car-line {
                                         fill: none;
-                                        stroke: #4CD964;
+                                        stroke: #00D1FF;
                                         stroke-width: 2;
                                     }
 
@@ -3444,7 +3730,7 @@
 
                                     .glass {
                                         fill: #333;
-                                        stroke: #4CD964;
+                                        stroke: #00D1FF;
                                         stroke-width: 1;
                                     }
 
@@ -4298,6 +4584,29 @@
                         <!-- Populated dynamically -->
                     </div>
 
+                    <!-- ETA Date & Notes Section -->
+                    <div class="order-tracking-section"
+                        style="padding: 16px 20px; background: rgba(0, 209, 255, 0.05); border-bottom: 1px solid rgba(255,255,255,0.08);">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                            <div>
+                                <label
+                                    style="display: block; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📅
+                                    ETA Date</label>
+                                <input type="date" id="partEtaDate" class="eta-date-input"
+                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 14px;"
+                                    onchange="markEtaChanged()">
+                            </div>
+                            <div>
+                                <label
+                                    style="display: block; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📝
+                                    Order Notes</label>
+                                <textarea id="partOrderNotes" placeholder="Add notes about this order..."
+                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 14px; resize: none; height: 44px; font-family: inherit;"
+                                    oninput="markNotesChanged()"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Progress Tracker -->
                     <div id="progressTracker" class="progress-tracker">
                         <!-- Populated dynamically -->
@@ -4411,7 +4720,7 @@
         <div id="pdfTemplate">
             <!-- HEADER -->
             <div
-                style="text-align: center; border-bottom: 2px solid #4CD964; padding-bottom: 8px; margin-bottom: 12px;">
+                style="text-align: center; border-bottom: 2px solid #00D1FF; padding-bottom: 8px; margin-bottom: 12px;">
                 <h1>DENT EXPERTS PDR SCOPE</h1>
                 <p style="margin: 4px 0 0 0; font-size: 8pt; color: #666;">
                     RO#: <span id="pdf-ro"></span> | Estimator: <span id="pdf-estimator"></span> | Date: <span
@@ -4611,7 +4920,7 @@
         .brand-bar .logo {
             font-size: 24px;
             font-weight: 800;
-            color: #4CD964;
+            color: #00D1FF;
             letter-spacing: -0.5px;
         }
 
@@ -4685,7 +4994,7 @@
         .app-btn.state-current {
             background: rgba(76, 217, 100, 0.2);
             border: 1px solid rgba(76, 217, 100, 0.4);
-            color: #4CD964;
+            color: #00D1FF;
             cursor: default;
         }
 
@@ -4778,7 +5087,7 @@
         input:focus,
         select:focus {
             background: rgba(255, 255, 255, 0.15);
-            border-color: #4CD964;
+            border-color: #00D1FF;
             /* Highlight */
             outline: none;
             box-shadow: 0 0 0 2px rgba(76, 217, 100, 0.1);
@@ -4981,7 +5290,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             background: transparent;
-            border-left: 4px solid #4CD964;
+            border-left: 4px solid #00D1FF;
             padding-left: 10px;
             display: flex;
             justify-content: space-between;
@@ -5007,7 +5316,7 @@
             width: 16px;
             height: 16px;
             margin: 0;
-            accent-color: #4CD964;
+            accent-color: #00D1FF;
         }
 
         .panel-done-toggle:hover {
@@ -5016,17 +5325,17 @@
 
         /* COMPLETE STATE */
         .panel-box.is-complete {
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.05);
             box-shadow: 0 0 15px rgba(76, 217, 100, 0.1);
         }
 
         .panel-box.is-complete .panel-header {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .panel-box.is-complete .panel-done-toggle {
-            background: #4CD964;
+            background: #00D1FF;
             color: #000;
         }
 
@@ -5065,7 +5374,7 @@
             height: 32px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #4CD964;
+            color: #00D1FF;
             padding: 4px;
             text-align: center;
             font-weight: bold;
@@ -5075,7 +5384,7 @@
         }
 
         .panel-ratings input:focus {
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.1);
             outline: none;
         }
@@ -5110,7 +5419,7 @@
             height: 40px;
             background: rgba(255, 255, 255, 0.05);
             border: none;
-            color: #4CD964;
+            color: #00D1FF;
             font-size: 20px;
             border-radius: 6px;
             cursor: pointer;
@@ -5122,7 +5431,7 @@
         }
 
         .st-btn:active {
-            background: #4CD964;
+            background: #00D1FF;
             color: #000;
         }
 
@@ -5185,8 +5494,8 @@
 
         .dc-range-btn.selected {
             background: linear-gradient(135deg, rgba(76, 217, 100, 0.25) 0%, rgba(76, 217, 100, 0.15) 100%);
-            border-color: #4CD964;
-            color: #4CD964;
+            border-color: #00D1FF;
+            color: #00D1FF;
             transform: scale(1.05);
             box-shadow: 0 2px 8px rgba(76, 217, 100, 0.3);
         }
@@ -5407,8 +5716,8 @@
         }
 
         input[type="checkbox"]:checked {
-            background: #4CD964;
-            border-color: #4CD964;
+            background: #00D1FF;
+            border-color: #00D1FF;
             box-shadow: 0 0 10px rgba(76, 217, 100, 0.4);
         }
 
@@ -5506,7 +5815,7 @@
         }
 
         .stat-box.dents .stat-value {
-            color: #4CD964;
+            color: #00D1FF;
         }
 
         .stat-box.oversized {
@@ -5602,7 +5911,7 @@
         }
 
         .footer-btn.green {
-            background: linear-gradient(135deg, #4CD964 0%, #30D158 100%);
+            background: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
             color: #000;
         }
 
@@ -5680,7 +5989,7 @@
             height: 100%;
             border: none;
             background: transparent;
-            color: #4CD964;
+            color: #00D1FF;
             font-size: 28px;
             /* Larger symbol */
             font-weight: 200;
@@ -5919,7 +6228,7 @@
 
         /* Panel header glow on data entry */
         .panel-box.has-data .panel-header {
-            border-left-color: #4CD964;
+            border-left-color: #00D1FF;
             text-shadow: 0 0 10px rgba(76, 217, 100, 0.3);
         }
 
@@ -5993,14 +6302,14 @@
 
         .general-info-grid input:focus,
         .general-info-grid select:focus {
-            border-color: #4CD964;
+            border-color: #00D1FF;
             background: rgba(76, 217, 100, 0.08);
             box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.12);
         }
 
         /* Auto-filled state enhancement */
         .auto-filled {
-            border-color: #4CD964 !important;
+            border-color: #00D1FF !important;
             background: rgba(76, 217, 100, 0.12) !important;
             box-shadow: 0 0 12px rgba(76, 217, 100, 0.25);
             animation: auto-fill-glow 0.5s ease;
@@ -6563,6 +6872,223 @@
             }, 3000);
         }
 
+        // ==================== ENHANCED SEARCHABLE DROPDOWN ====================
+        function initSearchableSelect(selectId, placeholder = 'Search...') {
+            const originalSelect = document.getElementById(selectId);
+            if (!originalSelect || originalSelect.dataset.searchableInit) return;
+            originalSelect.dataset.searchableInit = 'true';
+
+            // Hide original select but keep it functional
+            originalSelect.style.display = 'none';
+
+            // Create wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'searchable-select-wrapper';
+            originalSelect.parentNode.insertBefore(wrapper, originalSelect);
+            wrapper.appendChild(originalSelect);
+
+            // Create trigger button
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'searchable-select-trigger placeholder';
+            trigger.textContent = originalSelect.options[0]?.text || placeholder;
+            wrapper.appendChild(trigger);
+
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'searchable-dropdown';
+            dropdown.innerHTML = `
+                <div class="dropdown-search-wrapper">
+                    <input type="text" class="dropdown-search" placeholder="${placeholder}">
+                </div>
+                <div class="dropdown-options"></div>
+            `;
+            wrapper.appendChild(dropdown);
+
+            const searchInput = dropdown.querySelector('.dropdown-search');
+            const optionsContainer = dropdown.querySelector('.dropdown-options');
+
+            let highlightedIndex = -1;
+            let visibleOptions = [];
+
+            // Category class mapping
+            const categoryClasses = {
+                'primary': 'cat-primary',
+                'high-volume': 'cat-primary',
+                'regional': 'cat-regional',
+                'secondary': 'cat-regional',
+                'commercial': 'cat-commercial',
+                'fleet': 'cat-commercial',
+                'non-standard': 'cat-niche',
+                'niche': 'cat-niche',
+                'rental': 'cat-rental',
+                'finance': 'cat-rental',
+                'canadian': 'cat-international',
+                'international': 'cat-international',
+                'other': 'cat-other'
+            };
+
+            function getCategoryClass(label) {
+                const lowerLabel = label.toLowerCase();
+                for (const [key, value] of Object.entries(categoryClasses)) {
+                    if (lowerLabel.includes(key)) return value;
+                }
+                return 'cat-other';
+            }
+
+            function renderOptions(filter = '') {
+                optionsContainer.innerHTML = '';
+                visibleOptions = [];
+                highlightedIndex = -1;
+                const filterLower = filter.toLowerCase();
+
+                // Get options from original select
+                const optgroups = originalSelect.querySelectorAll('optgroup');
+                const standaloneOptions = originalSelect.querySelectorAll(':scope > option');
+
+                // Render optgroups
+                if (optgroups.length > 0) {
+                    optgroups.forEach(optgroup => {
+                        const options = Array.from(optgroup.querySelectorAll('option')).filter(opt =>
+                            opt.value && opt.text.toLowerCase().includes(filterLower)
+                        );
+
+                        if (options.length > 0) {
+                            const categoryDiv = document.createElement('div');
+                            categoryDiv.className = `dropdown-category ${getCategoryClass(optgroup.label)}`;
+                            categoryDiv.innerHTML = `<span>${optgroup.label}</span>`;
+                            optionsContainer.appendChild(categoryDiv);
+
+                            options.forEach(opt => {
+                                const optDiv = createOptionDiv(opt);
+                                optionsContainer.appendChild(optDiv);
+                                visibleOptions.push({ element: optDiv, value: opt.value, text: opt.text });
+                            });
+                        }
+                    });
+                }
+
+                // Render standalone options
+                standaloneOptions.forEach(opt => {
+                    if (opt.value && opt.text.toLowerCase().includes(filterLower)) {
+                        const optDiv = createOptionDiv(opt);
+                        optionsContainer.appendChild(optDiv);
+                        visibleOptions.push({ element: optDiv, value: opt.value, text: opt.text });
+                    }
+                });
+
+                // No results message
+                if (visibleOptions.length === 0 && filter) {
+                    optionsContainer.innerHTML = `
+                        <div class="dropdown-no-results">
+                            <span class="dropdown-no-results-icon">🔍</span>
+                            No results for "${filter}"
+                        </div>
+                    `;
+                }
+            }
+
+            function createOptionDiv(opt) {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'dropdown-option';
+                optDiv.dataset.value = opt.value;
+                optDiv.textContent = opt.text;
+
+                if (opt.value === originalSelect.value) {
+                    optDiv.classList.add('selected');
+                }
+
+                optDiv.addEventListener('click', () => selectOption(opt.value, opt.text));
+                return optDiv;
+            }
+
+            function selectOption(value, text) {
+                originalSelect.value = value;
+                originalSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                trigger.textContent = text;
+                trigger.classList.remove('placeholder');
+                closeDropdown();
+            }
+
+            function openDropdown() {
+                wrapper.classList.add('open');
+                renderOptions();
+                setTimeout(() => searchInput.focus(), 50);
+            }
+
+            function closeDropdown() {
+                wrapper.classList.remove('open');
+                searchInput.value = '';
+                highlightedIndex = -1;
+            }
+
+            function updateHighlight() {
+                visibleOptions.forEach((opt, idx) => {
+                    opt.element.classList.toggle('highlighted', idx === highlightedIndex);
+                });
+                if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
+                    visibleOptions[highlightedIndex].element.scrollIntoView({ block: 'nearest' });
+                }
+            }
+
+            // Event listeners
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (wrapper.classList.contains('open')) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            });
+
+            searchInput.addEventListener('input', () => {
+                renderOptions(searchInput.value);
+            });
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (highlightedIndex < visibleOptions.length - 1) {
+                        highlightedIndex++;
+                        updateHighlight();
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (highlightedIndex > 0) {
+                        highlightedIndex--;
+                        updateHighlight();
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
+                        selectOption(visibleOptions[highlightedIndex].value, visibleOptions[highlightedIndex].text);
+                    }
+                } else if (e.key === 'Escape') {
+                    closeDropdown();
+                    trigger.focus();
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+
+            // Update trigger if select value changes externally
+            originalSelect.addEventListener('change', () => {
+                const selectedOpt = originalSelect.options[originalSelect.selectedIndex];
+                if (selectedOpt && selectedOpt.value) {
+                    trigger.textContent = selectedOpt.text;
+                    trigger.classList.remove('placeholder');
+                } else {
+                    trigger.textContent = originalSelect.options[0]?.text || placeholder;
+                    trigger.classList.add('placeholder');
+                }
+            });
+        }
+
         function loadDropdowns() {
             // Populate Year (back to 1960)
             const yearSelect = document.getElementById('year');
@@ -6574,8 +7100,20 @@
                 yearSelect.add(opt);
             }
 
-            // Populate basic Makes (can expand later)
-            const makes = ["Ford", "Chevy", "Dodge/Ram", "Toyota", "Honda", "Nissan", "Hyundai/Kia", "BMW", "Mercedes", "Audi", "VW", "Tesla", "Subaru", "Other"];
+            // Populate Makes - Priority ordered then alphabetized (67 makes)
+            const makes = [
+                // Priority / High-Volume
+                "Acura", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "RAM",
+                "Ford", "Honda", "Toyota", "Hyundai", "Kia", "Nissan", "GMC", "Jeep", "Volkswagen",
+                "Subaru", "Tesla", "Mazda", "Lexus", "Mercedes-Benz", "Volvo",
+                // Extended (Alphabetical)
+                "Alfa Romeo", "Aston Martin", "Bentley", "Ferrari", "Fiat", "Freightliner", "Genesis",
+                "Hummer", "Infiniti", "International", "Isuzu", "Jaguar", "Lamborghini", "Land Rover",
+                "Lincoln", "Lucid", "Maserati", "McLaren", "Mini", "Mitsubishi", "Mitsubishi Fuso",
+                "Polestar", "Pontiac", "Porsche", "Rivian", "Rolls-Royce", "Saab", "Saturn", "Scion",
+                // Other
+                "Other"
+            ];
             const makeSelect = document.getElementById('make');
             makes.forEach(m => {
                 const opt = document.createElement('option');
@@ -6583,6 +7121,7 @@
                 opt.text = m;
                 makeSelect.add(opt);
             });
+
             // Locations
             const locs = ["Progressive Cat Drive", "Shop", "Mobile", "Dealership", "Auction"];
             const locSelect = document.getElementById('location');
@@ -6593,15 +7132,94 @@
                 locSelect.add(opt);
             });
 
-            // Insurance
-            const ins = ["State Farm", "Geico", "Progressive", "Allstate", "Liberty Mutual", "Farmers", "Nationwide", "USAA", "Other"];
+            // Insurance Companies - Organized by Category (128+ carriers)
+            const insuranceCategories = [
+                {
+                    name: "📋 Primary / High-Volume",
+                    carriers: [
+                        "State Farm", "Progressive", "GEICO", "Allstate Insurance", "USAA",
+                        "Farmers Insurance", "Liberty Mutual", "Nationwide Insurance", "Travelers Insurance",
+                        "The Hartford", "AAA", "American Family Insurance", "Auto-Owners Insurance",
+                        "Erie Insurance", "Safeco", "Shelter Insurance", "Farm Bureau", "Mercury Insurance",
+                        "Amica", "Chubb Insurance Group"
+                    ]
+                },
+                {
+                    name: "📍 Regional & Secondary",
+                    carriers: [
+                        "AAA Michigan", "AAA Mid-Atlantic", "Acadia Insurance", "Acuity Insurance",
+                        "Assurant", "Cincinnati Insurance", "Country Financial", "CSAA Insurance",
+                        "Encompass Insurance", "Grange Insurance", "Hanover Insurance",
+                        "Hastings Mutual Insurance", "Kemper", "MAPFRE Insurance North America",
+                        "MetLife", "Michigan Farm Bureau", "Missouri Farm Bureau", "National General",
+                        "New Jersey Manufacturers", "North Carolina Farm Bureau", "Oklahoma Farm Bureau",
+                        "Penn National Insurance", "PEMCO Insurance", "Plymouth Rock Assurance",
+                        "Sentry Insurance", "State Auto", "Tennessee Farm Bureau", "Texas Farm Bureau",
+                        "Virginia Farm Bureau", "Westfield Insurance", "Wawanesa Insurance"
+                    ]
+                },
+                {
+                    name: "🚛 Commercial / Fleet",
+                    carriers: [
+                        "ACE Private Risk Services", "Canal Insurance Company", "Carolina Casualty Insurance",
+                        "Continental Western Insurance", "Federated Mutual Insurance", "Fireman's Fund",
+                        "Foremost Insurance", "Frankenmuth Insurance", "General Casualty Companies",
+                        "Grinnell Mutual", "Guardian Insurance", "Indiana Farm Bureau", "Intact Insurance",
+                        "MEMIC", "Motorists Insurance Group", "Mutual of Enumclaw", "Norfolk & Dedham Group",
+                        "NODAK Insurance", "OneBeacon Insurance Group", "QBE Insurance", "Republic Group",
+                        "Rockford Mutual Insurance", "Society Insurance", "Utica National Insurance Group"
+                    ]
+                },
+                {
+                    name: "⚡ Non-Standard / Niche",
+                    carriers: [
+                        "21st Century Insurance", "Acceptance Insurance", "Access Insurance",
+                        "Affirmative Insurance", "American Freedom Insurance", "American Independent Insurance",
+                        "American Service Insurance", "American Transit Insurance", "CURE Insurance",
+                        "Direct Insurance", "Elephant Insurance", "Esurance", "Explorer Insurance",
+                        "Fred Loya Insurance", "Gainsco Insurance", "Imperial Fire & Casualty",
+                        "Infinity Insurance", "Mendota Insurance", "SafeAuto Insurance", "Safeway Insurance",
+                        "Unifund", "Western General"
+                    ]
+                },
+                {
+                    name: "🚗 Rental / Fleet / Finance",
+                    carriers: [
+                        "Adesa", "Alamo Rental Car", "Avis Budget Group", "Discount Car and Truck Rental",
+                        "Dollar Rent A Car", "Enterprise Rent-A-Car", "Hertz", "National Car Rental",
+                        "Ford Motor Credit", "Element Fleet", "Vanguard Car Rental"
+                    ]
+                },
+                {
+                    name: "🌎 Canadian / International",
+                    carriers: [
+                        "CAA Insurance Company", "Desjardins Insurance", "Gore Mutual Insurance",
+                        "Manitoba Public Insurance", "MAPFRE Puerto Rico", "Optima Seguros",
+                        "Saskatchewan Government Insurance", "The Co-operators", "Zurich Canada"
+                    ]
+                },
+                {
+                    name: "📝 Other",
+                    carriers: ["Other"]
+                }
+            ];
+
             const insSelect = document.getElementById('insuranceCompany');
-            ins.forEach(i => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.text = i;
-                insSelect.add(opt);
+            insuranceCategories.forEach(category => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = category.name;
+                category.carriers.forEach(carrier => {
+                    const opt = document.createElement('option');
+                    opt.value = carrier;
+                    opt.text = carrier;
+                    optgroup.appendChild(opt);
+                });
+                insSelect.appendChild(optgroup);
             });
+
+            // Initialize enhanced searchable dropdowns
+            initSearchableSelect('insuranceCompany', 'Search insurance carriers...');
+            initSearchableSelect('make', 'Search vehicle makes...');
         }
 
         // --- VIN LOGIC ---
@@ -7563,7 +8181,7 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 // Add a flash effect
                 el.style.transition = 'box-shadow 0.3s ease';
-                el.style.boxShadow = '0 0 20px #4CD964';
+                el.style.boxShadow = '0 0 20px #00D1FF';
                 setTimeout(() => {
                     el.style.boxShadow = '';
                 }, 1000);
@@ -7971,7 +8589,7 @@
                 pdf.rect(x, y + height - labelHeight, width, labelHeight, 'F');
 
                 // Add green accent line at top of label
-                pdf.setDrawColor(76, 217, 100); // #4CD964
+                pdf.setDrawColor(76, 217, 100); // #00D1FF
                 pdf.setLineWidth(2);
                 pdf.line(x, y + height - labelHeight, x + width, y + height - labelHeight);
 
@@ -9556,6 +10174,9 @@
                 </div>
             `;
 
+            // Load ETA Date and Notes from record
+            loadEtaAndNotes(vehicle);
+
             const parts = extractRRParts(vehicle);
 
             // Calculate status counts for progress tracker
@@ -9656,6 +10277,45 @@
             }
         }
 
+        // ========== ETA & NOTES STATE ==========
+        let pendingEtaDate = null;
+        let pendingNotes = null;
+        let originalEtaDate = null;
+        let originalNotes = null;
+
+        function markEtaChanged() {
+            const etaInput = document.getElementById('partEtaDate');
+            pendingEtaDate = etaInput.value;
+            if (pendingEtaDate !== originalEtaDate) {
+                isDirty = true;
+                updateSaveUI();
+            }
+        }
+
+        function markNotesChanged() {
+            const notesInput = document.getElementById('partOrderNotes');
+            pendingNotes = notesInput.value;
+            if (pendingNotes !== originalNotes) {
+                isDirty = true;
+                updateSaveUI();
+            }
+        }
+
+        function loadEtaAndNotes(record) {
+            const etaInput = document.getElementById('partEtaDate');
+            const notesInput = document.getElementById('partOrderNotes');
+
+            // Load ETA from Airtable record
+            originalEtaDate = record?.fields?.['ETA Date'] || '';
+            etaInput.value = originalEtaDate;
+            pendingEtaDate = originalEtaDate;
+
+            // Load Notes from Airtable record  
+            originalNotes = record?.fields?.['Order Notes'] || '';
+            notesInput.value = originalNotes;
+            pendingNotes = originalNotes;
+        }
+
         // Open PDF in new tab from Airtable attachment
         function viewPdfFromAirtable() {
             haptic();
@@ -9751,6 +10411,21 @@
                     panelData.partOrderStatus[partKey] = pendingChanges[partKey];
                 });
 
+                // Build fields object for PATCH
+                const fieldsToUpdate = {
+                    'Panel Data': JSON.stringify(panelData, null, 2)
+                };
+
+                // Include ETA Date if changed
+                if (pendingEtaDate !== originalEtaDate) {
+                    fieldsToUpdate['ETA Date'] = pendingEtaDate || null;
+                }
+
+                // Include Order Notes if changed
+                if (pendingNotes !== originalNotes) {
+                    fieldsToUpdate['Order Notes'] = pendingNotes || '';
+                }
+
                 // Save back to Airtable (single request for all changes)
                 const patchResp = await fetch(endpoint, {
                     method: 'PATCH',
@@ -9758,9 +10433,7 @@
                         'Authorization': `Bearer ${config.apiKey}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        fields: { 'Panel Data': JSON.stringify(panelData, null, 2) }
-                    })
+                    body: JSON.stringify({ fields: fieldsToUpdate })
                 });
 
                 if (!patchResp.ok) throw new Error('Failed to update record');
@@ -9769,6 +10442,8 @@
                 const v = allVehicles.find(v => v.id === currentRecordId);
                 if (v) {
                     v.fields['Panel Data'] = JSON.stringify(panelData, null, 2);
+                    if (pendingEtaDate !== originalEtaDate) v.fields['ETA Date'] = pendingEtaDate;
+                    if (pendingNotes !== originalNotes) v.fields['Order Notes'] = pendingNotes;
                 }
 
                 // Clear modified states from all dropdowns
@@ -9776,12 +10451,16 @@
                     el.classList.remove('modified');
                 });
 
-                const changeCount = Object.keys(pendingChanges).length;
+                const changeCount = Object.keys(pendingChanges).length +
+                    (pendingEtaDate !== originalEtaDate ? 1 : 0) +
+                    (pendingNotes !== originalNotes ? 1 : 0);
                 showToast(`✅ Saved ${changeCount} change${changeCount > 1 ? 's' : ''}`, 'success');
                 haptic('success');
 
                 // Reset state
                 pendingChanges = {};
+                originalEtaDate = pendingEtaDate;
+                originalNotes = pendingNotes;
                 isDirty = false;
                 updateSaveUI();
 

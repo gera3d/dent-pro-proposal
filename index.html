@@ -1800,174 +1800,233 @@
             font-weight: bold;
         }
 
-        /* ==================== PARTS TECH MODE STYLES ==================== */
+        /* ==================== PARTS TECH MODE STYLES - PREMIUM IPAD DESIGN ==================== */
 
         /* Mode Toggle in Header */
         .mode-toggle {
             display: flex;
             gap: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 5px;
+            backdrop-filter: blur(10px);
         }
 
         .mode-btn {
-            padding: 8px 14px;
+            padding: 10px 18px;
             border: none;
             background: transparent;
-            color: #888;
-            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s ease;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            letter-spacing: 0.3px;
         }
 
         .mode-btn:hover {
             background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .mode-btn.active {
-            background: #4CD964;
+            background: linear-gradient(135deg, #4CD964, #32B84A);
             color: #000;
-            font-weight: 600;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
         }
 
-        /* Parts Tech Dashboard */
+        /* Dashboard Container - iPad Optimized */
         .parts-tech-dashboard {
-            padding: 16px;
+            padding: 24px;
             min-height: 80vh;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .parts-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .parts-header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 28px;
+            font-weight: 700;
             color: #fff;
+            letter-spacing: -0.5px;
         }
 
         .refresh-btn {
-            padding: 10px 18px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.25s;
+            backdrop-filter: blur(10px);
         }
 
         .refresh-btn:hover {
             background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
         }
 
         .refresh-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
         }
 
-        /* Filters */
+        /* Search Filters - Premium Design */
         .parts-filters {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .parts-filters input,
         .parts-filters select {
             flex: 1;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
             color: #fff;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .parts-filters input:focus,
+        .parts-filters select:focus {
+            outline: none;
+            border-color: #4CD964;
+            background: rgba(76, 217, 100, 0.08);
+            box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.15);
         }
 
         .parts-filters input::placeholder {
-            color: #666;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 400;
         }
 
         .parts-filters select {
-            max-width: 160px;
+            max-width: 180px;
+            cursor: pointer;
         }
 
-        /* Dashboard Summary */
+        /* Dashboard Summary - Premium Cards */
         .dashboard-summary {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 28px;
         }
 
         .summary-card {
-            padding: 16px;
-            border-radius: 12px;
+            padding: 24px 20px;
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .summary-card.active::before {
+            opacity: 1;
         }
 
         .summary-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
 
         .summary-card.vehicles {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
-            border: 1px solid rgba(52, 152, 219, 0.3);
+            background: linear-gradient(165deg, rgba(52, 152, 219, 0.18), rgba(52, 152, 219, 0.06));
+            border: 1px solid rgba(52, 152, 219, 0.25);
+        }
+
+        .summary-card.vehicles::before {
+            background: linear-gradient(90deg, #3498db, #5faee3);
         }
 
         .summary-card.vehicles.active {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.2));
-            border: 1px solid rgba(52, 152, 219, 0.8);
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+            background: linear-gradient(165deg, rgba(52, 152, 219, 0.28), rgba(52, 152, 219, 0.12));
+            border: 1px solid rgba(52, 152, 219, 0.6);
+            box-shadow: 0 0 30px rgba(52, 152, 219, 0.2);
         }
 
         .summary-card.pending {
-            background: linear-gradient(135deg, rgba(255, 69, 58, 0.2), rgba(255, 69, 58, 0.1));
-            border: 1px solid rgba(255, 69, 58, 0.3);
+            background: linear-gradient(165deg, rgba(255, 69, 58, 0.18), rgba(255, 69, 58, 0.06));
+            border: 1px solid rgba(255, 69, 58, 0.25);
+        }
+
+        .summary-card.pending::before {
+            background: linear-gradient(90deg, #FF453A, #ff6b63);
         }
 
         .summary-card.pending.active {
-            background: linear-gradient(135deg, rgba(255, 69, 58, 0.3), rgba(255, 69, 58, 0.2));
-            border: 1px solid rgba(255, 69, 58, 0.8);
-            box-shadow: 0 0 15px rgba(255, 69, 58, 0.2);
+            background: linear-gradient(165deg, rgba(255, 69, 58, 0.28), rgba(255, 69, 58, 0.12));
+            border: 1px solid rgba(255, 69, 58, 0.6);
+            box-shadow: 0 0 30px rgba(255, 69, 58, 0.2);
         }
 
         .summary-card.in-progress {
-            background: linear-gradient(135deg, rgba(255, 159, 10, 0.2), rgba(255, 159, 10, 0.1));
-            border: 1px solid rgba(255, 159, 10, 0.3);
+            background: linear-gradient(165deg, rgba(255, 159, 10, 0.18), rgba(255, 159, 10, 0.06));
+            border: 1px solid rgba(255, 159, 10, 0.25);
+        }
+
+        .summary-card.in-progress::before {
+            background: linear-gradient(90deg, #FF9F0A, #ffb84d);
         }
 
         .summary-card.in-progress.active {
-            background: linear-gradient(135deg, rgba(255, 159, 10, 0.3), rgba(255, 159, 10, 0.2));
-            border: 1px solid rgba(255, 159, 10, 0.8);
-            box-shadow: 0 0 15px rgba(255, 159, 10, 0.2);
+            background: linear-gradient(165deg, rgba(255, 159, 10, 0.28), rgba(255, 159, 10, 0.12));
+            border: 1px solid rgba(255, 159, 10, 0.6);
+            box-shadow: 0 0 30px rgba(255, 159, 10, 0.2);
         }
 
         .summary-card.complete {
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.2), rgba(76, 217, 100, 0.1));
-            border: 1px solid rgba(76, 217, 100, 0.3);
+            background: linear-gradient(165deg, rgba(76, 217, 100, 0.18), rgba(76, 217, 100, 0.06));
+            border: 1px solid rgba(76, 217, 100, 0.25);
+        }
+
+        .summary-card.complete::before {
+            background: linear-gradient(90deg, #4CD964, #6ee382);
         }
 
         .summary-card.complete.active {
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.3), rgba(76, 217, 100, 0.2));
-            border: 1px solid rgba(76, 217, 100, 0.8);
-            box-shadow: 0 0 15px rgba(76, 217, 100, 0.2);
+            background: linear-gradient(165deg, rgba(76, 217, 100, 0.28), rgba(76, 217, 100, 0.12));
+            border: 1px solid rgba(76, 217, 100, 0.6);
+            box-shadow: 0 0 30px rgba(76, 217, 100, 0.2);
         }
 
         .summary-number {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 800;
             display: block;
+            line-height: 1;
+            letter-spacing: -1px;
         }
 
         .summary-card.vehicles .summary-number {
@@ -1987,84 +2046,90 @@
         }
 
         .summary-label {
-            font-size: 12px;
-            color: #888;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            margin-top: 4px;
+            letter-spacing: 1px;
+            margin-top: 8px;
         }
 
-        /* Vehicle List */
+        /* Vehicle List - Premium Cards */
         .vehicle-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .vehicle-card {
             padding: 0;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             overflow: hidden;
         }
 
         .vehicle-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
         }
 
         .vehicle-card.has-pending {
-            border-left: 4px solid #FF9F0A;
+            border-left: 5px solid #FF9F0A;
         }
 
         .vehicle-card.all-done {
-            border-left: 4px solid #4CD964;
+            border-left: 5px solid #4CD964;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .card-ro {
-            font-size: 16px;
+            font-size: 19px;
             font-weight: 700;
             color: #4CD964;
+            letter-spacing: 0.5px;
         }
 
         .card-location {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: #fff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 24px;
+            font-size: 13px;
             font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .card-body {
-            padding: 12px 16px;
+            padding: 18px 20px;
             display: flex;
-            gap: 12px;
+            gap: 18px;
             align-items: flex-start;
         }
 
         .card-thumbnail {
-            width: 70px;
-            height: 70px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            width: 100px;
+            height: 100px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
             flex-shrink: 0;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .card-thumbnail img {
@@ -2074,39 +2139,42 @@
         }
 
         .card-thumbnail .placeholder {
-            font-size: 28px;
-            opacity: 0.4;
+            font-size: 40px;
+            opacity: 0.35;
         }
 
         .card-content {
             flex: 1;
             min-width: 0;
+            padding-top: 4px;
         }
 
         .card-customer {
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: #fff;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: -0.2px;
         }
 
         .card-vehicle {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 16px;
+            font-weight: 500;
         }
 
         .card-progress-section {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .card-progress-bar {
             flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 5px;
             overflow: hidden;
             display: flex;
         }
@@ -2116,25 +2184,26 @@
         }
 
         .progress-seg.done {
-            background: #4CD964;
+            background: linear-gradient(90deg, #4CD964, #3cc356);
         }
 
         .progress-seg.received {
-            background: #30D158;
+            background: linear-gradient(90deg, #30D158, #28b34a);
         }
 
         .progress-seg.ordered {
-            background: #FF9F0A;
+            background: linear-gradient(90deg, #FF9F0A, #e88f00);
         }
 
         .progress-seg.pending {
-            background: #FF453A;
+            background: linear-gradient(90deg, #FF453A, #e83a30);
         }
 
         .card-parts-count {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
+            letter-spacing: 0.2px;
         }
 
         .card-parts-count.has-pending {
@@ -2520,6 +2589,315 @@
         .progress-segment.not-ordered {
             background: #FF453A;
         }
+
+        /* ==================== RECORDS DASHBOARD STYLES - PREMIUM IPAD DESIGN ==================== */
+
+        .records-dashboard {
+            padding: 24px;
+            min-height: 80vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .records-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        /* Records Summary Cards - Premium */
+        .records-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .records-summary .summary-card.total {
+            background: linear-gradient(165deg, rgba(52, 152, 219, 0.18), rgba(52, 152, 219, 0.06));
+            border: 1px solid rgba(52, 152, 219, 0.25);
+        }
+
+        .records-summary .summary-card.total::before {
+            background: linear-gradient(90deg, #3498db, #5faee3);
+        }
+
+        .records-summary .summary-card.total.active {
+            background: linear-gradient(165deg, rgba(52, 152, 219, 0.28), rgba(52, 152, 219, 0.12));
+            border: 1px solid rgba(52, 152, 219, 0.6);
+            box-shadow: 0 0 30px rgba(52, 152, 219, 0.2);
+        }
+
+        .records-summary .summary-card.total .summary-number {
+            color: #3498db;
+        }
+
+        /* Records List - Premium Cards */
+        .records-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .record-card {
+            padding: 0;
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .record-card:hover {
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .record-card .card-header {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .record-card .card-body {
+            display: flex;
+            gap: 18px;
+            padding: 18px 20px;
+        }
+
+        .record-card .card-thumbnail {
+            width: 90px;
+            height: 90px;
+            min-width: 90px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .record-card .card-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .record-card .card-thumbnail .placeholder {
+            font-size: 36px;
+            opacity: 0.35;
+        }
+
+        .record-card .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 4px;
+        }
+
+        .record-card .card-vehicle {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.2px;
+        }
+
+        .record-card .card-customer {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 500;
+        }
+
+        .record-card .card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .record-card .card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 14px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.submitted {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(52, 152, 219, 0.12));
+            color: #5faee3;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .status-badge.in-progress {
+            background: linear-gradient(135deg, rgba(255, 159, 10, 0.25), rgba(255, 159, 10, 0.12));
+            color: #ffb84d;
+            border: 1px solid rgba(255, 159, 10, 0.3);
+        }
+
+        .status-badge.complete {
+            background: linear-gradient(135deg, rgba(76, 217, 100, 0.25), rgba(76, 217, 100, 0.12));
+            color: #6ee382;
+            border: 1px solid rgba(76, 217, 100, 0.3);
+        }
+
+        /* Record Detail Modal - Premium */
+        .record-detail-modal {
+            background: linear-gradient(165deg, #1e1e1e, #151515);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .record-detail-content {
+            padding: 28px;
+        }
+
+        .record-detail-section {
+            margin-bottom: 28px;
+        }
+
+        .record-detail-section h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #4CD964;
+            margin: 0 0 16px 0;
+            font-weight: 700;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .detail-item {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .detail-item .value {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .record-detail-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .load-to-form-btn {
+            flex: 1;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #4CD964, #34C759);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .load-to-form-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(76, 217, 100, 0.3);
+        }
+
+        .view-attachments-btn {
+            padding: 14px 20px;
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-attachments-btn:hover {
+            background: rgba(52, 152, 219, 0.3);
+        }
+
+        /* Search filter styling for records */
+        .records-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .records-filters input,
+        .records-filters select {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .records-filters input::placeholder {
+            color: #666;
+        }
+
+        .records-filters select {
+            max-width: 160px;
+        }
     </style>
 
     <!-- PDF Generation Libraries -->
@@ -2535,13 +2913,16 @@
         <div class="brand-bar">
             <div class="logo"><img src="logo.webp" alt="Dent Experts Logo"></div>
 
-            <!-- Mode Toggle for Scoper vs Parts Tech -->
+            <!-- Mode Toggle for Scoper vs Parts Tech vs Records -->
             <div class="mode-toggle">
                 <button class="mode-btn active" data-mode="scoper" onclick="switchMode('scoper')">
                     📸 Scoper
                 </button>
                 <button class="mode-btn" data-mode="parts" onclick="switchMode('parts')">
                     🔧 Parts
+                </button>
+                <button class="mode-btn" data-mode="records" onclick="switchMode('records')">
+                    📋 Records
                 </button>
             </div>
 
@@ -3935,6 +4316,92 @@
                             <button type="button" id="saveChangesBtn" class="save-changes-btn"
                                 onclick="savePartChanges()">💾 Save Changes</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECORDS DASHBOARD (Hidden by default) -->
+        <div id="recordsDashboard" class="records-dashboard" style="display: none;">
+            <div class="records-header">
+                <h2>📋 All Records</h2>
+                <button class="refresh-btn" onclick="refreshRecordsList()">🔄 Refresh</button>
+            </div>
+
+            <div class="records-filters">
+                <input type="text" id="recordsSearch" placeholder="🔍 Search RO#, VIN, customer, vehicle..."
+                    oninput="filterRecords()">
+                <select id="recordsStatusFilter" onchange="filterRecords()">
+                    <option value="all">All Status</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Complete">Complete</option>
+                </select>
+            </div>
+
+            <!-- Records Summary -->
+            <div id="recordsSummary" class="records-summary">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div id="recordsList" class="records-list">
+                <div class="empty-state">Switch to Records mode and click Refresh to load all records</div>
+            </div>
+
+            <!-- Record Detail Modal -->
+            <div id="recordDetailModal" class="modal-overlay">
+                <div class="record-detail-modal">
+                    <div class="modal-header">
+                        <h3 id="recordDetailTitle">Record Details</h3>
+                        <button class="modal-close-btn" onclick="closeRecordDetail()">✕</button>
+                    </div>
+
+                    <div class="record-detail-content">
+                        <!-- Vehicle Info Section -->
+                        <div class="record-detail-section">
+                            <h4>Vehicle Information</h4>
+                            <div id="recordVehicleInfo" class="detail-grid">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Customer & Insurance Section -->
+                        <div class="record-detail-section">
+                            <h4>Customer & Insurance</h4>
+                            <div id="recordCustomerInfo" class="detail-grid">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Assessment Section -->
+                        <div class="record-detail-section">
+                            <h4>Assessment Details</h4>
+                            <div id="recordAssessmentInfo" class="detail-grid">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Attachments Section -->
+                        <div class="record-detail-section" id="recordAttachmentsSection" style="display: none;">
+                            <h4>Attachments</h4>
+                            <div id="recordAttachments" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="record-detail-section" id="recordNotesSection" style="display: none;">
+                            <h4>Notes</h4>
+                            <div id="recordNotes" class="detail-item full-width">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="record-detail-footer">
+                        <button class="load-to-form-btn" onclick="loadRecordToForm()">
+                            ✏️ Load to Form
+                        </button>
                     </div>
                 </div>
             </div>
@@ -8772,13 +9239,21 @@
                 btn.classList.toggle('active', btn.dataset.mode === mode);
             });
 
-            // Elements to toggle (scoper mode elements)
+            // Elements to toggle
             const scopeForm = document.getElementById('scopeForm');
             const savedFormsBar = document.querySelector('.saved-forms-bar');
             const vinSection = document.querySelector('.vin-scan-section');
             const actionToolbar = document.querySelector('.action-toolbar');
-
             const partsView = document.getElementById('partsTechDashboard');
+            const recordsView = document.getElementById('recordsDashboard');
+
+            // Hide all views first
+            if (scopeForm) scopeForm.style.display = 'none';
+            if (savedFormsBar) savedFormsBar.style.display = 'none';
+            if (vinSection) vinSection.style.display = 'none';
+            if (actionToolbar) actionToolbar.style.display = 'none';
+            if (partsView) partsView.style.display = 'none';
+            if (recordsView) recordsView.style.display = 'none';
 
             if (mode === 'scoper') {
                 // Show scoper mode
@@ -8786,17 +9261,16 @@
                 if (savedFormsBar) savedFormsBar.style.display = '';
                 if (vinSection) vinSection.style.display = '';
                 if (actionToolbar) actionToolbar.style.display = '';
-                partsView.style.display = 'none';
-            } else {
+            } else if (mode === 'parts') {
                 // Show parts tech mode
-                if (scopeForm) scopeForm.style.display = 'none';
-                if (savedFormsBar) savedFormsBar.style.display = 'none';
-                if (vinSection) vinSection.style.display = 'none';
-                if (actionToolbar) actionToolbar.style.display = 'none';
-                partsView.style.display = 'block';
-
+                if (partsView) partsView.style.display = 'block';
                 // Load vehicles when switching to parts mode
                 refreshVehicleList();
+            } else if (mode === 'records') {
+                // Show records dashboard mode
+                if (recordsView) recordsView.style.display = 'block';
+                // Load records when switching to records mode
+                refreshRecordsList();
             }
         }
 
@@ -9351,6 +9825,374 @@
             if (searchInput) searchInput.addEventListener('input', filterVehicles);
             if (statusFilter) statusFilter.addEventListener('change', filterVehicles);
         });
+
+        // ==================== RECORDS DASHBOARD MODE ====================
+
+        let allRecords = [];  // Cache for filtering
+        let currentDetailRecordId = null;  // Currently viewed record
+
+        // Refresh records list from Airtable
+        async function refreshRecordsList() {
+            haptic();
+            const listEl = document.getElementById('recordsList');
+            listEl.innerHTML = '<div class="loading-state">⏳ Loading records...</div>';
+
+            try {
+                allRecords = await fetchVehiclesFromAirtable();  // Reuse existing fetch function
+                renderRecordsList(allRecords);
+            } catch (err) {
+                console.error('Records fetch error:', err);
+                listEl.innerHTML = `<div class="error-state">❌ ${err.message}</div>`;
+            }
+        }
+
+        // Render records list
+        function renderRecordsList(records) {
+            const listEl = document.getElementById('recordsList');
+            const summaryEl = document.getElementById('recordsSummary');
+
+            // Calculate stats
+            const stats = {
+                total: records.length,
+                submitted: records.filter(r => (r.fields.Status || 'Submitted') === 'Submitted').length,
+                complete: records.filter(r => (r.fields.Status || '') === 'Complete').length
+            };
+            stats.inProgress = stats.total - stats.submitted - stats.complete;
+
+            // Render summary cards
+            summaryEl.innerHTML = `
+                <div class="summary-card total ${currentRecordsFilter === 'all' ? 'active' : ''}" onclick="setRecordsFilter('all')">
+                    <span class="summary-number">${stats.total}</span>
+                    <span class="summary-label">Total</span>
+                </div>
+                <div class="summary-card pending ${currentRecordsFilter === 'Submitted' ? 'active' : ''}" onclick="setRecordsFilter('Submitted')">
+                    <span class="summary-number">${stats.submitted}</span>
+                    <span class="summary-label">Submitted</span>
+                </div>
+                <div class="summary-card complete ${currentRecordsFilter === 'Complete' ? 'active' : ''}" onclick="setRecordsFilter('Complete')">
+                    <span class="summary-number">${stats.complete}</span>
+                    <span class="summary-label">Complete</span>
+                </div>
+            `;
+
+            if (records.length === 0) {
+                listEl.innerHTML = '<div class="empty-state">📋 No records found</div>';
+                return;
+            }
+
+            // Filter records based on current filter and search
+            let displayedRecords = filterRecordsData(records);
+
+            if (displayedRecords.length === 0) {
+                listEl.innerHTML = '<div class="empty-state">🔍 No records match your filter</div>';
+                return;
+            }
+
+            listEl.innerHTML = displayedRecords.map(r => {
+                const f = r.fields;
+                const status = f.Status || 'Submitted';
+                const statusClass = status.toLowerCase().replace(/\s+/g, '-');
+                const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleDateString() : 'N/A';
+                const vehicleInfo = [f.Year, f.Make, f.Model].filter(Boolean).join(' ') || 'Vehicle Info N/A';
+                const thumbnailUrl = f.Thumbnail && f.Thumbnail[0] ?
+                    (f.Thumbnail[0].thumbnails?.small?.url || f.Thumbnail[0].url) : null;
+
+                return `
+                    <div class="record-card" onclick="openRecordDetail('${r.id}')">
+                        <div class="card-header">
+                            <span class="card-ro">RO# ${f['RO Number'] || 'N/A'}</span>
+                            <span class="status-badge ${statusClass}">${status}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-thumbnail">
+                                ${thumbnailUrl
+                        ? `<img src="${thumbnailUrl}" alt="Vehicle">`
+                        : `<span class="placeholder">🚗</span>`
+                    }
+                            </div>
+                            <div class="card-content">
+                                <div class="card-vehicle">${vehicleInfo}${f.Color ? ' • ' + f.Color : ''}</div>
+                                <div class="card-customer">${f['Customer Name'] || 'Customer Not Set'}</div>
+                                <div class="card-meta">
+                                    <span>📅 ${submittedDate}</span>
+                                    ${f['Insurance Company'] ? `<span>🏢 ${f['Insurance Company']}</span>` : ''}
+                                    ${f['Photo Count'] ? `<span>📸 ${f['Photo Count']}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        let currentRecordsFilter = 'all';
+
+        function setRecordsFilter(filter) {
+            haptic();
+            currentRecordsFilter = filter;
+            renderRecordsList(allRecords);
+        }
+
+        function filterRecords() {
+            renderRecordsList(allRecords);
+        }
+
+        function filterRecordsData(records) {
+            const search = document.getElementById('recordsSearch')?.value?.toLowerCase() || '';
+            const statusFilter = document.getElementById('recordsStatusFilter')?.value || 'all';
+
+            let filtered = records;
+
+            // Apply search filter
+            if (search) {
+                filtered = filtered.filter(r => {
+                    const f = r.fields;
+                    const searchText = [
+                        f['RO Number'],
+                        f.VIN,
+                        f['Customer Name'],
+                        f.Year,
+                        f.Make,
+                        f.Model,
+                        f.Color,
+                        f['Insurance Company'],
+                        f.Location
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    return searchText.includes(search);
+                });
+            }
+
+            // Apply status filter (from dropdown or summary card click)
+            const activeFilter = statusFilter !== 'all' ? statusFilter : currentRecordsFilter;
+            if (activeFilter !== 'all') {
+                filtered = filtered.filter(r => (r.fields.Status || 'Submitted') === activeFilter);
+            }
+
+            return filtered;
+        }
+
+        // Open record detail modal
+        function openRecordDetail(recordId) {
+            haptic();
+            const record = allRecords.find(r => r.id === recordId);
+            if (!record) return;
+
+            currentDetailRecordId = recordId;
+            const f = record.fields;
+
+            // Update title
+            const vehicleInfo = [f.Year, f.Make, f.Model].filter(Boolean).join(' ') || 'Record';
+            document.getElementById('recordDetailTitle').textContent = `${vehicleInfo} - RO# ${f['RO Number'] || 'N/A'}`;
+
+            // Vehicle Info
+            document.getElementById('recordVehicleInfo').innerHTML = `
+                <div class="detail-item">
+                    <label>VIN</label>
+                    <div class="value">${f.VIN || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Year</label>
+                    <div class="value">${f.Year || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Make</label>
+                    <div class="value">${f.Make || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Model</label>
+                    <div class="value">${f.Model || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Color</label>
+                    <div class="value">${f.Color || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Odometer</label>
+                    <div class="value">${f.Odometer || 'N/A'}</div>
+                </div>
+            `;
+
+            // Customer Info
+            document.getElementById('recordCustomerInfo').innerHTML = `
+                <div class="detail-item">
+                    <label>Customer Name</label>
+                    <div class="value">${f['Customer Name'] || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Insurance</label>
+                    <div class="value">${f['Insurance Company'] || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Claim Number</label>
+                    <div class="value">${f['Claim Number'] || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Location</label>
+                    <div class="value">${f.Location || 'N/A'}</div>
+                </div>
+            `;
+
+            // Assessment Info
+            const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleString() : 'N/A';
+            document.getElementById('recordAssessmentInfo').innerHTML = `
+                <div class="detail-item">
+                    <label>Estimator</label>
+                    <div class="value">${f.Estimator || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <div class="value">${f.Status || 'Submitted'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Submitted</label>
+                    <div class="value">${submittedDate}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Photo Count</label>
+                    <div class="value">${f['Photo Count'] || '0'}</div>
+                </div>
+            `;
+
+            // Attachments
+            const attachmentsSection = document.getElementById('recordAttachmentsSection');
+            const attachmentsEl = document.getElementById('recordAttachments');
+            const hasPdf = f['PDF Report'] && f['PDF Report'][0];
+            const hasPhotos = f['Photo Package'] && f['Photo Package'][0];
+
+            if (hasPdf || hasPhotos) {
+                attachmentsSection.style.display = 'block';
+                let attachmentsHtml = '';
+                if (hasPdf) {
+                    attachmentsHtml += `
+                        <button class="view-attachments-btn" onclick="window.open('${f['PDF Report'][0].url}', '_blank')">
+                            📄 View PDF
+                        </button>
+                    `;
+                }
+                if (hasPhotos) {
+                    attachmentsHtml += `
+                        <button class="view-attachments-btn" onclick="window.open('${f['Photo Package'][0].url}', '_blank')">
+                            📸 Download Photos
+                        </button>
+                    `;
+                }
+                attachmentsEl.innerHTML = attachmentsHtml;
+            } else {
+                attachmentsSection.style.display = 'none';
+            }
+
+            // Notes
+            const notesSection = document.getElementById('recordNotesSection');
+            const notesEl = document.getElementById('recordNotes');
+            if (f.Notes) {
+                notesSection.style.display = 'block';
+                notesEl.innerHTML = `<div class="value" style="white-space: pre-wrap;">${f.Notes}</div>`;
+            } else {
+                notesSection.style.display = 'none';
+            }
+
+            // Show modal
+            document.getElementById('recordDetailModal').classList.add('show');
+        }
+
+        function closeRecordDetail() {
+            haptic();
+            document.getElementById('recordDetailModal').classList.remove('show');
+            currentDetailRecordId = null;
+        }
+
+        // Load record data into the Scoper form
+        function loadRecordToForm() {
+            if (!currentDetailRecordId) return;
+
+            const record = allRecords.find(r => r.id === currentDetailRecordId);
+            if (!record) return;
+
+            const f = record.fields;
+            haptic('medium');
+
+            // Close modal first
+            closeRecordDetail();
+
+            // Switch to Scoper mode
+            switchMode('scoper');
+
+            // Wait for mode switch, then populate form
+            setTimeout(() => {
+                // Basic vehicle info
+                const setField = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el && value) el.value = value;
+                };
+
+                setField('roNumber', f['RO Number']);
+                setField('vin', f.VIN);
+                setField('year', f.Year);
+                setField('make', f.Make);
+                setField('model', f.Model);
+                setField('color', f.Color);
+                setField('odometer', f.Odometer);
+                setField('insuredName', f['Customer Name']);
+                setField('insuranceCompany', f['Insurance Company']);
+                setField('claimNumber', f['Claim Number']);
+                setField('location', f.Location);
+                setField('estimator', f.Estimator);
+
+                // Notes field
+                const notesField = document.querySelector('textarea[name="notes"]');
+                if (notesField && f.Notes) notesField.value = f.Notes;
+
+                // Parse and load panel data if available
+                if (f['Panel Data']) {
+                    try {
+                        const panelData = JSON.parse(f['Panel Data']);
+
+                        // Load panel damage data
+                        if (panelData.panels) {
+                            Object.keys(panelData.panels).forEach(panelKey => {
+                                const panel = panelData.panels[panelKey];
+                                const dcInput = document.querySelector(`input[name="${panelKey}_dc"]`);
+                                const osInput = document.querySelector(`input[name="${panelKey}_os"]`);
+                                const coinSelect = document.querySelector(`select[name="${panelKey}_coin"]`);
+
+                                if (dcInput && panel.dc) dcInput.value = panel.dc;
+                                if (osInput && panel.os) osInput.value = panel.os;
+                                if (coinSelect && panel.coin) coinSelect.value = panel.coin;
+                            });
+                        }
+
+                        // Load R&R checkboxes
+                        if (panelData.rrParts) {
+                            Object.keys(panelData.rrParts).forEach(key => {
+                                if (panelData.rrParts[key]) {
+                                    const checkbox = document.querySelector(`input[name="${key}"]`);
+                                    if (checkbox) checkbox.checked = true;
+                                }
+                            });
+                        }
+
+                        // Load R&I checkboxes
+                        if (panelData.riParts) {
+                            Object.keys(panelData.riParts).forEach(key => {
+                                if (panelData.riParts[key]) {
+                                    const checkbox = document.querySelector(`input[name="${key}"]`);
+                                    if (checkbox) checkbox.checked = true;
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse Panel Data:', e);
+                    }
+                }
+
+                // Trigger highlighting update
+                if (typeof checkAllHighlighting === 'function') {
+                    checkAllHighlighting();
+                }
+
+                showToast('✅ Record loaded into form', 'success');
+            }, 100);
+        }
 
         // ==================== VIN BARCODE SCANNER ====================
         let scannerActive = false;

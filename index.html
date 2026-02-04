@@ -20,25 +20,30 @@
 
         /* ==================== STATUS COLOR TOKENS ==================== */
         :root {
+            /* Brand Colors (Your Dent Experts) */
+            --brand-primary: #1A6CFF;
+            --brand-primary-dark: #0C4D9C;
+            --brand-accent-glow: rgba(26, 108, 255, 0.4);
+
             /* Status Colors */
             --status-not-ordered: #FF453A;
             --status-ordered: #FFD60A;
             /* Yellow - less problematic */
             --status-delayed: #FF9F0A;
             /* Orange - attention/warning */
-            --status-received: #00A3CC;
-            /* Green - in transit */
-            --status-complete: #00D1FF;
-            /* Neon Blue - done */
-            --status-complete-secondary: #00A3CC;
+            --status-received: #1A6CFF;
+            /* Brand Blue - in transit */
+            --status-complete: #1A6CFF;
+            /* Brand Blue - done */
+            --status-complete-secondary: #0C4D9C;
 
             /* Complete State Gradients */
-            --complete-gradient: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
-            --complete-gradient-90: linear-gradient(90deg, #00D1FF, #00C4E8);
+            --complete-gradient: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
+            --complete-gradient-90: linear-gradient(90deg, #1A6CFF, #0C4D9C);
 
-            /* Brand Accent (updated to neon blue per Judah's branding) */
-            --brand-accent: #00D1FF;
-            --brand-accent-secondary: #00A3CC;
+            /* Brand Accent (Your Dent Experts branding) */
+            --brand-accent: #1A6CFF;
+            --brand-accent-secondary: #0C4D9C;
         }
 
         /* Hide scrollbar for iOS PWA feel */
@@ -100,7 +105,7 @@
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #00D1FF;
+            color: #1A6CFF;
             margin-bottom: 16px;
             font-weight: 600;
         }
@@ -143,8 +148,8 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.1);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
         }
 
         input::placeholder,
@@ -170,7 +175,7 @@
         select optgroup {
             font-weight: 700;
             font-size: 13px;
-            color: #00D1FF;
+            color: #1A6CFF;
             background: #0d0d0d;
             padding: 8px 0;
         }
@@ -230,9 +235,9 @@
         }
 
         .searchable-select-wrapper.open .searchable-select-trigger {
-            border-color: #00D1FF;
-            background: rgba(0, 209, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(0, 209, 255, 0.15);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.15);
         }
 
         .searchable-select-trigger.placeholder {
@@ -301,8 +306,8 @@
 
         .dropdown-search:focus {
             outline: none;
-            border-color: #00D1FF;
-            background: rgba(0, 209, 255, 0.06);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.06);
         }
 
         .dropdown-options {
@@ -352,8 +357,8 @@
 
         /* Category colors */
         .dropdown-category.cat-primary {
-            border-left-color: #00D1FF;
-            color: rgba(0, 209, 255, 0.8);
+            border-left-color: #1A6CFF;
+            color: rgba(26, 108, 255, 0.8);
         }
 
         .dropdown-category.cat-regional {
@@ -399,13 +404,13 @@
 
         .dropdown-option:hover,
         .dropdown-option.highlighted {
-            background: rgba(0, 209, 255, 0.1);
+            background: rgba(26, 108, 255, 0.1);
             color: #fff;
         }
 
         .dropdown-option.selected {
-            background: rgba(0, 209, 255, 0.15);
-            color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            color: #1A6CFF;
             font-weight: 600;
         }
 
@@ -468,14 +473,14 @@
         }
 
         .checkbox-item.selected {
-            background: rgba(76, 217, 100, 0.15);
-            border-color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
         }
 
         .checkbox-item input {
             width: auto;
             margin-right: 8px;
-            accent-color: #00D1FF;
+            accent-color: #1A6CFF;
         }
 
         .checkbox-item span {
@@ -507,8 +512,8 @@
         }
 
         .rating-option.selected {
-            background: rgba(76, 217, 100, 0.15);
-            border-color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
         }
 
         .rating-option input {
@@ -538,8 +543,8 @@
         }
 
         .toggle-item.active {
-            background: rgba(76, 217, 100, 0.15);
-            border-color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
         }
 
         .toggle-switch {
@@ -553,7 +558,7 @@
         }
 
         .toggle-switch.active {
-            background: #00D1FF;
+            background: #1A6CFF;
         }
 
         .toggle-switch::after {
@@ -611,7 +616,7 @@
         }
 
         .severity-option.light .severity-dot {
-            background: #00A3CC;
+            background: #0C4D9C;
         }
 
         .severity-option.moderate .severity-dot {
@@ -627,7 +632,7 @@
         }
 
         .severity-option.light.selected {
-            --severity-color: #00A3CC;
+            --severity-color: #0C4D9C;
             --severity-rgb: 48, 209, 88;
         }
 
@@ -662,10 +667,10 @@
             margin: 0 auto;
             display: block;
             padding: 18px 32px;
-            background: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
             border: none;
             border-radius: 14px;
-            color: #000;
+            color: #fff;
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
@@ -675,7 +680,7 @@
 
         .submit-btn button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(76, 217, 100, 0.3);
+            box-shadow: 0 8px 24px rgba(26, 108, 255, 0.3);
         }
 
         .submit-btn button:active {
@@ -820,7 +825,7 @@
         }
 
         .vin-counter.valid {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .vin-counter.invalid {
@@ -839,13 +844,13 @@
         }
 
         .photo-upload-area:hover {
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.05);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.05);
         }
 
         .photo-upload-area.dragover {
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.1);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
         }
 
         .photo-upload-icon {
@@ -859,7 +864,7 @@
         }
 
         .photo-upload-text strong {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .photo-buttons {
@@ -959,7 +964,7 @@
         }
 
         .photo-preview .upload-status.uploaded {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .photo-preview .upload-status.error {
@@ -1004,7 +1009,7 @@
             padding: 12px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
-            border: 1px solid rgba(76, 217, 100, 0.3);
+            border: 1px solid rgba(26, 108, 255, 0.3);
         }
 
         .upload-progress-bar {
@@ -1018,7 +1023,7 @@
 
         .upload-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00D1FF, #00C4E8);
+            background: linear-gradient(90deg, #1A6CFF, #0C4D9C);
             border-radius: 3px;
             width: 0%;
             transition: width 0.3s ease;
@@ -1034,7 +1039,7 @@
         .photo-count-display {
             margin-top: 8px;
             font-size: 12px;
-            color: #00D1FF;
+            color: #1A6CFF;
             text-align: center;
         }
 
@@ -1136,19 +1141,19 @@
         }
 
         .saved-btn.new {
-            background: rgba(76, 217, 100, 0.15);
-            color: #00D1FF;
-            border: 1px solid rgba(76, 217, 100, 0.25);
+            background: rgba(26, 108, 255, 0.15);
+            color: #1A6CFF;
+            border: 1px solid rgba(26, 108, 255, 0.25);
         }
 
         .saved-btn.new:hover {
-            background: rgba(76, 217, 100, 0.25);
+            background: rgba(26, 108, 255, 0.25);
         }
 
         /* VIN Scan Section */
         .vin-scan-section {
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
-            border: 2px solid rgba(76, 217, 100, 0.3);
+            background: linear-gradient(135deg, rgba(26, 108, 255, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+            border: 2px solid rgba(26, 108, 255, 0.3);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 20px;
@@ -1158,7 +1163,7 @@
         .vin-scan-content h2 {
             font-size: 22px;
             font-weight: 700;
-            color: #00D1FF;
+            color: #1A6CFF;
             margin-bottom: 8px;
         }
 
@@ -1173,15 +1178,15 @@
             align-items: center;
             gap: 8px;
             padding: 18px 36px;
-            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
             border: none;
             border-radius: 14px;
-            color: #000;
+            color: #fff;
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             font-family: inherit;
-            box-shadow: 0 6px 20px rgba(76, 217, 100, 0.4);
+            box-shadow: 0 6px 20px rgba(26, 108, 255, 0.4);
             transition: all 0.2s;
             margin-right: 12px;
         }
@@ -1226,7 +1231,7 @@
         .vin-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #00D1FF, #00A3CC);
+            background: linear-gradient(90deg, #1A6CFF, #0C4D9C);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -1246,7 +1251,7 @@
 
         .vin-scan-result h3 {
             font-size: 18px;
-            color: #00D1FF;
+            color: #1A6CFF;
             margin-bottom: 16px;
         }
 
@@ -1265,7 +1270,7 @@
         }
 
         .result-item.filled {
-            border-left: 3px solid #00D1FF;
+            border-left: 3px solid #1A6CFF;
         }
 
         .result-item.missing {
@@ -1289,9 +1294,9 @@
         }
 
         .auto-filled {
-            border: 1px solid #00D1FF !important;
-            background-color: rgba(76, 217, 100, 0.1) !important;
-            box-shadow: 0 0 10px rgba(76, 217, 100, 0.2);
+            border: 1px solid #1A6CFF !important;
+            background-color: rgba(26, 108, 255, 0.1) !important;
+            box-shadow: 0 0 10px rgba(26, 108, 255, 0.2);
             transition: all 0.3s ease;
         }
 
@@ -1337,7 +1342,7 @@
         }
 
         .toast.success {
-            border-color: rgba(76, 217, 100, 0.5);
+            border-color: rgba(26, 108, 255, 0.5);
         }
 
         .toast.error {
@@ -1446,7 +1451,7 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
-            border: 2px solid rgba(76, 217, 100, 0.8);
+            border: 2px solid rgba(26, 108, 255, 0.8);
             animation: photoPopIn 0.3s ease;
         }
 
@@ -1532,7 +1537,7 @@
         }
 
         .camera-done-btn {
-            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
             border: none;
             color: #fff;
             padding: 12px 24px;
@@ -1621,7 +1626,7 @@
         .guide-box {
             width: 80%;
             height: 80px;
-            border: 3px solid #00D1FF;
+            border: 3px solid #1A6CFF;
             border-radius: 8px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
             position: relative;
@@ -1635,7 +1640,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #00D1FF, transparent);
+            background: linear-gradient(90deg, transparent, #1A6CFF, transparent);
             animation: scanLine 1.5s ease-in-out infinite;
         }
 
@@ -1669,7 +1674,7 @@
         }
 
         .scanner-status.success {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .scanner-status.error {
@@ -1759,9 +1764,9 @@
         }
 
         .scanner-tab.active {
-            color: #00D1FF;
-            border-bottom-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.1);
+            color: #1A6CFF;
+            border-bottom-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
         }
 
         .scanner-view {
@@ -1826,15 +1831,15 @@
 
         .ocr-capture-btn {
             padding: 16px 32px;
-            background: linear-gradient(135deg, #00D1FF 0%, #00C4E8 100%);
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
             border: none;
             border-radius: 12px;
-            color: #000;
+            color: #fff;
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             font-family: inherit;
-            box-shadow: 0 4px 15px rgba(76, 217, 100, 0.4);
+            box-shadow: 0 4px 15px rgba(26, 108, 255, 0.4);
             transition: all 0.2s;
         }
 
@@ -1861,7 +1866,7 @@
         .ocr-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #00D1FF, #00A3CC);
+            background: linear-gradient(90deg, #1A6CFF, #0C4D9C);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -1949,15 +1954,15 @@
         }
 
         .export-checkbox.selected {
-            background: rgba(76, 217, 100, 0.15);
-            border-color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
         }
 
         .export-checkbox input[type="checkbox"] {
             width: 20px;
             height: 20px;
             margin-right: 12px;
-            accent-color: #00D1FF;
+            accent-color: #1A6CFF;
             cursor: pointer;
         }
 
@@ -1992,9 +1997,9 @@
         }
 
         .photo-mode-option.active {
-            background: rgba(76, 217, 100, 0.15);
-            border-color: #00D1FF;
-            color: #00D1FF;
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
+            color: #1A6CFF;
         }
 
         .export-btn {
@@ -2059,7 +2064,7 @@
         #pdfTemplate h1 {
             margin: 0;
             font-size: 18pt;
-            color: #000;
+            color: #fff;
         }
 
         #pdfTemplate h3 {
@@ -2117,10 +2122,10 @@
         }
 
         .mode-btn.active {
-            background: linear-gradient(135deg, #00D1FF, #00B5D9);
-            color: #000;
+            background: linear-gradient(135deg, #1A6CFF, #0C4D9C);
+            color: #fff;
             font-weight: 700;
-            box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
+            box-shadow: 0 4px 15px rgba(26, 108, 255, 0.3);
         }
 
         /* Dashboard Container - iPad Optimized */
@@ -2193,9 +2198,9 @@
         .parts-filters input:focus,
         .parts-filters select:focus {
             outline: none;
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.08);
-            box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.15);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.15);
         }
 
         .parts-filters input::placeholder {
@@ -2293,8 +2298,8 @@
         }
 
         .summary-card.complete {
-            background: linear-gradient(165deg, rgba(0, 209, 255, 0.18), rgba(0, 209, 255, 0.06));
-            border: 1px solid rgba(0, 209, 255, 0.25);
+            background: linear-gradient(165deg, rgba(26, 108, 255, 0.18), rgba(26, 108, 255, 0.06));
+            border: 1px solid rgba(26, 108, 255, 0.25);
         }
 
         .summary-card.complete::before {
@@ -2302,9 +2307,9 @@
         }
 
         .summary-card.complete.active {
-            background: linear-gradient(165deg, rgba(0, 209, 255, 0.28), rgba(0, 209, 255, 0.12));
-            border: 1px solid rgba(0, 209, 255, 0.6);
-            box-shadow: 0 0 30px rgba(0, 209, 255, 0.2);
+            background: linear-gradient(165deg, rgba(26, 108, 255, 0.28), rgba(26, 108, 255, 0.12));
+            border: 1px solid rgba(26, 108, 255, 0.6);
+            box-shadow: 0 0 30px rgba(26, 108, 255, 0.2);
         }
 
         .summary-number {
@@ -2384,7 +2389,7 @@
         .card-ro {
             font-size: 19px;
             font-weight: 700;
-            color: #00D1FF;
+            color: #1A6CFF;
             letter-spacing: 0.5px;
         }
 
@@ -2514,7 +2519,7 @@
         }
 
         .vehicle-ro {
-            color: #00D1FF;
+            color: #1A6CFF;
             font-weight: 600;
             font-size: 13px;
         }
@@ -2732,7 +2737,7 @@
 
         /* Save Changes Button */
         .save-changes-btn {
-            background: linear-gradient(135deg, #00D1FF, #00C4E8);
+            background: linear-gradient(135deg, #1A6CFF, #0C4D9C);
             border: none;
             color: #fff;
             padding: 12px 24px;
@@ -2751,7 +2756,7 @@
 
         .save-changes-btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(76, 217, 100, 0.3);
+            box-shadow: 0 4px 12px rgba(26, 108, 255, 0.3);
         }
 
         .save-changes-btn:disabled {
@@ -2840,7 +2845,7 @@
         }
 
         .progress-stat.received .count {
-            color: #00A3CC;
+            color: #0C4D9C;
         }
 
         .progress-stat.replaced .count {
@@ -2865,7 +2870,7 @@
         }
 
         .progress-segment.received {
-            background: #00A3CC;
+            background: #0C4D9C;
         }
 
         .progress-segment.ordered {
@@ -3050,9 +3055,9 @@
         }
 
         .status-badge.complete {
-            background: linear-gradient(135deg, rgba(0, 209, 255, 0.25), rgba(0, 209, 255, 0.12));
-            color: #00D1FF;
-            border: 1px solid rgba(0, 209, 255, 0.3);
+            background: linear-gradient(135deg, rgba(26, 108, 255, 0.25), rgba(26, 108, 255, 0.12));
+            color: #1A6CFF;
+            border: 1px solid rgba(26, 108, 255, 0.3);
         }
 
         /* Record Detail Modal - Premium */
@@ -3079,7 +3084,7 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: #00D1FF;
+            color: #1A6CFF;
             margin: 0 0 16px 0;
             font-weight: 700;
         }
@@ -3128,10 +3133,10 @@
         .load-to-form-btn {
             flex: 1;
             padding: 14px 20px;
-            background: linear-gradient(135deg, #00D1FF, #00C4E8);
+            background: linear-gradient(135deg, #1A6CFF, #0C4D9C);
             border: none;
             border-radius: 10px;
-            color: #000;
+            color: #fff;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -3140,7 +3145,7 @@
 
         .load-to-form-btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(76, 217, 100, 0.3);
+            box-shadow: 0 4px 12px rgba(26, 108, 255, 0.3);
         }
 
         .view-attachments-btn {
@@ -3213,11 +3218,7 @@
             </div>
 
             <div class="brand-bar-right">
-                <button id="appBtn" class="app-btn state-checking" onclick="handleAppButton()">
-                    ⏳ Checking...
-                </button>
-                <a href="Option_B_Custom_WebApp/Training_Guide.html" class="help-link">📖 Training Guide &
-                    Terminology</a>
+                <a href="Option_B_Custom_WebApp/Training_Guide.html" class="help-link">📖 Training</a>
             </div>
         </div>
 
@@ -3708,14 +3709,14 @@
                         <div class="car-schematic" style="text-align: center; margin-bottom: 20px; position: relative;">
                             <!-- Glow Effect -->
                             <div
-                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 300px; background: radial-gradient(closest-side, rgba(76, 217, 100, 0.15), transparent); pointer-events: none;">
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 300px; background: radial-gradient(closest-side, rgba(26, 108, 255, 0.15), transparent); pointer-events: none;">
                             </div>
                             <svg width="220" height="330" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg"
                                 style="filter: drop-shadow(0 0 10px rgba(76,217,100,0.2));">
                                 <style>
                                     .car-line {
                                         fill: none;
-                                        stroke: #00D1FF;
+                                        stroke: #1A6CFF;
                                         stroke-width: 2;
                                     }
 
@@ -3730,7 +3731,7 @@
 
                                     .glass {
                                         fill: #333;
-                                        stroke: #00D1FF;
+                                        stroke: #1A6CFF;
                                         stroke-width: 1;
                                     }
 
@@ -3740,7 +3741,7 @@
                                     }
 
                                     .click-zone:hover {
-                                        fill: rgba(76, 217, 100, 0.1);
+                                        fill: rgba(26, 108, 255, 0.1);
                                     }
 
                                     text {
@@ -4586,7 +4587,7 @@
 
                     <!-- ETA Date & Notes Section -->
                     <div class="order-tracking-section"
-                        style="padding: 16px 20px; background: rgba(0, 209, 255, 0.05); border-bottom: 1px solid rgba(255,255,255,0.08);">
+                        style="padding: 16px 20px; background: rgba(26, 108, 255, 0.05); border-bottom: 1px solid rgba(255,255,255,0.08);">
                         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
                             <div>
                                 <label
@@ -4720,7 +4721,7 @@
         <div id="pdfTemplate">
             <!-- HEADER -->
             <div
-                style="text-align: center; border-bottom: 2px solid #00D1FF; padding-bottom: 8px; margin-bottom: 12px;">
+                style="text-align: center; border-bottom: 2px solid #1A6CFF; padding-bottom: 8px; margin-bottom: 12px;">
                 <h1>DENT EXPERTS PDR SCOPE</h1>
                 <p style="margin: 4px 0 0 0; font-size: 8pt; color: #666;">
                     RO#: <span id="pdf-ro"></span> | Estimator: <span id="pdf-estimator"></span> | Date: <span
@@ -4920,7 +4921,7 @@
         .brand-bar .logo {
             font-size: 24px;
             font-weight: 800;
-            color: #00D1FF;
+            color: #1A6CFF;
             letter-spacing: -0.5px;
         }
 
@@ -4992,9 +4993,9 @@
         }
 
         .app-btn.state-current {
-            background: rgba(76, 217, 100, 0.2);
-            border: 1px solid rgba(76, 217, 100, 0.4);
-            color: #00D1FF;
+            background: rgba(26, 108, 255, 0.2);
+            border: 1px solid rgba(26, 108, 255, 0.4);
+            color: #1A6CFF;
             cursor: default;
         }
 
@@ -5087,10 +5088,10 @@
         input:focus,
         select:focus {
             background: rgba(255, 255, 255, 0.15);
-            border-color: #00D1FF;
+            border-color: #1A6CFF;
             /* Highlight */
             outline: none;
-            box-shadow: 0 0 0 2px rgba(76, 217, 100, 0.1);
+            box-shadow: 0 0 0 2px rgba(26, 108, 255, 0.1);
         }
 
         .inline-input {
@@ -5290,7 +5291,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             background: transparent;
-            border-left: 4px solid #00D1FF;
+            border-left: 4px solid #1A6CFF;
             padding-left: 10px;
             display: flex;
             justify-content: space-between;
@@ -5316,7 +5317,7 @@
             width: 16px;
             height: 16px;
             margin: 0;
-            accent-color: #00D1FF;
+            accent-color: #1A6CFF;
         }
 
         .panel-done-toggle:hover {
@@ -5325,18 +5326,18 @@
 
         /* COMPLETE STATE */
         .panel-box.is-complete {
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.05);
-            box-shadow: 0 0 15px rgba(76, 217, 100, 0.1);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.05);
+            box-shadow: 0 0 15px rgba(26, 108, 255, 0.1);
         }
 
         .panel-box.is-complete .panel-header {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .panel-box.is-complete .panel-done-toggle {
-            background: #00D1FF;
-            color: #000;
+            background: #1A6CFF;
+            color: #fff;
         }
 
         .panel-ratings {
@@ -5374,7 +5375,7 @@
             height: 32px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #00D1FF;
+            color: #1A6CFF;
             padding: 4px;
             text-align: center;
             font-weight: bold;
@@ -5384,8 +5385,8 @@
         }
 
         .panel-ratings input:focus {
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.1);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
             outline: none;
         }
 
@@ -5419,7 +5420,7 @@
             height: 40px;
             background: rgba(255, 255, 255, 0.05);
             border: none;
-            color: #00D1FF;
+            color: #1A6CFF;
             font-size: 20px;
             border-radius: 6px;
             cursor: pointer;
@@ -5431,8 +5432,8 @@
         }
 
         .st-btn:active {
-            background: #00D1FF;
-            color: #000;
+            background: #1A6CFF;
+            color: #fff;
         }
 
         .st-input {
@@ -5493,11 +5494,11 @@
         }
 
         .dc-range-btn.selected {
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.25) 0%, rgba(76, 217, 100, 0.15) 100%);
-            border-color: #00D1FF;
-            color: #00D1FF;
+            background: linear-gradient(135deg, rgba(26, 108, 255, 0.25) 0%, rgba(26, 108, 255, 0.15) 100%);
+            border-color: #1A6CFF;
+            color: #1A6CFF;
             transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(76, 217, 100, 0.3);
+            box-shadow: 0 2px 8px rgba(26, 108, 255, 0.3);
         }
 
         /* COIN SIZE BUTTONS */
@@ -5716,9 +5717,9 @@
         }
 
         input[type="checkbox"]:checked {
-            background: #00D1FF;
-            border-color: #00D1FF;
-            box-shadow: 0 0 10px rgba(76, 217, 100, 0.4);
+            background: #1A6CFF;
+            border-color: #1A6CFF;
+            box-shadow: 0 0 10px rgba(26, 108, 255, 0.4);
         }
 
         input[type="checkbox"]:checked::after {
@@ -5810,12 +5811,12 @@
         }
 
         .stat-box.dents {
-            border-color: rgba(76, 217, 100, 0.3);
-            background: rgba(76, 217, 100, 0.08);
+            border-color: rgba(26, 108, 255, 0.3);
+            background: rgba(26, 108, 255, 0.08);
         }
 
         .stat-box.dents .stat-value {
-            color: #00D1FF;
+            color: #1A6CFF;
         }
 
         .stat-box.oversized {
@@ -5911,17 +5912,17 @@
         }
 
         .footer-btn.green {
-            background: linear-gradient(135deg, #00D1FF 0%, #00A3CC 100%);
-            color: #000;
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
+            color: #fff;
         }
 
         .footer-btn.green:hover {
-            box-shadow: 0 4px 12px rgba(76, 217, 100, 0.4);
+            box-shadow: 0 4px 12px rgba(26, 108, 255, 0.4);
         }
 
         .footer-btn.orange {
             background: linear-gradient(135deg, #FF9F0A 0%, #FF7A00 100%);
-            color: #000;
+            color: #fff;
         }
 
         .footer-btn.orange:hover {
@@ -5989,7 +5990,7 @@
             height: 100%;
             border: none;
             background: transparent;
-            color: #00D1FF;
+            color: #1A6CFF;
             font-size: 28px;
             /* Larger symbol */
             font-weight: 200;
@@ -6122,8 +6123,8 @@
         }
 
         .stepper-wrapper:focus-within {
-            border-color: rgba(76, 217, 100, 0.4);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(76, 217, 100, 0.15);
+            border-color: rgba(26, 108, 255, 0.4);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(26, 108, 255, 0.15);
         }
 
         .stepper-btn {
@@ -6205,9 +6206,9 @@
         }
 
         .panel-box.is-complete {
-            border-color: rgba(76, 217, 100, 0.5);
-            background: rgba(76, 217, 100, 0.06);
-            box-shadow: 0 0 20px rgba(76, 217, 100, 0.12), 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(26, 108, 255, 0.5);
+            background: rgba(26, 108, 255, 0.06);
+            box-shadow: 0 0 20px rgba(26, 108, 255, 0.12), 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .panel-box.has-upd {
@@ -6228,8 +6229,8 @@
 
         /* Panel header glow on data entry */
         .panel-box.has-data .panel-header {
-            border-left-color: #00D1FF;
-            text-shadow: 0 0 10px rgba(76, 217, 100, 0.3);
+            border-left-color: #1A6CFF;
+            text-shadow: 0 0 10px rgba(26, 108, 255, 0.3);
         }
 
         /* --- Footer Stats Animation --- */
@@ -6302,30 +6303,30 @@
 
         .general-info-grid input:focus,
         .general-info-grid select:focus {
-            border-color: #00D1FF;
-            background: rgba(76, 217, 100, 0.08);
-            box-shadow: 0 0 0 3px rgba(76, 217, 100, 0.12);
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12);
         }
 
         /* Auto-filled state enhancement */
         .auto-filled {
-            border-color: #00D1FF !important;
-            background: rgba(76, 217, 100, 0.12) !important;
-            box-shadow: 0 0 12px rgba(76, 217, 100, 0.25);
+            border-color: #1A6CFF !important;
+            background: rgba(26, 108, 255, 0.12) !important;
+            box-shadow: 0 0 12px rgba(26, 108, 255, 0.25);
             animation: auto-fill-glow 0.5s ease;
         }
 
         @keyframes auto-fill-glow {
             0% {
-                box-shadow: 0 0 0 rgba(76, 217, 100, 0);
+                box-shadow: 0 0 0 rgba(26, 108, 255, 0);
             }
 
             50% {
-                box-shadow: 0 0 20px rgba(76, 217, 100, 0.5);
+                box-shadow: 0 0 20px rgba(26, 108, 255, 0.5);
             }
 
             100% {
-                box-shadow: 0 0 12px rgba(76, 217, 100, 0.25);
+                box-shadow: 0 0 12px rgba(26, 108, 255, 0.25);
             }
         }
 
@@ -6335,8 +6336,8 @@
         }
 
         .vin-scan-section:hover {
-            border-color: rgba(76, 217, 100, 0.4);
-            box-shadow: 0 0 30px rgba(76, 217, 100, 0.1);
+            border-color: rgba(26, 108, 255, 0.4);
+            box-shadow: 0 0 30px rgba(26, 108, 255, 0.1);
         }
 
         .vin-scan-btn {
@@ -6345,7 +6346,7 @@
 
         .vin-scan-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(76, 217, 100, 0.5);
+            box-shadow: 0 8px 25px rgba(26, 108, 255, 0.5);
         }
 
         /* Result grid enhancement */
@@ -6400,7 +6401,7 @@
 
         .photo-mode-option.active {
             transform: scale(1.02);
-            box-shadow: 0 2px 10px rgba(76, 217, 100, 0.25);
+            box-shadow: 0 2px 10px rgba(26, 108, 255, 0.25);
         }
 
         .export-btn {
@@ -6434,8 +6435,8 @@
         }
 
         .checklist-table input[type="checkbox"]:hover {
-            border-color: rgba(76, 217, 100, 0.5);
-            box-shadow: 0 0 8px rgba(76, 217, 100, 0.2);
+            border-color: rgba(26, 108, 255, 0.5);
+            box-shadow: 0 0 8px rgba(26, 108, 255, 0.2);
         }
 
         .checklist-table input[type="checkbox"]:checked {
@@ -6462,8 +6463,8 @@
         }
 
         .toast.success {
-            border-color: rgba(76, 217, 100, 0.6);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(76, 217, 100, 0.2);
+            border-color: rgba(26, 108, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(26, 108, 255, 0.2);
         }
 
         .toast.error {
@@ -6506,7 +6507,7 @@
         /* --- Grid Header Enhancement --- */
         .grid-header {
             transition: background 0.2s ease;
-            background: linear-gradient(135deg, rgba(76, 217, 100, 0.15) 0%, rgba(51, 51, 51, 0.8) 100%);
+            background: linear-gradient(135deg, rgba(26, 108, 255, 0.15) 0%, rgba(51, 51, 51, 0.8) 100%);
         }
 
         /* --- Photo Preview Enhancement --- */
@@ -6534,7 +6535,7 @@
 
         .brand-bar .logo:hover img {
             transform: scale(1.05);
-            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(76, 217, 100, 0.4));
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(26, 108, 255, 0.4));
         }
 
         /* --- Help Link Polish --- */
@@ -8181,7 +8182,7 @@
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 // Add a flash effect
                 el.style.transition = 'box-shadow 0.3s ease';
-                el.style.boxShadow = '0 0 20px #00D1FF';
+                el.style.boxShadow = '0 0 20px #1A6CFF';
                 setTimeout(() => {
                     el.style.boxShadow = '';
                 }, 1000);
@@ -8589,7 +8590,7 @@
                 pdf.rect(x, y + height - labelHeight, width, labelHeight, 'F');
 
                 // Add green accent line at top of label
-                pdf.setDrawColor(76, 217, 100); // #00D1FF
+                pdf.setDrawColor(76, 217, 100); // #1A6CFF
                 pdf.setLineWidth(2);
                 pdf.line(x, y + height - labelHeight, x + width, y + height - labelHeight);
 
@@ -11593,113 +11594,13 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.01.24.01';
-        let deferredInstallPrompt = null;
-        let appButtonState = 'checking'; // checking, install, update, current
+        // ==================== APP BUTTON (Install/Update) ====================
+        // Logic moved to Training_Guide.html
 
-        // Capture the install prompt before it's shown
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredInstallPrompt = e;
-            console.log('[PWA] Install prompt captured');
-            // If we're still checking, this means we can show install
-            if (appButtonState === 'checking' || appButtonState === 'current') {
-                setAppButtonState('install');
-            }
-        });
-
-        function setAppButtonState(state) {
-            appButtonState = state;
-            const btn = document.getElementById('appBtn');
-            if (!btn) return;
-
-            // Remove all state classes
-            btn.classList.remove('state-checking', 'state-install', 'state-update', 'state-current');
-
-            switch (state) {
-                case 'checking':
-                    btn.classList.add('state-checking');
-                    btn.innerHTML = '⏳ Checking...';
-                    break;
-                case 'install':
-                    btn.classList.add('state-install');
-                    btn.innerHTML = '📥 Install App';
-                    break;
-                case 'update':
-                    btn.classList.add('state-update');
-                    btn.innerHTML = '🔄 Update Available';
-                    break;
-                case 'current':
-                    btn.classList.add('state-current');
-                    btn.innerHTML = '✓ v' + LOCAL_APP_VERSION;
-                    break;
-            }
-        }
-
-        async function checkForUpdates() {
-            try {
-                const response = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
-                if (!response.ok) {
-                    setAppButtonState('current');
-                    return;
-                }
-
-                const data = await response.json();
-                const serverVersion = data.version;
-
-                console.log('[Version Check] Local:', LOCAL_APP_VERSION, 'Server:', serverVersion);
-
-                if (serverVersion && serverVersion !== LOCAL_APP_VERSION) {
-                    setAppButtonState('update');
-                } else if (deferredInstallPrompt) {
-                    setAppButtonState('install');
-                } else {
-                    setAppButtonState('current');
-                }
-            } catch (err) {
-                console.log('[Version Check] Error:', err.message);
-                setAppButtonState('current');
-            }
-        }
-
-        async function handleAppButton() {
-            const btn = document.getElementById('appBtn');
-
-            if (appButtonState === 'install' && deferredInstallPrompt) {
-                // Trigger PWA install
-                deferredInstallPrompt.prompt();
-                const { outcome } = await deferredInstallPrompt.userChoice;
-                console.log('[PWA] Install outcome:', outcome);
-                deferredInstallPrompt = null;
-                if (outcome === 'accepted') {
-                    setAppButtonState('current');
-                }
-            } else if (appButtonState === 'update') {
-                // Clear cache and reload
-                if (btn) {
-                    btn.innerHTML = '⏳ Updating...';
-                    btn.disabled = true;
-                }
-
-                try {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    for (const registration of registrations) {
-                        await registration.unregister();
-                    }
-
-                    const cacheNames = await caches.keys();
-                    await Promise.all(cacheNames.map(name => caches.delete(name)));
-
-                    console.log('[Update] Caches cleared, reloading...');
-                    window.location.reload(true);
-                } catch (err) {
-                    console.error('[Update] Error:', err);
-                    alert('Update failed. Please clear your browser cache manually.');
-                    setAppButtonState('update');
-                }
-            }
-            // If state is 'current' or 'checking', button does nothing
-        }
+        /*
+         * App Button logic removed and transferred to Training page.
+         * Previous location: index.html
+         */
 
         // ==================== GLOBAL FIELD HIGHLIGHTING ====================
         function setupFieldHighlighting() {
@@ -11729,7 +11630,8 @@
 
         // Check for updates on page load
         window.addEventListener('load', () => {
-            setTimeout(checkForUpdates, 1500);
+            // Updated logic moved to Training Guide
+            // setTimeout(checkForUpdates, 1500); 
             initGoogleAuth();
         });
     </script>

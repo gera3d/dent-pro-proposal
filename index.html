@@ -2664,10 +2664,16 @@
 
         .rr-part-row {
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .part-header-row {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .rr-part-row:last-child {
@@ -2701,6 +2707,56 @@
             cursor: pointer;
             font-size: 13px;
             min-width: 130px;
+        }
+
+        .part-input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .part-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .part-input-label {
+            font-size: 11px;
+            color: #888;
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        .part-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .part-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #0A84FF;
+            outline: none;
+        }
+
+        .part-input.full-width {
+            grid-column: span 2;
+        }
+
+        .part-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Modified state for inputs */
+        .part-input.modified {
+            border-color: #FF9F0A;
+            background: rgba(255, 159, 10, 0.1);
         }
 
         .status-select:disabled {
@@ -8610,6 +8666,15 @@
         // =============================================
 
         const AIRTABLE_QUEUE_KEY = 'airtable_upload_queue';
+        // Fallback config for environments where config.json cannot be fetched (e.g., file:// or Apps Script)
+        const EMBEDDED_CONFIG = {
+            airtable: {
+                apiKey: '',
+                baseId: '',
+                tableName: 'PDR Assessments',
+                tableId: ''
+            }
+        };
         let airtableConfig = null;
         let fullConfig = null;
 
@@ -8623,6 +8688,12 @@
                 return fullConfig;
             } catch (err) {
                 console.error('Failed to load config:', err);
+                if (EMBEDDED_CONFIG?.airtable) {
+                    console.warn('Using embedded Airtable config fallback');
+                    fullConfig = EMBEDDED_CONFIG;
+                    airtableConfig = EMBEDDED_CONFIG.airtable;
+                    return fullConfig;
+                }
                 return null;
             }
         }
@@ -9841,15 +9912,25 @@
             'glass': 'Glass',
             'windshield': 'Windshield',
             'cowl': 'Cowl',
+            'hood': 'Hood',
             'hilamp': 'High-Mount Lamp',
             'headliner': 'Headliner',
             'sunroof': 'Sunroof',
+            'l_mldg': 'Left Molding',
+            'r_mldg': 'Right Molding',
             'rack': 'Roof Rack',
             'ant': 'Antenna',
             'llamp': 'Left Lamp',
             'rlamp': 'Right Lamp',
             'spoiler': 'Spoiler'
         };
+
+        const PART_VENDORS = ['Dealer', 'LKQ', 'Keystone', 'AutoZone', 'NAPA', "O'Reilly", 'Other'];
+
+        function dateSort(a, b) {
+            return new Date(b.fields['Submitted At']) - new Date(a.fields['Submitted At']);
+        }
+
 
         function switchMode(mode) {
             haptic();
@@ -9933,7 +10014,8 @@
 
                 const data = JSON.parse(raw);
                 const rrParts = data.rrParts || {};
-                const orderStatus = data.partOrderStatus || {};
+                const orderStatus = data.partOrderStatus || {}; // Legacy support for simple status
+                const partOrders = data.partOrders || {};       // New structured data
 
                 return Object.keys(rrParts)
                     .filter(k => rrParts[k] === true)
@@ -9945,11 +10027,20 @@
                         const panelKey = match[1];
                         const partKey = match[2];
 
+                        // Get data from new structure or fallback to legacy
+                        const orderData = partOrders[key] || {};
+                        const legacyStatus = orderStatus[key];
+
                         return {
                             key: key,
                             panel: PANEL_DISPLAY_NAMES[panelKey] || panelKey.replace(/_/g, ' '),
                             part: PART_DISPLAY_NAMES[partKey] || partKey.replace(/_/g, ' '),
-                            status: orderStatus[key] || 'not_ordered'
+                            // Use new status if available, else legacy, else default
+                            status: orderData.status || legacyStatus || 'not_ordered',
+                            partNumber: orderData.partNumber || '',
+                            vendor: orderData.vendor || '',
+                            eta: orderData.eta || '',
+                            notes: orderData.notes || ''
                         };
                     })
                     .filter(Boolean);
@@ -10232,30 +10323,92 @@
             if (parts.length === 0) {
                 listEl.innerHTML = '<div class="no-parts-message">No R&R parts for this vehicle.</div>';
             } else {
-                listEl.innerHTML = parts.map(part => `
+                listEl.innerHTML = parts.map(part => {
+                    const vendorValue = part.vendor || '';
+                    const isCustomVendor = vendorValue && !PART_VENDORS.includes(vendorValue);
+                    const selectedVendor = isCustomVendor ? 'Other' : (vendorValue || '');
+
+                    return `
                     <div class="rr-part-row">
-                        <div class="part-info">
-                            <span class="panel-name">${part.panel}</span>
-                            <span class="part-name">${part.part}</span>
+                        <div class="part-header-row">
+                            <div class="part-info">
+                                <span class="panel-name">${part.panel}</span>
+                                <span class="part-name">${part.part}</span>
+                            </div>
+                            <select class="status-select" 
+                                    data-record="${recordId}" 
+                                    data-part="${part.key}"
+                                    onchange="updatePartData(this, 'status')">
+                                <option value="not_ordered" ${part.status === 'not_ordered' ? 'selected' : ''}>❌ Not Ordered</option>
+                                <option value="ordered" ${part.status === 'ordered' ? 'selected' : ''}>📦 Ordered</option>
+                                <option value="received" ${part.status === 'received' ? 'selected' : ''}>📬 Received</option>
+                                <option value="replaced" ${part.status === 'replaced' ? 'selected' : ''}>✅ Replaced</option>
+                            </select>
                         </div>
-                        <select class="status-select" 
-                                data-record="${recordId}" 
-                                data-part="${part.key}"
-                                onchange="updatePartStatus(this)">
-                            <option value="not_ordered" ${part.status === 'not_ordered' ? 'selected' : ''}>❌ Not Ordered</option>
-                            <option value="ordered" ${part.status === 'ordered' ? 'selected' : ''}>📦 Ordered</option>
-                            <option value="received" ${part.status === 'received' ? 'selected' : ''}>📬 Received</option>
-                            <option value="replaced" ${part.status === 'replaced' ? 'selected' : ''}>✅ Replaced</option>
-                        </select>
+                        
+                        <div class="part-input-grid">
+                            <!-- Part Number -->
+                            <div class="part-input-group">
+                                <label class="part-input-label">Part Number</label>
+                                <input type="text" class="part-input" 
+                                    placeholder="Part #" 
+                                    value="${part.partNumber || ''}"
+                                    data-record="${recordId}"
+                                    data-part="${part.key}"
+                                    oninput="updatePartData(this, 'partNumber')">
+                            </div>
+
+                            <!-- Vendor (Dropdown + Custom Input) -->
+                            <div class="part-input-group">
+                                <label class="part-input-label">Vendor</label>
+                                <select class="part-input vendor-select"
+                                    data-record="${recordId}"
+                                    data-part="${part.key}"
+                                    onchange="handleVendorChange(this)">
+                                    <option value="" ${!selectedVendor ? 'selected' : ''}>Select Vendor</option>
+                                    ${PART_VENDORS.map(v => `<option value="${v}" ${selectedVendor === v ? 'selected' : ''}>${v}</option>`).join('')}
+                                </select>
+                                <input type="text" class="part-input vendor-custom" 
+                                    placeholder="Enter Vendor Name" 
+                                    value="${isCustomVendor ? vendorValue : ''}"
+                                    data-record="${recordId}"
+                                    data-part="${part.key}"
+                                    style="display: ${selectedVendor === 'Other' ? 'block' : 'none'}; margin-top: 5px;"
+                                    oninput="updatePartData(this, 'vendor')">
+                            </div>
+
+                            <!-- ETA -->
+                            <div class="part-input-group">
+                                <label class="part-input-label">ETA</label>
+                                <input type="text" class="part-input" 
+                                    placeholder="ETA (e.g. 5/12)" 
+                                    value="${part.eta || ''}"
+                                    data-record="${recordId}"
+                                    data-part="${part.key}"
+                                    oninput="updatePartData(this, 'eta')">
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="part-input-group">
+                                <label class="part-input-label">Notes</label>
+                                <input type="text" class="part-input" 
+                                    placeholder="Notes" 
+                                    value="${part.notes || ''}"
+                                    data-record="${recordId}"
+                                    data-part="${part.key}"
+                                    oninput="updatePartData(this, 'notes')">
+                            </div>
+                        </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             }
 
             document.getElementById('partDetailModal').classList.add('show');
         }
 
         // ========== BATCH SAVE STATE ==========
-        let pendingChanges = {};      // { partKey: newStatus }
+        let pendingChanges = {};      // { partKey: { status, partNumber, vendor, eta, notes } }
         let currentRecordId = null;   // Record being edited
         let isDirty = false;          // Whether there are unsaved changes
 
@@ -10303,18 +10456,22 @@
         }
 
         function loadEtaAndNotes(record) {
+            // These are legacy GLOBAL ETA/Notes. We keep them for backward compatibility
+            // but the new UI focuses on per-part fields.
             const etaInput = document.getElementById('partEtaDate');
             const notesInput = document.getElementById('partOrderNotes');
 
-            // Load ETA from Airtable record
-            originalEtaDate = record?.fields?.['ETA Date'] || '';
-            etaInput.value = originalEtaDate;
-            pendingEtaDate = originalEtaDate;
+            if (etaInput) {
+                originalEtaDate = record?.fields?.['ETA Date'] || '';
+                etaInput.value = originalEtaDate;
+                pendingEtaDate = originalEtaDate;
+            }
 
-            // Load Notes from Airtable record  
-            originalNotes = record?.fields?.['Order Notes'] || '';
-            notesInput.value = originalNotes;
-            pendingNotes = originalNotes;
+            if (notesInput) {
+                originalNotes = record?.fields?.['Order Notes'] || '';
+                notesInput.value = originalNotes;
+                pendingNotes = originalNotes;
+            }
         }
 
         // Open PDF in new tab from Airtable attachment
@@ -10352,24 +10509,47 @@
             renderVehicleList(allVehicles);
         }
 
-        function updatePartStatus(selectEl) {
-            const recordId = selectEl.dataset.record;
-            const partKey = selectEl.dataset.part;
-            const newStatus = selectEl.value;
+        function handleVendorChange(selectEl) {
+            const val = selectEl.value;
+            // The custom input is the next sibling
+            const customInput = selectEl.nextElementSibling;
 
-            // Store change locally
+            if (val === 'Other') {
+                customInput.style.display = 'block';
+                customInput.focus();
+                // Do not update data yet, let user type
+            } else {
+                customInput.style.display = 'none';
+                // Update data with standard value
+                updatePartData(selectEl, 'vendor');
+            }
+        }
+
+        function updatePartData(element, field) {
+            const recordId = element.dataset.record;
+            const partKey = element.dataset.part;
+            const value = element.value;
+
             currentRecordId = recordId;
-            pendingChanges[partKey] = newStatus;
+
+            // Initialize if not present
+            if (!pendingChanges[partKey]) {
+                pendingChanges[partKey] = {};
+            }
+
+            pendingChanges[partKey][field] = value;
             isDirty = true;
 
             // Visual feedback - mark as modified
-            selectEl.classList.add('modified');
+            element.classList.add('modified');
 
             // Update the save UI
             updateSaveUI();
 
-            // Provide immediate haptic feedback
-            haptic();
+            // Provide haptic feedback only for select changes
+            if (field === 'status') {
+                haptic();
+            }
         }
 
         async function savePartChanges() {
@@ -10406,10 +10586,21 @@
                 }
 
                 if (!panelData.partOrderStatus) panelData.partOrderStatus = {};
+                if (!panelData.partOrders) panelData.partOrders = {};
 
                 // Apply all pending changes
                 Object.keys(pendingChanges).forEach(partKey => {
-                    panelData.partOrderStatus[partKey] = pendingChanges[partKey];
+                    const changes = pendingChanges[partKey];
+                    // Merge into new structure
+                    panelData.partOrders[partKey] = {
+                        ...(panelData.partOrders[partKey] || {}),
+                        ...changes
+                    };
+
+                    // Sync status to legacy structure
+                    if (changes.status) {
+                        panelData.partOrderStatus[partKey] = changes.status;
+                    }
                 });
 
                 // Build fields object for PATCH
@@ -10417,12 +10608,12 @@
                     'Panel Data': JSON.stringify(panelData, null, 2)
                 };
 
-                // Include ETA Date if changed
+                // Include Global ETA Date if changed (legacy/global field)
                 if (pendingEtaDate !== originalEtaDate) {
                     fieldsToUpdate['ETA Date'] = pendingEtaDate || null;
                 }
 
-                // Include Order Notes if changed
+                // Include Global Order Notes if changed (legacy/global field)
                 if (pendingNotes !== originalNotes) {
                     fieldsToUpdate['Order Notes'] = pendingNotes || '';
                 }
@@ -10447,15 +10638,15 @@
                     if (pendingNotes !== originalNotes) v.fields['Order Notes'] = pendingNotes;
                 }
 
-                // Clear modified states from all dropdowns
-                document.querySelectorAll('.status-select.modified').forEach(el => {
+                // Clear modified states from all inputs/selects
+                document.querySelectorAll('.modified').forEach(el => {
                     el.classList.remove('modified');
                 });
 
                 const changeCount = Object.keys(pendingChanges).length +
                     (pendingEtaDate !== originalEtaDate ? 1 : 0) +
                     (pendingNotes !== originalNotes ? 1 : 0);
-                showToast(`✅ Saved ${changeCount} change${changeCount > 1 ? 's' : ''}`, 'success');
+                showToast(`✅ Saved changes`, 'success');
                 haptic('success');
 
                 // Reset state

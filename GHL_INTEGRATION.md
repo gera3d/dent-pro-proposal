@@ -113,6 +113,28 @@ A test page is available at `/ghl_test.html` that allows you to:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2026.02.05.01 | 2026-02-05 | Added: Documents & Contracts integration (send, status tracking, polling) |
 | 2026.01.22.04 | 2026-01-22 | Fixed: Removed invalid `notes` field from opportunity creation |
 | 2026.01.22.03 | 2026-01-22 | Added detailed API logging for debugging |
 | 2026.01.22.02 | 2026-01-22 | Updated custom field IDs, improved contact upsert |
+
+## Documents & Contracts
+
+See full integration spec: `brain/GHL_CONTRACTS_INTEGRATION.md`
+
+### Quick Reference
+
+- **Test Page:** `/ghl_contracts_test.html`
+- **Templates Endpoint:** `GET /documents-contracts/templates?locationId={id}`
+- **Send Document:** `POST /documents-contracts/`
+- **Check Status:** `GET /documents-contracts/{documentId}?locationId={id}`
+- **Resend:** `POST /documents-contracts/{documentId}/resend`
+
+### Required Token Scopes (in addition to existing)
+
+| Scope | Purpose |
+|---|---|
+| `documents-contracts.readonly` | List templates, check status |
+| `documents-contracts.write` | Send documents to contacts |
+| `webhooks.readonly` | (Optional) List webhook subscriptions |
+| `webhooks.write` | (Optional) Create webhook subscriptions |

@@ -460,5 +460,30 @@ The Dent Experts PDR Scoper is **production-ready** with all core features imple
 - ✅ Cloud storage integration
 - ✅ Auto-field management
 - ✅ No authentication required
+- ✅ GHL contact/opportunity integration
+- ✅ GHL contract workflow enrollment (from Records page)
 
 **Ready for deployment and field testing.**
+
+---
+
+## GHL Documents & Contracts Integration (Feb 2026)
+
+### Status: ✅ Implemented (Workflow-Based)
+
+The GHL Documents & Contracts API is **IAM-blocked** for Private Integration Tokens. 
+Solution: Enroll contacts in GHL Workflows that contain "Send Document" action steps.
+
+### What's Working
+- **Records Detail Modal**: Contract section with workflow picker + send button
+- **Scoper Panel**: Contract section for sending from the form
+- **Workflow Enrollment**: `POST /contacts/{id}/workflow/{wfId}` → 201 confirmed
+- **Contact Find/Create**: Automatic GHL contact upsert before enrollment
+- **Local Tracking**: Contract history stored in localStorage per RO#
+- **Resend**: Re-enrollment in workflow
+
+### Setup Required
+1. Create document templates in GHL (Sites → Documents & Contracts)
+2. Create workflows with "Send Document" action step
+3. Add workflow IDs to `GHL_CONFIG.contractWorkflows[]` in index.html
+4. See `brain/GHL_CONTRACTS_INTEGRATION.md` for full setup guide

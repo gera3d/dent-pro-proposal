@@ -1,0 +1,13 @@
+{
+  "start_date": "2026-02-12",
+  "status": "active",
+  "day_number": 2,
+  "total_runs": 2,
+  "last_run": "2026-02-13",
+  "last_run_result": {
+    "date": "2026-02-13",
+    "removed": 83,
+    "readded": 84,
+    "errors": 1
+  }
+}

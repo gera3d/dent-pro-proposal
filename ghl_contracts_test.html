@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GHL Workflow Contract Test</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #1A6CFF;
+            font-size: 20px;
+        }
+
+        h2 {
+            color: #4CD964;
+            font-size: 16px;
+            margin-top: 24px;
+        }
+
+        .test-group {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .test-group label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .test-group input,
+        .test-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        .test-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            margin: 4px;
+            transition: all 0.2s;
+        }
+
+        .test-btn.blue {
+            background: linear-gradient(135deg, #1A6CFF, #0C4D9C);
+        }
+
+        .test-btn.green {
+            background: linear-gradient(135deg, #4CD964, #34A853);
+        }
+
+        .test-btn.orange {
+            background: linear-gradient(135deg, #FF9F0A, #E67E00);
+        }
+
+        .test-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .test-btn:active {
+            transform: scale(0.98);
+        }
+
+        .test-btn:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+        #logOutput {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .log-success { color: #4CD964; }
+        .log-error { color: #FF453A; }
+        .log-info { color: #64B5F6; }
+        .log-warn { color: #FF9F0A; }
+
+        .info-box {
+            background: rgba(26, 108, 255, 0.1);
+            border: 1px solid rgba(26, 108, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: #64B5F6;
+            margin-bottom: 16px;
+        }
+
+        .workflow-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .workflow-item .wf-name { color: #fff; font-weight: 500; }
+        .workflow-item .wf-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+        .workflow-item .wf-status.published { background: rgba(76, 217, 100, 0.15); color: #4CD964; }
+        .workflow-item .wf-status.draft { background: rgba(255, 159, 10, 0.15); color: #FF9F0A; }
+        .workflow-item .wf-id { font-size: 10px; color: #555; font-family: monospace; }
+    </style>
+</head>
+
+<body>
+    <h1>📋 GHL Workflow Contract Test</h1>
+
+    <div class="info-box">
+        ⚠️ <strong>Documents API is IAM-blocked</strong> for Private Integration Tokens.
+        This test uses the <strong>Workflow Enrollment API</strong> instead:<br>
+        <code>POST /contacts/{contactId}/workflow/{workflowId}</code> → 201
+    </div>
+
+    <!-- Test 1: List Workflows -->
+    <h2>1. List All Workflows</h2>
+    <div class="test-group">
+        <p style="color:#888; font-size:12px;">Fetches all workflows for the location. Use this to find the workflow ID for your contract-sending workflow.</p>
+        <button class="test-btn blue" onclick="listWorkflows()">📋 List Workflows</button>
+        <button class="test-btn orange" onclick="listPublishedOnly()">📋 Published Only</button>
+        <div id="workflowsList" style="margin-top: 12px;"></div>
+    </div>
+
+    <!-- Test 2: Search/Create Contact -->
+    <h2>2. Find or Create Contact</h2>
+    <div class="test-group">
+        <label>Customer Name</label>
+        <input type="text" id="testName" value="Test Customer" placeholder="John Smith">
+
+        <label>Email</label>
+        <input type="email" id="testEmail" value="test@example.com" placeholder="email@example.com">
+
+        <label>Phone</label>
+        <input type="tel" id="testPhone" placeholder="(555) 123-4567">
+
+        <button class="test-btn blue" onclick="searchContact()">🔍 Search Contact</button>
+        <button class="test-btn green" onclick="createContact()">➕ Create Contact</button>
+    </div>
+
+    <!-- Test 3: Enroll in Workflow -->
+    <h2>3. Enroll Contact in Workflow</h2>
+    <div class="test-group">
+        <label>Contact ID (from step 2)</label>
+        <input type="text" id="testContactId" placeholder="Contact ID will auto-fill">
+
+        <label>Workflow ID (from step 1)</label>
+        <input type="text" id="testWorkflowId" placeholder="Paste workflow ID here">
+
+        <button class="test-btn green" onclick="enrollInWorkflow()">📤 Enroll in Workflow</button>
+    </div>
+
+    <!-- Test 4: Conversations API -->
+    <h2>4. Send Direct Email (Optional)</h2>
+    <div class="test-group">
+        <label>Contact ID</label>
+        <input type="text" id="testEmailContactId" placeholder="Contact ID">
+
+        <label>Subject</label>
+        <input type="text" id="testSubject" value="Contract Notification" placeholder="Email subject">
+
+        <label>Message</label>
+        <input type="text" id="testMessage" value="Your contract is ready for signing." placeholder="Message body">
+
+        <button class="test-btn blue" onclick="sendEmail()">📧 Send Email</button>
+    </div>
+
+    <!-- Log Output -->
+    <h2>📝 Log Output</h2>
+    <button class="test-btn orange" onclick="document.getElementById('logOutput').innerHTML=''">Clear Log</button>
+    <div id="logOutput"></div>
+
+    <script>
+        const GHL = {
+            token: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+            locationId: 'AAzBZNLXS4rdwhG76MLi',
+            baseUrl: 'https://services.leadconnectorhq.com'
+        };
+
+        function log(msg, type = '') {
+            const el = document.getElementById('logOutput');
+            const ts = new Date().toLocaleTimeString();
+            const cls = type ? `class="log-${type}"` : '';
+            el.innerHTML += `<span ${cls}>[${ts}] ${msg}</span>\n`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        async function apiCall(method, path, body = null) {
+            const url = `${GHL.baseUrl}${path}`;
+            const opts = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${GHL.token}`,
+                    'Version': '2021-07-28'
+                }
+            };
+            if (body) {
+                opts.headers['Content-Type'] = 'application/json';
+                opts.body = JSON.stringify(body);
+            }
+
+            log(`${method} ${path}`, 'info');
+
+            try {
+                const resp = await fetch(url, opts);
+                const data = await resp.json();
+
+                if (resp.ok) {
+                    log(`✅ ${resp.status} — ${JSON.stringify(data).substring(0, 200)}`, 'success');
+                } else {
+                    log(`❌ ${resp.status} — ${JSON.stringify(data)}`, 'error');
+                }
+
+                return { ok: resp.ok, status: resp.status, data };
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+                return { ok: false, error: err.message };
+            }
+        }
+
+        // Test 1: List Workflows
+        async function listWorkflows(publishedOnly = false) {
+            const result = await apiCall('GET', `/workflows/?locationId=${GHL.locationId}`);
+            if (!result.ok) return;
+
+            let workflows = result.data.workflows || [];
+            if (publishedOnly) {
+                workflows = workflows.filter(w => w.status === 'published');
+            }
+
+            const el = document.getElementById('workflowsList');
+            el.innerHTML = workflows.map(w => `
+                <div class="workflow-item" onclick="document.getElementById('testWorkflowId').value='${w.id}'">
+                    <div>
+                        <div class="wf-name">${w.name}</div>
+                        <div class="wf-id">${w.id}</div>
+                    </div>
+                    <span class="wf-status ${w.status}">${w.status}</span>
+                </div>
+            `).join('');
+
+            log(`Found ${workflows.length} workflows${publishedOnly ? ' (published)' : ''}`, 'success');
+        }
+
+        function listPublishedOnly() {
+            listWorkflows(true);
+        }
+
+        // Test 2: Search Contact
+        async function searchContact() {
+            const query = document.getElementById('testEmail').value || document.getElementById('testName').value;
+            if (!query) {
+                log('Enter name or email to search', 'warn');
+                return;
+            }
+
+            const result = await apiCall('GET', `/contacts/search?locationId=${GHL.locationId}&query=${encodeURIComponent(query)}`);
+            if (result.ok && result.data.contacts?.length > 0) {
+                const c = result.data.contacts[0];
+                document.getElementById('testContactId').value = c.id;
+                document.getElementById('testEmailContactId').value = c.id;
+                log(`Found contact: ${c.contactName || c.firstName || '?'} (${c.id})`, 'success');
+            } else {
+                log('No contacts found. Try creating one.', 'warn');
+            }
+        }
+
+        // Test 2b: Create Contact
+        async function createContact() {
+            const name = document.getElementById('testName').value;
+            const email = document.getElementById('testEmail').value;
+            const phone = document.getElementById('testPhone').value;
+
+            const nameParts = name.split(' ');
+            const payload = {
+                locationId: GHL.locationId,
+                firstName: nameParts[0] || 'Test',
+                lastName: nameParts.slice(1).join(' ') || 'Customer',
+                name: name,
+                email: email || undefined,
+                phone: phone || undefined,
+                tags: ['dent-pro', 'contract-test']
+            };
+
+            const result = await apiCall('POST', '/contacts/', payload);
+            if (result.ok && result.data.contact?.id) {
+                document.getElementById('testContactId').value = result.data.contact.id;
+                document.getElementById('testEmailContactId').value = result.data.contact.id;
+                log(`Created contact: ${result.data.contact.id}`, 'success');
+            }
+        }
+
+        // Test 3: Enroll in Workflow
+        async function enrollInWorkflow() {
+            const contactId = document.getElementById('testContactId').value;
+            const workflowId = document.getElementById('testWorkflowId').value;
+
+            if (!contactId || !workflowId) {
+                log('Both Contact ID and Workflow ID are required', 'warn');
+                return;
+            }
+
+            const result = await apiCall('POST', `/contacts/${contactId}/workflow/${workflowId}`);
+            if (result.ok) {
+                log(`✅ Contact enrolled in workflow successfully! The workflow should now trigger its actions (e.g., send document).`, 'success');
+            }
+        }
+
+        // Test 4: Send Email
+        async function sendEmail() {
+            const contactId = document.getElementById('testEmailContactId').value;
+            const subject = document.getElementById('testSubject').value;
+            const message = document.getElementById('testMessage').value;
+
+            if (!contactId) {
+                log('Contact ID required', 'warn');
+                return;
+            }
+
+            const payload = {
+                type: 'Email',
+                contactId: contactId,
+                subject: subject,
+                message: message,
+                html: `<p>${message}</p>`
+            };
+
+            const result = await apiCall('POST', '/conversations/messages', payload);
+        }
+
+        // Initial log
+        log('GHL Workflow Contract Test loaded', 'info');
+        log(`Location: ${GHL.locationId}`, 'info');
+        log(`Token: ${GHL.token.substring(0, 20)}...`, 'info');
+    </script>
+</body>
+
+</html>

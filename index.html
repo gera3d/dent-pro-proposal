@@ -2091,6 +2091,513 @@
             font-weight: bold;
         }
 
+        /* ==================== CONTRACT PANEL STYLES ==================== */
+        .contract-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contract-section .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1A6CFF;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .contract-template-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .contract-template-picker select {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .contract-template-picker select:focus {
+            outline: none;
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
+        }
+
+        .contract-send-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contract-send-btn.ready {
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
+            color: #fff;
+        }
+
+        .contract-send-btn.ready:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(26, 108, 255, 0.3);
+        }
+
+        .contract-send-btn.ready:active {
+            transform: scale(0.98);
+        }
+
+        .contract-send-btn.sending {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a1a1a6;
+            cursor: wait;
+        }
+
+        .contract-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .contract-validation-msg {
+            color: #FF453A;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .contract-validation-msg.visible {
+            display: block;
+        }
+
+        /* Sent contracts list */
+        .sent-contracts-header {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            margin: 16px 0 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .contract-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .contract-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .contract-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .contract-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .contract-card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .contract-card-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .contract-card-btn.resend {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a1a1a6;
+        }
+
+        .contract-card-btn.resend:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .contract-card-btn.view-pdf {
+            background: rgba(26, 108, 255, 0.15);
+            color: #1A6CFF;
+        }
+
+        .contract-card-btn.view-pdf:hover {
+            background: rgba(26, 108, 255, 0.25);
+        }
+
+        .contract-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .contract-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Contract status badges */
+        .contract-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .contract-status.status-sent {
+            background: rgba(255, 214, 10, 0.15);
+            color: #FFD60A;
+        }
+
+        .contract-status.status-viewed {
+            background: rgba(26, 108, 255, 0.15);
+            color: #64B5F6;
+        }
+
+        .contract-status.status-signed {
+            background: rgba(76, 175, 80, 0.15);
+            color: #81C784;
+        }
+
+        .contract-status.status-completed {
+            background: rgba(76, 217, 100, 0.2);
+            color: #4CD964;
+        }
+
+        .contract-status.status-error {
+            background: rgba(255, 69, 58, 0.15);
+            color: #FF453A;
+        }
+
+        .contract-status.status-sending {
+            background: rgba(255, 255, 255, 0.08);
+            color: #a1a1a6;
+        }
+
+        .contract-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-sent .contract-status-dot {
+            background: #FFD60A;
+        }
+
+        .status-viewed .contract-status-dot {
+            background: #64B5F6;
+        }
+
+        .status-signed .contract-status-dot {
+            background: #81C784;
+        }
+
+        .status-completed .contract-status-dot {
+            background: #4CD964;
+        }
+
+        .status-error .contract-status-dot {
+            background: #FF453A;
+        }
+
+        .status-sending .contract-status-dot {
+            background: #a1a1a6;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .contract-empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .contract-empty-state .empty-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .contract-ready-banner {
+            background: linear-gradient(135deg, rgba(76, 217, 100, 0.15) 0%, rgba(76, 175, 80, 0.1) 100%);
+            border: 1px solid rgba(76, 217, 100, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInSlide 0.4s ease;
+        }
+
+        .contract-ready-banner .ready-icon {
+            font-size: 24px;
+        }
+
+        .contract-ready-banner .ready-text {
+            flex: 1;
+        }
+
+        .contract-ready-banner .ready-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4CD964;
+        }
+
+        .contract-ready-banner .ready-subtitle {
+            font-size: 12px;
+            color: #81C784;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .contract-overdue-badge {
+            color: #FF9F0A;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+
+        .contract-refresh-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .contract-refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        /* ==================== RECORD DETAIL CONTRACT STYLES ==================== */
+        .record-contract-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .record-contract-picker select {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            -webkit-appearance: none;
+        }
+
+        .record-contract-picker select:focus {
+            outline: none;
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.1);
+        }
+
+        .record-contract-send-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            white-space: nowrap;
+            background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%);
+            color: #fff;
+        }
+
+        .record-contract-send-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(26, 108, 255, 0.3);
+        }
+
+        .record-contract-send-btn:active {
+            transform: scale(0.98);
+        }
+
+        .record-contract-send-btn:disabled {
+            opacity: 0.5;
+            cursor: wait;
+            transform: none !important;
+        }
+
+        .record-contract-status {
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .record-contract-status.info {
+            background: rgba(26, 108, 255, 0.1);
+            color: #64B5F6;
+        }
+
+        .record-contract-status.success {
+            background: rgba(76, 217, 100, 0.1);
+            color: #4CD964;
+        }
+
+        .record-contract-status.warning {
+            background: rgba(255, 159, 10, 0.1);
+            color: #FF9F0A;
+        }
+
+        .record-contract-status.error {
+            background: rgba(255, 69, 58, 0.1);
+            color: #FF453A;
+        }
+
+        .record-contract-history {
+            margin-top: 12px;
+        }
+
+        .contract-history-empty {
+            text-align: center;
+            padding: 16px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .contract-history-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .contract-history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .contract-history-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .contract-history-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .contract-history-status.status-sent {
+            background: rgba(255, 214, 10, 0.15);
+            color: #FFD60A;
+        }
+
+        .contract-history-status.status-completed {
+            background: rgba(76, 217, 100, 0.2);
+            color: #4CD964;
+        }
+
+        .contract-history-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .contract-history-actions {
+            margin-top: 6px;
+        }
+
+        .contract-history-btn {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .contract-history-btn.resend {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a1a1a6;
+        }
+
+        .contract-history-btn.resend:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
         /* ==================== PARTS TECH MODE STYLES - PREMIUM IPAD DESIGN ==================== */
 
         /* Mode Toggle in Header */
@@ -3359,12 +3866,12 @@
                 <div class="info-group col-span-1">
                     <label id="emailLabel">Customer Email <span class="required">*</span></label>
                     <input type="email" id="customerEmail" placeholder="email@example.com">
-                    <div id="emailHint" class="validation-hint">📧 Email or phone required for GHL</div>
+                    <div id="emailHint" class="validation-hint">📧 Required for contracts in Records</div>
                 </div>
                 <div class="info-group col-span-1">
                     <label id="phoneLabel">Customer Phone <span class="required">*</span></label>
                     <input type="tel" id="customerPhone" placeholder="(555) 123-4567">
-                    <div id="phoneHint" class="validation-hint">📱 Email or phone required for GHL</div>
+                    <div id="phoneHint" class="validation-hint">📱 Required for contracts in Records</div>
                 </div>
                 <div class="info-group col-span-2">
                     <label>Carrier</label>
@@ -4535,6 +5042,47 @@
                 </button>
             </div>
 
+            <!-- ==================== CONTRACT PANEL ==================== -->
+            <div class="contract-section" id="contractSection">
+                <div class="section-title">📋 Contracts</div>
+
+                <!-- Ready to Work Banner (shown when any contract is completed) -->
+                <div id="contractReadyBanner" class="contract-ready-banner" style="display: none;">
+                    <span class="ready-icon">🟢</span>
+                    <div class="ready-text">
+                        <div class="ready-title">Ready to Work</div>
+                        <div class="ready-subtitle" id="readyBannerSubtitle">All contracts signed</div>
+                    </div>
+                </div>
+
+                <!-- Template Picker + Send -->
+                <div class="contract-template-picker">
+                    <select id="contractTemplateSelect">
+                        <option value="">Loading templates...</option>
+                    </select>
+                    <button type="button" class="contract-send-btn ready" id="contractSendBtn" onclick="sendContract()">
+                        📤 Send
+                    </button>
+                </div>
+                <div class="contract-validation-msg" id="contractValidationMsg"></div>
+
+                <!-- Sent Contracts List -->
+                <div id="sentContractsList">
+                    <div class="contract-empty-state">
+                        <span class="empty-icon">📝</span>
+                        No contracts sent yet
+                    </div>
+                </div>
+
+                <!-- Refresh / Status -->
+                <div style="text-align: right; margin-top: 8px;">
+                    <button type="button" class="contract-refresh-btn" onclick="refreshContractStatuses()"
+                        title="Check for status updates">
+                        🔄 Refresh Status
+                    </button>
+                </div>
+            </div>
+
             <div class="submit-bar">
                 <!-- Estimate Display -->
                 <div class="estimate-bar" id="estimateBar">
@@ -4739,6 +5287,35 @@
                             </div>
                         </div>
 
+                        <!-- Contact Edit Section -->
+                        <div class="record-detail-section" id="recordContactEditSection">
+                            <h4>Contact (Edit)</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <label>Customer Name</label>
+                                    <input id="recordContactName" type="text" placeholder="Full name"
+                                        style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1a; color:#fff;">
+                                </div>
+                                <div class="detail-item">
+                                    <label>Email</label>
+                                    <input id="recordContactEmail" type="email" placeholder="email@example.com"
+                                        style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1a; color:#fff;">
+                                </div>
+                                <div class="detail-item">
+                                    <label>Phone</label>
+                                    <input id="recordContactPhone" type="tel" placeholder="(555) 123-4567"
+                                        style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#1a1a1a; color:#fff;">
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+                                <button type="button" class="record-contract-send-btn" onclick="saveRecordContact()">
+                                    💾 Save Contact
+                                </button>
+                                <div id="recordContactSaveStatus" class="record-contract-status" style="display:none;">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Assessment Section -->
                         <div class="record-detail-section">
                             <h4>Assessment Details</h4>
@@ -4760,6 +5337,24 @@
                             <h4>Notes</h4>
                             <div id="recordNotes" class="detail-item full-width">
                                 <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Contracts Section -->
+                        <div class="record-detail-section" id="recordContractsSection">
+                            <h4>📋 Send Document</h4>
+                            <div class="record-contract-picker">
+                                <select id="recordContractWorkflowSelect">
+                                    <option value="">Choose document template...</option>
+                                </select>
+                                <button type="button" class="record-contract-send-btn" id="recordContractSendBtn"
+                                    onclick="sendContractFromRecord()">
+                                    📤 Send Contract
+                                </button>
+                            </div>
+                            <div id="recordContractStatus" class="record-contract-status" style="display: none;"></div>
+                            <div id="recordContractHistory" class="record-contract-history">
+                                <div class="contract-history-empty">No contracts sent yet</div>
                             </div>
                         </div>
                     </div>
@@ -4930,7 +5525,7 @@
     <div class="modal-overlay" id="successModal">
         <div class="modal">
             <div class="modal-icon">✓</div>
-            <h2>Scope Submitted!</h2>
+            <h2>Scope Saved to Airtable!</h2>
             <button onclick="resetForm()">New Scope</button>
         </div>
     </div>
@@ -6777,7 +7372,7 @@
 
             // Also collect standalone IDs that might not have name attributes
             const standaloneIds = ['insuredName', 'insuranceCompany', 'claimNumber', 'year', 'make', 'model',
-                'odometer', 'location', 'vin', 'color', 'notes', 'status'];
+                'odometer', 'location', 'vin', 'color', 'notes', 'status', 'customerEmail', 'customerPhone'];
             standaloneIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && !data[id]) {
@@ -8669,6 +9264,7 @@
         // Fallback config for environments where config.json cannot be fetched (e.g., file:// or Apps Script)
         const EMBEDDED_CONFIG = {
             airtable: {
+                // Secrets removed. Use config.json for local development or GitHub Secrets for deployment.
                 apiKey: '',
                 baseId: '',
                 tableName: 'PDR Assessments',
@@ -8711,6 +9307,48 @@
 
         // Cache to track which fields we've already checked/created
         let airtableFieldsChecked = false;
+        let airtableFieldMap = null;
+
+        function getFieldValue(fields, keys) {
+            for (const key of keys) {
+                const val = fields[key];
+                if (val !== undefined && val !== null && String(val).trim() !== '') return val;
+            }
+            return '';
+        }
+
+        function resolveFieldName(fieldMap, candidates) {
+            if (!fieldMap) return null;
+            for (const cand of candidates) {
+                const key = cand.toLowerCase();
+                if (fieldMap[key]) return fieldMap[key];
+            }
+            return null;
+        }
+
+        async function getAirtableFieldMap(config) {
+            if (airtableFieldMap) return airtableFieldMap;
+            try {
+                if (!config?.tableId) return null;
+                const schemaUrl = `https://api.airtable.com/v0/meta/bases/${config.baseId}/tables`;
+                const schemaRes = await fetch(schemaUrl, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${config.apiKey}` }
+                });
+                if (!schemaRes.ok) return null;
+                const schemaData = await schemaRes.json();
+                const table = schemaData.tables?.find(t => t.id === config.tableId || t.name === config.tableName);
+                if (!table) return null;
+                const map = {};
+                (table.fields || []).forEach(f => {
+                    if (f?.name) map[f.name.toLowerCase()] = f.name;
+                });
+                airtableFieldMap = map;
+                return map;
+            } catch {
+                return null;
+            }
+        }
 
         /**
          * Ensure required fields exist in Airtable table
@@ -8763,12 +9401,19 @@
 
                 const existingFields = table.fields?.map(f => f.name) || [];
                 console.log('📋 Existing fields:', existingFields.join(', '));
+                airtableFieldMap = existingFields.reduce((acc, name) => {
+                    acc[name.toLowerCase()] = name;
+                    return acc;
+                }, {});
 
                 // Fields we need
                 const requiredFields = [
                     { name: 'Photo Package', type: 'multipleAttachments' },
                     { name: 'Photo Count', type: 'number', options: { precision: 0 } },
-                    { name: 'PDF Report', type: 'multipleAttachments' }
+                    { name: 'PDF Report', type: 'multipleAttachments' },
+                    { name: 'Customer Name', type: 'singleLineText' },
+                    { name: 'Customer Email', type: 'email' },
+                    { name: 'Customer Phone', type: 'phoneNumber' }
                 ];
 
                 // Create missing fields
@@ -9196,6 +9841,11 @@
                     }
                 });
 
+                const fieldMap = await getAirtableFieldMap(config);
+                const nameField = resolveFieldName(fieldMap, ['Customer Name', 'Customer', 'Name', 'CustomerName']) || 'Customer Name';
+                const emailField = resolveFieldName(fieldMap, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']) || 'Customer Email';
+                const phoneField = resolveFieldName(fieldMap, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']) || 'Customer Phone';
+
                 const record = {
                     fields: {
                         'RO Number': formData.roNumber || '',
@@ -9203,7 +9853,9 @@
                         'Year': formData.year || '',
                         'Make': formData.make || '',
                         'Model': formData.model || '',
-                        'Customer Name': formData.insuredName || '',
+                        [nameField]: formData.insuredName || '',
+                        [emailField]: formData.customerEmail || '',
+                        [phoneField]: formData.customerPhone || '',
                         'Insurance Company': formData.insuranceCompany || '',
                         // ... Basic fields ...
                         'Estimator': formData.estimator || '',
@@ -9616,6 +10268,15 @@
                 claim_number: 'Y8BZnpg3SgTCaF6eNcwt',
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
                 ro_number: 'cHqj3TzHR1qipS5zXv4L'
+            },
+            // Documents & Contracts via GHL Proposals API
+            // GET  /proposals/templates       — list document templates
+            // POST /proposals/templates/send  — send template to contact
+            // GET  /proposals/document        — list sent documents (check status)
+            userId: 'D0d4WknnxH0DTw39xHxA',  // Gera Yeremin — sender for templates
+            contracts: {
+                overdueHours: 72,       // Flag as overdue after 72h unsigned
+                followUpHours: 24       // First follow-up after 24h
             }
         };
 
@@ -9680,14 +10341,17 @@
                 email: email || undefined,
                 phone: phone || undefined,
                 source: 'Dent Experts Form',
-                customFields: customFields
+                customFields: customFields,
+                dnd: false,
+                dndSettings: { ...GHL_DND_SETTINGS }
             };
 
             // Search for existing contact
             const searchQuery = email || phone;
             try {
+                // GHL search endpoint: GET /contacts/ with query param (NOT /contacts/search)
                 const searchResponse = await fetch(
-                    `${GHL_CONFIG.baseUrl}/contacts/search?locationId=${GHL_CONFIG.locationId}&query=${encodeURIComponent(searchQuery)}`,
+                    `${GHL_CONFIG.baseUrl}/contacts/?locationId=${GHL_CONFIG.locationId}&query=${encodeURIComponent(searchQuery)}&limit=5`,
                     {
                         method: 'GET',
                         headers: {
@@ -9783,10 +10447,1187 @@
             return { success: false, error: 'Failed to create opportunity' };
         }
 
+
+        // ==================== GHL DOCUMENTS & CONTRACTS (Proposals API) ====================
+        //
+        // Uses the GHL Proposals API to send document templates directly:
+        //   GET  /proposals/templates       - list available document templates
+        //   POST /proposals/templates/send  - send a template to a contact
+        //   GET  /proposals/document        - list sent documents & check status
+        //
+
+        // ---- Contract data storage (keyed by RO#) ----
+        function getContractStorageKey(roNumber) {
+            const ro = roNumber || document.getElementById('roNumber')?.value?.trim();
+            return ro ? `contracts_${ro}` : null;
+        }
+
+        function loadContractData(roNumber) {
+            const key = getContractStorageKey(roNumber);
+            if (!key) return null;
+            try {
+                return JSON.parse(localStorage.getItem(key)) || null;
+            } catch { return null; }
+        }
+
+        function saveContractData(data) {
+            const key = getContractStorageKey(data.roNumber);
+            if (!key) return;
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function getOrCreateContractData(roNumber) {
+            let data = loadContractData(roNumber);
+            if (!data) {
+                data = {
+                    roNumber: roNumber || '',
+                    contactId: null,
+                    contracts: []
+                };
+            }
+            return data;
+        }
+
+        // ---- Lookup GHL contact by name/email/phone ----
+        async function findGHLContact(customerName, email, phone) {
+            const searchQuery = email || phone || customerName;
+            if (!searchQuery) return null;
+
+            try {
+                // GHL search endpoint: GET /contacts/ with query param (NOT /contacts/search)
+                const url = `${GHL_CONFIG.baseUrl}/contacts/?locationId=${GHL_CONFIG.locationId}&query=${encodeURIComponent(searchQuery)}&limit=5`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28'
+                    }
+                });
+                if (!response.ok) {
+                    console.warn('Contact search failed:', response.status);
+                    return null;
+                }
+                const data = await response.json();
+                const contacts = data.contacts || [];
+                console.log(`Contact search for "${searchQuery}": found ${contacts.length} result(s)`);
+                return contacts.length > 0 ? contacts[0] : null;
+            } catch (err) {
+                console.error('Contact search error:', err);
+                return null;
+            }
+        }
+
+        // ---- GHL custom field IDs (from /locations/{id}/customFields) ----
+        const GHL_CUSTOM_FIELDS = {
+            vin: 'Au75x5FoMof3Bsjexmj3',
+            year: 'tRnwHMSfBWl329vr1jsd',
+            make: 's49iwLf4IDkUgKKcQAQ0',
+            model: 'GXMUoOOiBFliQxuAGuzk',
+            yearMakeModel: '0Ww8VjdC7Bxyj38LmRKi',
+            roNumber: 'vyZYQeeI6awFvqjCACE0',
+            insurance: 'YVIvG2P73p9IltxLHm5v',
+            claimNumber: 'Qcsf5Kk2MrNp1UP9kdDt',
+            estimator: 'oAiKQXcP4Z3B6KbdRF6N',
+            deductible: 'gNl6srVoXFU7JQGrKGl2'
+        };
+
+        // Build customFields array from Airtable record fields
+        function buildGHLCustomFields(recordFields) {
+            const cf = [];
+            const f = recordFields || {};
+            const push = (id, val) => { if (val) cf.push({ id, field_value: String(val) }); };
+
+            push(GHL_CUSTOM_FIELDS.vin, f.VIN);
+            push(GHL_CUSTOM_FIELDS.year, f.Year);
+            push(GHL_CUSTOM_FIELDS.make, f.Make);
+            push(GHL_CUSTOM_FIELDS.model, f.Model);
+
+            // Combined "Year Make Model" field
+            const ymm = [f.Year, f.Make, f.Model].filter(Boolean).join(' ');
+            if (ymm) cf.push({ id: GHL_CUSTOM_FIELDS.yearMakeModel, field_value: ymm });
+
+            push(GHL_CUSTOM_FIELDS.roNumber, f['RO Number']);
+            push(GHL_CUSTOM_FIELDS.insurance, f['Insurance Company']);
+            push(GHL_CUSTOM_FIELDS.claimNumber, f['Claim Number']);
+            push(GHL_CUSTOM_FIELDS.estimator, f.Estimator);
+            push(GHL_CUSTOM_FIELDS.deductible, f.Deductible);
+
+            return cf;
+        }
+
+        // ---- Prepare contact for document delivery (two-phase approach) ----
+        //
+        // GHL auto-enables DND ("DND enabled by customer") when a contact is
+        // created or updated — likely via a workflow or location-level setting.
+        // To defeat this, we use a TWO-PHASE approach:
+        //
+        //   Phase 1: Sync data ONLY (name, phone, custom fields) — NO dnd settings.
+        //            This triggers GHL's workflow which auto-enables DND.
+        //   (wait 4 seconds for the workflow to complete)
+        //   Phase 2: Force DND OFF in a SEPARATE, standalone API call.
+        //            Since this is a minimal update, the workflow may not re-trigger.
+        //
+        // DND settings for contacts:
+        //   status: 'active'   = channel is ACTIVE (DND OFF) — messages CAN be sent
+        //   status: 'inactive' = channel is INACTIVE (DND ON) — messages BLOCKED
+        const GHL_DND_SETTINGS = {
+            Call: { status: 'active', message: '', code: '' },
+            Email: { status: 'active', message: '', code: '' },
+            SMS: { status: 'active', message: '', code: '' },
+            WhatsApp: { status: 'active', message: '', code: '' },
+            GMB: { status: 'active', message: '', code: '' },
+            FB: { status: 'active', message: '', code: '' }
+        };
+
+        // Standalone function to force DND off — used as the LAST step before sending
+        async function forceDndOff(contactId) {
+            try {
+                const resp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${contactId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dnd: false,
+                        dndSettings: { ...GHL_DND_SETTINGS }
+                    })
+                });
+                if (resp.ok) {
+                    console.log('DND forced OFF for contact:', contactId);
+                    return true;
+                } else {
+                    console.warn('Failed to force DND off:', resp.status, await resp.text());
+                    return false;
+                }
+            } catch (err) {
+                console.warn('Error forcing DND off:', err);
+                return false;
+            }
+        }
+
+        async function prepareContactForSend(contactId, recordFields) {
+            try {
+                // Build the contact name from record fields
+                const contactName = recordFields?.['Customer Name'] || '';
+                const nameParts = contactName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                // Get phone from record
+                const phone = recordFields?.['Customer Phone'] || recordFields?.['Phone'] || null;
+
+                // ── PHASE 1: Sync data ONLY (no DND settings) ──
+                // This update triggers GHL workflows which may auto-enable DND.
+                const dataPayload = {};
+                if (phone) dataPayload.phone = phone;
+                if (firstName) dataPayload.firstName = firstName;
+                if (lastName) dataPayload.lastName = lastName;
+                if (contactName) dataPayload.name = contactName;
+
+                const cf = buildGHLCustomFields(recordFields);
+                if (cf.length > 0) dataPayload.customFields = cf;
+
+                console.log('Phase 1: Syncing contact data (no DND)...');
+                const resp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${contactId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataPayload)
+                });
+                if (resp.ok) {
+                    console.log('Phase 1 done: Contact data synced');
+                } else {
+                    console.warn('Phase 1 warning:', resp.status, await resp.text());
+                }
+
+                // ── WAIT for GHL workflows to fire and complete ──
+                console.log('Waiting 4s for GHL workflows to complete...');
+                await new Promise(r => setTimeout(r, 4000));
+
+                // ── PHASE 2: Force DND OFF (standalone call) ──
+                console.log('Phase 2: Forcing DND off...');
+                await forceDndOff(contactId);
+
+                // Brief pause to let the DND change propagate
+                await new Promise(r => setTimeout(r, 1000));
+
+            } catch (err) {
+                console.warn('Error preparing contact:', err);
+            }
+        }
+
+        // Verify DND is truly off before sending a document.
+        // GHL can auto-enable DND via workflows/settings on contact create/update.
+        // This function checks the contact's actual DND state and forces it off
+        // if needed, then waits to let the change propagate before returning.
+        async function ensureEmailDndOff(contactId, maxRetries = 3) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const resp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${contactId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28'
+                        }
+                    });
+                    if (!resp.ok) return false;
+                    const data = await resp.json();
+                    const contact = data.contact || data;
+
+                    // Check if DND is on for any relevant channel
+                    const dndOn = contact.dnd === true ||
+                        contact.dndSettings?.Email?.status === 'inactive' ||
+                        contact.dndSettings?.SMS?.status === 'inactive';
+
+                    if (dndOn) {
+                        console.warn(`DND is ON (attempt ${attempt}/${maxRetries}) — forcing all channels active...`);
+                        await fetch(`${GHL_CONFIG.baseUrl}/contacts/${contactId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                                'Version': '2021-07-28',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                dnd: false,
+                                dndSettings: { ...GHL_DND_SETTINGS }
+                            })
+                        });
+                        console.log('DND forced OFF, waiting 2s for GHL to propagate...');
+                        await new Promise(r => setTimeout(r, 2000));
+                        // Loop back to verify it stuck
+                    } else {
+                        console.log(`DND check passed (attempt ${attempt}) — all channels active`);
+                        return true;
+                    }
+                } catch (err) {
+                    console.warn('Error in DND check:', err);
+                    return false;
+                }
+            }
+            console.warn(`DND still ON after ${maxRetries} attempts — proceeding anyway`);
+            return false;
+        }
+
+        // ── PROBE: Check if GHL's messaging service actually accepts email sends ──
+        // GHL has a known desync: the Contacts API can show dnd=false while
+        // the Conversations API still blocks with "DND is active".
+        // This function sends a lightweight probe to detect that desync.
+        async function probeEmailDelivery(contactId) {
+            try {
+                const resp = await fetch(`${GHL_CONFIG.baseUrl}/conversations/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'Email',
+                        contactId: contactId,
+                        subject: 'Delivery Probe — please ignore',
+                        html: '<p style="color:#999;font-size:11px">This is an automated delivery test. Please ignore.</p>',
+                        emailFrom: 'Dent Experts <info@mg.mydentexperts.com>'
+                    })
+                });
+                if (resp.status === 201) {
+                    console.log('Email probe: delivery OK (201)');
+                    return true; // Email channel is working
+                }
+                const result = await resp.json();
+                if (result.message && result.message.includes('DND is active')) {
+                    console.warn('Email probe: DND is STUCK (API says active despite contact record)');
+                    return false; // DND is stuck
+                }
+                // Other error — not DND related, assume delivery might work
+                console.warn('Email probe: unexpected response:', resp.status, result);
+                return true;
+            } catch (err) {
+                console.warn('Email probe error:', err);
+                return true; // On error, don't block the flow
+            }
+        }
+
+        // ── NUCLEAR FIX: Delete and recreate a contact to clear stuck DND ──
+        // GHL's internal messaging DND state can get permanently stuck.
+        // The Contacts API reports dnd=false, but the Conversations API
+        // still blocks. The only fix is to delete and recreate the contact.
+        async function recreateContact(oldContactId, contactData) {
+            try {
+                // Step 1: Delete the old contact
+                console.log('Deleting stuck contact:', oldContactId);
+                const delResp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${oldContactId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28'
+                    }
+                });
+                if (!delResp.ok) {
+                    console.error('Failed to delete contact:', delResp.status);
+                    return null;
+                }
+
+                // Step 2: Wait for GHL to process the deletion
+                console.log('Contact deleted, waiting 3s...');
+                await new Promise(r => setTimeout(r, 3000));
+
+                // Step 3: Recreate with clean state (NO DND settings)
+                const createPayload = {
+                    locationId: GHL_CONFIG.locationId,
+                    firstName: contactData.firstName,
+                    lastName: contactData.lastName,
+                    email: contactData.email,
+                    source: 'Dent Experts Form',
+                    tags: contactData.tags || ['dent-pro']
+                };
+                if (contactData.phone) createPayload.phone = contactData.phone;
+                if (contactData.customFields?.length) createPayload.customFields = contactData.customFields;
+
+                console.log('Recreating contact...');
+                const createResp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(createPayload)
+                });
+
+                if (!createResp.ok) {
+                    console.error('Failed to recreate contact:', createResp.status);
+                    return null;
+                }
+
+                const result = await createResp.json();
+                const newId = result.contact?.id;
+                console.log('Contact recreated with fresh ID:', newId);
+                return newId;
+            } catch (err) {
+                console.error('Error in recreateContact:', err);
+                return null;
+            }
+        }
+
+        // ---- Fetch document templates from GHL Proposals API (paginated) ----
+        let cachedGHLTemplates = null;
+
+        async function fetchGHLTemplates(forceRefresh = false) {
+            if (cachedGHLTemplates && !forceRefresh) return cachedGHLTemplates;
+
+            // Check sessionStorage cache (valid 10 min)
+            if (!forceRefresh) {
+                try {
+                    const cached = sessionStorage.getItem('ghl_templates');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (parsed.ts && Date.now() - parsed.ts < 600000) {
+                            cachedGHLTemplates = parsed.data;
+                            return cachedGHLTemplates;
+                        }
+                    }
+                } catch (e) { }
+            }
+
+            try {
+                // GHL API: fetch all templates (limit=20 is the max the API accepts)
+                const response = await fetch(
+                    `${GHL_CONFIG.baseUrl}/proposals/templates?locationId=${GHL_CONFIG.locationId}&limit=20`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28'
+                        }
+                    }
+                );
+                if (!response.ok) {
+                    console.error('Failed to fetch templates:', response.status);
+                    return [];
+                }
+                const result = await response.json();
+                let allTemplates = result.data || [];
+                console.log(`Fetched ${allTemplates.length} templates`);
+
+                // Sort alphabetically by name
+                allTemplates.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                // Only cache if we actually got results
+                cachedGHLTemplates = allTemplates;
+                if (allTemplates.length > 0) {
+                    sessionStorage.setItem('ghl_templates', JSON.stringify({ ts: Date.now(), data: allTemplates }));
+                }
+                return allTemplates;
+            } catch (err) {
+                console.error('Error fetching templates:', err);
+                return [];
+            }
+        }
+
+        // ---- Send template to contact via Proposals API ----
+        async function sendGHLTemplate(templateId, contactId, opportunityId) {
+            const url = `${GHL_CONFIG.baseUrl}/proposals/templates/send`;
+            const payload = {
+                templateId: templateId,
+                userId: GHL_CONFIG.userId,
+                sendDocument: true,
+                locationId: GHL_CONFIG.locationId,
+                contactId: contactId
+            };
+            if (opportunityId) payload.opportunityId = opportunityId;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                    'Version': '2021-07-28',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errBody = await response.text();
+                throw new Error(`Send template failed (${response.status}): ${errBody}`);
+            }
+
+            const result = await response.json();
+            console.log('Template send result:', result);
+            return result;
+        }
+
+        // ---- Fetch sent documents to check statuses ----
+        async function fetchSentDocuments(contactName) {
+            try {
+                let url = `${GHL_CONFIG.baseUrl}/proposals/document?locationId=${GHL_CONFIG.locationId}&limit=20`;
+                if (contactName) url += `&query=${encodeURIComponent(contactName)}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28'
+                    }
+                });
+                if (!response.ok) return [];
+                const result = await response.json();
+                return result.documents || [];
+            } catch (err) {
+                console.error('Error fetching documents:', err);
+                return [];
+            }
+        }
+
+        // ---- Populate template dropdown ----
+        async function populateContractTemplateDropdown(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Loading templates...</option>';
+
+            const templates = await fetchGHLTemplates();
+
+            if (templates.length === 0) {
+                select.innerHTML = '<option value="">No templates found</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="">Choose document template...</option>';
+            templates.forEach(tmpl => {
+                const opt = document.createElement('option');
+                opt.value = tmpl._id || tmpl.id;
+                opt.textContent = tmpl.name || 'Untitled Template';
+                select.appendChild(opt);
+            });
+        }
+
+        // ---- Send contract from Records detail modal ----
+        async function sendContractFromRecord() {
+            const select = document.getElementById('recordContractWorkflowSelect');
+            const sendBtn = document.getElementById('recordContractSendBtn');
+            const statusEl = document.getElementById('recordContractStatus');
+            const templateId = select?.value;
+
+            if (!templateId) {
+                showRecordContractStatus('Please select a document template', 'warning');
+                return;
+            }
+
+            const record = allRecords.find(r => r.id === currentDetailRecordId);
+            if (!record) return;
+
+            const f = record.fields;
+            const customerName = getFieldValue(f, ['Customer Name', 'Customer', 'Name']);
+            const email = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']);
+            const phone = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']);
+            const roNumber = f['RO Number'] || '';
+
+            console.log('DEBUG: Contract Data:', { customerName, email, phone, roNumber, fields: f });
+
+            if (!customerName) {
+                showRecordContractStatus('Customer name is required', 'warning');
+                return;
+            }
+
+            if (!email) {
+                showRecordContractStatus('Customer email is required for document delivery', 'warning');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                showRecordContractStatus('You are offline', 'warning');
+                return;
+            }
+
+            // Get template name from dropdown
+            const templateName = select.options[select.selectedIndex]?.textContent || 'Document';
+
+            // UI: sending state
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = 'Sending...';
+            showRecordContractStatus('Finding contact in GHL...', 'info');
+
+            let contactId = null;
+
+            try {
+                // Step 1: Find or create contact in GHL
+
+                let existingContact = await findGHLContact(customerName, email, phone);
+
+                // ── Verify the contact actually exists (GHL search index lag) ──
+                // After deleting a contact, GHL's search may still return the old ID.
+                // A direct GET confirms the contact is real before we operate on it.
+                if (existingContact) {
+                    try {
+                        const verifyResp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${existingContact.id}`, {
+                            headers: {
+                                'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                                'Version': '2021-07-28'
+                            }
+                        });
+                        if (!verifyResp.ok) {
+                            console.warn('Contact from search is stale/deleted:', existingContact.id, '— will create new');
+                            existingContact = null; // Fall through to create path
+                        }
+                    } catch (e) {
+                        console.warn('Error verifying contact:', e);
+                        existingContact = null;
+                    }
+                }
+
+                if (existingContact) {
+                    contactId = existingContact.id;
+                    console.log('Found existing GHL contact:', contactId);
+                    showRecordContractStatus('Contact found, syncing vehicle data...', 'info');
+                    // Push all record data into custom fields (Phase 1: data only)
+                    await prepareContactForSend(contactId, f);
+                    // Verify DND is actually off
+                    showRecordContractStatus('Verifying delivery channels are open...', 'info');
+                    await ensureEmailDndOff(contactId);
+
+                    // ── PROBE: test if GHL's messaging service actually accepts sends ──
+                    // GHL has a known desync: Contacts API may show dnd=false but the
+                    // Conversations API still blocks with "DND is active". The only fix
+                    // is to delete the contact and recreate it fresh.
+                    const probeOk = await probeEmailDelivery(contactId);
+                    if (!probeOk) {
+                        console.warn('DND is STUCK on contact — deleting and recreating...');
+                        showRecordContractStatus('⚠️ Fixing stuck DND — recreating contact...', 'warning');
+                        contactId = await recreateContact(contactId, {
+                            firstName: existingContact.firstName || customerName.split(' ')[0] || 'Customer',
+                            lastName: existingContact.lastName || customerName.split(' ').slice(1).join(' ') || '',
+                            email: email,
+                            phone: phone,
+                            tags: existingContact.tags || ['dent-pro'],
+                            customFields: buildGHLCustomFields(f)
+                        });
+                        if (!contactId) throw new Error('Failed to recreate contact');
+                        console.log('Contact recreated with clean DND:', contactId);
+                    }
+
+                    showRecordContractStatus('Contact ready, sending document...', 'info');
+                } else {
+                    // ── CREATE new contact (two-phase DND approach) ──
+                    showRecordContractStatus('Creating contact in GHL...', 'info');
+                    const nameParts = customerName.split(' ');
+                    const firstName = nameParts[0] || 'Customer';
+                    const lastName = nameParts.slice(1).join(' ') || '';
+
+                    // Phase 1: Create contact WITHOUT DND settings
+                    // GHL will auto-enable DND via workflow on create — that's fine.
+                    // We'll force it off AFTER the workflow completes.
+                    const customFields = buildGHLCustomFields(f);
+                    const createPayload = {
+                        locationId: GHL_CONFIG.locationId,
+                        firstName: firstName,
+                        lastName: lastName,
+                        name: customerName,
+                        email: email,
+                        tags: ['dent-pro', 'contract-pending'],
+                        customFields: customFields
+                    };
+                    if (phone) createPayload.phone = phone;
+                    console.log('Phase 1: Creating contact (no DND settings)...');
+
+                    const createResp = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(createPayload)
+                    });
+
+                    if (!createResp.ok) {
+                        const errText = await createResp.text();
+                        console.error('Contact creation failed:', errText);
+                        throw new Error(`Failed to create contact: ${createResp.status}`);
+                    }
+
+                    const createResult = await createResp.json();
+                    contactId = createResult.contact?.id;
+                    if (!contactId) throw new Error('No contact ID returned');
+                    console.log('Created new GHL contact:', contactId);
+
+                    // Wait for GHL workflows to fire (auto-DND, tags, etc.)
+                    showRecordContractStatus('Waiting for GHL to process contact...', 'info');
+                    console.log('Waiting 4s for GHL workflows to complete...');
+                    await new Promise(r => setTimeout(r, 4000));
+
+                    // Phase 2: Force DND off AFTER workflows complete
+                    showRecordContractStatus('Enabling delivery channels...', 'info');
+                    console.log('Phase 2: Forcing DND off on new contact...');
+                    await forceDndOff(contactId);
+                    await new Promise(r => setTimeout(r, 1000));
+
+                    // Verify DND is actually off
+                    showRecordContractStatus('Verifying delivery channels are open...', 'info');
+                    await ensureEmailDndOff(contactId);
+                }
+
+                // Step 2: Send template directly via Proposals API
+                showRecordContractStatus('Sending document...', 'info');
+                console.log(`Sending template ${templateId} to contact ${contactId}`);
+                const sendResult = await sendGHLTemplate(templateId, contactId);
+
+                // Step 2b: Send SMS notification (non-blocking — if it fails, email still went through)
+                if (phone) {
+                    try {
+                        showRecordContractStatus('Sending SMS notification...', 'info');
+                        const smsResp = await fetch(`${GHL_CONFIG.baseUrl}/conversations/messages`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                                'Version': '2021-07-28',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                type: 'SMS',
+                                contactId: contactId,
+                                message: `Dent Experts: Your ${templateName} has been sent to your email. Please check your inbox and sign at your earliest convenience.`
+                            })
+                        });
+                        if (smsResp.ok) {
+                            console.log('SMS notification sent successfully');
+                        } else {
+                            const smsErr = await smsResp.json().catch(() => ({}));
+                            console.warn('SMS notification failed (email still sent):', smsErr.message || smsResp.status);
+                        }
+                    } catch (smsErr) {
+                        console.warn('SMS notification error (email still sent):', smsErr.message);
+                    }
+                }
+
+                // Step 2c: Post-send DND check — verify GHL didn't re-enable DND
+                // If DND was re-enabled, fix it (document may still deliver after fix)
+                setTimeout(() => ensureEmailDndOff(contactId, 2), 5000);
+
+                // Step 3: Save contract record locally
+                const contractData = getOrCreateContractData(roNumber);
+                contractData.contactId = contactId;
+                contractData.contracts.push({
+                    templateId: templateId,
+                    templateName: templateName,
+                    contactId: contactId,
+                    customerName: customerName,
+                    status: 'sent',
+                    sentAt: new Date().toISOString(),
+                    sendCount: 1,
+                    roNumber: roNumber,
+                    links: sendResult.links || []
+                });
+                saveContractData(contractData);
+
+                // Step 4: Success
+                showRecordContractStatus('Document sent successfully!', 'success');
+                renderRecordContractHistory(roNumber);
+                showToast(`${templateName} sent to ${customerName}`, 'success');
+                haptic('success');
+
+            } catch (err) {
+                console.error('Contract send error:', err);
+                showRecordContractStatus(`Failed: ${err.message} [C:${contactId}|T:${templateId}|E:${email}]`, 'error');
+                showToast(`Contract failed: ${err.message}`, 'error');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '📤 Send Contract';
+            }
+        }
+
+        function showRecordContactStatus(msg, type) {
+            const el = document.getElementById('recordContactSaveStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.className = `record-contract-status ${type}`;
+            el.style.display = 'block';
+            if (type === 'success' || type === 'warning') {
+                setTimeout(() => { el.style.display = 'none'; }, 6000);
+            }
+        }
+
+        async function saveRecordContact() {
+            if (!currentDetailRecordId) return;
+
+            const name = document.getElementById('recordContactName')?.value?.trim() || '';
+            const email = document.getElementById('recordContactEmail')?.value?.trim() || '';
+            const phone = document.getElementById('recordContactPhone')?.value?.trim() || '';
+
+            if (!name) {
+                showRecordContactStatus('Customer name is required', 'warning');
+                return;
+            }
+
+            if (!email && !phone) {
+                showRecordContactStatus('Email or phone is required', 'warning');
+                return;
+            }
+
+            try {
+                const config = await loadAirtableConfig();
+                if (!config) throw new Error('Airtable config not found');
+
+                const endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}/${currentDetailRecordId}`;
+                await ensureAirtableFields(config);
+
+                const fieldMap = await getAirtableFieldMap(config);
+                const nameKey = resolveFieldName(fieldMap, ['Customer Name', 'Customer', 'Name', 'CustomerName']);
+                const emailKey = resolveFieldName(fieldMap, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']);
+                const phoneKey = resolveFieldName(fieldMap, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']);
+
+                const preferredFields = {};
+                if (nameKey) preferredFields[nameKey] = name;
+                if (emailKey) preferredFields[emailKey] = email;
+                if (phoneKey) preferredFields[phoneKey] = phone;
+
+                if (fieldMap && Object.keys(preferredFields).length === 0) {
+                    showRecordContactStatus('Missing Airtable contact fields. Add Customer Name/Email/Phone.', 'error');
+                    return;
+                }
+
+                const fieldSets = [
+                    preferredFields,
+                    { 'Customer Name': name, 'Customer Email': email, 'Customer Phone': phone },
+                    { 'Customer': name, 'Email': email, 'Phone': phone },
+                    { 'Name': name, 'Email': email, 'Phone': phone },
+                    { 'CustomerName': name, 'CustomerEmail': email, 'CustomerPhone': phone }
+                ].filter(f => f && Object.keys(f).length > 0);
+
+                let updated = null;
+                let successfulFields = null;
+                let lastError = null;
+
+                for (const fields of fieldSets) {
+                    try {
+                        const resp = await fetch(endpoint, {
+                            method: 'PATCH',
+                            headers: {
+                                'Authorization': `Bearer ${config.apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ fields })
+                        });
+
+                        if (resp.ok) {
+                            updated = await resp.json();
+                            successfulFields = { ...fields };
+                            break;
+                        }
+
+                        const errText = await resp.text();
+                        lastError = errText || `Airtable update failed (${resp.status})`;
+                    } catch (err) {
+                        lastError = err.message;
+                    }
+                }
+
+                if (!updated) {
+                    throw new Error(lastError || 'Airtable update failed');
+                }
+
+                if (successfulFields) {
+                    if (!updated.fields) updated.fields = {};
+                    Object.assign(updated.fields, successfulFields);
+                }
+
+                const idx = allRecords.findIndex(r => r.id === currentDetailRecordId);
+                if (idx !== -1) allRecords[idx] = updated;
+
+                showRecordContactStatus('Contact updated', 'success');
+                openRecordDetail(currentDetailRecordId);
+                renderRecordsList(allRecords);
+            } catch (err) {
+                console.error('Save contact error:', err);
+                showRecordContactStatus(`Failed: ${err.message}`, 'error');
+            }
+        }
+
+        function showRecordContractStatus(msg, type) {
+            const el = document.getElementById('recordContractStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.className = `record-contract-status ${type}`;
+            el.style.display = 'block';
+            if (type === 'success' || type === 'warning') {
+                setTimeout(() => { el.style.display = 'none'; }, 6000);
+            }
+        }
+
+        // ---- Render contract history in records detail modal ----
+        function renderRecordContractHistory(roNumber) {
+            const historyEl = document.getElementById('recordContractHistory');
+            if (!historyEl) return;
+
+            const contractData = loadContractData(roNumber);
+
+            if (!contractData || contractData.contracts.length === 0) {
+                historyEl.innerHTML = '<div class="contract-history-empty">No contracts sent yet</div>';
+                return;
+            }
+
+            let html = '';
+            contractData.contracts.forEach((c, i) => {
+                const sentDate = c.sentAt ? new Date(c.sentAt).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+                }) : 'Unknown';
+
+                const statusIcon = c.status === 'completed' ? 'Signed' : c.status === 'sent' ? 'Sent' : c.status;
+
+                html += `
+                    <div class="contract-history-item">
+                        <div class="contract-history-header">
+                            <span class="contract-history-name">${c.templateName || 'Document'}</span>
+                            <span class="contract-history-status status-${c.status}">
+                                ${statusIcon}
+                            </span>
+                        </div>
+                        <div class="contract-history-meta">
+                            ${sentDate} - ${c.customerName || 'Customer'}
+                            ${c.sendCount > 1 ? ` (x${c.sendCount})` : ''}
+                        </div>
+                        <div class="contract-history-actions">
+                            <button class="contract-history-btn resend" onclick="resendContract(${i}, '${roNumber}')">
+                                Resend
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyEl.innerHTML = html;
+        }
+
+        // ---- Resend contract (re-send template) ----
+        async function resendContract(contractIndex, roNumber) {
+            const contractData = loadContractData(roNumber);
+            if (!contractData || !contractData.contracts[contractIndex]) return;
+
+            const contract = contractData.contracts[contractIndex];
+
+            try {
+                showToast('Resending document...', 'info');
+                await sendGHLTemplate(contract.templateId, contract.contactId);
+
+                contract.sentAt = new Date().toISOString();
+                contract.sendCount = (contract.sendCount || 1) + 1;
+                contract.status = 'sent';
+                saveContractData(contractData);
+                renderRecordContractHistory(roNumber);
+
+                showToast(`${contract.templateName} resent`, 'success');
+                haptic('success');
+            } catch (err) {
+                console.error('Resend error:', err);
+                showToast(`Resend failed: ${err.message}`, 'error');
+            }
+        }
+
+        // ---- Refresh contract statuses (check GHL for completed docs) ----
+        async function refreshContractStatuses() {
+            const roNumber = document.getElementById('roNumber')?.value?.trim();
+            if (!roNumber) {
+                showToast('Enter an RO Number first', 'warning');
+                return;
+            }
+
+            const contractData = loadContractData(roNumber);
+            if (!contractData || contractData.contracts.length === 0) {
+                showToast('No contracts to check', 'info');
+                return;
+            }
+
+            showToast('Checking contract statuses...', 'info');
+
+            try {
+                // Fetch sent documents from GHL
+                const customerName = contractData.contracts[0]?.customerName;
+                const docs = await fetchSentDocuments(customerName);
+
+                let updated = false;
+                contractData.contracts.forEach(c => {
+                    if (c.status === 'completed') return; // Already done
+
+                    // Match by template name or contact
+                    const matchingDoc = docs.find(d => {
+                        const nameMatch = d.name && c.templateName && d.name.includes(c.templateName.split(' ')[0]);
+                        const recipientMatch = d.recipients?.some(r => r.id === c.contactId);
+                        return recipientMatch || nameMatch;
+                    });
+
+                    if (matchingDoc) {
+                        if (matchingDoc.status === 'completed') {
+                            c.status = 'completed';
+                            c.completedAt = matchingDoc.recipients?.find(r => r.signedDate)?.signedDate || new Date().toISOString();
+                            updated = true;
+                        } else if (matchingDoc.status === 'viewed') {
+                            c.status = 'viewed';
+                            updated = true;
+                        }
+                    }
+                });
+
+                if (updated) {
+                    saveContractData(contractData);
+                    renderScoperContractsList(roNumber);
+
+                    const completedCount = contractData.contracts.filter(c => c.status === 'completed').length;
+                    if (completedCount > 0) {
+                        showToast(`${completedCount} contract(s) signed! Ready to work.`, 'success');
+                        haptic('success');
+                    } else {
+                        showToast('Statuses updated', 'info');
+                    }
+                } else {
+                    showToast('No status changes', 'info');
+                }
+            } catch (err) {
+                console.error('Refresh status error:', err);
+                showToast('Failed to check statuses', 'error');
+            }
+        }
+
+        // ---- Initialize contracts panel ----
+        function initContractsPanel() {
+            const section = document.getElementById('contractSection');
+            if (section) section.style.display = 'none';
+            return;
+        }
+
+        // Render contracts list in the Scoper panel
+        function renderScoperContractsList(roNumber) {
+            const listEl = document.getElementById('sentContractsList');
+            const bannerEl = document.getElementById('contractReadyBanner');
+            if (!listEl) return;
+
+            const contractData = loadContractData(roNumber);
+
+            if (!contractData || contractData.contracts.length === 0) {
+                listEl.innerHTML = `
+                    <div class="contract-empty-state">
+                        <span class="empty-icon">No contracts sent yet</span>
+                    </div>
+                `;
+                if (bannerEl) bannerEl.style.display = 'none';
+                return;
+            }
+
+            const completedContracts = contractData.contracts.filter(c => c.status === 'completed');
+            if (bannerEl) {
+                if (completedContracts.length > 0) {
+                    bannerEl.style.display = 'flex';
+                    document.getElementById('readyBannerSubtitle').textContent =
+                        completedContracts.map(c => c.templateName).join(', ') + ' signed';
+                } else {
+                    bannerEl.style.display = 'none';
+                }
+            }
+
+            let html = '<div class="sent-contracts-header">Sent Contracts</div>';
+            contractData.contracts.forEach((c, i) => {
+                const sentDate = c.sentAt ? new Date(c.sentAt).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                }) : 'Unknown';
+
+                const statusLabel = c.status === 'completed' ? 'Signed' : c.status === 'viewed' ? 'Viewed' : 'Sent';
+
+                html += `
+                    <div class="contract-card">
+                        <div class="contract-card-header">
+                            <span class="contract-card-name">${c.templateName || 'Document'}</span>
+                            <span class="contract-status status-${c.status}">
+                                <span class="contract-status-dot"></span>
+                                ${statusLabel}
+                            </span>
+                        </div>
+                        <div class="contract-card-meta">
+                            <span>${sentDate}${c.sendCount > 1 ? ` (x${c.sendCount})` : ''}</span>
+                            <span>${c.customerName || 'Customer'}</span>
+                        </div>
+                        <div class="contract-card-actions" style="margin-top: 8px;">
+                            <button type="button" class="contract-card-btn resend" onclick="resendContract(${i}, '${contractData.roNumber}')">
+                                Resend
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        // Scoper panel send handler
+        async function sendContract() {
+            const select = document.getElementById('contractTemplateSelect');
+            const sendBtn = document.getElementById('contractSendBtn');
+            const validationMsg = document.getElementById('contractValidationMsg');
+            const templateId = select?.value;
+
+            validationMsg.classList.remove('visible');
+
+            if (!templateId) {
+                showContractValidation('Please select a document template');
+                return;
+            }
+
+            const roNumber = document.getElementById('roNumber')?.value?.trim();
+            if (!roNumber) {
+                showContractValidation('RO Number is required before sending contracts');
+                return;
+            }
+
+            const customerName = document.getElementById('insuredName')?.value?.trim() || 'Customer';
+            const email = document.getElementById('customerEmail')?.value?.trim();
+            const phone = document.getElementById('customerPhone')?.value?.trim();
+
+            if (!email && !phone) {
+                showContractValidation('Customer email or phone is required');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                showContractValidation('You are offline - cannot send contracts');
+                return;
+            }
+
+            const templateName = select.options[select.selectedIndex]?.textContent || 'Document';
+
+            sendBtn.disabled = true;
+            sendBtn.classList.remove('ready');
+            sendBtn.classList.add('sending');
+            sendBtn.innerHTML = 'Sending...';
+
+            try {
+                // Step 1: Upsert contact
+                const formData = collectFormDataForGHL();
+                const contactResult = await upsertGHLContact(formData);
+                if (!contactResult.success) {
+                    throw new Error(contactResult.error || 'Failed to create/find contact');
+                }
+                const contactId = contactResult.contactId;
+
+                // Step 2: Send template via Proposals API
+                const sendResult = await sendGHLTemplate(templateId, contactId);
+
+                // Step 3: Save contract record
+                const contractData = getOrCreateContractData(roNumber);
+                contractData.contactId = contactId;
+                contractData.contracts.push({
+                    templateId: templateId,
+                    templateName: templateName,
+                    contactId: contactId,
+                    customerName: customerName,
+                    status: 'sent',
+                    sentAt: new Date().toISOString(),
+                    sendCount: 1,
+                    roNumber: roNumber,
+                    links: sendResult.links || []
+                });
+                saveContractData(contractData);
+
+                renderScoperContractsList(roNumber);
+                showToast(`${templateName} sent to ${customerName}`, 'success');
+                haptic('success');
+
+            } catch (err) {
+                console.error('Send contract error:', err);
+                showToast(`Failed: ${err.message}`, 'error');
+                showContractValidation(err.message);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('sending');
+                sendBtn.classList.add('ready');
+                sendBtn.innerHTML = 'Send';
+            }
+        }
+
+        function showContractValidation(msg) {
+            const el = document.getElementById('contractValidationMsg');
+            el.textContent = msg;
+            el.classList.add('visible');
+            setTimeout(() => el.classList.remove('visible'), 5000);
+        }
+
+        function collectFormDataForGHL() {
+            return {
+                insuredName: document.getElementById('insuredName')?.value || '',
+                customerEmail: document.getElementById('customerEmail')?.value?.trim() || '',
+                customerPhone: document.getElementById('customerPhone')?.value?.trim() || '',
+                vin: document.getElementById('vin')?.value?.toUpperCase() || '',
+                year: document.getElementById('year')?.value || '',
+                make: document.getElementById('make')?.value || '',
+                model: document.getElementById('model')?.value || '',
+                insurance: document.getElementById('insuranceCompany')?.value || '',
+                claimNumber: document.getElementById('claimNumber')?.value || '',
+                estimator: document.getElementById('estimator')?.value || '',
+                roNumber: document.getElementById('roNumber')?.value || ''
+            };
+        }
+
+        function onRoNumberChange() {
+            const roNumber = document.getElementById('roNumber')?.value?.trim();
+            if (roNumber) renderScoperContractsList(roNumber);
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initContractsPanel();
+
+            const roInput = document.getElementById('roNumber');
+            if (roInput) {
+                let roDebounce;
+                roInput.addEventListener('input', () => {
+                    clearTimeout(roDebounce);
+                    roDebounce = setTimeout(onRoNumberChange, 500);
+                });
+            }
+        });
+
         // ==================== FORM SUBMISSION ====================
         async function submitData(photoUrls) {
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerHTML = '⏳ Submitting to GHL...';
+            submitBtn.innerHTML = '⏳ Submitting to Airtable...';
             submitBtn.disabled = true;
 
             // Base Data
@@ -9844,20 +11685,15 @@
                 rawData[key] = checklistBundles[key].join(', ');
             });
 
-            // Submit to GHL
             try {
-                const pipelineKey = document.getElementById('pipelineSelect')?.value || 'production';
-                const ghlResult = await submitToGHL(rawData, pipelineKey);
+                const airtableResult = await uploadToAirtable();
 
-                if (ghlResult.success) {
-                    showToast(`✅ Sent to GHL! Contact: ${ghlResult.contactId}`, 'success');
-                    console.log('GHL Success:', ghlResult);
-
-                    // Show success modal
+                if (airtableResult) {
+                    showToast('✅ Uploaded to Airtable!', 'success');
                     document.getElementById('successModal').style.display = 'flex';
                     clearDraft();
                 } else {
-                    showToast(`⚠️ GHL Error: ${ghlResult.error}`, 'error');
+                    showToast('⚠️ Airtable upload failed', 'error');
                 }
             } catch (error) {
                 console.error('Submit error:', error);
@@ -10000,6 +11836,7 @@
                 }
 
                 const data = await resp.json();
+                console.log('Fetched Airtable Records (Batch):', data.records);
                 records = records.concat(data.records);
                 offset = data.offset;
             } while (offset);
@@ -10884,10 +12721,22 @@
             `;
 
             // Customer Info
+            const displayName = getFieldValue(f, ['Customer Name', 'Customer', 'Name']) || 'N/A';
+            const displayEmail = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']) || 'N/A';
+            const displayPhone = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']) || 'N/A';
+
             document.getElementById('recordCustomerInfo').innerHTML = `
                 <div class="detail-item">
                     <label>Customer Name</label>
-                    <div class="value">${f['Customer Name'] || 'N/A'}</div>
+                    <div class="value">${displayName}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Email</label>
+                    <div class="value">${displayEmail}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Phone</label>
+                    <div class="value">${displayPhone}</div>
                 </div>
                 <div class="detail-item">
                     <label>Insurance</label>
@@ -10902,6 +12751,17 @@
                     <div class="value">${f.Location || 'N/A'}</div>
                 </div>
             `;
+
+            // Contact edit fields
+            const contactNameEl = document.getElementById('recordContactName');
+            const contactEmailEl = document.getElementById('recordContactEmail');
+            const contactPhoneEl = document.getElementById('recordContactPhone');
+            if (contactNameEl) contactNameEl.value = getFieldValue(f, ['Customer Name', 'Customer', 'Name']);
+            if (contactEmailEl) contactEmailEl.value = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']);
+            if (contactPhoneEl) contactPhoneEl.value = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']);
+
+            const contactStatusEl = document.getElementById('recordContactSaveStatus');
+            if (contactStatusEl) contactStatusEl.style.display = 'none';
 
             // Assessment Info
             const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleString() : 'N/A';
@@ -10961,6 +12821,14 @@
             } else {
                 notesSection.style.display = 'none';
             }
+
+            // Contracts section
+            populateContractTemplateDropdown('recordContractWorkflowSelect');
+            const roNumber = f['RO Number'] || '';
+            renderRecordContractHistory(roNumber);
+            // Reset status
+            const statusEl = document.getElementById('recordContractStatus');
+            if (statusEl) statusEl.style.display = 'none';
 
             // Show modal
             document.getElementById('recordDetailModal').classList.add('show');

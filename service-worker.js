@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.01.28.01';
+const APP_VERSION = '2026.02.12.02';
 const CACHE_NAME = 'dent-experts-v' + APP_VERSION;
 const ASSETS_TO_CACHE = [
     './',
@@ -23,16 +23,39 @@ self.addEventListener('install', (e) => {
     self.skipWaiting();
 });
 
-// Fetch Event - Serve from Cache, fall back to Network
+// Fetch Event
+// - HTML / navigation requests → NETWORK-FIRST (always get fresh code when online)
+// - version.json → NETWORK-ONLY (for update checks)
+// - Everything else (images, fonts, css) → CACHE-FIRST (fast offline loads)
 self.addEventListener('fetch', (e) => {
-    // Always fetch version.json from network to check for updates
-    if (e.request.url.includes('version.json')) {
+    const url = e.request.url;
+
+    // version.json — always from network
+    if (url.includes('version.json')) {
         e.respondWith(
             fetch(e.request).catch(() => caches.match(e.request))
         );
         return;
     }
 
+    // HTML / navigation requests — NETWORK-FIRST
+    // This ensures code changes are picked up immediately when online.
+    if (e.request.mode === 'navigate' || url.endsWith('.html') || url.endsWith('/')) {
+        e.respondWith(
+            fetch(e.request).then((response) => {
+                // Cache the fresh response for offline use
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+                return response;
+            }).catch(() => {
+                // Offline — fall back to cache
+                return caches.match(e.request);
+            })
+        );
+        return;
+    }
+
+    // All other assets — CACHE-FIRST
     e.respondWith(
         caches.match(e.request).then((r) => {
             return r || fetch(e.request).then((response) => {

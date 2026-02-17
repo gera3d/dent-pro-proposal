@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.02.12.02';
+const APP_VERSION = '2026.02.14.01';
 const CACHE_NAME = 'dent-experts-v' + APP_VERSION;
 const ASSETS_TO_CACHE = [
     './',
@@ -31,10 +31,16 @@ self.addEventListener('fetch', (e) => {
     const url = e.request.url;
 
     // version.json — always from network
-    if (url.includes('version.json')) {
+    if (url.includes('version.json') || url.includes('config.json')) {
         e.respondWith(
             fetch(e.request).catch(() => caches.match(e.request))
         );
+        return;
+    }
+
+    // API calls — NEVER cache, always fetch from network
+    if (url.includes('api.airtable.com') || url.includes('airtableusercontent.com') || url.includes('api.gohighlevel.com') || url.includes('tmpfiles.org')) {
+        e.respondWith(fetch(e.request));
         return;
     }
 

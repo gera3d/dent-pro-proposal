@@ -140,7 +140,7 @@
             border-radius: 12px;
             color: #fff;
             font-size: 16px;
-            font-family: inherit;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             transition: all 0.2s ease;
         }
 
@@ -201,7 +201,7 @@
             border-radius: 12px;
             color: #fff;
             font-size: 15px;
-            font-family: inherit;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
             cursor: pointer;
             text-align: left;
             transition: all 0.2s ease;
@@ -249,7 +249,7 @@
             top: calc(100% + 6px);
             left: 0;
             right: 0;
-            max-height: 380px;
+            max-height: 320px;
             background: rgba(20, 20, 22, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -264,6 +264,12 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        @media (max-width: 600px) {
+            .searchable-dropdown {
+                max-height: 240px;
+            }
         }
 
         .searchable-select-wrapper.open .searchable-dropdown {
@@ -296,7 +302,7 @@
             border-radius: 10px;
             color: #fff;
             font-size: 14px;
-            font-family: inherit;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
             transition: all 0.2s;
         }
 
@@ -308,6 +314,7 @@
             outline: none;
             border-color: #1A6CFF;
             background: rgba(26, 108, 255, 0.06);
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12);
         }
 
         .dropdown-options {
@@ -397,6 +404,7 @@
             transition: all 0.15s ease;
             color: #e0e0e0;
             font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -810,6 +818,7 @@
             gap: 8px;
             margin-bottom: 10px;
         }
+
         .modal-btn {
             padding: 12px 10px;
             border-radius: 12px;
@@ -818,11 +827,12 @@
             font-weight: 500;
             cursor: pointer;
             font-family: inherit;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
             flex: 1;
             transition: opacity 0.15s;
         }
+
         .modal-btn-primary {
             padding: 14px 20px;
             font-size: 16px;
@@ -831,7 +841,10 @@
             width: 100%;
             display: block;
         }
-        .modal-btn:active { opacity: 0.75; }
+
+        .modal-btn:active {
+            opacity: 0.75;
+        }
 
         /* Panel header photo quick-capture button */
         .panel-photo-btn {
@@ -847,9 +860,10 @@
             line-height: 1;
             vertical-align: middle;
         }
+
         .panel-photo-btn:hover {
             opacity: 1;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Loading Spinner */
@@ -1115,8 +1129,8 @@
             gap: 0;
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .photo-step {
@@ -1126,16 +1140,18 @@
             align-items: center;
             gap: 4px;
             padding: 11px 6px 10px;
-            border-right: 1px solid rgba(255,255,255,0.07);
+            border-right: 1px solid rgba(255, 255, 255, 0.07);
             position: relative;
         }
 
-        .photo-step:last-child { border-right: none; }
+        .photo-step:last-child {
+            border-right: none;
+        }
 
         .photo-step-num {
             font-size: 10px;
             font-weight: 700;
-            color: rgba(255,255,255,0.25);
+            color: rgba(255, 255, 255, 0.25);
             letter-spacing: 0.3px;
         }
 
@@ -1165,7 +1181,7 @@
             height: 0;
             border-top: 6px solid transparent;
             border-bottom: 6px solid transparent;
-            border-left: 6px solid rgba(255,255,255,0.07);
+            border-left: 6px solid rgba(255, 255, 255, 0.07);
             z-index: 1;
         }
 
@@ -1173,17 +1189,17 @@
         .cat-when-to-use {
             padding: 8px 14px 6px;
             font-size: 11px;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.4);
             line-height: 1.5;
             font-style: italic;
-            background: rgba(0,0,0,0.12);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0, 0, 0, 0.12);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Tab subtitle */
         .cat-sublabel {
             font-size: 9px;
-            color: rgba(255,255,255,0.35);
+            color: rgba(255, 255, 255, 0.35);
             text-align: center;
             line-height: 1.2;
             margin-top: 2px;
@@ -1191,7 +1207,9 @@
             letter-spacing: 0;
         }
 
-        .photo-cat-tab.active .cat-sublabel { color: rgba(255,255,255,0.65); }
+        .photo-cat-tab.active .cat-sublabel {
+            color: rgba(255, 255, 255, 0.65);
+        }
 
         /* cat-panel-header — add cursor pointer to hint it's a clickable area */
         .cat-panel-header {
@@ -1207,14 +1225,14 @@
             gap: 10px;
             margin-bottom: 14px;
             padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .photo-section-title-icon {
             width: 34px;
             height: 34px;
             border-radius: 9px;
-            background: rgba(26,108,255,0.18);
+            background: rgba(26, 108, 255, 0.18);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1237,15 +1255,15 @@
         .photo-section-title-text p {
             margin: 2px 0 0;
             font-size: 11px;
-            color: rgba(255,255,255,0.35);
+            color: rgba(255, 255, 255, 0.35);
         }
 
         .photo-section-title-badge {
             font-size: 10px;
             font-weight: 700;
-            color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 4px 10px;
             letter-spacing: 0.3px;
@@ -1266,13 +1284,15 @@
             gap: 3px;
             padding: 12px 6px 10px;
             border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.04);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .photo-cat-tab:active { transform: scale(0.96); }
+        .photo-cat-tab:active {
+            transform: scale(0.96);
+        }
 
         .photo-cat-tab .cat-label {
             font-size: 10px;
@@ -1302,16 +1322,18 @@
             top: 6px;
             right: 7px;
             font-size: 9px;
-            color: rgba(255,255,255,0.2);
+            color: rgba(255, 255, 255, 0.2);
             transition: transform 0.25s ease, color 0.2s;
             pointer-events: none;
         }
 
-        .photo-cat-tab { position: relative; }
+        .photo-cat-tab {
+            position: relative;
+        }
 
         .photo-cat-tab.active .cat-tab-chevron {
             transform: rotate(180deg);
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* Complete state — all required shots captured */
@@ -1320,42 +1342,106 @@
             font-size: 12px;
         }
 
-        .photo-cat-tab.voil.complete        { border-color: rgba(26,108,255,0.5); box-shadow: 0 0 0 1px rgba(26,108,255,0.25); }
-        .photo-cat-tab.conditioning.complete { border-color: rgba(255,159,10,0.5);  box-shadow: 0 0 0 1px rgba(255,159,10,0.25); }
-        .photo-cat-tab.upd.complete          { border-color: rgba(255,69,58,0.5);   box-shadow: 0 0 0 1px rgba(255,69,58,0.25); }
-        .photo-cat-tab.scope.complete        { border-color: rgba(48,209,88,0.5);   box-shadow: 0 0 0 1px rgba(48,209,88,0.25); }
+        .photo-cat-tab.voil.complete {
+            border-color: rgba(26, 108, 255, 0.5);
+            box-shadow: 0 0 0 1px rgba(26, 108, 255, 0.25);
+        }
+
+        .photo-cat-tab.conditioning.complete {
+            border-color: rgba(255, 159, 10, 0.5);
+            box-shadow: 0 0 0 1px rgba(255, 159, 10, 0.25);
+        }
+
+        .photo-cat-tab.upd.complete {
+            border-color: rgba(255, 69, 58, 0.5);
+            box-shadow: 0 0 0 1px rgba(255, 69, 58, 0.25);
+        }
+
+        .photo-cat-tab.scope.complete {
+            border-color: rgba(48, 209, 88, 0.5);
+            box-shadow: 0 0 0 1px rgba(48, 209, 88, 0.25);
+        }
 
         /* Colored count when photos exist */
-        .photo-cat-tab.voil.active .cat-count        { color: #5B9BFF; }
-        .photo-cat-tab.conditioning.active .cat-count { color: #FFBC52; }
-        .photo-cat-tab.upd.active .cat-count          { color: #FF6961; }
-        .photo-cat-tab.scope.active .cat-count        { color: #34C659; }
+        .photo-cat-tab.voil.active .cat-count {
+            color: #5B9BFF;
+        }
 
-        .photo-cat-tab.voil .cat-dot        { background: #1A6CFF; }
-        .photo-cat-tab.conditioning .cat-dot { background: #FF9F0A; }
-        .photo-cat-tab.upd .cat-dot          { background: #FF453A; }
-        .photo-cat-tab.scope .cat-dot        { background: #30D158; }
+        .photo-cat-tab.conditioning.active .cat-count {
+            color: #FFBC52;
+        }
 
-        .photo-cat-tab.voil.active        { border-color: #1A6CFF; background: rgba(26,108,255,0.12); }
-        .photo-cat-tab.voil.active .cat-label { color: #1A6CFF; }
-        .photo-cat-tab.conditioning.active { border-color: #FF9F0A; background: rgba(255,159,10,0.12); }
-        .photo-cat-tab.conditioning.active .cat-label { color: #FF9F0A; }
-        .photo-cat-tab.upd.active          { border-color: #FF453A; background: rgba(255,69,58,0.12); }
-        .photo-cat-tab.upd.active .cat-label { color: #FF453A; }
-        .photo-cat-tab.scope.active        { border-color: #30D158; background: rgba(48,209,88,0.12); }
-        .photo-cat-tab.scope.active .cat-label { color: #30D158; }
+        .photo-cat-tab.upd.active .cat-count {
+            color: #FF6961;
+        }
+
+        .photo-cat-tab.scope.active .cat-count {
+            color: #34C659;
+        }
+
+        .photo-cat-tab.voil .cat-dot {
+            background: #1A6CFF;
+        }
+
+        .photo-cat-tab.conditioning .cat-dot {
+            background: #FF9F0A;
+        }
+
+        .photo-cat-tab.upd .cat-dot {
+            background: #FF453A;
+        }
+
+        .photo-cat-tab.scope .cat-dot {
+            background: #30D158;
+        }
+
+        .photo-cat-tab.voil.active {
+            border-color: #1A6CFF;
+            background: rgba(26, 108, 255, 0.12);
+        }
+
+        .photo-cat-tab.voil.active .cat-label {
+            color: #1A6CFF;
+        }
+
+        .photo-cat-tab.conditioning.active {
+            border-color: #FF9F0A;
+            background: rgba(255, 159, 10, 0.12);
+        }
+
+        .photo-cat-tab.conditioning.active .cat-label {
+            color: #FF9F0A;
+        }
+
+        .photo-cat-tab.upd.active {
+            border-color: #FF453A;
+            background: rgba(255, 69, 58, 0.12);
+        }
+
+        .photo-cat-tab.upd.active .cat-label {
+            color: #FF453A;
+        }
+
+        .photo-cat-tab.scope.active {
+            border-color: #30D158;
+            background: rgba(48, 209, 88, 0.12);
+        }
+
+        .photo-cat-tab.scope.active .cat-label {
+            color: #30D158;
+        }
 
         /* Panel animation — max-height slide */
         .photo-cat-panel {
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             max-height: 0;
             opacity: 0;
             margin-bottom: 0;
-            transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1),
-                        opacity 0.28s ease,
-                        margin-bottom 0.3s ease;
+            transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.28s ease,
+                margin-bottom 0.3s ease;
         }
 
         .photo-cat-panel.panel-open {
@@ -1371,14 +1457,29 @@
             letter-spacing: 0.4px;
         }
 
-        .cat-panel-header.voil        { background: rgba(26,108,255,0.18); color: #5B9BFF; }
-        .cat-panel-header.conditioning { background: rgba(255,159,10,0.18); color: #FFBC52; }
-        .cat-panel-header.upd          { background: rgba(255,69,58,0.18);  color: #FF6961; }
-        .cat-panel-header.scope        { background: rgba(48,209,88,0.18);  color: #34C659; }
+        .cat-panel-header.voil {
+            background: rgba(26, 108, 255, 0.18);
+            color: #5B9BFF;
+        }
+
+        .cat-panel-header.conditioning {
+            background: rgba(255, 159, 10, 0.18);
+            color: #FFBC52;
+        }
+
+        .cat-panel-header.upd {
+            background: rgba(255, 69, 58, 0.18);
+            color: #FF6961;
+        }
+
+        .cat-panel-header.scope {
+            background: rgba(48, 209, 88, 0.18);
+            color: #34C659;
+        }
 
         .cat-shot-list {
             padding: 10px 14px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
             flex-direction: column;
             gap: 5px;
@@ -1395,17 +1496,19 @@
         }
 
         /* Auto-number items that have a data-slot (guided shots) */
-        .cat-shot-item[data-slot] { counter-increment: shot-counter; }
+        .cat-shot-item[data-slot] {
+            counter-increment: shot-counter;
+        }
 
         .cat-shot-item[data-slot]::before {
             content: counter(shot-counter);
             min-width: 18px;
             height: 18px;
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             border-radius: 50%;
             font-size: 9px;
             font-weight: 700;
-            color: rgba(255,255,255,0.35);
+            color: rgba(255, 255, 255, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1420,15 +1523,20 @@
             flex-shrink: 0;
         }
 
-        .cat-shot-item.done { color: #34C659; }
-
-        .cat-shot-item.done[data-slot]::before {
-            content: '✓';
-            background: rgba(52,198,89,0.2);
+        .cat-shot-item.done {
             color: #34C659;
         }
 
-        .cat-shot-item.done:not([data-slot])::before { content: '✓'; color: #34C659; }
+        .cat-shot-item.done[data-slot]::before {
+            content: '✓';
+            background: rgba(52, 198, 89, 0.2);
+            color: #34C659;
+        }
+
+        .cat-shot-item.done:not([data-slot])::before {
+            content: '✓';
+            color: #34C659;
+        }
 
         .cat-shot-item .req-badge {
             font-size: 9px;
@@ -1442,10 +1550,11 @@
             display: flex;
             gap: 8px;
             padding: 10px 14px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        .cat-camera-btn, .cat-gallery-btn {
+        .cat-camera-btn,
+        .cat-gallery-btn {
             flex: 1;
             padding: 11px;
             border-radius: 8px;
@@ -1456,17 +1565,39 @@
             transition: opacity 0.15s;
         }
 
-        .cat-camera-btn:active, .cat-gallery-btn:active { opacity: 0.65; }
+        .cat-camera-btn:active,
+        .cat-gallery-btn:active {
+            opacity: 0.65;
+        }
 
-        .cat-camera-btn.voil        { background: rgba(26,108,255,0.25); color: #5B9BFF; border: 1px solid rgba(26,108,255,0.4); }
-        .cat-camera-btn.conditioning { background: rgba(255,159,10,0.25); color: #FFBC52; border: 1px solid rgba(255,159,10,0.4); }
-        .cat-camera-btn.upd          { background: rgba(255,69,58,0.25);  color: #FF6961; border: 1px solid rgba(255,69,58,0.4); }
-        .cat-camera-btn.scope        { background: rgba(48,209,88,0.25);  color: #34C659; border: 1px solid rgba(48,209,88,0.4); }
+        .cat-camera-btn.voil {
+            background: rgba(26, 108, 255, 0.25);
+            color: #5B9BFF;
+            border: 1px solid rgba(26, 108, 255, 0.4);
+        }
+
+        .cat-camera-btn.conditioning {
+            background: rgba(255, 159, 10, 0.25);
+            color: #FFBC52;
+            border: 1px solid rgba(255, 159, 10, 0.4);
+        }
+
+        .cat-camera-btn.upd {
+            background: rgba(255, 69, 58, 0.25);
+            color: #FF6961;
+            border: 1px solid rgba(255, 69, 58, 0.4);
+        }
+
+        .cat-camera-btn.scope {
+            background: rgba(48, 209, 88, 0.25);
+            color: #34C659;
+            border: 1px solid rgba(48, 209, 88, 0.4);
+        }
 
         .cat-gallery-btn {
-            background: rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.07);
             color: #a1a1a6;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .cat-photo-strip {
@@ -1474,14 +1605,14 @@
             flex-wrap: wrap;
             gap: 6px;
             padding: 10px 14px 12px;
-            background: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.15);
             min-height: 36px;
         }
 
         .cat-photo-strip:empty::after {
             content: '📷  No photos yet — tap Camera or Gallery above';
             font-size: 11px;
-            color: rgba(255,255,255,0.2);
+            color: rgba(255, 255, 255, 0.2);
             align-self: center;
             letter-spacing: 0.1px;
         }
@@ -1492,7 +1623,7 @@
             height: auto;
             border-radius: 6px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             display: flex;
             flex-direction: column;
         }
@@ -1511,7 +1642,7 @@
             right: 2px;
             width: 18px;
             height: 18px;
-            background: rgba(255,69,58,0.9);
+            background: rgba(255, 69, 58, 0.9);
             border: none;
             border-radius: 50%;
             color: white;
@@ -1535,10 +1666,26 @@
             text-transform: uppercase;
             vertical-align: middle;
         }
-        .camera-category-badge.voil        { background: rgba(26,108,255,0.3); color: #5B9BFF; }
-        .camera-category-badge.conditioning { background: rgba(255,159,10,0.3); color: #FFBC52; }
-        .camera-category-badge.upd          { background: rgba(255,69,58,0.3);  color: #FF6961; }
-        .camera-category-badge.scope        { background: rgba(48,209,88,0.3);  color: #34C659; }
+
+        .camera-category-badge.voil {
+            background: rgba(26, 108, 255, 0.3);
+            color: #5B9BFF;
+        }
+
+        .camera-category-badge.conditioning {
+            background: rgba(255, 159, 10, 0.3);
+            color: #FFBC52;
+        }
+
+        .camera-category-badge.upd {
+            background: rgba(255, 69, 58, 0.3);
+            color: #FF6961;
+        }
+
+        .camera-category-badge.scope {
+            background: rgba(48, 209, 88, 0.3);
+            color: #34C659;
+        }
 
         /* SAVED FORMS BAR */
         .saved-forms-bar {
@@ -2060,7 +2207,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.92) 32%);
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.92) 32%);
             padding: 32px 16px 12px;
             z-index: 6;
             pointer-events: none;
@@ -2070,7 +2217,7 @@
         /* Visual progress bar for guided shots */
         .camera-guide-bar-wrap {
             height: 3px;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             border-radius: 2px;
             overflow: hidden;
             margin-bottom: 8px;
@@ -2080,18 +2227,23 @@
             height: 100%;
             border-radius: 2px;
             background: #1A6CFF;
-            transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .camera-guide-bar-fill.conditioning { background: #FF9F0A; }
-        .camera-guide-bar-fill.voil          { background: #1A6CFF; }
+        .camera-guide-bar-fill.conditioning {
+            background: #FF9F0A;
+        }
+
+        .camera-guide-bar-fill.voil {
+            background: #1A6CFF;
+        }
 
         .camera-guide-progress {
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.45);
+            color: rgba(255, 255, 255, 0.45);
             margin-bottom: 3px;
         }
 
@@ -2100,13 +2252,13 @@
             font-weight: 800;
             color: #fff;
             line-height: 1.2;
-            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
         }
 
         .camera-guide-hint {
             font-size: 12px;
             line-height: 1.4;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 4px;
         }
 
@@ -2120,9 +2272,9 @@
         .guide-nav-btn {
             padding: 7px 16px;
             border-radius: 20px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.22);
-            color: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -2130,17 +2282,23 @@
             font-family: inherit;
         }
 
-        .guide-nav-btn:active { background: rgba(255,255,255,0.28); }
-        .guide-nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+        .guide-nav-btn:active {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .guide-nav-btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
 
         /* Strip slot label */
         .strip-slot-label {
             font-size: 8px;
             font-weight: 600;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-align: center;
             padding: 3px 4px;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0, 0, 0, 0.75);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -4445,8 +4603,10 @@
             <div class="meta-group">
                 <label>GHL Pipeline</label>
                 <div class="pipeline-seg" id="pipelineSeg">
-                    <button type="button" class="pipeline-seg-btn active" data-value="repair_tracker" onclick="setPipeline(this)">Repair Tracker</button>
-                    <button type="button" class="pipeline-seg-btn" data-value="expert_path" onclick="setPipeline(this)">Expert Path</button>
+                    <button type="button" class="pipeline-seg-btn active" data-value="repair_tracker"
+                        onclick="setPipeline(this)">Repair Tracker</button>
+                    <button type="button" class="pipeline-seg-btn" data-value="expert_path"
+                        onclick="setPipeline(this)">Expert Path</button>
                 </div>
                 <input type="hidden" id="pipelineSelect" value="repair_tracker">
             </div>
@@ -4539,7 +4699,9 @@
 
                     <!-- Instructions -->
                     <div class="photo-section-intro">
-                        <p>Photos are organized into 4 required categories. Tap a category below to expand its shot list, then use <strong>Camera</strong> — it will guide you through each required shot one at a time.</p>
+                        <p>Photos are organized into 4 required categories. Tap a category below to expand its shot
+                            list, then use <strong>Camera</strong> — it will guide you through each required shot one at
+                            a time.</p>
                         <div class="photo-workflow-steps">
                             <div class="photo-step">
                                 <span class="photo-step-num">01</span>
@@ -4566,28 +4728,32 @@
 
                     <!-- 4 Category Tabs -->
                     <div class="photo-cat-tabs">
-                        <button type="button" class="photo-cat-tab voil" id="tab-voil" onclick="togglePhotoCategory('voil')">
+                        <button type="button" class="photo-cat-tab voil" id="tab-voil"
+                            onclick="togglePhotoCategory('voil')">
                             <span class="cat-tab-chevron">▾</span>
                             <span class="cat-count" id="cat-count-voil">0</span>
                             <span class="cat-label">VOIL</span>
                             <span class="cat-sublabel">Vehicle ID</span>
                             <span class="cat-dot"></span>
                         </button>
-                        <button type="button" class="photo-cat-tab conditioning" id="tab-conditioning" onclick="togglePhotoCategory('conditioning')">
+                        <button type="button" class="photo-cat-tab conditioning" id="tab-conditioning"
+                            onclick="togglePhotoCategory('conditioning')">
                             <span class="cat-tab-chevron">▾</span>
                             <span class="cat-count" id="cat-count-conditioning">0</span>
                             <span class="cat-label">COND</span>
                             <span class="cat-sublabel">Total Loss</span>
                             <span class="cat-dot"></span>
                         </button>
-                        <button type="button" class="photo-cat-tab upd" id="tab-upd" onclick="togglePhotoCategory('upd')">
+                        <button type="button" class="photo-cat-tab upd" id="tab-upd"
+                            onclick="togglePhotoCategory('upd')">
                             <span class="cat-tab-chevron">▾</span>
                             <span class="cat-count" id="cat-count-upd">0</span>
                             <span class="cat-label">UPD</span>
                             <span class="cat-sublabel">Prior Damage</span>
                             <span class="cat-dot"></span>
                         </button>
-                        <button type="button" class="photo-cat-tab scope" id="tab-scope" onclick="togglePhotoCategory('scope')">
+                        <button type="button" class="photo-cat-tab scope" id="tab-scope"
+                            onclick="togglePhotoCategory('scope')">
                             <span class="cat-tab-chevron">▾</span>
                             <span class="cat-count" id="cat-count-scope">0</span>
                             <span class="cat-label">SCOPE</span>
@@ -4599,19 +4765,29 @@
                     <!-- VOIL Panel -->
                     <div class="photo-cat-panel" id="panel-voil">
                         <div class="cat-panel-header voil">🪪 VOIL — Vehicle Identification &amp; Overview</div>
-                        <div class="cat-when-to-use">Required on every claim. Establishes the vehicle's identity and allows the insurer to verify it matches the policy.</div>
+                        <div class="cat-when-to-use">Required on every claim. Establishes the vehicle's identity and
+                            allows the insurer to verify it matches the policy.</div>
                         <div class="cat-shot-list">
-                            <div class="cat-shot-item" data-slot="vin_door">VIN — Door Plate <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="vin_windshield">VIN — Through Windshield <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="odometer">Odometer <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="instrument_panel">Instrument Panel <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="interior">Interior (2–3 photos) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="license_plate">License Plate <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="four_corners">Four Corners (1 photo) <span class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="vin_door">VIN — Door Plate <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="vin_windshield">VIN — Through Windshield <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="odometer">Odometer <span class="req-badge">req</span>
+                            </div>
+                            <div class="cat-shot-item" data-slot="instrument_panel">Instrument Panel <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="interior">Interior (2–3 photos) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="license_plate">License Plate <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="four_corners">Four Corners (1 photo) <span
+                                    class="req-badge">req</span></div>
                         </div>
                         <div class="cat-controls">
-                            <button type="button" class="cat-camera-btn voil" onclick="openCamera('voil')">📷 Camera</button>
-                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('voil')">🖼️ Gallery</button>
+                            <button type="button" class="cat-camera-btn voil" onclick="openCamera('voil')">📷
+                                Camera</button>
+                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('voil')">🖼️
+                                Gallery</button>
                         </div>
                         <div class="cat-photo-strip" id="strip-voil"></div>
                     </div>
@@ -4619,23 +4795,39 @@
                     <!-- CONDITIONING Panel -->
                     <div class="photo-cat-panel" id="panel-conditioning">
                         <div class="cat-panel-header conditioning">🔧 CONDITIONING — Potential Total Loss</div>
-                        <div class="cat-when-to-use">Complete once the estimate reaches 50% of the vehicle's actual cash value. Documents condition to support both the estimate and vehicle valuation.</div>
+                        <div class="cat-when-to-use">Complete once the estimate reaches 50% of the vehicle's actual cash
+                            value. Documents condition to support both the estimate and vehicle valuation.</div>
                         <div class="cat-shot-list">
-                            <div class="cat-shot-item" data-slot="tire_fl">Tire FL — Setup + Gauge (2 pics) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="tire_fr">Tire FR — Setup + Gauge (2 pics) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="tire_rl">Tire RL — Setup + Gauge (2 pics) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="tire_rr">Tire RR — Setup + Gauge (2 pics) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="engine_top">Engine Compartment — top down <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="engine_under">Underneath Front Engine — ground up <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="door_panels">Front + Rear Door Trim Panels (all) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="seats">Front + Rear + 3rd Row Seats (driver seat esp.) <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="headliner">Headliner / Sunroof / Panoramic Roof <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="dash">Dashboard <span class="req-badge">req</span></div>
-                            <div class="cat-shot-item" data-slot="options">Options / CPE / Refurbishments that add value</div>
+                            <div class="cat-shot-item" data-slot="tire_fl">Tire FL — Setup + Gauge (2 pics) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="tire_fr">Tire FR — Setup + Gauge (2 pics) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="tire_rl">Tire RL — Setup + Gauge (2 pics) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="tire_rr">Tire RR — Setup + Gauge (2 pics) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="engine_top">Engine Compartment — top down <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="engine_under">Underneath Front Engine — ground up
+                                <span class="req-badge">req</span>
+                            </div>
+                            <div class="cat-shot-item" data-slot="door_panels">Front + Rear Door Trim Panels (all) <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="seats">Front + Rear + 3rd Row Seats (driver seat esp.)
+                                <span class="req-badge">req</span>
+                            </div>
+                            <div class="cat-shot-item" data-slot="headliner">Headliner / Sunroof / Panoramic Roof <span
+                                    class="req-badge">req</span></div>
+                            <div class="cat-shot-item" data-slot="dash">Dashboard <span class="req-badge">req</span>
+                            </div>
+                            <div class="cat-shot-item" data-slot="options">Options / CPE / Refurbishments that add value
+                            </div>
                         </div>
                         <div class="cat-controls">
-                            <button type="button" class="cat-camera-btn conditioning" onclick="openCamera('conditioning')">📷 Camera</button>
-                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('conditioning')">🖼️ Gallery</button>
+                            <button type="button" class="cat-camera-btn conditioning"
+                                onclick="openCamera('conditioning')">📷 Camera</button>
+                            <button type="button" class="cat-gallery-btn"
+                                onclick="openGalleryForCategory('conditioning')">🖼️ Gallery</button>
                         </div>
                         <div class="cat-photo-strip" id="strip-conditioning"></div>
                     </div>
@@ -4643,13 +4835,18 @@
                     <!-- UPD Panel -->
                     <div class="photo-cat-panel" id="panel-upd">
                         <div class="cat-panel-header upd">⚠️ UPD — Unrelated Prior Damage</div>
-                        <div class="cat-when-to-use">Document any existing scratches, dings, or damage on the vehicle that is <strong style="color:rgba(255,255,255,0.6)">not</strong> related to the current claim. This protects the tech and the estimate.</div>
+                        <div class="cat-when-to-use">Document any existing scratches, dings, or damage on the vehicle
+                            that is <strong style="color:rgba(255,255,255,0.6)">not</strong> related to the current
+                            claim. This protects the tech and the estimate.</div>
                         <div class="cat-shot-list">
-                            <div class="cat-shot-item">Photograph all pre-existing scratches, dings, and damage not related to the current claim.</div>
+                            <div class="cat-shot-item">Photograph all pre-existing scratches, dings, and damage not
+                                related to the current claim.</div>
                         </div>
                         <div class="cat-controls">
-                            <button type="button" class="cat-camera-btn upd" onclick="openCamera('upd')">📷 Camera</button>
-                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('upd')">🖼️ Gallery</button>
+                            <button type="button" class="cat-camera-btn upd" onclick="openCamera('upd')">📷
+                                Camera</button>
+                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('upd')">🖼️
+                                Gallery</button>
                         </div>
                         <div class="cat-photo-strip" id="strip-upd"></div>
                     </div>
@@ -4657,13 +4854,17 @@
                     <!-- SCOPE Panel -->
                     <div class="photo-cat-panel" id="panel-scope">
                         <div class="cat-panel-header scope">🌩️ SCOPE — Storm Damage</div>
-                        <div class="cat-when-to-use">The core claim documentation. Photograph every storm-damaged panel. Include a setup shot and a close-up for any glass damage.</div>
+                        <div class="cat-when-to-use">The core claim documentation. Photograph every storm-damaged panel.
+                            Include a setup shot and a close-up for any glass damage.</div>
                         <div class="cat-shot-list">
-                            <div class="cat-shot-item">Photograph all storm damage panel by panel. Include close-up photos of any glass damage (setup pic + close-up).</div>
+                            <div class="cat-shot-item">Photograph all storm damage panel by panel. Include close-up
+                                photos of any glass damage (setup pic + close-up).</div>
                         </div>
                         <div class="cat-controls">
-                            <button type="button" class="cat-camera-btn scope" onclick="openCamera('scope')">📷 Camera</button>
-                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('scope')">🖼️ Gallery</button>
+                            <button type="button" class="cat-camera-btn scope" onclick="openCamera('scope')">📷
+                                Camera</button>
+                            <button type="button" class="cat-gallery-btn" onclick="openGalleryForCategory('scope')">🖼️
+                                Gallery</button>
                         </div>
                         <div class="cat-photo-strip" id="strip-scope"></div>
                     </div>
@@ -6269,7 +6470,8 @@
                 <div class="camera-guide-slot-name" id="guideSlotName"></div>
                 <div class="camera-guide-hint" id="guideSlotHint"></div>
                 <div class="camera-guide-nav" id="guideNavButtons">
-                    <button type="button" class="guide-nav-btn" id="guidePrevBtn" onclick="prevGuideSlot()">&#8592; Prev</button>
+                    <button type="button" class="guide-nav-btn" id="guidePrevBtn" onclick="prevGuideSlot()">&#8592;
+                        Prev</button>
                     <button type="button" class="guide-nav-btn" onclick="skipGuideSlot()">Skip &#8594;</button>
                 </div>
             </div>
@@ -6293,8 +6495,12 @@
             <h2>Scope Submitted!</h2>
             <p id="successModalDetail"></p>
             <div class="modal-actions">
-                <button class="modal-btn modal-btn-secondary" onclick="generatePDF(); document.getElementById('successModal').style.display='none';">📄 Export PDF</button>
-                <button class="modal-btn modal-btn-secondary" onclick="document.getElementById('successModal').style.display='none'; switchMode('records');">📋 View Record</button>
+                <button class="modal-btn modal-btn-secondary"
+                    onclick="generatePDF(); document.getElementById('successModal').style.display='none';">📄 Export
+                    PDF</button>
+                <button class="modal-btn modal-btn-secondary"
+                    onclick="document.getElementById('successModal').style.display='none'; switchMode('records');">📋
+                    View Record</button>
             </div>
             <button class="modal-btn modal-btn-primary" onclick="resetForm()">＋ New Scope</button>
         </div>
@@ -6438,14 +6644,36 @@
 
         .action-toolbar {
             display: flex;
+            flex-wrap: wrap;
             justify-content: flex-end;
-            gap: 20px;
+            gap: 16px;
             margin-bottom: 30px;
             background: rgba(45, 45, 45, 0.4);
-            padding: 20px;
-            /* Unified 20px */
+            padding: 16px 20px;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 600px) {
+            .action-toolbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 14px 16px;
+            }
+
+            .meta-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .toolbar-input {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .pipeline-seg {
+                flex: 1;
+            }
         }
 
         .meta-group {
@@ -6489,6 +6717,7 @@
             color: #aaa;
             font-size: 13px;
             font-weight: 600;
+            font-family: inherit;
             padding: 0 10px;
             cursor: pointer;
             white-space: nowrap;
@@ -6548,9 +6777,14 @@
         select:focus {
             background: rgba(255, 255, 255, 0.15);
             border-color: #1A6CFF;
-            /* Highlight */
             outline: none;
-            box-shadow: 0 0 0 2px rgba(26, 108, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12);
+        }
+
+        /* Suppress browser-default red glow on required/invalid fields when not focused */
+        input:invalid:not(:focus),
+        select:invalid:not(:focus) {
+            box-shadow: none;
         }
 
         .inline-input {
@@ -6644,6 +6878,13 @@
             margin-bottom: 4px;
         }
 
+        /* VIN label: push counter to the right */
+        .info-group label:has(.vin-counter) {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .general-info-grid .info-group input,
         .general-info-grid .info-group select {
             width: 100%;
@@ -6676,11 +6917,12 @@
             -webkit-appearance: none !important;
             appearance: none !important;
             height: 38px !important;
-            padding: 0 36px 0 10px !important;
+            padding: 0 44px 0 10px !important;
             font-size: 14px !important;
             line-height: 38px !important;
             width: 100% !important;
             box-sizing: border-box !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
 
         .general-info-grid .searchable-select-trigger.placeholder {
@@ -6702,7 +6944,43 @@
 
         .vin-row {
             display: flex;
+            align-items: center;
             gap: 5px;
+        }
+
+        .vin-row .scan-btn {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+            transition: border-color 0.15s ease, background 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .vin-row .scan-btn:hover {
+            border-color: #555;
+            background: #222;
+        }
+
+        .vin-row .scan-btn:active {
+            background: rgba(26, 108, 255, 0.15);
+            border-color: #1A6CFF;
+        }
+
+        .general-info-grid .info-group .vin-row input {
+            flex: 1;
+            min-width: 0;
+            width: auto !important;
         }
 
         /* DAMAGE GRID */
@@ -7835,8 +8113,9 @@
         }
 
         .saved-forms-select:focus {
-            border-color: #007AFF;
-            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+            border-color: #1A6CFF;
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12);
+            outline: none;
         }
 
         /* --- Export Section Polish --- */
@@ -7997,7 +8276,6 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
         }
-
     </style>
 
     <script>
@@ -8740,32 +9018,32 @@
         // ==================== PHOTO SLOT GUIDE DATA ====================
         const PHOTO_SLOTS = {
             voil: [
-                { id: 'vin_door',         label: 'VIN — Door Plate',            hint: 'Open the driver door and shoot the VIN sticker in the door jamb',                    checklistSlot: 'vin_door' },
-                { id: 'vin_windshield',   label: 'VIN — Thru Windshield',       hint: 'Shoot the VIN plate through the windshield from outside the vehicle',             checklistSlot: 'vin_windshield' },
-                { id: 'odometer',         label: 'Odometer',                     hint: 'Key on — mileage must be clearly readable',                                        checklistSlot: 'odometer' },
-                { id: 'instrument_panel', label: 'Instrument Panel',             hint: 'Full cluster overview showing all gauges',                                          checklistSlot: 'instrument_panel' },
-                { id: 'interior_1',       label: 'Interior — Shot 1 of 3',      hint: 'Overall interior from the driver door',                                            checklistSlot: 'interior' },
-                { id: 'interior_2',       label: 'Interior — Shot 2 of 3',      hint: 'Rear seat area and passenger side',                                                checklistSlot: 'interior' },
-                { id: 'interior_3',       label: 'Interior — Shot 3 of 3',      hint: 'Additional interior detail (optional)',                                            checklistSlot: 'interior', optional: true },
-                { id: 'license_plate',    label: 'License Plate',                hint: 'Full plate clearly readable from straight-on',                                     checklistSlot: 'license_plate' },
-                { id: 'four_corners',     label: 'Four Corners',                 hint: 'Step back — capture all 4 corners of the vehicle in one shot',                    checklistSlot: 'four_corners' },
+                { id: 'vin_door', label: 'VIN — Door Plate', hint: 'Open the driver door and shoot the VIN sticker in the door jamb', checklistSlot: 'vin_door' },
+                { id: 'vin_windshield', label: 'VIN — Thru Windshield', hint: 'Shoot the VIN plate through the windshield from outside the vehicle', checklistSlot: 'vin_windshield' },
+                { id: 'odometer', label: 'Odometer', hint: 'Key on — mileage must be clearly readable', checklistSlot: 'odometer' },
+                { id: 'instrument_panel', label: 'Instrument Panel', hint: 'Full cluster overview showing all gauges', checklistSlot: 'instrument_panel' },
+                { id: 'interior_1', label: 'Interior — Shot 1 of 3', hint: 'Overall interior from the driver door', checklistSlot: 'interior' },
+                { id: 'interior_2', label: 'Interior — Shot 2 of 3', hint: 'Rear seat area and passenger side', checklistSlot: 'interior' },
+                { id: 'interior_3', label: 'Interior — Shot 3 of 3', hint: 'Additional interior detail (optional)', checklistSlot: 'interior', optional: true },
+                { id: 'license_plate', label: 'License Plate', hint: 'Full plate clearly readable from straight-on', checklistSlot: 'license_plate' },
+                { id: 'four_corners', label: 'Four Corners', hint: 'Step back — capture all 4 corners of the vehicle in one shot', checklistSlot: 'four_corners' },
             ],
             conditioning: [
-                { id: 'tire_fl_setup',    label: 'Tire FL — Setup',             hint: 'Front-left tire full shot before placing gauge',                                   checklistSlot: 'tire_fl' },
-                { id: 'tire_fl_gauge',    label: 'Tire FL — Gauge',             hint: 'Tread depth gauge pressed into front-left tire tread',                             checklistSlot: 'tire_fl' },
-                { id: 'tire_fr_setup',    label: 'Tire FR — Setup',             hint: 'Front-right tire full shot before placing gauge',                                  checklistSlot: 'tire_fr' },
-                { id: 'tire_fr_gauge',    label: 'Tire FR — Gauge',             hint: 'Tread depth gauge pressed into front-right tire tread',                            checklistSlot: 'tire_fr' },
-                { id: 'tire_rl_setup',    label: 'Tire RL — Setup',             hint: 'Rear-left tire full shot before placing gauge',                                    checklistSlot: 'tire_rl' },
-                { id: 'tire_rl_gauge',    label: 'Tire RL — Gauge',             hint: 'Tread depth gauge pressed into rear-left tire tread',                              checklistSlot: 'tire_rl' },
-                { id: 'tire_rr_setup',    label: 'Tire RR — Setup',             hint: 'Rear-right tire full shot before placing gauge',                                   checklistSlot: 'tire_rr' },
-                { id: 'tire_rr_gauge',    label: 'Tire RR — Gauge',             hint: 'Tread depth gauge pressed into rear-right tire tread',                             checklistSlot: 'tire_rr' },
-                { id: 'engine_top',       label: 'Engine — Top Down',           hint: 'Hood fully open, full engine compartment from above',                              checklistSlot: 'engine_top' },
-                { id: 'engine_under',     label: 'Engine — Underneath',         hint: 'From ground looking up at the front engine area',                                  checklistSlot: 'engine_under' },
-                { id: 'door_panels',      label: 'Door Trim Panels',             hint: 'All front + rear interior door panels',                                            checklistSlot: 'door_panels' },
-                { id: 'seats',            label: 'Seats',                        hint: 'Front + rear + 3rd row seats — especially the driver seat',                       checklistSlot: 'seats' },
-                { id: 'headliner',        label: 'Headliner',                    hint: 'Headliner and sunroof / panoramic roof if present',                                checklistSlot: 'headliner' },
-                { id: 'dash',             label: 'Dashboard',                    hint: 'Full dashboard view from the driver door',                                         checklistSlot: 'dash' },
-                { id: 'options',          label: 'Options / Refurbishments',     hint: 'Any CPE, options or refurbishments that add value (optional)',                    checklistSlot: 'options', optional: true },
+                { id: 'tire_fl_setup', label: 'Tire FL — Setup', hint: 'Front-left tire full shot before placing gauge', checklistSlot: 'tire_fl' },
+                { id: 'tire_fl_gauge', label: 'Tire FL — Gauge', hint: 'Tread depth gauge pressed into front-left tire tread', checklistSlot: 'tire_fl' },
+                { id: 'tire_fr_setup', label: 'Tire FR — Setup', hint: 'Front-right tire full shot before placing gauge', checklistSlot: 'tire_fr' },
+                { id: 'tire_fr_gauge', label: 'Tire FR — Gauge', hint: 'Tread depth gauge pressed into front-right tire tread', checklistSlot: 'tire_fr' },
+                { id: 'tire_rl_setup', label: 'Tire RL — Setup', hint: 'Rear-left tire full shot before placing gauge', checklistSlot: 'tire_rl' },
+                { id: 'tire_rl_gauge', label: 'Tire RL — Gauge', hint: 'Tread depth gauge pressed into rear-left tire tread', checklistSlot: 'tire_rl' },
+                { id: 'tire_rr_setup', label: 'Tire RR — Setup', hint: 'Rear-right tire full shot before placing gauge', checklistSlot: 'tire_rr' },
+                { id: 'tire_rr_gauge', label: 'Tire RR — Gauge', hint: 'Tread depth gauge pressed into rear-right tire tread', checklistSlot: 'tire_rr' },
+                { id: 'engine_top', label: 'Engine — Top Down', hint: 'Hood fully open, full engine compartment from above', checklistSlot: 'engine_top' },
+                { id: 'engine_under', label: 'Engine — Underneath', hint: 'From ground looking up at the front engine area', checklistSlot: 'engine_under' },
+                { id: 'door_panels', label: 'Door Trim Panels', hint: 'All front + rear interior door panels', checklistSlot: 'door_panels' },
+                { id: 'seats', label: 'Seats', hint: 'Front + rear + 3rd row seats — especially the driver seat', checklistSlot: 'seats' },
+                { id: 'headliner', label: 'Headliner', hint: 'Headliner and sunroof / panoramic roof if present', checklistSlot: 'headliner' },
+                { id: 'dash', label: 'Dashboard', hint: 'Full dashboard view from the driver door', checklistSlot: 'dash' },
+                { id: 'options', label: 'Options / Refurbishments', hint: 'Any CPE, options or refurbishments that add value (optional)', checklistSlot: 'options', optional: true },
             ],
             upd: [],
             scope: [],
@@ -8960,11 +9238,11 @@
 
             overlay.style.display = 'block';
 
-            const progressEl  = document.getElementById('guideProgress');
-            const nameEl      = document.getElementById('guideSlotName');
-            const hintEl      = document.getElementById('guideSlotHint');
-            const navEl       = document.getElementById('guideNavButtons');
-            const prevBtn     = document.getElementById('guidePrevBtn');
+            const progressEl = document.getElementById('guideProgress');
+            const nameEl = document.getElementById('guideSlotName');
+            const hintEl = document.getElementById('guideSlotHint');
+            const navEl = document.getElementById('guideNavButtons');
+            const prevBtn = document.getElementById('guidePrevBtn');
 
             // Progress bar
             const barWrap = document.getElementById('guideBarWrap');
@@ -8979,20 +9257,20 @@
             if (slotIndex >= slots.length) {
                 // All guided slots done — switch to free-form messaging
                 progressEl.textContent = '\u2713 All required shots done';
-                nameEl.textContent  = 'Free capture';
-                hintEl.textContent  = 'Take any extra shots or press Done';
+                nameEl.textContent = 'Free capture';
+                hintEl.textContent = 'Take any extra shots or press Done';
                 navEl.style.display = 'none';
                 return;
             }
 
-            const slot  = slots[slotIndex];
+            const slot = slots[slotIndex];
             const total = slots.length;
             const optTag = slot.optional ? ' (optional)' : '';
 
             progressEl.textContent = `Shot ${slotIndex + 1} of ${total}${optTag}`;
-            nameEl.textContent     = slot.label;
-            hintEl.textContent     = slot.hint;
-            navEl.style.display    = 'flex';
+            nameEl.textContent = slot.label;
+            hintEl.textContent = slot.hint;
+            navEl.style.display = 'flex';
             if (prevBtn) prevBtn.disabled = (slotIndex === 0);
         }
 
@@ -9720,14 +9998,14 @@
             const cats = ['voil', 'conditioning', 'upd', 'scope'];
 
             cats.forEach(cat => {
-                const strip   = document.getElementById(`strip-${cat}`);
+                const strip = document.getElementById(`strip-${cat}`);
                 const countEl = document.getElementById(`cat-count-${cat}`);
                 if (!strip) return;
 
                 const catPhotos = selectedPhotos.filter(p => (p.category || 'scope') === cat);
 
                 strip.innerHTML = catPhotos.map(photo => {
-                    const globalIdx  = selectedPhotos.indexOf(photo);
+                    const globalIdx = selectedPhotos.indexOf(photo);
                     const shortLabel = photo.label
                         ? (photo.label.includes('\u2014') ? photo.label.split('\u2014')[1].trim() : photo.label)
                         : '';
@@ -10219,16 +10497,16 @@
         async function addPhotoPages(pdf, photos) {
             const catOrder = ['voil', 'conditioning', 'upd', 'scope'];
             const catTitles = {
-                voil:         '🇭 VOIL — Vehicle Identification & Overview',
+                voil: '🇭 VOIL — Vehicle Identification & Overview',
                 conditioning: '🔧 CONDITIONING — Potential Total Loss',
-                upd:          '⚠️ UPD — Unrelated Prior Damage',
-                scope:        '🌩️ SCOPE — Storm Damage'
+                upd: '⚠️ UPD — Unrelated Prior Damage',
+                scope: '🌩️ SCOPE — Storm Damage'
             };
 
             const pageWidth = 612;
             const pageHeight = 792;
             const margin = 10;
-            const photoWidth  = (pageWidth  - margin * 3) / 2;
+            const photoWidth = (pageWidth - margin * 3) / 2;
             const photoHeight = (pageHeight - margin * 3) / 2;
 
             for (const cat of catOrder) {
@@ -10242,10 +10520,10 @@
 
                 // Accent bar
                 const barColors = {
-                    voil:         [26, 108, 255],
+                    voil: [26, 108, 255],
                     conditioning: [255, 159, 10],
-                    upd:          [255, 69, 58],
-                    scope:        [48, 209, 88]
+                    upd: [255, 69, 58],
+                    scope: [48, 209, 88]
                 };
                 const [r, g, b] = barColors[cat] || [255, 255, 255];
                 pdf.setFillColor(r, g, b);
@@ -10563,10 +10841,10 @@
 
             // Organize into category subfolders
             const catFolderNames = {
-                voil:         '1_VOIL_Vehicle_ID',
+                voil: '1_VOIL_Vehicle_ID',
                 conditioning: '2_COND_Total_Loss',
-                upd:          '3_UPD_Prior_Damage',
-                scope:        '4_SCOPE_Storm_Damage'
+                upd: '3_UPD_Prior_Damage',
+                scope: '4_SCOPE_Storm_Damage'
             };
 
             const catCounters = { voil: 0, conditioning: 0, upd: 0, scope: 0 };

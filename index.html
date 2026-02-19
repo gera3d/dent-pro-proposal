@@ -797,6 +797,61 @@
             font-family: inherit;
         }
 
+        .modal p#successModalDetail {
+            color: #a1a1a6;
+            font-size: 14px;
+            margin-bottom: 20px;
+            min-height: 18px;
+        }
+
+        /* Modal multi-button layout */
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .modal-btn {
+            padding: 12px 10px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            flex: 1;
+            transition: opacity 0.15s;
+        }
+        .modal-btn-primary {
+            padding: 14px 20px;
+            font-size: 16px;
+            background: var(--complete-gradient);
+            border-color: transparent;
+            width: 100%;
+            display: block;
+        }
+        .modal-btn:active { opacity: 0.75; }
+
+        /* Panel header photo quick-capture button */
+        .panel-photo-btn {
+            margin-left: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            opacity: 0.55;
+            padding: 2px 4px;
+            border-radius: 6px;
+            transition: opacity 0.15s, background 0.15s;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .panel-photo-btn:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+        }
+
         /* Loading Spinner */
         .spinner {
             width: 20px;
@@ -4221,6 +4276,11 @@
                                     <td>Liner/Flare</td>
                                     <td><input type="checkbox" name="lr_quarter_rr_liner"></td>
                                 </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="lr_quarter_ri_bedcap"></td>
+                                    <td>Bed Cap</td>
+                                    <td><input type="checkbox" name="lr_quarter_rr_bedcap"></td>
+                                </tr>
                             </table>
                         </div>
 
@@ -4634,6 +4694,11 @@
                                     <td>Antenna</td>
                                     <td><input type="checkbox" name="deck_rr_ant"></td>
                                 </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="deck_ri_tonneau"></td>
+                                    <td>Tonneau Cover</td>
+                                    <td><input type="checkbox" name="deck_rr_tonneau"></td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -4928,6 +4993,11 @@
                                     <td>Liner/Flare</td>
                                     <td><input type="checkbox" name="rr_quarter_rr_liner"></td>
                                 </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="rr_quarter_ri_bedcap"></td>
+                                    <td>Bed Cap</td>
+                                    <td><input type="checkbox" name="rr_quarter_rr_bedcap"></td>
+                                </tr>
                             </table>
                         </div>
 
@@ -5085,18 +5155,18 @@
 
             <div class="submit-bar">
                 <!-- Estimate Display -->
-                <div class="estimate-bar" id="estimateBar">
+                <div class="estimate-bar hidden" id="estimateBar">
                     <div>
                         <div class="estimate-label">PDR Estimate</div>
                         <div class="estimate-amount" id="estimateTotal">$0</div>
                     </div>
                     <button type="button" class="estimate-toggle" onclick="toggleEstimate()">
-                        👁️ Hide
+                        👁️ Show
                     </button>
                 </div>
 
                 <!-- Stats Row -->
-                <div class="footer-stats-row">
+                <div class="footer-stats-row" style="display:none;">
                     <div class="stat-box dents">
                         <span class="stat-label">Panels w/Damage</span>
                         <span class="stat-value" id="liveDentCount">0</span>
@@ -5525,8 +5595,13 @@
     <div class="modal-overlay" id="successModal">
         <div class="modal">
             <div class="modal-icon">✓</div>
-            <h2>Scope Saved to Airtable!</h2>
-            <button onclick="resetForm()">New Scope</button>
+            <h2>Scope Submitted!</h2>
+            <p id="successModalDetail"></p>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="generatePDF(); document.getElementById('successModal').style.display='none';">📄 Export PDF</button>
+                <button class="modal-btn modal-btn-secondary" onclick="document.getElementById('successModal').style.display='none'; switchMode('records');">📋 View Record</button>
+            </div>
+            <button class="modal-btn modal-btn-primary" onclick="resetForm()">＋ New Scope</button>
         </div>
     </div>
 
@@ -7252,10 +7327,40 @@
             }
         };
 
+        // ==================== AUTO-GENERATE RO NUMBER ====================
+        function generateNextRO() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const dateKey = `ro_counter_${yy}${mm}${dd}`;
+            const todayCount = parseInt(localStorage.getItem(dateKey) || '0') + 1;
+            localStorage.setItem(dateKey, todayCount);
+            return `DE-${yy}${mm}${dd}-${String(todayCount).padStart(3, '0')}`;
+        }
+
         // INITIALIZATION
         document.addEventListener('DOMContentLoaded', () => {
             loadDropdowns();
             loadSavedFormsList();
+
+            // Restore sticky estimator (persists per device across sessions)
+            const stickyEst = localStorage.getItem('device_estimator');
+            if (stickyEst) {
+                const estEl = document.getElementById('estimator');
+                if (estEl) estEl.value = stickyEst;
+            }
+            // Save estimator whenever changed
+            const estEl = document.getElementById('estimator');
+            if (estEl) {
+                estEl.addEventListener('change', function () {
+                    localStorage.setItem('device_estimator', this.value);
+                });
+            }
+
+            // Auto-populate RO number on fresh load
+            const roEl = document.getElementById('roNumber');
+            if (roEl && !roEl.value) roEl.value = generateNextRO();
 
             // Register Service Worker for PWA
             if ('serviceWorker' in navigator) {
@@ -8445,6 +8550,18 @@
                     saveDraft();
                 });
                 header.appendChild(doneLabel);
+
+                // Panel-level camera quick-capture button
+                const photoBtnEl = document.createElement('button');
+                photoBtnEl.type = 'button';
+                photoBtnEl.className = 'panel-photo-btn';
+                photoBtnEl.title = 'Add photo for this panel';
+                photoBtnEl.textContent = '\uD83D\uDCF7';
+                photoBtnEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openCamera();
+                });
+                header.appendChild(photoBtnEl);
 
                 // Create UPD Toggle + Notes (at end of panel)
                 const updContainer = document.createElement('div');
@@ -11689,9 +11806,22 @@
                 const airtableResult = await uploadToAirtable();
 
                 if (airtableResult) {
-                    showToast('✅ Uploaded to Airtable!', 'success');
-                    document.getElementById('successModal').style.display = 'flex';
+                    const submittedRo = rawData.roNumber || '';
+                    const submittedVehicle = [rawData.year, rawData.make, rawData.model].filter(Boolean).join(' ');
+                    showToast(`✅ Scope saved — ${submittedRo}${submittedVehicle ? ' · ' + submittedVehicle : ''}`, 'success');
                     clearDraft();
+
+                    // Reset the form so it's ready for the next vehicle
+                    resetForm();
+
+                    // Switch to Records and pre-filter to the submitted RO so the scoper
+                    // can immediately see what was captured and know what happens next
+                    switchMode('records');
+                    const searchEl = document.getElementById('recordsSearch');
+                    if (searchEl) {
+                        searchEl.value = submittedRo;
+                    }
+                    refreshRecordsList();
                 } else {
                     showToast('⚠️ Airtable upload failed', 'error');
                 }
@@ -11705,10 +11835,105 @@
         }
 
         function resetForm() {
+            // 1. Reset all native form inputs to their default values
             document.getElementById('scopeForm').reset();
+
+            // 2. Explicitly blank header fields that live OUTSIDE the form element
+            //    (form.reset() only resets inputs that are children of the form)
+            const headerFieldsToClear = ['roNumber', 'insuredName', 'customerEmail', 'customerPhone',
+                'vin', 'color', 'claimNumber', 'notes', 'model', 'odometer'];
+            headerFieldsToClear.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            // Reset selects outside form to first option
+            // NOTE: 'estimator' is intentionally excluded — it is sticky per device
+            ['year', 'make', 'location', 'insuranceCompany', 'status'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.tagName === 'SELECT') el.selectedIndex = 0;
+                else if (el) el.value = '';
+            });
+
+            // 3. Reset DC stepper display divs
+            document.querySelectorAll('[id$="_dc_display"]').forEach(el => {
+                el.textContent = '0';
+                el.className = 'stepper-value placeholder';
+            });
+            // Reset DC hidden inputs (type=hidden ignores form.reset — must use setAttribute)
+            document.querySelectorAll('input.stepper-input[name$="_dc"]').forEach(el => {
+                el.setAttribute('value', '');
+                el.value = '';
+            });
+
+            // 4. Reset OS stepper display divs
+            document.querySelectorAll('[id$="_os_display"]').forEach(el => {
+                el.textContent = '0';
+            });
+            // Reset OS hidden inputs
+            document.querySelectorAll('input.stepper-input[name$="_os"]').forEach(el => {
+                el.setAttribute('value', '0');
+                el.value = '0';
+            });
+
+            // 5. Reset coin selectors — re-select Quarter visually, re-disable wrappers
+            document.querySelectorAll('.coin-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.size === 'quarter');
+            });
+            document.querySelectorAll('.coin-selector').forEach(el => {
+                el.classList.add('disabled');
+            });
+            // Reset coin hidden inputs (same type=hidden issue)
+            document.querySelectorAll('input[name$="_coin"]').forEach(el => {
+                el.setAttribute('value', 'quarter');
+                el.value = 'quarter';
+            });
+
+            // 6. Remove Done (is-complete) visual state from all panels
+            document.querySelectorAll('.panel-box.is-complete').forEach(box => {
+                box.classList.remove('is-complete');
+            });
+
+            // 7. Remove has-data visual state
+            document.querySelectorAll('.panel-box.has-data').forEach(box => {
+                box.classList.remove('has-data');
+            });
+
+            // 8. Remove UPD orange-outline visual states
+            document.querySelectorAll('.panel-box.has-upd').forEach(box => {
+                box.classList.remove('has-upd');
+            });
+            document.querySelectorAll('.upd-toggle.active').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.upd-notes.visible').forEach(el => {
+                el.classList.remove('visible');
+            });
+
+            // 9. Clear photos
             selectedPhotos = [];
             renderPreviews();
+
+            // 10. Reset live summary to zero
+            updateSummary();
+
+            // 11. Close success modal
             document.getElementById('successModal').style.display = 'none';
+
+            // 12. Clear draft LAST — after all DOM changes so any change events
+            //     fired by form.reset() (which call saveDraft) have already run.
+            //     Deleting here guarantees we end up with no draft persisted.
+            localStorage.removeItem(DRAFT_KEY);
+
+            // 13. Auto-generate a fresh RO number for the next scope
+            const roEl = document.getElementById('roNumber');
+            if (roEl) roEl.value = generateNextRO();
+
+            // 14. Restore sticky estimator (was just cleared by form reset + manual selects above)
+            const stickyEst = localStorage.getItem('device_estimator');
+            if (stickyEst) {
+                const estEl = document.getElementById('estimator');
+                if (estEl) estEl.value = stickyEst;
+            }
         }
 
         // ==================== PARTS TECH MODE ====================
@@ -11758,7 +11983,9 @@
             'ant': 'Antenna',
             'llamp': 'Left Lamp',
             'rlamp': 'Right Lamp',
-            'spoiler': 'Spoiler'
+            'spoiler': 'Spoiler',
+            'bedcap': 'Bed Cap',
+            'tonneau': 'Tonneau Cover'
         };
 
         const PART_VENDORS = ['Dealer', 'LKQ', 'Keystone', 'AutoZone', 'NAPA', "O'Reilly", 'Other'];

@@ -4443,11 +4443,12 @@
                 </select>
             </div>
             <div class="meta-group">
-                <label>Pipeline</label>
-                <select id="pipelineSelect" class="toolbar-input">
-                    <option value="production">Repair Tracker</option>
-                    <option value="expert_path">Expert Path</option>
-                </select>
+                <label>GHL Pipeline</label>
+                <div class="pipeline-seg" id="pipelineSeg">
+                    <button type="button" class="pipeline-seg-btn active" data-value="repair_tracker" onclick="setPipeline(this)">Repair Tracker</button>
+                    <button type="button" class="pipeline-seg-btn" data-value="expert_path" onclick="setPipeline(this)">Expert Path</button>
+                </div>
+                <input type="hidden" id="pipelineSelect" value="repair_tracker">
             </div>
         </div>
 
@@ -6468,6 +6469,44 @@
             color: #fff;
             font-size: 16px;
             min-width: 140px;
+        }
+
+        /* Pipeline segmented control */
+        .pipeline-seg {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 44px;
+        }
+
+        .pipeline-seg-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-right: 1px solid #333;
+            color: #aaa;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease, color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .pipeline-seg-btn:last-child {
+            border-right: none;
+        }
+
+        .pipeline-seg-btn.active {
+            background: #1A6CFF;
+            color: #fff;
+        }
+
+        .pipeline-seg-btn:not(.active):active {
+            background: rgba(26, 108, 255, 0.2);
         }
 
         /* Clear old header styles if any remain */
@@ -9788,6 +9827,13 @@
             }
         }
 
+        // --- PIPELINE SELECTOR ---
+        function setPipeline(btn) {
+            document.querySelectorAll('.pipeline-seg-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('pipelineSelect').value = btn.dataset.value;
+        }
+
         // --- SUBMISSION LOGIC ---
         function submitForm() {
             const submitBtn = document.getElementById('submitBtn');
@@ -11268,10 +11314,12 @@
             locationId: 'AAzBZNLXS4rdwhG76MLi',
             baseUrl: 'https://services.leadconnectorhq.com',
             pipelines: {
-                production: {
+                // "Repair Process tracker" — Scope/Estimation entry point
+                repair_tracker: {
                     id: 'JptjUQHom2aW3y3MGc2g',
                     startStage: 'abf22448-51ea-474f-bac1-e4edd981f8e3'
                 },
+                // "The Expert Path"
                 expert_path: {
                     id: 'zLqAUFVD2Bfub4EP54lL',
                     startStage: 'f62deed6-d81c-4e31-98aa-af54d5646596'
@@ -11298,7 +11346,7 @@
         };
 
         // ==================== GHL API FUNCTIONS ====================
-        async function submitToGHL(formData, pipelineKey = 'production') {
+        async function submitToGHL(formData, pipelineKey = 'repair_tracker') {
             try {
                 // Step 1: Create or find contact
                 const contact = await upsertGHLContact(formData);
@@ -11426,8 +11474,8 @@
             return { success: false, error: 'Failed to create contact in GHL' };
         }
 
-        async function createGHLOpportunity(formData, contactId, pipelineKey = 'production') {
-            const pipeline = GHL_CONFIG.pipelines[pipelineKey] || GHL_CONFIG.pipelines.production;
+        async function createGHLOpportunity(formData, contactId, pipelineKey = 'repair_tracker') {
+            const pipeline = GHL_CONFIG.pipelines[pipelineKey] || GHL_CONFIG.pipelines.repair_tracker;
             const title = `Repair: ${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'New Repair';
 
             const customFields = getGHLCustomFields(formData);
@@ -12653,6 +12701,9 @@
             submitBtn.innerHTML = '⏳ Submitting to Airtable...';
             submitBtn.disabled = true;
 
+            // Capture selected GHL pipeline before form data is collected
+            const selectedPipelineKey = document.getElementById('pipelineSelect')?.value || 'repair_tracker';
+
             // Base Data
             const rawData = {
                 roNumber: document.getElementById('roNumber').value,
@@ -12716,6 +12767,21 @@
                     const submittedVehicle = [rawData.year, rawData.make, rawData.model].filter(Boolean).join(' ');
                     showToast(`✅ Scope saved — ${submittedRo}${submittedVehicle ? ' · ' + submittedVehicle : ''}`, 'success');
                     clearDraft();
+
+                    // Submit to GHL CRM with selected pipeline
+                    try {
+                        submitBtn.innerHTML = '⏳ Syncing to GHL...';
+                        const ghlFormData = collectFormDataForGHL();
+                        const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
+                        if (ghlResult && ghlResult.success) {
+                            showToast('✅ GHL opportunity created', 'success');
+                        } else {
+                            console.warn('GHL submission did not return success:', ghlResult);
+                        }
+                    } catch (ghlErr) {
+                        console.error('GHL submission error:', ghlErr);
+                        showToast('⚠️ GHL sync failed — Airtable was saved', 'warning');
+                    }
 
                     // Reset the form so it's ready for the next vehicle
                     resetForm();

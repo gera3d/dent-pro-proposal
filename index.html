@@ -3473,8 +3473,8 @@
         /* Records Summary Cards - Premium */
         .records-summary {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
             margin-bottom: 28px;
         }
 
@@ -3611,43 +3611,6 @@
             border: 1px solid rgba(52, 152, 219, 0.3);
         }
 
-        .status-badge.approved {
-            background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.12));
-            color: #b57edc;
-            border: 1px solid rgba(147, 51, 234, 0.3);
-        }
-
-        .status-badge.contract-sent {
-            background: linear-gradient(135deg, rgba(255, 159, 10, 0.25), rgba(255, 159, 10, 0.12));
-            color: #ffb84d;
-            border: 1px solid rgba(255, 159, 10, 0.3);
-        }
-
-        .status-badge.contract-signed {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.12));
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .status-badge.ready-to-work {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.12));
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            animation: pulse-ready 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-ready {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-
-            50% {
-                box-shadow: 0 0 12px 2px rgba(16, 185, 129, 0.25);
-            }
-        }
-
         .status-badge.in-progress {
             background: linear-gradient(135deg, rgba(255, 159, 10, 0.25), rgba(255, 159, 10, 0.12));
             color: #ffb84d;
@@ -3658,68 +3621,6 @@
             background: linear-gradient(135deg, rgba(26, 108, 255, 0.25), rgba(26, 108, 255, 0.12));
             color: #1A6CFF;
             border: 1px solid rgba(26, 108, 255, 0.3);
-        }
-
-        /* Record Status Selector */
-        .record-status-section {
-            padding: 20px 28px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .record-status-selector {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .record-status-selector label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.5);
-            font-weight: 700;
-            white-space: nowrap;
-            margin-bottom: 0;
-        }
-
-        .record-status-select {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-        }
-
-        .record-status-select:focus {
-            outline: none;
-            border-color: #1A6CFF;
-            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.15);
-        }
-
-        .record-status-select option {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 8px;
-        }
-
-        .record-status-saving {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            font-style: italic;
-            min-width: 60px;
-            text-align: right;
         }
 
         /* Record Detail Modal - Premium */
@@ -3803,30 +3704,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-        }
-
-        .download-package-btn {
-            flex: 1;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .download-package-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .download-package-btn:disabled {
-            opacity: 0.6;
-            cursor: wait;
-            transform: none;
         }
 
         .load-to-form-btn:hover {
@@ -5371,10 +5248,6 @@
                 <select id="recordsStatusFilter" onchange="filterRecords()">
                     <option value="all">All Status</option>
                     <option value="Submitted">Submitted</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Contract Sent">Contract Sent</option>
-                    <option value="Contract Signed">Contract Signed</option>
-                    <option value="Ready to Work">Ready to Work</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Complete">Complete</option>
                 </select>
@@ -5395,24 +5268,6 @@
                     <div class="modal-header">
                         <h3 id="recordDetailTitle">Record Details</h3>
                         <button class="modal-close-btn" onclick="closeRecordDetail()">✕</button>
-                    </div>
-
-                    <!-- Workflow Status Selector -->
-                    <div class="record-status-section">
-                        <div class="record-status-selector">
-                            <label>Workflow Status</label>
-                            <select id="recordStatusSelect" class="record-status-select"
-                                onchange="updateRecordStatus(this.value)">
-                                <option value="Submitted">📋 Submitted</option>
-                                <option value="Approved">✅ Approved</option>
-                                <option value="Contract Sent">📤 Contract Sent</option>
-                                <option value="Contract Signed">✍️ Contract Signed</option>
-                                <option value="Ready to Work">🟢 Ready to Work</option>
-                                <option value="In Progress">🔧 In Progress</option>
-                                <option value="Complete">🏁 Complete</option>
-                            </select>
-                            <span id="recordStatusSaving" class="record-status-saving"></span>
-                        </div>
                     </div>
 
                     <div class="record-detail-content">
@@ -5505,9 +5360,6 @@
                     </div>
 
                     <div class="record-detail-footer">
-                        <button class="download-package-btn" id="downloadPackageBtn" onclick="downloadRecordPackage()">
-                            📦 Download Package
-                        </button>
                         <button class="load-to-form-btn" onclick="loadRecordToForm()">
                             ✏️ Load to Form
                         </button>
@@ -5549,11 +5401,10 @@
                     <thead>
                         <tr style="background: #f0f0f0;">
                             <th style="text-align: left;">Panel</th>
-                            <th style="text-align: center; width: 45px;">DC</th>
-                            <th style="text-align: center; width: 30px;">OS</th>
-                            <th style="text-align: center; width: 40px;">Coin</th>
+                            <th style="text-align: center; width: 50px;">DC</th>
+                            <th style="text-align: center; width: 50px;">OS</th>
                             <th style="text-align: left;">R&I</th>
-                            <th style="text-align: left;">R&R</th>
+                            <th style="text-align: center; width: 40px;">R&R</th>
                         </tr>
                     </thead>
                     <tbody id="pdf-panel-rows">
@@ -9811,142 +9662,13 @@
                             y += 20;
                             pdf.setTextColor(200, 200, 200);
                             pdf.setFontSize(11);
-                            const noteLines = pdf.splitTextToSize(formData.notes, 520);
-                            pdf.text(noteLines, 40, y);
-                            y += noteLines.length * 14;
+                            pdf.text(pdf.splitTextToSize(formData.notes, 520), 40, y);
                         }
 
-                        // ═══ DAMAGE ASSESSMENT TABLE ═══
-                        // Collect panel damage data from form
-                        const damagePanels = [];
-                        document.querySelectorAll('.panel-box').forEach(box => {
-                            const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
-                            const dcInput = box.querySelector('input[name$="_dc"]');
-                            const osInput = box.querySelector('input[name$="_os"]');
-                            const coinInput = box.querySelector('input[name$="_coin"]');
-                            const dcDisplay = box.querySelector('[id$="_dc_display"]');
-                            const dcVal = dcInput ? dcInput.value : '';
-                            const osVal = osInput ? osInput.value : '0';
-                            const coinVal = coinInput ? coinInput.value : '';
-                            const dcDisplayVal = dcDisplay ? dcDisplay.textContent.trim() : dcVal;
-
-                            // Get R&I and R&R items
-                            const riParts = [];
-                            const rrParts = [];
-                            box.querySelectorAll('.checklist-table tr').forEach(row => {
-                                const cells = row.querySelectorAll('td');
-                                if (cells.length >= 3) {
-                                    const riCb = cells[0].querySelector('input[type="checkbox"]');
-                                    const partLabel = cells[1]?.textContent?.trim() || '';
-                                    const rrCb = cells[2].querySelector('input[type="checkbox"]');
-                                    if (riCb && riCb.checked && partLabel) riParts.push(partLabel);
-                                    if (rrCb && rrCb.checked && partLabel) rrParts.push(partLabel);
-                                }
-                            });
-
-                            if (dcVal || riParts.length > 0 || rrParts.length > 0) {
-                                damagePanels.push({
-                                    name: panelName,
-                                    dc: dcDisplayVal || '0',
-                                    os: osVal || '0',
-                                    coin: coinVal || '-',
-                                    ri: riParts.join(', ') || '-',
-                                    rr: rrParts.join(', ') || '-'
-                                });
-                            }
-                        });
-
-                        if (damagePanels.length > 0) {
-                            // Check if we need a new page
-                            if (y > 500) {
-                                pdf.addPage();
-                                pdf.setFillColor(30, 30, 30);
-                                pdf.rect(0, 0, 612, 792, 'F');
-                                y = 50;
-                            } else {
-                                y += 30;
-                            }
-
-                            // Section header
-                            pdf.setFontSize(16);
-                            pdf.setTextColor(76, 217, 100);
-                            pdf.text('DAMAGE ASSESSMENT', 40, y);
-                            y += 8;
-                            pdf.setDrawColor(76, 217, 100);
-                            pdf.setLineWidth(1);
-                            pdf.line(40, y, 572, y);
-                            y += 20;
-
-                            // Table header
-                            const colX = [40, 170, 225, 265, 320, 445];
-                            const colW = [130, 55, 40, 55, 125, 127];
-                            const headers = ['Panel', 'DC', 'OS', 'Coin', 'R&I Parts', 'R&R Parts'];
-
-                            pdf.setFillColor(50, 50, 50);
-                            pdf.rect(40, y - 12, 532, 18, 'F');
-                            pdf.setFontSize(9);
-                            pdf.setTextColor(76, 217, 100);
-                            headers.forEach((h, i) => {
-                                pdf.text(h, colX[i] + 3, y);
-                            });
-                            y += 14;
-
-                            // Table rows
-                            pdf.setFontSize(8);
-                            damagePanels.forEach((panel, idx) => {
-                                // Check if we need a new page
-                                if (y > 740) {
-                                    pdf.addPage();
-                                    pdf.setFillColor(30, 30, 30);
-                                    pdf.rect(0, 0, 612, 792, 'F');
-                                    y = 50;
-
-                                    // Repeat header on new page
-                                    pdf.setFillColor(50, 50, 50);
-                                    pdf.rect(40, y - 12, 532, 18, 'F');
-                                    pdf.setFontSize(9);
-                                    pdf.setTextColor(76, 217, 100);
-                                    headers.forEach((h, i) => {
-                                        pdf.text(h, colX[i] + 3, y);
-                                    });
-                                    y += 14;
-                                    pdf.setFontSize(8);
-                                }
-
-                                // Alternate row background
-                                if (idx % 2 === 0) {
-                                    pdf.setFillColor(40, 40, 40);
-                                    pdf.rect(40, y - 10, 532, 16, 'F');
-                                }
-
-                                pdf.setTextColor(230, 230, 230);
-                                pdf.text(panel.name, colX[0] + 3, y);
-                                pdf.text(String(panel.dc), colX[1] + 3, y);
-                                pdf.text(String(panel.os), colX[2] + 3, y);
-                                pdf.text(panel.coin, colX[3] + 3, y);
-
-                                // R&I and R&R - truncate if too long
-                                pdf.setFontSize(7);
-                                const riText = pdf.splitTextToSize(panel.ri, colW[4] - 6);
-                                const rrText = pdf.splitTextToSize(panel.rr, colW[5] - 6);
-                                pdf.text(riText[0] || '-', colX[4] + 3, y);
-                                pdf.text(rrText[0] || '-', colX[5] + 3, y);
-                                pdf.setFontSize(8);
-
-                                y += 16;
-                            });
-
-                            // Summary line
-                            y += 10;
-                            pdf.setFontSize(10);
-                            pdf.setTextColor(76, 217, 100);
-                            const totalDC = damagePanels.reduce((sum, p) => {
-                                const val = parseInt(String(p.dc).replace(/[^\d]/g, '')) || 0;
-                                return sum + val;
-                            }, 0);
-                            const totalOS = damagePanels.reduce((sum, p) => sum + (parseInt(p.os) || 0), 0);
-                            pdf.text(`Total Panels: ${damagePanels.length}  |  Total OS: ${totalOS}`, 40, y);
-                        }
+                        // Footer
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(`Generated: ${new Date().toLocaleString()}`, 40, 760);
 
                         // Photos excluded from PDF - uploaded separately as ZIP package
                         // Single-page PDF for Airtable storage
@@ -10352,43 +10074,30 @@
                     const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
                     const dcInput = box.querySelector('input[name$="_dc"]');
                     const osInput = box.querySelector('input[name$="_os"]');
-                    const coinInput = box.querySelector('input[name$="_coin"]');
                     const dcVal = dcInput ? dcInput.value : '';
                     const osVal = osInput ? osInput.value : '';
-                    const coinVal = coinInput ? coinInput.value : '';
 
-                    // Get display value for DC (the stepper shows ranges like "1-5", "6-15", etc.)
-                    const dcDisplay = box.querySelector('[id$="_dc_display"]');
-                    const dcDisplayVal = dcDisplay ? dcDisplay.textContent.trim() : dcVal;
-
-                    // Get R&I items from checklist-table checkboxes
+                    // Get R&I items
                     const riItems = [];
-                    const rrItems = [];
-                    box.querySelectorAll('.checklist-table tr').forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        if (cells.length >= 3) {
-                            const riCheckbox = cells[0].querySelector('input[type="checkbox"]');
-                            const partLabel = cells[1]?.textContent?.trim() || '';
-                            const rrCheckbox = cells[2].querySelector('input[type="checkbox"]');
-
-                            if (riCheckbox && riCheckbox.checked && partLabel) {
-                                riItems.push(partLabel);
-                            }
-                            if (rrCheckbox && rrCheckbox.checked && partLabel) {
-                                rrItems.push(partLabel);
-                            }
+                    box.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
+                        const label = cb.closest('.checkbox-item')?.querySelector('span')?.textContent?.trim();
+                        if (label && !label.includes('R&R')) {
+                            riItems.push(label);
                         }
                     });
 
+                    // Get R&R status
+                    const rrCheckbox = box.querySelector('input[name$="_rr"]');
+                    const rrChecked = rrCheckbox ? rrCheckbox.checked : false;
+
                     // Only add panels with some damage
-                    if (dcVal || osVal || riItems.length > 0 || rrItems.length > 0) {
+                    if (dcVal || osVal || riItems.length > 0 || rrChecked) {
                         panels.push({
                             name: panelName,
-                            dc: dcDisplayVal || '-',
+                            dc: dcVal || '-',
                             os: osVal || '-',
-                            coin: coinVal || '-',
                             ri: riItems.join(', ') || '-',
-                            rr: rrItems.join(', ') || '-'
+                            rr: rrChecked ? '✓' : ''
                         });
                     }
                 });
@@ -10400,16 +10109,15 @@
                         <td>${panel.name}</td>
                         <td style="text-align: center;">${panel.dc}</td>
                         <td style="text-align: center;">${panel.os}</td>
-                        <td style="text-align: center;">${panel.coin}</td>
-                        <td style="font-size: 6pt;">${panel.ri}</td>
-                        <td style="font-size: 6pt;">${panel.rr}</td>
+                        <td>${panel.ri}</td>
+                        <td style="text-align: center;">${panel.rr}</td>
                     `;
                     tbody.appendChild(row);
                 });
 
                 // If no panels, add a note
                 if (panels.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No damage recorded</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No damage recorded</td></tr>';
                 }
             } else {
                 damageSection.style.display = 'none';
@@ -11458,21 +11166,6 @@
                 renderRecordContractHistory(roNumber);
                 showToast(`${templateName} sent to ${customerName}`, 'success');
                 haptic('success');
-
-                // Step 5: Auto-update status to "Contract Sent" if currently "Submitted" or "Approved"
-                if (currentDetailRecordId) {
-                    const currentRecord = allRecords.find(r => r.id === currentDetailRecordId);
-                    const currentStatus = currentRecord?.fields?.Status || 'Submitted';
-                    if (['Submitted', 'Approved'].includes(currentStatus)) {
-                        try {
-                            await updateRecordStatus('Contract Sent');
-                            const statusSelect = document.getElementById('recordStatusSelect');
-                            if (statusSelect) statusSelect.value = 'Contract Sent';
-                        } catch (e) {
-                            console.warn('Auto-status update failed (non-critical):', e);
-                        }
-                    }
-                }
 
             } catch (err) {
                 console.error('Contract send error:', err);
@@ -12870,11 +12563,9 @@
             const stats = {
                 total: records.length,
                 submitted: records.filter(r => (r.fields.Status || 'Submitted') === 'Submitted').length,
-                readyToWork: records.filter(r => ['Ready to Work', 'Contract Signed'].includes(r.fields.Status)).length,
-                inProgress: records.filter(r => r.fields.Status === 'In Progress').length,
                 complete: records.filter(r => (r.fields.Status || '') === 'Complete').length
             };
-            stats.other = stats.total - stats.submitted - stats.readyToWork - stats.inProgress - stats.complete;
+            stats.inProgress = stats.total - stats.submitted - stats.complete;
 
             // Render summary cards
             summaryEl.innerHTML = `
@@ -12885,10 +12576,6 @@
                 <div class="summary-card pending ${currentRecordsFilter === 'Submitted' ? 'active' : ''}" onclick="setRecordsFilter('Submitted')">
                     <span class="summary-number">${stats.submitted}</span>
                     <span class="summary-label">Submitted</span>
-                </div>
-                <div class="summary-card" style="${currentRecordsFilter === 'Ready to Work' ? 'background: linear-gradient(165deg, rgba(16, 185, 129, 0.28), rgba(16, 185, 129, 0.12)); border: 1px solid rgba(16, 185, 129, 0.6); box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);' : 'background: linear-gradient(165deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06)); border: 1px solid rgba(16, 185, 129, 0.25);'} border-radius: 16px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all 0.3s ease;" onclick="setRecordsFilter('Ready to Work')">
-                    <span class="summary-number" style="color: #34d399;">${stats.readyToWork}</span>
-                    <span class="summary-label">Ready</span>
                 </div>
                 <div class="summary-card complete ${currentRecordsFilter === 'Complete' ? 'active' : ''}" onclick="setRecordsFilter('Complete')">
                     <span class="summary-number">${stats.complete}</span>
@@ -12986,12 +12673,7 @@
             // Apply status filter (from dropdown or summary card click)
             const activeFilter = statusFilter !== 'all' ? statusFilter : currentRecordsFilter;
             if (activeFilter !== 'all') {
-                // "Ready to Work" summary card shows both "Ready to Work" and "Contract Signed"
-                if (activeFilter === 'Ready to Work') {
-                    filtered = filtered.filter(r => ['Ready to Work', 'Contract Signed'].includes(r.fields.Status));
-                } else {
-                    filtered = filtered.filter(r => (r.fields.Status || 'Submitted') === activeFilter);
-                }
+                filtered = filtered.filter(r => (r.fields.Status || 'Submitted') === activeFilter);
             }
 
             return filtered;
@@ -13083,20 +12765,14 @@
 
             // Assessment Info
             const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleString() : 'N/A';
-
-            // Set the status dropdown to current value
-            const statusSelect = document.getElementById('recordStatusSelect');
-            if (statusSelect) {
-                statusSelect.value = f.Status || 'Submitted';
-            }
-            // Clear saving indicator
-            const savingEl = document.getElementById('recordStatusSaving');
-            if (savingEl) savingEl.textContent = '';
-
             document.getElementById('recordAssessmentInfo').innerHTML = `
                 <div class="detail-item">
                     <label>Estimator</label>
                     <div class="value">${f.Estimator || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <div class="value">${f.Status || 'Submitted'}</div>
                 </div>
                 <div class="detail-item">
                     <label>Submitted</label>
@@ -13162,225 +12838,6 @@
             haptic();
             document.getElementById('recordDetailModal').classList.remove('show');
             currentDetailRecordId = null;
-        }
-
-        // Update record workflow status in Airtable
-        async function updateRecordStatus(newStatus) {
-            if (!currentDetailRecordId) return;
-            const savingEl = document.getElementById('recordStatusSaving');
-            if (savingEl) savingEl.textContent = 'Saving...';
-
-            try {
-                const config = await loadAirtableConfig();
-                if (!config) throw new Error('Airtable config not found');
-
-                const endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}/${currentDetailRecordId}`;
-
-                const resp = await fetch(endpoint, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${config.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ fields: { Status: newStatus } })
-                });
-
-                if (!resp.ok) {
-                    const errText = await resp.text();
-                    throw new Error(errText || `Status update failed (${resp.status})`);
-                }
-
-                const updated = await resp.json();
-
-                // Update local cache
-                const idx = allRecords.findIndex(r => r.id === currentDetailRecordId);
-                if (idx !== -1) {
-                    allRecords[idx] = updated;
-                }
-
-                // Re-render the records list to update badges
-                renderRecordsList(allRecords);
-
-                if (savingEl) {
-                    savingEl.textContent = '✓ Saved';
-                    savingEl.style.color = '#4ade80';
-                    setTimeout(() => {
-                        savingEl.textContent = '';
-                        savingEl.style.color = '';
-                    }, 2000);
-                }
-
-                haptic('success');
-                showToast(`Status updated to ${newStatus}`, 'success');
-
-            } catch (err) {
-                console.error('Status update error:', err);
-                if (savingEl) {
-                    savingEl.textContent = '✗ Failed';
-                    savingEl.style.color = '#ff453a';
-                    setTimeout(() => {
-                        savingEl.textContent = '';
-                        savingEl.style.color = '';
-                    }, 3000);
-                }
-                showToast(`Status update failed: ${err.message}`, 'error');
-            }
-        }
-
-        // Download record package as ZIP (PDF + photos + form data summary)
-        async function downloadRecordPackage() {
-            if (!currentDetailRecordId) return;
-            const record = allRecords.find(r => r.id === currentDetailRecordId);
-            if (!record) return;
-
-            const btn = document.getElementById('downloadPackageBtn');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Preparing...';
-
-            try {
-                const f = record.fields;
-                const roNumber = f['RO Number'] || 'unknown';
-                const zip = new JSZip();
-
-                // 1. Generate form data summary text
-                const summaryLines = [
-                    '═══════════════════════════════════════',
-                    `  DENT EXPERTS — RECORD PACKAGE`,
-                    `  RO# ${roNumber}`,
-                    `  Generated: ${new Date().toLocaleString()}`,
-                    '═══════════════════════════════════════',
-                    '',
-                    '── VEHICLE INFORMATION ──',
-                    `VIN:        ${f.VIN || 'N/A'}`,
-                    `Year:       ${f.Year || 'N/A'}`,
-                    `Make:       ${f.Make || 'N/A'}`,
-                    `Model:      ${f.Model || 'N/A'}`,
-                    `Color:      ${f.Color || 'N/A'}`,
-                    `Odometer:   ${f.Odometer || 'N/A'}`,
-                    '',
-                    '── CUSTOMER & INSURANCE ──',
-                    `Customer:   ${getFieldValue(f, ['Customer Name', 'Customer', 'Name']) || 'N/A'}`,
-                    `Email:      ${getFieldValue(f, ['Customer Email', 'Email']) || 'N/A'}`,
-                    `Phone:      ${getFieldValue(f, ['Customer Phone', 'Phone']) || 'N/A'}`,
-                    `Insurance:  ${f['Insurance Company'] || 'N/A'}`,
-                    `Claim #:    ${f['Claim Number'] || 'N/A'}`,
-                    `Location:   ${f.Location || 'N/A'}`,
-                    '',
-                    '── ASSESSMENT ──',
-                    `Estimator:  ${f.Estimator || 'N/A'}`,
-                    `Status:     ${f.Status || 'Submitted'}`,
-                    `Submitted:  ${f['Submitted At'] ? new Date(f['Submitted At']).toLocaleString() : 'N/A'}`,
-                    `Photo Count: ${f['Photo Count'] || '0'}`,
-                    ''
-                ];
-
-                // Add panel data if present
-                if (f['Panel Data']) {
-                    try {
-                        const panelData = JSON.parse(f['Panel Data']);
-                        summaryLines.push('── PANEL DATA ──');
-                        if (panelData.panels) {
-                            Object.entries(panelData.panels).forEach(([key, val]) => {
-                                if (val && typeof val === 'object') {
-                                    summaryLines.push(`${key}: ${JSON.stringify(val)}`);
-                                }
-                            });
-                        }
-                        if (panelData.rrParts) {
-                            summaryLines.push('');
-                            summaryLines.push('── R&R PARTS ──');
-                            Object.entries(panelData.rrParts).forEach(([key, val]) => {
-                                if (val === true) summaryLines.push(`  ✓ ${key.replace(/_/g, ' ')}`);
-                            });
-                        }
-                        summaryLines.push('');
-                    } catch (e) {
-                        summaryLines.push('Panel Data: (raw) ' + f['Panel Data']);
-                    }
-                }
-
-                if (f.Notes) {
-                    summaryLines.push('── NOTES ──');
-                    summaryLines.push(f.Notes);
-                    summaryLines.push('');
-                }
-
-                zip.file(`${roNumber}_record_info.txt`, summaryLines.join('\n'));
-
-                // 2. Fetch and add PDF Report
-                btn.innerHTML = '📄 Fetching PDF...';
-                if (f['PDF Report'] && f['PDF Report'][0]?.url) {
-                    try {
-                        const pdfUrl = f['PDF Report'][0].url;
-                        const pdfResp = await fetch(pdfUrl);
-                        if (pdfResp.ok) {
-                            const pdfBlob = await pdfResp.blob();
-                            zip.file(`${roNumber}_report.pdf`, pdfBlob);
-                        } else {
-                            console.warn('PDF fetch failed:', pdfResp.status);
-                            zip.file(`${roNumber}_report_link.txt`, `PDF Report URL: ${pdfUrl}\n\nNote: Direct download was not possible. Open this URL in your browser to access the PDF.`);
-                        }
-                    } catch (pdfErr) {
-                        console.warn('PDF download error:', pdfErr);
-                        zip.file(`${roNumber}_report_link.txt`, `PDF Report URL: ${f['PDF Report'][0].url}\n\nNote: Direct download was not possible. Open this URL in your browser to access the PDF.`);
-                    }
-                }
-
-                // 3. Fetch and add Photo Package
-                btn.innerHTML = '📷 Fetching Photos...';
-                if (f['Photo Package'] && f['Photo Package'][0]?.url) {
-                    try {
-                        const photoUrl = f['Photo Package'][0].url;
-                        const photoResp = await fetch(photoUrl);
-                        if (photoResp.ok) {
-                            const photoBlob = await photoResp.blob();
-                            const filename = f['Photo Package'][0].filename || `${roNumber}_photos.zip`;
-                            zip.file(filename, photoBlob);
-                        } else {
-                            console.warn('Photo package fetch failed:', photoResp.status);
-                            zip.file(`${roNumber}_photos_link.txt`, `Photo Package URL: ${photoUrl}\n\nNote: Direct download was not possible. Open this URL in your browser to access the photos.`);
-                        }
-                    } catch (photoErr) {
-                        console.warn('Photo package download error:', photoErr);
-                        zip.file(`${roNumber}_photos_link.txt`, `Photo Package URL: ${f['Photo Package'][0].url}\n\nNote: Direct download was not possible. Open this URL in your browser to access the photos.`);
-                    }
-                }
-
-                // 4. Also include Thumbnail if available
-                if (f.Thumbnail && f.Thumbnail[0]?.url) {
-                    try {
-                        const thumbResp = await fetch(f.Thumbnail[0].url);
-                        if (thumbResp.ok) {
-                            const thumbBlob = await thumbResp.blob();
-                            const ext = f.Thumbnail[0].filename?.split('.').pop() || 'jpg';
-                            zip.file(`${roNumber}_thumbnail.${ext}`, thumbBlob);
-                        }
-                    } catch (e) { /* non-critical */ }
-                }
-
-                // 5. Generate and download ZIP
-                btn.innerHTML = '📦 Creating ZIP...';
-                const blob = await zip.generateAsync({ type: 'blob' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${roNumber}_package.zip`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                showToast(`Package downloaded: ${roNumber}`, 'success');
-                haptic('success');
-
-            } catch (err) {
-                console.error('Download package error:', err);
-                showToast(`Download failed: ${err.message}`, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
         }
 
         // Load record data into the Scoper form

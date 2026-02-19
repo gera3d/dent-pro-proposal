@@ -1,5 +1,6 @@
 # Sensitive configuration files
 config.json
+config.js
 .env
 .env.local
 

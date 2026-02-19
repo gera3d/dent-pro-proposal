@@ -7044,76 +7044,6 @@
             color: #fff;
         }
 
-        /* UPD TOGGLE */
-        .upd-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-            padding: 10px 14px;
-            background: rgba(255, 159, 10, 0.08);
-            border: 1px solid rgba(255, 159, 10, 0.15);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .upd-toggle:hover {
-            background: rgba(255, 159, 10, 0.12);
-            border-color: rgba(255, 159, 10, 0.25);
-        }
-
-        .upd-toggle.active {
-            background: rgba(255, 159, 10, 0.15);
-            border-color: rgba(255, 159, 10, 0.4);
-        }
-
-        .upd-toggle input {
-            width: 18px;
-            height: 18px;
-            accent-color: #FF9500;
-        }
-
-        .upd-toggle span {
-            font-size: 11px;
-            font-weight: 600;
-            color: #FF9500;
-        }
-
-        .panel-box.has-upd {
-            border-color: #FF9500 !important;
-            box-shadow: 0 0 12px rgba(255, 149, 0, 0.2);
-        }
-
-        .panel-box.has-upd .panel-header {
-            border-left-color: #FF9500;
-        }
-
-        .upd-notes {
-            display: none;
-            margin-top: 8px;
-        }
-
-        .upd-notes.visible {
-            display: block;
-        }
-
-        .upd-notes textarea {
-            width: 100%;
-            min-height: 60px;
-            background: rgba(255, 149, 0, 0.05);
-            border: 1px solid rgba(255, 149, 0, 0.2);
-            border-radius: 6px;
-            color: #fff;
-            padding: 8px;
-            font-size: 13px;
-            resize: vertical;
-        }
-
-        .upd-notes textarea::placeholder {
-            color: rgba(255, 149, 0, 0.5);
-        }
-
         /* CHECKLIST TABLES */
         .checklist-table {
             width: 100%;
@@ -7679,22 +7609,6 @@
             box-shadow: 0 0 20px rgba(26, 108, 255, 0.12), 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .panel-box.has-upd {
-            animation: upd-pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes upd-pulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 12px rgba(255, 149, 0, 0.2);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(255, 149, 0, 0.35);
-            }
-        }
-
         /* Panel header glow on data entry */
         .panel-box.has-data .panel-header {
             border-left-color: #1A6CFF;
@@ -8022,18 +7936,6 @@
             box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
         }
 
-        /* --- UPD Toggle Enhancement --- */
-        .upd-toggle {
-            transition: all 0.2s ease;
-        }
-
-        .upd-toggle:hover {
-            transform: translateX(2px);
-        }
-
-        .upd-toggle.active {
-            box-shadow: 0 0 15px rgba(255, 149, 0, 0.25);
-        }
     </style>
 
     <script>
@@ -9422,7 +9324,7 @@
             // Camera handler
             document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
 
-            // Inject "Done" and "UPD" Toggles
+            // Inject "Done" toggles into each panel
             initPanelToggles();
 
             // Initialize Auto-Save
@@ -9442,8 +9344,6 @@
                     if (match) baseName = match[1];
                 }
                 const doneName = baseName + "_done";
-                const updName = baseName + "_upd";
-                const updNotesName = baseName + "_upd_notes";
 
                 // Create Done Toggle
                 const doneLabel = document.createElement('label');
@@ -9470,37 +9370,6 @@
                 });
                 header.appendChild(photoBtnEl);
 
-                // Create UPD Toggle + Notes (at end of panel)
-                const updContainer = document.createElement('div');
-                updContainer.className = 'upd-container';
-                updContainer.innerHTML = `
-                    <label class="upd-toggle">
-                        <input type="checkbox" name="${updName}">
-                        <span>⚠️ UPD (Unrelated Prior Damage)</span>
-                    </label>
-                    <div class="upd-notes">
-                        <textarea name="${updNotesName}" placeholder="Describe the unrelated prior damage..."></textarea>
-                    </div>
-                `;
-
-                const updChk = updContainer.querySelector('input[type="checkbox"]');
-                const updNotes = updContainer.querySelector('.upd-notes');
-                const updToggle = updContainer.querySelector('.upd-toggle');
-
-                updChk.addEventListener('change', () => {
-                    if (updChk.checked) {
-                        box.classList.add('has-upd');
-                        updToggle.classList.add('active');
-                        updNotes.classList.add('visible');
-                    } else {
-                        box.classList.remove('has-upd');
-                        updToggle.classList.remove('active');
-                        updNotes.classList.remove('visible');
-                    }
-                    saveDraft();
-                });
-
-                box.appendChild(updContainer);
             });
         }
 
@@ -9576,17 +9445,7 @@
                             const box = el.closest('.panel-box');
                             if (box && el.checked) box.classList.add('is-complete');
                         }
-                        // Handle UPD toggle visual state
-                        if (name.endsWith('_upd')) {
-                            const box = el.closest('.panel-box');
-                            const updToggle = el.closest('.upd-toggle');
-                            const updNotes = box?.querySelector('.upd-notes');
-                            if (el.checked) {
-                                box?.classList.add('has-upd');
-                                updToggle?.classList.add('active');
-                                updNotes?.classList.add('visible');
-                            }
-                        }
+
                     } else if (el.type === 'hidden' && name.endsWith('_dc')) {
                         // Restore range button selection
                         el.value = data[name];
@@ -10076,7 +9935,7 @@
             const vehicle = `${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'Unknown';
 
             // CSV Headers
-            let csv = 'Panel,Dent Count,Coin Size,Oversized,R&I Parts,R&R Parts,Price,UPD,Notes\n';
+            let csv = 'Panel,Dent Count,Coin Size,Oversized,R&I Parts,R&R Parts,Price\n';
 
             // Panel mapping for display names
             const PANEL_NAMES = {
@@ -10121,14 +9980,6 @@
                     if (cb.checked) rrCount++;
                 });
 
-                // Get UPD status
-                const updInput = document.querySelector(`input[name="${panelKey}_upd"]`);
-                const hasUpd = updInput?.checked ? 'Yes' : 'No';
-
-                // Get UPD notes
-                const notesInput = document.querySelector(`textarea[name="${panelKey}_upd_notes"]`);
-                const notes = (notesInput?.value || '').replace(/"/g, '""').replace(/\n/g, ' ');
-
                 // Calculate price
                 const category = PANEL_CATEGORY[panelKey] || 'door';
                 const priceTable = PANEL_PRICES[category];
@@ -10140,11 +9991,11 @@
                 totalEstimate += price;
 
                 // Add CSV row
-                csv += `"${panelName}","${dcRange}","${coinLabel}",${osCount},${riCount},${rrCount},$${price},"${hasUpd}","${notes}"\n`;
+                csv += `"${panelName}","${dcRange}","${coinLabel}",${osCount},${riCount},${rrCount},$${price}\n`;
             });
 
             // Add summary row
-            csv += `\n"TOTAL ESTIMATE",,,,,,"$${totalEstimate.toLocaleString()}",,\n`;
+            csv += `\n"TOTAL ESTIMATE",,,,,,"$${totalEstimate.toLocaleString()}"\n`;
             csv += `\n"Vehicle Info:","${vehicle}"\n`;
             csv += `"VIN:","${vin}"\n`;
             csv += `"RO#:","${roNum}"\n`;
@@ -11337,10 +11188,15 @@
 
         // Share PDF using iOS Share Sheet or download
         async function sharePDF(pdf, formData) {
-            // Create filename
+            // Create filename — include key details for easy identification
             const timestamp = new Date().toISOString().slice(0, 10);
             const roNum = formData.roNumber || 'draft';
-            const fileName = `DentScope_${roNum}_${timestamp}.pdf`;
+            const lastName = (formData.insuredName || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
+            const year = formData.year || '';
+            const make = (formData.make || '').replace(/\s+/g, '-');
+            const model = (formData.model || '').replace(/\s+/g, '-');
+            const nameParts = [roNum, lastName, year, make, model].filter(Boolean);
+            const fileName = `DentScope_${nameParts.join('_')}_${timestamp}.pdf`;
 
             // Convert PDF to Blob
             const pdfBlob = pdf.output('blob');
@@ -11437,7 +11293,8 @@
                 insurance_company: 'wcjFn8HG8fhssQWn0TFM',
                 claim_number: 'Y8BZnpg3SgTCaF6eNcwt',
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
-                ro_number: 'cHqj3TzHR1qipS5zXv4L'
+                ro_number: 'cHqj3TzHR1qipS5zXv4L',
+                color: 'ljDkfmAAhoJFkZuUii0C'
             },
             // Documents & Contracts via GHL Proposals API
             // GET  /proposals/templates       — list document templates
@@ -11487,6 +11344,7 @@
             if (formData.claimNumber) customFields.push({ id: GHL_CONFIG.customFields.claim_number, value: formData.claimNumber });
             if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
             if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
+            if (formData.color && GHL_CONFIG.customFields.color) customFields.push({ id: GHL_CONFIG.customFields.color, value: formData.color });
 
             return customFields;
         }
@@ -11697,7 +11555,8 @@
             insurance: 'YVIvG2P73p9IltxLHm5v',
             claimNumber: 'Qcsf5Kk2MrNp1UP9kdDt',
             estimator: 'oAiKQXcP4Z3B6KbdRF6N',
-            deductible: 'gNl6srVoXFU7JQGrKGl2'
+            deductible: 'gNl6srVoXFU7JQGrKGl2',
+            color: 'ljDkfmAAhoJFkZuUii0C'
         };
 
         // Build customFields array from Airtable record fields
@@ -11720,6 +11579,7 @@
             push(GHL_CUSTOM_FIELDS.claimNumber, f['Claim Number']);
             push(GHL_CUSTOM_FIELDS.estimator, f.Estimator);
             push(GHL_CUSTOM_FIELDS.deductible, f.Deductible);
+            if (GHL_CUSTOM_FIELDS.color) push(GHL_CUSTOM_FIELDS.color, f.Color);
 
             return cf;
         }
@@ -11776,10 +11636,10 @@
             }
         }
 
-        async function prepareContactForSend(contactId, recordFields) {
+        async function prepareContactForSend(contactId, recordFields, overrideName = null) {
             try {
-                // Build the contact name from record fields
-                const contactName = recordFields?.['Customer Name'] || '';
+                // Use the override name (edited in modal) if provided, otherwise fall back to record
+                const contactName = overrideName || recordFields?.['Customer Name'] || '';
                 const nameParts = contactName.split(' ');
                 const firstName = nameParts[0] || '';
                 const lastName = nameParts.slice(1).join(' ') || '';
@@ -12129,7 +11989,9 @@
             if (!record) return;
 
             const f = record.fields;
-            const customerName = getFieldValue(f, ['Customer Name', 'Customer', 'Name']);
+            // Prefer the editable name input in the modal (allows correcting wrong names)
+            const editedName = document.getElementById('recordContactName')?.value?.trim();
+            const customerName = editedName || getFieldValue(f, ['Customer Name', 'Customer', 'Name']);
             const email = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']);
             const phone = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']);
             const roNumber = f['RO Number'] || '';
@@ -12191,8 +12053,8 @@
                     contactId = existingContact.id;
                     console.log('Found existing GHL contact:', contactId);
                     showRecordContractStatus('Contact found, syncing vehicle data...', 'info');
-                    // Push all record data into custom fields (Phase 1: data only)
-                    await prepareContactForSend(contactId, f);
+                    // Push all record data into custom fields — pass edited name so GHL contact stays in sync
+                    await prepareContactForSend(contactId, f, customerName);
                     // Verify DND is actually off
                     showRecordContractStatus('Verifying delivery channels are open...', 'info');
                     await ensureEmailDndOff(contactId);
@@ -12768,6 +12630,7 @@
                 year: document.getElementById('year')?.value || '',
                 make: document.getElementById('make')?.value || '',
                 model: document.getElementById('model')?.value || '',
+                color: document.getElementById('color')?.value || '',
                 insurance: document.getElementById('insuranceCompany')?.value || '',
                 claimNumber: document.getElementById('claimNumber')?.value || '',
                 estimator: document.getElementById('estimator')?.value || '',
@@ -12951,16 +12814,6 @@
                 box.classList.remove('has-data');
             });
 
-            // 8. Remove UPD orange-outline visual states
-            document.querySelectorAll('.panel-box.has-upd').forEach(box => {
-                box.classList.remove('has-upd');
-            });
-            document.querySelectorAll('.upd-toggle.active').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.upd-notes.visible').forEach(el => {
-                el.classList.remove('visible');
-            });
 
             // 9. Clear photos
             selectedPhotos = [];
@@ -14072,17 +13925,25 @@
 
             if (hasPdf || hasPhotos) {
                 attachmentsSection.style.display = 'block';
+                const roNum = (f['RO Number'] || 'RO').replace(/\s+/g, '-');
+                const custLastName = (f['Customer Name'] || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
+                const yr = f.Year || '';
+                const mk = (f.Make || '').replace(/\s+/g, '-');
+                const mdl = (f.Model || '').replace(/\s+/g, '-');
+                const dateStr = new Date().toISOString().slice(0, 10);
                 let attachmentsHtml = '';
                 if (hasPdf) {
+                    const pdfFilename = `DentScope_${[roNum, custLastName, yr, mk, mdl].filter(Boolean).join('_')}_${dateStr}.pdf`;
                     attachmentsHtml += `
-                        <button class="view-attachments-btn" onclick="window.open('${f['PDF Report'][0].url}', '_blank')">
-                            📄 View PDF
+                        <button class="view-attachments-btn" onclick="downloadFileWithName('${f['PDF Report'][0].url}', '${pdfFilename}')">
+                            📄 Download PDF
                         </button>
                     `;
                 }
                 if (hasPhotos) {
+                    const zipFilename = `photos_${[roNum, yr, mk, mdl].filter(Boolean).join('_')}.zip`;
                     attachmentsHtml += `
-                        <button class="view-attachments-btn" onclick="window.open('${f['Photo Package'][0].url}', '_blank')">
+                        <button class="view-attachments-btn" onclick="downloadFileWithName('${f['Photo Package'][0].url}', '${zipFilename}')">
                             📸 Download Photos
                         </button>
                     `;
@@ -14112,6 +13973,29 @@
 
             // Show modal
             document.getElementById('recordDetailModal').classList.add('show');
+        }
+
+        // Download a remote file and force the correct filename/extension
+        async function downloadFileWithName(url, filename) {
+            try {
+                showToast('⬇️ Preparing download...', 'info');
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Download failed');
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+                showToast(`✅ Downloaded: ${filename}`, 'success');
+            } catch (err) {
+                console.error('Download failed, falling back to window.open:', err);
+                showToast('⚠️ Could not download directly — opening in browser', 'warning');
+                window.open(url, '_blank');
+            }
         }
 
         function closeRecordDetail() {

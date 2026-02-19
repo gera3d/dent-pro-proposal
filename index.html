@@ -6589,19 +6589,11 @@
             white-space: nowrap;
         }
 
-        .general-info-grid .ymb-row select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
-            background-repeat: no-repeat !important;
-            background-position: right 10px center !important;
-            background-size: 10px 6px !important;
-            padding-right: 30px;
-        }
-
         .general-info-grid .ymb-row select:focus,
         .general-info-grid .ymb-row input:focus {
             border-color: #1A6CFF !important;
             background-color: rgba(26, 108, 255, 0.08) !important;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
+            background-image: none !important;
             box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12) !important;
             outline: none;
         }
@@ -6630,12 +6622,10 @@
             appearance: none !important;
         }
 
-        .general-info-grid .info-group select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
-            background-repeat: no-repeat !important;
-            background-position: right 10px center !important;
-            background-size: 10px 6px !important;
-            padding-right: 30px;
+        /* Placeholder state — dim the text like a text input's ::placeholder */
+        .general-info-grid .info-group select:has(option[value=""]:checked),
+        .general-info-grid .ymb-row select:has(option[value=""]:checked) {
+            color: #666;
         }
 
         .vin-row {

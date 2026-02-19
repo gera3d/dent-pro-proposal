@@ -4484,13 +4484,13 @@
                 <div class="info-group col-span-2">
                     <label>Year / Make / Model</label>
                     <div class="ymb-row">
-                        <select id="year" style="width: 80px">
+                        <select id="year">
                             <option value="">Year</option>
                         </select>
-                        <select id="make" style="flex:1">
+                        <select id="make">
                             <option value="">Make</option>
                         </select>
-                        <input type="text" id="model" placeholder="Model (e.g. F-150)" style="flex:1">
+                        <input type="text" id="model" placeholder="Model (e.g. F-150)">
                     </div>
                 </div>
 
@@ -6560,17 +6560,50 @@
             gap: 6px;
         }
 
-        /* Fix Year/Make/Model Row */
+        /* Year/Make/Model Row — uniform flex columns */
         .ymb-row {
-            display: flex;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 90px 1fr 1fr;
+            gap: 8px;
             width: 100%;
         }
 
-        .ymb-row select,
-        .ymb-row input {
-            width: auto;
-            /* Allow flex to control width */
+        .general-info-grid .ymb-row select,
+        .general-info-grid .ymb-row input {
+            width: 100%;
+            background: #111 !important;
+            background-image: none !important;
+            border: 1px solid #333 !important;
+            color: #fff;
+            padding: 0 10px;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+            height: 38px !important;
+            line-height: 38px;
+            box-sizing: border-box;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .general-info-grid .ymb-row select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 10px center !important;
+            background-size: 10px 6px !important;
+            padding-right: 30px;
+        }
+
+        .general-info-grid .ymb-row select:focus,
+        .general-info-grid .ymb-row input:focus {
+            border-color: #1A6CFF !important;
+            background-color: rgba(26, 108, 255, 0.08) !important;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12) !important;
+            outline: none;
         }
 
         .info-group label {
@@ -6580,14 +6613,29 @@
             margin-bottom: 4px;
         }
 
-        .info-group input,
-        .info-group select {
+        .general-info-grid .info-group input,
+        .general-info-grid .info-group select {
             width: 100%;
-            background: #111;
-            border: 1px solid #333;
+            background: #111 !important;
+            background-image: none !important;
+            border: 1px solid #333 !important;
             color: #fff;
-            padding: 8px;
-            border-radius: 4px;
+            padding: 0 10px;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+            height: 38px !important;
+            line-height: 38px;
+            box-sizing: border-box;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+        }
+
+        .general-info-grid .info-group select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width%3D'10' height%3D'6'%3E%3Cpath fill%3D'%23888' d%3D'M0 0l5 6 5-6z'%2F%3E%3C%2Fsvg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 10px center !important;
+            background-size: 10px 6px !important;
+            padding-right: 30px;
         }
 
         .vin-row {
@@ -7717,15 +7765,21 @@
         /* --- Form Input Polish --- */
         .general-info-grid input,
         .general-info-grid select,
+        .general-info-grid .info-group input,
+        .general-info-grid .info-group select,
+        .general-info-grid .ymb-row input,
         .toolbar-input {
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .general-info-grid input:focus,
-        .general-info-grid select:focus {
-            border-color: #1A6CFF;
-            background: rgba(26, 108, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12);
+        .general-info-grid select:focus,
+        .general-info-grid .info-group input:focus,
+        .general-info-grid .info-group select:focus {
+            border-color: #1A6CFF !important;
+            background-color: rgba(26, 108, 255, 0.08) !important;
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12) !important;
+            outline: none;
         }
 
         /* Auto-filled state enhancement */

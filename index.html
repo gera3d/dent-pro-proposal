@@ -6667,6 +6667,39 @@
             color: #666;
         }
 
+        /* Searchable-select trigger inside general-info-grid — match plain <input> look */
+        .general-info-grid .searchable-select-trigger {
+            background: #111 !important;
+            border: 1px solid #333 !important;
+            border-radius: 4px !important;
+            color: #fff !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            height: 38px !important;
+            padding: 0 36px 0 10px !important;
+            font-size: 14px !important;
+            line-height: 38px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .general-info-grid .searchable-select-trigger.placeholder {
+            color: #666 !important;
+        }
+
+        .general-info-grid .searchable-select-wrapper.open .searchable-select-trigger,
+        .general-info-grid .searchable-select-trigger:focus {
+            border-color: #1A6CFF !important;
+            background-color: rgba(26, 108, 255, 0.08) !important;
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.12) !important;
+            outline: none !important;
+        }
+
+        .general-info-grid .searchable-select-trigger:hover:not(:focus) {
+            border-color: #555 !important;
+            background: #111 !important;
+        }
+
         .vin-row {
             display: flex;
             gap: 5px;

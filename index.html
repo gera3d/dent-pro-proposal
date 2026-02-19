@@ -9694,10 +9694,12 @@
 
             files.forEach(file => {
                 compressImage(file, (compressedBase64, mimeType) => {
+                    const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
                     selectedPhotos.push({
                         base64Data: compressedBase64,
                         mimeType: mimeType,
                         name: file.name,
+                        label: `${catNames[cat] || cat.toUpperCase()} \u2014 ${file.name}`,
                         category: cat
                     });
                     renderCategoryPreviews();
@@ -10241,32 +10243,80 @@
         // =============================================
 
         async function addPhotoPages(pdf, photos) {
-            const photosPerPage = 4;
-            const pageWidth = 612;  // letter size in points
+            const catOrder = ['voil', 'conditioning', 'upd', 'scope'];
+            const catTitles = {
+                voil:         '🇭 VOIL — Vehicle Identification & Overview',
+                conditioning: '🔧 CONDITIONING — Potential Total Loss',
+                upd:          '⚠️ UPD — Unrelated Prior Damage',
+                scope:        '🌩️ SCOPE — Storm Damage'
+            };
+
+            const pageWidth = 612;
             const pageHeight = 792;
             const margin = 10;
-            const photoWidth = (pageWidth - margin * 3) / 2;
+            const photoWidth  = (pageWidth  - margin * 3) / 2;
             const photoHeight = (pageHeight - margin * 3) / 2;
 
-            for (let i = 0; i < photos.length; i++) {
-                // Add new page for every 4 photos
-                if (i % photosPerPage === 0) {
-                    pdf.addPage();
-                    // Set dark background for photo pages
-                    pdf.setFillColor(26, 26, 26); // #1a1a1a
-                    pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+            for (const cat of catOrder) {
+                const catPhotos = photos.filter(p => (p.category || 'scope') === cat);
+                if (catPhotos.length === 0) continue;
+
+                // Category header page
+                pdf.addPage();
+                pdf.setFillColor(10, 10, 10);
+                pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+
+                // Accent bar
+                const barColors = {
+                    voil:         [26, 108, 255],
+                    conditioning: [255, 159, 10],
+                    upd:          [255, 69, 58],
+                    scope:        [48, 209, 88]
+                };
+                const [r, g, b] = barColors[cat] || [255, 255, 255];
+                pdf.setFillColor(r, g, b);
+                pdf.rect(0, 0, 6, pageHeight, 'F');
+
+                // Category title text
+                pdf.setTextColor(r, g, b);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(20);
+                pdf.text(catTitles[cat] || cat.toUpperCase(), 30, 60);
+
+                // Photo count
+                pdf.setTextColor(160, 160, 160);
+                pdf.setFontSize(13);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(`${catPhotos.length} photo${catPhotos.length !== 1 ? 's' : ''}`, 30, 85);
+
+                // Grid of photos on this header page (up to 4)
+                const firstBatch = catPhotos.slice(0, 4);
+                const topOffset = 110;
+                const gridHeight = (pageHeight - topOffset - margin * 3) / 2;
+
+                for (let i = 0; i < firstBatch.length; i++) {
+                    const col = i % 2;
+                    const row = Math.floor(i / 2);
+                    const x = margin + col * (photoWidth + margin);
+                    const y = topOffset + row * (gridHeight + margin);
+                    await addPhotoWithLabel(pdf, firstBatch[i], x, y, photoWidth, gridHeight);
                 }
 
-                const photo = photos[i];
-                const posInGrid = i % photosPerPage;
-                const col = posInGrid % 2;
-                const row = Math.floor(posInGrid / 2);
-
-                const x = margin + col * (photoWidth + margin);
-                const y = margin + row * (photoHeight + margin);
-
-                // Add photo with label
-                await addPhotoWithLabel(pdf, photo, x, y, photoWidth, photoHeight);
+                // Remaining photos, 4 per page
+                const rest = catPhotos.slice(4);
+                for (let i = 0; i < rest.length; i++) {
+                    if (i % 4 === 0) {
+                        pdf.addPage();
+                        pdf.setFillColor(26, 26, 26);
+                        pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+                        pdf.setFillColor(r, g, b);
+                        pdf.rect(0, 0, 4, pageHeight, 'F');
+                    }
+                    const posInGrid = i % 4;
+                    const x = margin + (posInGrid % 2) * (photoWidth + margin);
+                    const y = margin + Math.floor(posInGrid / 2) * (photoHeight + margin);
+                    await addPhotoWithLabel(pdf, rest[i], x, y, photoWidth, photoHeight);
+                }
             }
         }
 
@@ -10288,11 +10338,18 @@
                 pdf.setLineWidth(2);
                 pdf.line(x, y + height - labelHeight, x + width, y + height - labelHeight);
 
+                // Build label text: prefer explicit label, then fall back to category + filename
+                let label = photo.label;
+                if (!label) {
+                    const catNames = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
+                    const catTag = catNames[photo.category] || 'SCOPE';
+                    label = photo.name ? `${catTag} — ${photo.name}` : catTag;
+                }
+
                 // Add label text
                 pdf.setTextColor(255, 255, 255);
                 pdf.setFontSize(10);
                 pdf.setFont('helvetica', 'normal');
-                const label = photo.label || 'Unlabeled Photo';
                 pdf.text(label, x + 8, y + height - 8);
             } catch (err) {
                 console.error('Error adding photo to PDF:', err);
@@ -10528,15 +10585,30 @@
             const zip = new JSZip();
             const timestamp = new Date().toISOString().slice(0, 10);
             const folderName = `photos_${roNumber || 'draft'}_${timestamp}`;
-            const folder = zip.folder(folderName);
+            const root = zip.folder(folderName);
 
-            // Add each photo to the zip
+            // Organize into category subfolders
+            const catFolderNames = {
+                voil:         '1_VOIL_Vehicle_ID',
+                conditioning: '2_COND_Total_Loss',
+                upd:          '3_UPD_Prior_Damage',
+                scope:        '4_SCOPE_Storm_Damage'
+            };
+
+            const catCounters = { voil: 0, conditioning: 0, upd: 0, scope: 0 };
+
             for (let i = 0; i < selectedPhotos.length; i++) {
                 const photo = selectedPhotos[i];
-                const label = photo.label || `photo_${i + 1}`;
-                // Clean filename (remove special chars)
-                const safeLabel = label.replace(/[^a-zA-Z0-9_-]/g, '_');
-                const filename = `${String(i + 1).padStart(2, '0')}_${safeLabel}.jpg`;
+                const cat = (photo.category && catFolderNames[photo.category]) ? photo.category : 'scope';
+                catCounters[cat]++;
+                const idx = catCounters[cat];
+
+                // Build filename from label or original name
+                let baseName = photo.label
+                    ? photo.label
+                    : (photo.name || `photo_${idx}`);
+                const safeBase = baseName.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+                const filename = `${String(idx).padStart(2, '0')}_${safeBase}.jpg`;
 
                 // Convert base64 to binary
                 const binaryData = atob(photo.base64Data);
@@ -10545,7 +10617,8 @@
                     bytes[j] = binaryData.charCodeAt(j);
                 }
 
-                folder.file(filename, bytes, { binary: true });
+                const subfolder = root.folder(catFolderNames[cat]);
+                subfolder.file(filename, bytes, { binary: true });
             }
 
             // Generate ZIP blob
@@ -10555,7 +10628,7 @@
                 compressionOptions: { level: 6 }
             });
 
-            console.log(`📦 Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${selectedPhotos.length} photos`);
+            console.log(`📦 Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${selectedPhotos.length} photos in ${Object.values(catFolderNames).length} category folders`);
             return zipBlob;
         }
 

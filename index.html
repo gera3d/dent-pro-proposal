@@ -13121,13 +13121,29 @@
                 if (airtableResult) {
                     const submittedRo = rawData.roNumber || '';
                     const submittedVehicle = [rawData.year, rawData.make, rawData.model].filter(Boolean).join(' ');
+
+                    // Capture GHL data NOW — before clearDraft() resets the form fields
+                    const ghlFormData = {
+                        insuredName: rawData.insuredName || '',
+                        customerEmail: (rawData.customerEmail || '').trim(),
+                        customerPhone: (rawData.customerPhone || '').trim(),
+                        vin: rawData.vin || '',
+                        year: rawData.year || '',
+                        make: rawData.make || '',
+                        model: rawData.model || '',
+                        color: rawData.color || '',
+                        insurance: rawData.insurance || '',
+                        claimNumber: rawData.claimNumber || '',
+                        estimator: rawData.estimator || '',
+                        roNumber: rawData.roNumber || ''
+                    };
+
                     showToast(`✅ Scope saved — ${submittedRo}${submittedVehicle ? ' · ' + submittedVehicle : ''}`, 'success');
                     clearDraft();
 
                     // Submit to GHL CRM with selected pipeline
                     try {
                         submitBtn.innerHTML = '⏳ Syncing to GHL...';
-                        const ghlFormData = collectFormDataForGHL();
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
                             showToast('✅ GHL opportunity created', 'success');

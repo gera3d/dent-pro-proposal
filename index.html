@@ -11725,7 +11725,7 @@
 
                 // Step 3: Attach photos as a formatted HTML Note on the Contact
                 if (formData.categoryUrls) {
-                    let noteHtml = `<h3>📸 Damage Photos (${formData.roNumber || 'N/A'})</h3>`;
+                    let noteBody = `📸 Damage Photos (${formData.roNumber || 'N/A'})\n=================================\n\n`;
 
                     const sections = [
                         { key: 'voil', title: '🇭 VOIL — Vehicle Identification & Overview' },
@@ -11740,22 +11740,16 @@
                         const photos = formData.categoryUrls[section.key];
                         if (photos && photos.length > 0) {
                             hasPhotos = true;
-                            noteHtml += `<hr/><br/><h4>${section.title}</h4><br/>`;
+                            noteBody += `${section.title}\n---------------------------------\n`;
 
                             for (const photo of photos) {
-                                noteHtml += `
-                                <div style="margin-bottom: 20px;">
-                                    <strong>${photo.label}</strong><br/>
-                                    <img src="${photo.url}" alt="${photo.label}" style="max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 8px; margin-top: 8px;" />
-                                    <br/><a href="${photo.url}" target="_blank" style="font-size: 12px; color: #1A6CFF;">View Original</a>
-                                </div>
-                                `;
+                                noteBody += `• ${photo.label}\n  ${photo.url}\n\n`;
                             }
                         }
                     }
 
                     if (hasPhotos) {
-                        await addGHLNote(contact.contactId, noteHtml);
+                        await addGHLNote(contact.contactId, noteBody.trim());
                     }
                 } else if (formData.photoUrls && formData.photoUrls.length > 0) {
                     // Fallback for old way

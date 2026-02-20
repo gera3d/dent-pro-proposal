@@ -12765,7 +12765,10 @@
 
                 // Step 4: Upload photos to Opportunity FILE_UPLOAD custom fields
                 if (formData.categoryBlobs && opportunity.opportunityId) {
-                    await uploadPhotosToOppFields(opportunity.opportunityId, formData.categoryBlobs);
+                    const hasSomeBlobs = Object.values(formData.categoryBlobs).some(arr => arr && arr.length > 0);
+                    if (hasSomeBlobs) {
+                        await uploadPhotosToOppFields(opportunity.opportunityId, formData.categoryBlobs);
+                    }
                 }
 
                 return {
@@ -13003,7 +13006,8 @@
             let totalUploaded = 0;
             let totalErrors = 0;
 
-            console.log('Uploading photos to opportunity fields...');
+            const totalPhotos = Object.values(categoryBlobs).reduce((sum, arr) => sum + (arr ? arr.length : 0), 0);
+            console.log(`Uploading ${totalPhotos} photo(s) to opportunity fields...`);
 
             for (const [cat, blobs] of Object.entries(categoryBlobs)) {
                 if (!blobs || blobs.length === 0) continue;
@@ -13056,6 +13060,10 @@
 
             if (totalUploaded > 0) {
                 console.log(`Opportunity photo upload complete: ${totalUploaded} uploaded, ${totalErrors} errors`);
+                showToast(`<i data-lucide="image" class="lucide-icon"></i> ${totalUploaded} photo(s) attached to opportunity`, 'success');
+            }
+            if (totalErrors > 0 && totalUploaded === 0) {
+                showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> Could not attach photos to opportunity`, 'warning');
             }
         }
 
@@ -14340,7 +14348,7 @@
                         ghlFormData.categoryUrls = ghlUploadResult.categoryUrls;
                         ghlFormData.categoryBlobs = ghlUploadResult.categoryBlobs;
 
-                        submitBtn.innerHTML = '⏳ Syncing to GHL (Creating Opportunity)...';
+                        submitBtn.innerHTML = '⏳ Syncing to GHL (Creating Contact & Opportunity)...';
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
                             showToast('<i data-lucide="check-circle" class="lucide-icon"></i> GHL opportunity created', 'success');

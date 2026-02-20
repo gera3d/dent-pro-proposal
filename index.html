@@ -11790,7 +11790,18 @@
 
         async function createGHLOpportunity(formData, contactId, pipelineKey = 'repair_tracker') {
             const pipeline = GHL_CONFIG.pipelines[pipelineKey] || GHL_CONFIG.pipelines.repair_tracker;
-            const title = `Repair: ${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() || 'New Repair';
+
+            // Format: "Gera Yeremin - 2023 Tesla Model S" or "Repair: 2023 Tesla Model S"
+            const vehicleInfo = `${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim();
+            const customerName = formData.insuredName ? formData.insuredName.split(' ')[0] : ''; // First name
+
+            let title = vehicleInfo;
+            if (customerName && vehicleInfo) {
+                title = `${customerName} - ${vehicleInfo}`;
+            } else if (!title) {
+                title = customerName ? `${customerName} - Repair` : 'New Repair';
+            }
+
 
             const customFields = getGHLCustomFields(formData);
 

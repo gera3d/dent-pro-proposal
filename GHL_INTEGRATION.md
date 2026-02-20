@@ -49,6 +49,8 @@ const GHL_CONFIG = {
 
 These are the custom field IDs for the GHL location `AAzBZNLXS4rdwhG76MLi`:
 
+### Contact + Opportunity (TEXT)
+
 | Field | GHL ID | Used On |
 |-------|--------|---------|
 | VIN | `qKQntVqCwKdmmPaHLnr6` | Contact + Opportunity |
@@ -57,6 +59,31 @@ These are the custom field IDs for the GHL location `AAzBZNLXS4rdwhG76MLi`:
 | Claim Number | `Y8BZnpg3SgTCaF6eNcwt` | Contact + Opportunity |
 | Technician/Estimator | `XOdGZsGCmyjFmZO1eHsw` | Contact + Opportunity |
 | RO Number | `cHqj3TzHR1qipS5zXv4L` | Contact + Opportunity |
+| Color | `ljDkfmAAhoJFkZuUii0C` | Contact + Opportunity |
+
+### Contact Photo Fields (TEXT — URLs)
+
+| Field | GHL ID |
+|-------|--------|
+| Damage Photo - VOIL | `oF2Zc0DkXXlS75vMlvI7` |
+| Damage Photo - Conditioning | `S8P54P2H4tQZ9HqB6W3o` |
+| Damage Photo - UPD | `s07tGv76Nst1wU5zLqC8` |
+| Damage Photo - Scope | `L9E1Vq9g8xNj8kM5A1qT` |
+
+### Opportunity Photo Fields (FILE_UPLOAD — viewable images)
+
+| Field | GHL ID | Max Files |
+|-------|--------|-----------|
+| VOIL Photos | `8uvGSwKa9N9lWYJUtqaC` | 10 |
+| Conditioning Photos | `ubXghjT46O1LI3vqZHrN` | 10 |
+| UPD Photos | `kkKtUxTtRiMAaoiy7hdP` | 10 |
+| Scope Photos | `zoJUdBhfiQwlyKISosQ0` | 10 |
+
+**Upload endpoint:** `POST /locations/{locationId}/customFields/upload`
+- Content-Type: `multipart/form-data`
+- Form field `id`: Opportunity ID
+- File keys: `{fieldId}_{uuid}` format
+- Photos appear as viewable thumbnails on the Opportunity card
 
 ## API Limitations & Gotchas
 

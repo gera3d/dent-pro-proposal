@@ -13018,6 +13018,7 @@
                     // Build multipart form with all photos for this category
                     const fd = new FormData();
                     fd.append('id', opportunityId);
+                    fd.append('maxFiles', '10');  // Required by GHL API
 
                     for (const item of blobs) {
                         // GHL expects key format: <custom_field_id>_<unique_id>

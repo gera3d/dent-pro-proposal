@@ -11745,6 +11745,9 @@
                     console.log('Found existing contact, updating:', existingId);
 
                     // UPDATE existing contact
+                    const updatePayload = { ...contactPayload };
+                    delete updatePayload.locationId; // GHL API v2 rejects locationId on PUT
+
                     const updateResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${existingId}`, {
                         method: 'PUT',
                         headers: {
@@ -11752,7 +11755,7 @@
                             'Version': '2021-07-28',
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(contactPayload)
+                        body: JSON.stringify(updatePayload)
                     });
                     const updateResult = await updateResponse.json();
                     console.log('Contact Update Response:', updateResult);
@@ -11821,7 +11824,8 @@
                 return { success: true, opportunityId: result.opportunity.id };
             }
 
-            return { success: false, error: 'Failed to create opportunity' };
+            const errorMsg = result.message || result.error || 'Failed to create opportunity';
+            return { success: false, error: errorMsg };
         }
 
 
@@ -13088,10 +13092,11 @@
                             showToast('✅ GHL opportunity created', 'success');
                         } else {
                             console.warn('GHL submission did not return success:', ghlResult);
+                            showToast(`⚠️ GHL sync failed: ${ghlResult.error || 'Unknown error'}`, 'warning');
                         }
                     } catch (ghlErr) {
                         console.error('GHL submission error:', ghlErr);
-                        showToast('⚠️ GHL sync failed — Airtable was saved', 'warning');
+                        showToast(`⚠️ GHL sync error: ${ghlErr.message}`, 'error');
                     }
 
                     // Reset the form so it's ready for the next vehicle

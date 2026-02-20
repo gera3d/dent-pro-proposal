@@ -11723,9 +11723,9 @@
                 // Step 2: Create opportunity
                 const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
 
-                // Step 3: Attach photos as a formatted HTML Note on the Contact
+                // Step 3: Attach photos as a formatted Note on the Contact
                 if (formData.categoryUrls) {
-                    let noteBody = `📸 Damage Photos (${formData.roNumber || 'N/A'})\n=================================\n\n`;
+                    let noteBody = `📸 Damage Photos (${formData.roNumber || 'N/A'})\n\n`;
 
                     const sections = [
                         { key: 'voil', title: '🇭 VOIL — Vehicle Identification & Overview' },
@@ -11740,10 +11740,11 @@
                         const photos = formData.categoryUrls[section.key];
                         if (photos && photos.length > 0) {
                             hasPhotos = true;
-                            noteBody += `${section.title}\n---------------------------------\n`;
+                            noteBody += `### ${section.title}\n\n`;
 
                             for (const photo of photos) {
-                                noteBody += `• ${photo.label}\n  ${photo.url}\n\n`;
+                                // Using standard Markdown for images and links
+                                noteBody += `**${photo.label}**\n![${photo.label}](${photo.url})\n[View Original](${photo.url})\n\n`;
                             }
                         }
                     }

@@ -11668,6 +11668,13 @@
                 // Step 2: Create opportunity
                 const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
 
+                // Step 3: Attach photos as a Note on the Contact
+                if (formData.photoUrls && formData.photoUrls.length > 0) {
+                    const links = formData.photoUrls.join('\n');
+                    const noteBody = `Uploaded Damage Photos:\n${links}`;
+                    await addGHLNote(contact.contactId, noteBody);
+                }
+
                 return {
                     success: true,
                     contactId: contact.contactId,
@@ -11837,6 +11844,29 @@
 
             const errorMsg = result.message || result.error || 'Failed to create opportunity';
             return { success: false, error: errorMsg };
+        }
+
+        async function addGHLNote(contactId, noteBody) {
+            try {
+                const response = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${contactId}/notes`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                        'Version': '2021-07-28',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        body: noteBody,
+                        userId: GHL_CONFIG.userId
+                    })
+                });
+                const result = await response.json();
+                console.log('GHL Note created:', result.note ? result.note.id : result);
+                return { success: true };
+            } catch (err) {
+                console.error('Failed to add GHL Note:', err);
+                return { success: false, error: err.message };
+            }
         }
 
 

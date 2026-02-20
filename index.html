@@ -11728,9 +11728,10 @@
                 // Step 2: Create opportunity
                 const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
 
-                // Step 3: Attach photos as a formatted Note on the Contact
+                // Step 3: Attach photos as an HTML Table Note on the Contact (GHL workaround)
                 if (formData.categoryUrls) {
-                    let noteBody = `📸 Damage Photos (${formData.roNumber || 'N/A'})\n\n`;
+                    let noteHtml = `<div style="font-family: sans-serif;">
+                        <h3 style="margin-bottom: 16px;">📸 Damage Photos (${formData.roNumber || 'N/A'})</h3>`;
 
                     const sections = [
                         { key: 'voil', title: '🇭 VOIL — Vehicle Identification & Overview' },
@@ -11745,17 +11746,43 @@
                         const photos = formData.categoryUrls[section.key];
                         if (photos && photos.length > 0) {
                             hasPhotos = true;
-                            noteBody += `### ${section.title}\n\n`;
+                            noteHtml += `<h4 style="margin-top: 24px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">${section.title}</h4>
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                                <tbody>`;
 
-                            for (const photo of photos) {
-                                // Using standard Markdown for images and links
-                                noteBody += `**${photo.label}**\n![${photo.label}](${photo.url})\n[View Original](${photo.url})\n\n`;
+                            // Group photos into rows of 2 for better layout
+                            for (let i = 0; i < photos.length; i += 2) {
+                                const p1 = photos[i];
+                                const p2 = photos[i + 1];
+
+                                noteHtml += `<tr>
+                                    <td style="padding: 8px; vertical-align: top; width: 50%;">
+                                        <strong>${p1.label}</strong><br/>
+                                        <a href="${p1.url}" target="_blank">
+                                            <img src="${p1.url}" alt="${p1.label}" style="max-width: 100%; height: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 6px;" />
+                                        </a>
+                                    </td>`;
+
+                                if (p2) {
+                                    noteHtml += `
+                                    <td style="padding: 8px; vertical-align: top; width: 50%;">
+                                        <strong>${p2.label}</strong><br/>
+                                        <a href="${p2.url}" target="_blank">
+                                            <img src="${p2.url}" alt="${p2.label}" style="max-width: 100%; height: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 6px;" />
+                                        </a>
+                                    </td>`;
+                                } else {
+                                    noteHtml += `<td style="width: 50%;"></td>`;
+                                }
+                                noteHtml += `</tr>`;
                             }
+                            noteHtml += `</tbody></table>`;
                         }
                     }
+                    noteHtml += `</div>`;
 
                     if (hasPhotos) {
-                        await addGHLNote(contact.contactId, noteBody.trim());
+                        await addGHLNote(contact.contactId, noteHtml);
                     }
                 } else if (formData.photoUrls && formData.photoUrls.length > 0) {
                     // Fallback for old way

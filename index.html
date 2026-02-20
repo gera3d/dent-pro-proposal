@@ -11652,11 +11652,66 @@
             userId: 'D0d4WknnxH0DTw39xHxA',  // Gera Yeremin — sender for templates
             contracts: {
                 overdueHours: 72,       // Flag as overdue after 72h unsigned
-                followUpHours: 24       // First follow-up after 24h
             }
         };
 
-        // ==================== GHL API FUNCTIONS ====================
+        async function uploadAllPhotosToGHL() {
+            if (selectedPhotos.length === 0) return {};
+
+            showToast(`🚀 Uploading ${selectedPhotos.length} photos to GoHighLevel...`, 'info');
+
+            const categoryUrls = {
+                voil: [],
+                conditioning: [],
+                upd: [],
+                scope: []
+            };
+
+            const promises = selectedPhotos.map(async (photo, index) => {
+                const cat = photo.category || 'scope';
+                const filename = photo.name || `photo_${cat}_${index}.jpg`;
+
+                // convert base64 to Blob
+                const binaryData = atob(photo.base64Data);
+                const arrayBuffer = new ArrayBuffer(binaryData.length);
+                const bytes = new Uint8Array(arrayBuffer);
+                for (let j = 0; j < binaryData.length; j++) {
+                    bytes[j] = binaryData.charCodeAt(j);
+                }
+                const blob = new Blob([bytes], { type: 'image/jpeg' });
+
+                const fd = new FormData();
+                fd.append('file', blob, filename);
+                fd.append('hosted', 'false'); // Must be false when uploading binary data
+
+                try {
+                    const response = await fetch(`${GHL_CONFIG.baseUrl}/medias/upload-file`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28'
+                        },
+                        body: fd
+                    });
+
+                    if (response.ok) {
+                        const json = await response.json();
+                        if (json.url) {
+                            if (!categoryUrls[cat]) categoryUrls[cat] = [];
+                            categoryUrls[cat].push({ url: json.url, label: photo.label || filename });
+                        }
+                    } else {
+                        console.warn(`GHL Upload failed for ${filename}:`, await response.text());
+                    }
+                } catch (e) {
+                    console.error('GHL Upload error:', e);
+                }
+            });
+
+            await Promise.all(promises);
+            return categoryUrls;
+        }
+
         async function submitToGHL(formData, pipelineKey = 'repair_tracker') {
             try {
                 // Step 1: Create or find contact
@@ -11668,8 +11723,42 @@
                 // Step 2: Create opportunity
                 const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
 
-                // Step 3: Attach photos as a Note on the Contact
-                if (formData.photoUrls && formData.photoUrls.length > 0) {
+                // Step 3: Attach photos as a formatted HTML Note on the Contact
+                if (formData.categoryUrls) {
+                    let noteHtml = `<h3>📸 Damage Photos (${formData.roNumber || 'N/A'})</h3>`;
+
+                    const sections = [
+                        { key: 'voil', title: '🇭 VOIL — Vehicle Identification & Overview' },
+                        { key: 'conditioning', title: '🔧 CONDITIONING — Potential Total Loss' },
+                        { key: 'upd', title: '⚠️ UPD — Unrelated Prior Damage' },
+                        { key: 'scope', title: '🌩️ SCOPE — Storm Damage' }
+                    ];
+
+                    let hasPhotos = false;
+
+                    for (const section of sections) {
+                        const photos = formData.categoryUrls[section.key];
+                        if (photos && photos.length > 0) {
+                            hasPhotos = true;
+                            noteHtml += `<hr/><br/><h4>${section.title}</h4><br/>`;
+
+                            for (const photo of photos) {
+                                noteHtml += `
+                                <div style="margin-bottom: 20px;">
+                                    <strong>${photo.label}</strong><br/>
+                                    <img src="${photo.url}" alt="${photo.label}" style="max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 8px; margin-top: 8px;" />
+                                    <br/><a href="${photo.url}" target="_blank" style="font-size: 12px; color: #1A6CFF;">View Original</a>
+                                </div>
+                                `;
+                            }
+                        }
+                    }
+
+                    if (hasPhotos) {
+                        await addGHLNote(contact.contactId, noteHtml);
+                    }
+                } else if (formData.photoUrls && formData.photoUrls.length > 0) {
+                    // Fallback for old way
                     const links = formData.photoUrls.join('\n');
                     const noteBody = `Uploaded Damage Photos:\n${links}`;
                     await addGHLNote(contact.contactId, noteBody);
@@ -13143,7 +13232,10 @@
 
                     // Submit to GHL CRM with selected pipeline
                     try {
-                        submitBtn.innerHTML = '⏳ Syncing to GHL...';
+                        submitBtn.innerHTML = '⏳ Syncing to GHL (Uploading Photos)...';
+                        ghlFormData.categoryUrls = await uploadAllPhotosToGHL();
+
+                        submitBtn.innerHTML = '⏳ Syncing to GHL (Creating Opportunity)...';
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
                             showToast('✅ GHL opportunity created', 'success');

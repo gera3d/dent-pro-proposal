@@ -61,16 +61,16 @@ These are the custom field IDs for the GHL location `AAzBZNLXS4rdwhG76MLi`:
 | RO Number | `cHqj3TzHR1qipS5zXv4L` | Contact + Opportunity |
 | Color | `ljDkfmAAhoJFkZuUii0C` | Contact + Opportunity |
 
-### Contact Photo Fields (FILE_UPLOAD — viewable image galleries)
+### Contact Photo Fields (TEXT — URLs)
 
-| Field | GHL ID | Max Files |
-|-------|--------|-----------|
-| VOIL Gallery | `Oy4NbiWhcxoV3IOlq9Ar` | 10 |
-| Conditioning Gallery | `pDMArE3EzFAIPD7EHldp` | 10 |
-| UPD Gallery | `z29ukzypNDkDTMOVvVxq` | 10 |
-| Scope Gallery | `6so9X9FfOoO9JAbSFrHo` | 10 |
+| Field | GHL ID |
+|-------|--------|
+| Damage Photo - VOIL | `oF2Zc0DkXXlS75vMlvI7` |
+| Damage Photo - Conditioning | `S8P54P2H4tQZ9HqB6W3o` |
+| Damage Photo - UPD | `s07tGv76Nst1wU5zLqC8` |
+| Damage Photo - Scope | `L9E1Vq9g8xNj8kM5A1qT` |
 
-**Note on Opportunity `FILE_UPLOAD` fields:** As of Feb 2026, the GHL Opportunity V2 API (`PUT /opportunities/{id}`) contains a severe backend bug where it silently discards `FILE_UPLOAD` array payloads, preventing image galleries from being attached to Opportunities natively. Therefore, all photo galleries are attached to the **Contact** record instead, which properly supports arrays of URLs.
+**Image Gallery Limitation:** Do **not** attempt to change these to `FILE_UPLOAD` fields. The GHL API strictly hides custom field image uploads from the UI. Instead, the raw image URLs are stored in these Text fields, and a beautiful HTML gallery note is pinned directly to the Contact's **Notes** tab upon submission.
 
 ## API Limitations & Gotchas
 

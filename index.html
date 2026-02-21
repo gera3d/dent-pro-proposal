@@ -11051,7 +11051,8 @@
             if (statusEl && progressFill && statusTextEl) {
                 statusEl.style.display = 'block';
                 progressFill.style.width = `${percent}%`;
-                statusTextEl.textContent = statusText;
+                statusTextEl.innerHTML = statusText;
+                refreshIcons();
             }
         }
 
@@ -12627,11 +12628,11 @@
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
                 ro_number: 'cHqj3TzHR1qipS5zXv4L',
                 color: 'ljDkfmAAhoJFkZuUii0C',
-                // Contact-level FILE_UPLOAD fields (to securely host image gallery arrays)
-                photo_voil: 'Oy4NbiWhcxoV3IOlq9Ar',
-                photo_conditioning: 'pDMArE3EzFAIPD7EHldp',
-                photo_upd: 'z29ukzypNDkDTMOVvVxq',
-                photo_scope: '6so9X9FfOoO9JAbSFrHo'
+                // Extracted from GHL API script (TEXT fields to store URLs)
+                photo_voil: 'oF2Zc0DkXXlS75vMlvI7',
+                photo_conditioning: 'S8P54P2H4tQZ9HqB6W3o',
+                photo_upd: 's07tGv76Nst1wU5zLqC8',
+                photo_scope: 'L9E1Vq9g8xNj8kM5A1qT'
             },
             // Documents & Contracts via GHL Proposals API
             // GET  /proposals/templates       — list document templates
@@ -12643,7 +12644,7 @@
             }
         };
 
-        async function uploadAllPhotosToGHL(formData) {
+        async function uploadAllPhotosToGHL() {
             if (selectedPhotos.length === 0) return { categoryUrls: {} };
 
             showToast(`<i data-lucide="rocket" class="lucide-icon text-brand-primary"></i> Uploading ${selectedPhotos.length} photos to GoHighLevel...`, 'info');
@@ -12659,18 +12660,6 @@
                 const cat = photo.category || 'scope';
                 const filename = photo.name || `photo_${cat}_${index}.jpg`;
 
-                let fieldId = null;
-                if (cat === 'voil') fieldId = GHL_CONFIG.customFields.photo_voil;
-                else if (cat === 'conditioning') fieldId = GHL_CONFIG.customFields.photo_conditioning;
-                else if (cat === 'upd') fieldId = GHL_CONFIG.customFields.photo_upd;
-                else if (cat === 'scope') fieldId = GHL_CONFIG.customFields.photo_scope;
-
-                // If there's no mapped custom field, skip this photo upload
-                if (!fieldId) {
-                    console.warn(`No custom field mapping found for category: ${cat}`);
-                    return;
-                }
-
                 // convert base64 to Blob
                 const binaryData = atob(photo.base64Data);
                 const arrayBuffer = new ArrayBuffer(binaryData.length);
@@ -12680,16 +12669,12 @@
                 }
                 const blob = new Blob([bytes], { type: 'image/jpeg' });
 
-                const uniqueId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-                const uploadId = (formData && formData.roNumber) ? formData.roNumber : ('ro_' + Date.now());
-
                 const fd = new FormData();
-                fd.append('id', uploadId);
-                fd.append('maxFiles', '10');
-                fd.append(`${fieldId}_${uniqueId}`, blob, filename);
+                fd.append('file', blob, filename);
+                fd.append('hosted', 'false'); // Must be false when uploading binary data
 
                 try {
-                    const response = await fetch(`${GHL_CONFIG.baseUrl}/locations/${GHL_CONFIG.locationId}/customFields/upload`, {
+                    const response = await fetch(`${GHL_CONFIG.baseUrl}/medias/upload-file`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
@@ -12699,22 +12684,16 @@
                     });
 
                     if (response.ok) {
-                        const result = await response.json();
-                        let uploadedUrl = null;
-                        if (result.uploadedFiles) {
-                            uploadedUrl = Object.values(result.uploadedFiles)[0];
-                        } else if (result.meta && Array.isArray(result.meta)) {
-                            uploadedUrl = result.meta[0]?.url;
-                        }
-
-                        if (uploadedUrl) {
-                            categoryUrls[cat].push({ url: uploadedUrl, label: photo.label || filename });
+                        const json = await response.json();
+                        if (json.url) {
+                            if (!categoryUrls[cat]) categoryUrls[cat] = [];
+                            categoryUrls[cat].push({ url: json.url, label: photo.label || filename });
                         }
                     } else {
-                        console.warn(`GHL Custom Field Upload failed for ${filename}:`, await response.text());
+                        console.warn(`GHL Upload failed for ${filename}:`, await response.text());
                     }
                 } catch (e) {
-                    console.error('GHL Custom Field Upload error:', e);
+                    console.error('GHL Upload error:', e);
                 }
             });
 
@@ -12799,20 +12778,19 @@
             if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
             if (formData.color && GHL_CONFIG.customFields.color) customFields.push({ id: GHL_CONFIG.customFields.color, value: formData.color });
 
-            // Dump photo URLs to specific custom fields
-            // Map raw photo URLs to the new Contact FILE_UPLOAD array fields
+            // Dump photo URLs to specific TEXT custom fields
             if (formData.categoryUrls) {
                 if (GHL_CONFIG.customFields.photo_voil && formData.categoryUrls.voil?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_voil, value: formData.categoryUrls.voil.map(p => p.url) });
+                    customFields.push({ id: GHL_CONFIG.customFields.photo_voil, value: formData.categoryUrls.voil.map(p => p.url).join('\n') });
                 }
                 if (GHL_CONFIG.customFields.photo_conditioning && formData.categoryUrls.conditioning?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_conditioning, value: formData.categoryUrls.conditioning.map(p => p.url) });
+                    customFields.push({ id: GHL_CONFIG.customFields.photo_conditioning, value: formData.categoryUrls.conditioning.map(p => p.url).join('\n') });
                 }
                 if (GHL_CONFIG.customFields.photo_upd && formData.categoryUrls.upd?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_upd, value: formData.categoryUrls.upd.map(p => p.url) });
+                    customFields.push({ id: GHL_CONFIG.customFields.photo_upd, value: formData.categoryUrls.upd.map(p => p.url).join('\n') });
                 }
                 if (GHL_CONFIG.customFields.photo_scope && formData.categoryUrls.scope?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_scope, value: formData.categoryUrls.scope.map(p => p.url) });
+                    customFields.push({ id: GHL_CONFIG.customFields.photo_scope, value: formData.categoryUrls.scope.map(p => p.url).join('\n') });
                 }
             }
 
@@ -14172,7 +14150,8 @@
         // ==================== FORM SUBMISSION ====================
         async function submitData(photoUrls) {
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerHTML = '⏳ Submitting to Airtable...';
+            submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Submitting to Airtable...';
+            refreshIcons();
             submitBtn.disabled = true;
 
             // Capture selected GHL pipeline before form data is collected
@@ -14261,11 +14240,13 @@
 
                     // Submit to GHL CRM with selected pipeline
                     try {
-                        submitBtn.innerHTML = '⏳ Syncing to GHL (Uploading Photos)...';
-                        const ghlUploadResult = await uploadAllPhotosToGHL(ghlFormData);
+                        submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Uploading Photos)...';
+                        refreshIcons();
+                        const ghlUploadResult = await uploadAllPhotosToGHL();
                         ghlFormData.categoryUrls = ghlUploadResult.categoryUrls;
 
-                        submitBtn.innerHTML = '⏳ Syncing to GHL (Creating Contact & Opportunity)...';
+                        submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Creating Contact & Opportunity)...';
+                        refreshIcons();
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
                             showToast('<i data-lucide="check-circle" class="lucide-icon"></i> GHL opportunity created', 'success');
@@ -14799,6 +14780,7 @@
             };
             const total = parts.length;
 
+            refreshIcons();
             // Populate Progress Tracker
             const progressEl = document.getElementById('progressTracker');
             if (total > 0) {
@@ -15519,6 +15501,8 @@
             // Reset status
             const statusEl = document.getElementById('recordContractStatus');
             if (statusEl) statusEl.style.display = 'none';
+
+            refreshIcons();
 
             // Show modal
             document.getElementById('recordDetailModal').classList.add('show');

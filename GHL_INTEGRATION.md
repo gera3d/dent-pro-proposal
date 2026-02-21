@@ -61,29 +61,16 @@ These are the custom field IDs for the GHL location `AAzBZNLXS4rdwhG76MLi`:
 | RO Number | `cHqj3TzHR1qipS5zXv4L` | Contact + Opportunity |
 | Color | `ljDkfmAAhoJFkZuUii0C` | Contact + Opportunity |
 
-### Contact Photo Fields (TEXT — URLs)
-
-| Field | GHL ID |
-|-------|--------|
-| Damage Photo - VOIL | `oF2Zc0DkXXlS75vMlvI7` |
-| Damage Photo - Conditioning | `S8P54P2H4tQZ9HqB6W3o` |
-| Damage Photo - UPD | `s07tGv76Nst1wU5zLqC8` |
-| Damage Photo - Scope | `L9E1Vq9g8xNj8kM5A1qT` |
-
-### Opportunity Photo Fields (FILE_UPLOAD — viewable images)
+### Contact Photo Fields (FILE_UPLOAD — viewable image galleries)
 
 | Field | GHL ID | Max Files |
 |-------|--------|-----------|
-| VOIL Photos | `8uvGSwKa9N9lWYJUtqaC` | 10 |
-| Conditioning Photos | `ubXghjT46O1LI3vqZHrN` | 10 |
-| UPD Photos | `kkKtUxTtRiMAaoiy7hdP` | 10 |
-| Scope Photos | `zoJUdBhfiQwlyKISosQ0` | 10 |
+| VOIL Gallery | `Oy4NbiWhcxoV3IOlq9Ar` | 10 |
+| Conditioning Gallery | `pDMArE3EzFAIPD7EHldp` | 10 |
+| UPD Gallery | `z29ukzypNDkDTMOVvVxq` | 10 |
+| Scope Gallery | `6so9X9FfOoO9JAbSFrHo` | 10 |
 
-**Upload endpoint:** `POST /locations/{locationId}/customFields/upload`
-- Content-Type: `multipart/form-data`
-- Form field `id`: Opportunity ID
-- File keys: `{fieldId}_{uuid}` format
-- Photos appear as viewable thumbnails on the Opportunity card
+**Note on Opportunity `FILE_UPLOAD` fields:** As of Feb 2026, the GHL Opportunity V2 API (`PUT /opportunities/{id}`) contains a severe backend bug where it silently discards `FILE_UPLOAD` array payloads, preventing image galleries from being attached to Opportunities natively. Therefore, all photo galleries are attached to the **Contact** record instead, which properly supports arrays of URLs.
 
 ## API Limitations & Gotchas
 

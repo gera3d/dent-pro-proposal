@@ -13045,8 +13045,59 @@
 
                     if (response.ok) {
                         const result = await response.json();
-                        console.log(`✅ Uploaded ${blobs.length} ${cat.toUpperCase()} photo(s) to opportunity`, result);
-                        totalUploaded += blobs.length;
+                        console.log(`Uploaded ${blobs.length} ${cat.toUpperCase()} photo(s) to GHL storage:`, result);
+
+                        // Extract the hosted URLs from the GHL response
+                        let uploadedUrls = [];
+                        if (result.uploadedFiles) {
+                            uploadedUrls = Object.values(result.uploadedFiles);
+                        } else if (result.meta && Array.isArray(result.meta)) {
+                            // Fallback in case response structure changes
+                            uploadedUrls = result.meta.map(m => m.url).filter(Boolean);
+                        }
+
+                        // GHL Opportunity V2 API bug/quirk:
+                        // The upload endpoint doesn't automatically attach files.
+                        // Furthermore, PUT /opportunities rejects array payloads for FILE_UPLOAD fields.
+                        // The ONLY way to attach multiple files is to sequentially PUT each URL as a string `value`,
+                        // which GHL natively "appends" to its internal file array.
+                        for (const fileUrl of uploadedUrls) {
+                            if (!fileUrl) continue;
+
+                            try {
+                                const attachResponse = await fetch(
+                                    `${GHL_CONFIG.baseUrl}/opportunities/${opportunityId}`,
+                                    {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                                            'Version': '2021-07-28',
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            customFields: [
+                                                {
+                                                    id: fieldId,
+                                                    value: fileUrl
+                                                }
+                                            ]
+                                        })
+                                    }
+                                );
+
+                                if (!attachResponse.ok) {
+                                    console.error(`Status ${attachResponse.status} while attaching ${fileUrl}`);
+                                    const errText = await attachResponse.text();
+                                    console.error('Attach error response:', errText);
+                                    totalErrors++;
+                                } else {
+                                    totalUploaded++;
+                                }
+                            } catch (attachErr) {
+                                console.error(`Error attaching ${fileUrl}:`, attachErr);
+                                totalErrors++;
+                            }
+                        }
                     } else {
                         const errText = await response.text();
                         console.error(`❌ Opportunity photo upload failed for ${cat}:`, response.status, errText);

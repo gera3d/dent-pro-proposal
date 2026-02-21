@@ -12627,16 +12627,11 @@
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
                 ro_number: 'cHqj3TzHR1qipS5zXv4L',
                 color: 'ljDkfmAAhoJFkZuUii0C',
-                // Extracted from GHL API script
-                photo_voil: 'oF2Zc0DkXXlS75vMlvI7',
-                photo_conditioning: 'S8P54P2H4tQZ9HqB6W3o',
-                photo_upd: 's07tGv76Nst1wU5zLqC8',
-                photo_scope: 'L9E1Vq9g8xNj8kM5A1qT',
-                // Opportunity-level FILE_UPLOAD fields (created by create-opp-photo-fields.js)
-                opp_photo_voil: '8uvGSwKa9N9lWYJUtqaC',
-                opp_photo_conditioning: 'ubXghjT46O1LI3vqZHrN',
-                opp_photo_upd: 'kkKtUxTtRiMAaoiy7hdP',
-                opp_photo_scope: 'zoJUdBhfiQwlyKISosQ0'
+                // Contact-level FILE_UPLOAD fields (to securely host image gallery arrays)
+                photo_voil: 'Oy4NbiWhcxoV3IOlq9Ar',
+                photo_conditioning: 'pDMArE3EzFAIPD7EHldp',
+                photo_upd: 'z29ukzypNDkDTMOVvVxq',
+                photo_scope: '6so9X9FfOoO9JAbSFrHo'
             },
             // Documents & Contracts via GHL Proposals API
             // GET  /proposals/templates       — list document templates
@@ -12648,8 +12643,8 @@
             }
         };
 
-        async function uploadAllPhotosToGHL() {
-            if (selectedPhotos.length === 0) return { categoryUrls: {}, categoryBlobs: {} };
+        async function uploadAllPhotosToGHL(formData) {
+            if (selectedPhotos.length === 0) return { categoryUrls: {} };
 
             showToast(`<i data-lucide="rocket" class="lucide-icon text-brand-primary"></i> Uploading ${selectedPhotos.length} photos to GoHighLevel...`, 'info');
 
@@ -12660,17 +12655,21 @@
                 scope: []
             };
 
-            // Preserve blobs for Opportunity FILE_UPLOAD fields
-            const categoryBlobs = {
-                voil: [],
-                conditioning: [],
-                upd: [],
-                scope: []
-            };
-
             const promises = selectedPhotos.map(async (photo, index) => {
                 const cat = photo.category || 'scope';
                 const filename = photo.name || `photo_${cat}_${index}.jpg`;
+
+                let fieldId = null;
+                if (cat === 'voil') fieldId = GHL_CONFIG.customFields.photo_voil;
+                else if (cat === 'conditioning') fieldId = GHL_CONFIG.customFields.photo_conditioning;
+                else if (cat === 'upd') fieldId = GHL_CONFIG.customFields.photo_upd;
+                else if (cat === 'scope') fieldId = GHL_CONFIG.customFields.photo_scope;
+
+                // If there's no mapped custom field, skip this photo upload
+                if (!fieldId) {
+                    console.warn(`No custom field mapping found for category: ${cat}`);
+                    return;
+                }
 
                 // convert base64 to Blob
                 const binaryData = atob(photo.base64Data);
@@ -12681,16 +12680,16 @@
                 }
                 const blob = new Blob([bytes], { type: 'image/jpeg' });
 
-                // Save blob for later Opportunity upload
-                if (!categoryBlobs[cat]) categoryBlobs[cat] = [];
-                categoryBlobs[cat].push({ blob, filename });
+                const uniqueId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+                const uploadId = (formData && formData.roNumber) ? formData.roNumber : ('ro_' + Date.now());
 
                 const fd = new FormData();
-                fd.append('file', blob, filename);
-                fd.append('hosted', 'false'); // Must be false when uploading binary data
+                fd.append('id', uploadId);
+                fd.append('maxFiles', '10');
+                fd.append(`${fieldId}_${uniqueId}`, blob, filename);
 
                 try {
-                    const response = await fetch(`${GHL_CONFIG.baseUrl}/medias/upload-file`, {
+                    const response = await fetch(`${GHL_CONFIG.baseUrl}/locations/${GHL_CONFIG.locationId}/customFields/upload`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
@@ -12700,21 +12699,27 @@
                     });
 
                     if (response.ok) {
-                        const json = await response.json();
-                        if (json.url) {
-                            if (!categoryUrls[cat]) categoryUrls[cat] = [];
-                            categoryUrls[cat].push({ url: json.url, label: photo.label || filename });
+                        const result = await response.json();
+                        let uploadedUrl = null;
+                        if (result.uploadedFiles) {
+                            uploadedUrl = Object.values(result.uploadedFiles)[0];
+                        } else if (result.meta && Array.isArray(result.meta)) {
+                            uploadedUrl = result.meta[0]?.url;
+                        }
+
+                        if (uploadedUrl) {
+                            categoryUrls[cat].push({ url: uploadedUrl, label: photo.label || filename });
                         }
                     } else {
-                        console.warn(`GHL Upload failed for ${filename}:`, await response.text());
+                        console.warn(`GHL Custom Field Upload failed for ${filename}:`, await response.text());
                     }
                 } catch (e) {
-                    console.error('GHL Upload error:', e);
+                    console.error('GHL Custom Field Upload error:', e);
                 }
             });
 
             await Promise.all(promises);
-            return { categoryUrls, categoryBlobs };
+            return { categoryUrls };
         }
 
         async function submitToGHL(formData, pipelineKey = 'repair_tracker') {
@@ -14257,9 +14262,8 @@
                     // Submit to GHL CRM with selected pipeline
                     try {
                         submitBtn.innerHTML = '⏳ Syncing to GHL (Uploading Photos)...';
-                        const ghlUploadResult = await uploadAllPhotosToGHL();
+                        const ghlUploadResult = await uploadAllPhotosToGHL(ghlFormData);
                         ghlFormData.categoryUrls = ghlUploadResult.categoryUrls;
-                        ghlFormData.categoryBlobs = ghlUploadResult.categoryBlobs;
 
                         submitBtn.innerHTML = '⏳ Syncing to GHL (Creating Contact & Opportunity)...';
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);

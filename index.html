@@ -13886,11 +13886,6 @@
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
                 ro_number: 'cHqj3TzHR1qipS5zXv4L',
                 color: 'ljDkfmAAhoJFkZuUii0C',
-                // Extracted from GHL API script (TEXT fields to store URLs)
-                photo_voil: 'oF2Zc0DkXXlS75vMlvI7',
-                photo_conditioning: 'S8P54P2H4tQZ9HqB6W3o',
-                photo_upd: 's07tGv76Nst1wU5zLqC8',
-                photo_scope: 'L9E1Vq9g8xNj8kM5A1qT'
             },
             // Documents & Contracts via GHL Proposals API
             // GET  /proposals/templates       — list document templates
@@ -14035,22 +14030,6 @@
             if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
             if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
             if (formData.color && GHL_CONFIG.customFields.color) customFields.push({ id: GHL_CONFIG.customFields.color, value: formData.color });
-
-            // Dump photo URLs to specific TEXT custom fields
-            if (formData.categoryUrls) {
-                if (GHL_CONFIG.customFields.photo_voil && formData.categoryUrls.voil?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_voil, value: formData.categoryUrls.voil.map(p => p.url).join('\n') });
-                }
-                if (GHL_CONFIG.customFields.photo_conditioning && formData.categoryUrls.conditioning?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_conditioning, value: formData.categoryUrls.conditioning.map(p => p.url).join('\n') });
-                }
-                if (GHL_CONFIG.customFields.photo_upd && formData.categoryUrls.upd?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_upd, value: formData.categoryUrls.upd.map(p => p.url).join('\n') });
-                }
-                if (GHL_CONFIG.customFields.photo_scope && formData.categoryUrls.scope?.length > 0) {
-                    customFields.push({ id: GHL_CONFIG.customFields.photo_scope, value: formData.categoryUrls.scope.map(p => p.url).join('\n') });
-                }
-            }
 
             return customFields;
         }

@@ -61,16 +61,6 @@ These are the custom field IDs for the GHL location `AAzBZNLXS4rdwhG76MLi`:
 | RO Number | `cHqj3TzHR1qipS5zXv4L` | Contact + Opportunity |
 | Color | `ljDkfmAAhoJFkZuUii0C` | Contact + Opportunity |
 
-### Contact Photo Fields (TEXT — URLs)
-
-| Field | GHL ID |
-|-------|--------|
-| Damage Photo - VOIL | `oF2Zc0DkXXlS75vMlvI7` |
-| Damage Photo - Conditioning | `S8P54P2H4tQZ9HqB6W3o` |
-| Damage Photo - UPD | `s07tGv76Nst1wU5zLqC8` |
-| Damage Photo - Scope | `L9E1Vq9g8xNj8kM5A1qT` |
-
-**Image Gallery Limitation:** Do **not** attempt to change these to `FILE_UPLOAD` fields. The GHL API strictly hides custom field image uploads from the UI. Instead, the raw image URLs are stored in these Text fields, and a beautiful HTML gallery note is pinned directly to the Contact's **Notes** tab upon submission.
 
 ## API Limitations & Gotchas
 

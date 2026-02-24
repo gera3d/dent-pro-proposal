@@ -3451,25 +3451,21 @@
             left: -99999px;
             width: 612px;
             height: 792px;
-            background: white;
+            background: #0a0a0a;
             padding: 36px;
             font-family: Arial, sans-serif;
             font-size: 9pt;
-            color: black;
+            color: #ffffff;
             overflow: hidden;
         }
 
-        #pdfTemplate h1 {
-            margin: 0;
-            font-size: 18pt;
-            color: #fff;
-        }
-
-        #pdfTemplate h3 {
-            margin: 0 0 6px 0;
-            font-size: 10pt;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 4px;
+        #pdfTemplate .pdf-section-label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1A6CFF;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
         #pdfTemplate table {
@@ -3480,13 +3476,19 @@
 
         #pdfTemplate th,
         #pdfTemplate td {
-            border: 1px solid #ccc;
-            padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 5px;
+            color: rgba(255, 255, 255, 0.85);
         }
 
         #pdfTemplate th {
-            background: #f0f0f0;
+            background: rgba(26, 108, 255, 0.25);
+            color: rgba(255, 255, 255, 0.95);
             font-weight: bold;
+        }
+
+        #pdfTemplate tbody tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         /* ==================== CONTRACT PANEL STYLES ==================== */
@@ -5928,7 +5930,6 @@
 
     <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- ZIP Compression Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
@@ -7656,34 +7657,8 @@
 
             <!-- PDF EXPORT SECTION -->
             <div class="section export-section">
-                <div class="section-title"><i data-lucide="file-text" class="lucide-icon"></i> PDF Export Options</div>
-
-                <div class="export-options">
-                    <!-- Include Text Toggle -->
-                    <div class="export-checkbox selected" onclick="toggleExportCheckbox(this)">
-                        <input type="checkbox" id="includeTextVersion" checked>
-                        <label for="includeTextVersion">Include detailed damage table</label>
-                    </div>
-
-                    <!-- Photo Handling -->
-                    <div class="form-group">
-                        <label>Photo Handling</label>
-                        <div class="photo-mode-toggle">
-                            <div class="photo-mode-option" data-mode="thumbnails"
-                                onclick="selectPhotoMode('thumbnails')">
-                                <i data-lucide="image" class="lucide-icon"></i> Thumbnails in PDF
-                            </div>
-                            <div class="photo-mode-option active" data-mode="attached"
-                                onclick="selectPhotoMode('attached')">
-                                <i data-lucide="paperclip" class="lucide-icon"></i> Photos Attached Separately
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Export Button -->
                 <button type="button" class="export-btn" onclick="generatePDF()">
-                    <span><i data-lucide="file-down" class="lucide-icon"></i></span> Export as PDF
+                    <span><i data-lucide="file-down" class="lucide-icon"></i></span> Download PDF
                 </button>
 
                 <!-- Airtable Upload Button -->
@@ -8078,41 +8053,45 @@
 
         <!-- HIDDEN PDF TEMPLATE -->
         <div id="pdfTemplate">
-            <!-- HEADER -->
-            <div
-                style="text-align: center; border-bottom: 2px solid #1A6CFF; padding-bottom: 8px; margin-bottom: 12px;">
-                <h1>DENT EXPERTS PDR SCOPE</h1>
-                <p style="margin: 4px 0 0 0; font-size: 8pt; color: #666;">
-                    RO#: <span id="pdf-ro"></span> | Estimator: <span id="pdf-estimator"></span> | Date: <span
-                        id="pdf-date"></span>
-                </p>
+            <!-- HEADER — full-width gradient banner -->
+            <div style="background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%); padding: 14px 24px; margin: -36px -36px 16px -36px; display: flex; align-items: center; justify-content: space-between;">
+                <img src="logo.webp" alt="Dent Experts" style="height: 42px; width: auto; filter: brightness(0) invert(1);">
+                <div style="text-align: right;">
+                    <div style="color: #ffffff; font-size: 11pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">PDR Damage Scope</div>
+                    <div style="color: rgba(255,255,255,0.65); font-size: 7pt; margin-top: 4px;">
+                        RO#: <span id="pdf-ro"></span> &nbsp;&bull;&nbsp; Est: <span id="pdf-estimator"></span> &nbsp;&bull;&nbsp; <span id="pdf-date"></span>
+                    </div>
+                </div>
             </div>
 
-            <!-- VEHICLE INFO (2-column grid) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 8pt;">
-                <div><strong>VIN:</strong> <span id="pdf-vin"></span></div>
-                <div><strong>Year:</strong> <span id="pdf-year"></span></div>
-                <div><strong>Make:</strong> <span id="pdf-make"></span></div>
-                <div><strong>Model:</strong> <span id="pdf-model"></span></div>
-                <div><strong>Color:</strong> <span id="pdf-color"></span></div>
-                <div><strong>Trim:</strong> <span id="pdf-trim"></span></div>
-                <div><strong>Insured:</strong> <span id="pdf-insured"></span></div>
-                <div><strong>Carrier:</strong> <span id="pdf-carrier"></span></div>
-                <div><strong>Claim #:</strong> <span id="pdf-claim"></span></div>
-                <div><strong>Odometer:</strong> <span id="pdf-odometer"></span></div>
+            <!-- VEHICLE INFO card -->
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                <div class="pdf-section-label">Vehicle Information</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; font-size: 8pt;">
+                    <div><span style="color: rgba(255,255,255,0.4);">VIN:</span> <span id="pdf-vin"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Year:</span> <span id="pdf-year"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Make:</span> <span id="pdf-make"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Model:</span> <span id="pdf-model"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Color:</span> <span id="pdf-color"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Trim:</span> <span id="pdf-trim"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Insured:</span> <span id="pdf-insured"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Carrier:</span> <span id="pdf-carrier"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Claim #:</span> <span id="pdf-claim"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Odometer:</span> <span id="pdf-odometer"></span></div>
+                </div>
             </div>
 
             <!-- DAMAGE ASSESSMENT TABLE -->
             <div id="pdf-damage-section" style="margin-bottom: 12px;">
-                <h3>Damage Assessment</h3>
+                <div class="pdf-section-label">Damage Assessment</div>
                 <table>
                     <thead>
-                        <tr style="background: #f0f0f0;">
+                        <tr>
                             <th style="text-align: left;">Panel</th>
                             <th style="text-align: center; width: 50px;">DC</th>
                             <th style="text-align: center; width: 50px;">OS</th>
-                            <th style="text-align: left;">R&I</th>
-                            <th style="text-align: center; width: 40px;">R&R</th>
+                            <th style="text-align: left;">R&amp;I</th>
+                            <th style="text-align: center; width: 40px;">R&amp;R</th>
                         </tr>
                     </thead>
                     <tbody id="pdf-panel-rows">
@@ -8123,7 +8102,7 @@
 
             <!-- PHOTOS -->
             <div id="pdf-photos-section" style="margin-bottom: 12px;">
-                <h3>Photos</h3>
+                <div class="pdf-section-label">Photos</div>
                 <div id="pdf-photo-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
                     <!-- Photos or message inserted via JS -->
                 </div>
@@ -8131,14 +8110,13 @@
 
             <!-- NOTES -->
             <div id="pdf-notes-section" style="margin-bottom: 12px;">
-                <h3>Notes</h3>
-                <p id="pdf-notes-text" style="font-size: 8pt; margin: 0; white-space: pre-wrap;"></p>
+                <div class="pdf-section-label">Notes</div>
+                <p id="pdf-notes-text" style="font-size: 8pt; margin: 0; white-space: pre-wrap; color: rgba(255,255,255,0.8);"></p>
             </div>
 
             <!-- FOOTER -->
-            <div
-                style="position: absolute; bottom: 24px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: #999; border-top: 1px solid #ddd; padding-top: 6px;">
-                Generated by Dent Experts PDR Scope App | <span id="pdf-timestamp"></span>
+            <div style="position: absolute; bottom: 20px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+                Generated by Dent Experts PDR Scope App &nbsp;&bull;&nbsp; <span id="pdf-timestamp"></span>
             </div>
         </div>
     </div>
@@ -12634,22 +12612,9 @@
         // =============================================
 
         // Global config for PDF export
-        let pdfPhotoMode = 'attached'; // 'thumbnails' or 'attached'
+        const pdfPhotoMode = 'attached'; // photos always go on full-size separate pages
 
-        // Toggle export checkbox visual state
-        function toggleExportCheckbox(element) {
-            const checkbox = element.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            element.classList.toggle('selected', checkbox.checked);
-        }
 
-        // Select photo mode
-        function selectPhotoMode(mode) {
-            pdfPhotoMode = mode;
-            document.querySelectorAll('.photo-mode-option').forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.mode === mode);
-            });
-        }
 
         // =============================================
         // PHOTO PAGES FOR PDF (2x2 grid with labels)
@@ -12658,10 +12623,10 @@
         async function addPhotoPages(pdf, photos) {
             const catOrder = ['voil', 'conditioning', 'upd', 'scope'];
             const catTitles = {
-                voil: '<i data-lucide="car-front" class="lucide-icon"></i> VOIL — Vehicle Identification & Overview',
-                conditioning: '<i data-lucide="wrench" class="lucide-icon"></i> CONDITIONING — Potential Total Loss',
-                upd: '<i data-lucide="alert-triangle" class="lucide-icon"></i> UPD — Unrelated Prior Damage',
-                scope: '<i data-lucide="cloud-lightning" class="lucide-icon"></i> SCOPE — Storm Damage'
+                voil: 'VOIL \u2014 Vehicle Identification & Overview',
+                conditioning: 'CONDITIONING \u2014 Potential Total Loss',
+                upd: 'UPD \u2014 Unrelated Prior Damage',
+                scope: 'SCOPE \u2014 Storm Damage'
             };
 
             const pageWidth = 612;
@@ -12712,7 +12677,7 @@
                     const row = Math.floor(i / 2);
                     const x = margin + col * (photoWidth + margin);
                     const y = topOffset + row * (gridHeight + margin);
-                    await addPhotoWithLabel(pdf, firstBatch[i], x, y, photoWidth, gridHeight);
+                    await addPhotoWithLabel(pdf, firstBatch[i], x, y, photoWidth, gridHeight, [r, g, b]);
                 }
 
                 // Remaining photos, 4 per page
@@ -12728,42 +12693,41 @@
                     const posInGrid = i % 4;
                     const x = margin + (posInGrid % 2) * (photoWidth + margin);
                     const y = margin + Math.floor(posInGrid / 2) * (photoHeight + margin);
-                    await addPhotoWithLabel(pdf, rest[i], x, y, photoWidth, photoHeight);
+                    await addPhotoWithLabel(pdf, rest[i], x, y, photoWidth, photoHeight, [r, g, b]);
                 }
             }
         }
 
-        async function addPhotoWithLabel(pdf, photo, x, y, width, height) {
+        async function addPhotoWithLabel(pdf, photo, x, y, width, height, accentColor = [26, 108, 255]) {
             try {
-                // Create image from base64
                 const imgData = `data:${photo.mimeType};base64,${photo.base64Data}`;
-
-                // Add image to PDF
-                pdf.addImage(imgData, 'JPEG', x, y, width, height - 25, undefined, 'FAST');
-
-                // Add dark banner for label at bottom
                 const labelHeight = 25;
+
+                pdf.addImage(imgData, 'JPEG', x, y, width, height - labelHeight, undefined, 'FAST');
+
+                // Dark label banner
                 pdf.setFillColor(0, 0, 0);
                 pdf.rect(x, y + height - labelHeight, width, labelHeight, 'F');
 
-                // Add green accent line at top of label
-                pdf.setDrawColor(76, 217, 100); // #1A6CFF
+                // Accent line in category color
+                pdf.setDrawColor(...accentColor);
                 pdf.setLineWidth(2);
                 pdf.line(x, y + height - labelHeight, x + width, y + height - labelHeight);
 
-                // Build label text: prefer explicit label, then fall back to category + filename
+                // Build label text
                 let label = photo.label;
                 if (!label) {
                     const catNames = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
                     const catTag = catNames[photo.category] || 'SCOPE';
-                    label = photo.name ? `${catTag} — ${photo.name}` : catTag;
+                    label = photo.name ? `${catTag} - ${photo.name}` : catTag;
                 }
 
-                // Add label text
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(10);
+                // Truncate to fit within photo width
                 pdf.setFont('helvetica', 'normal');
-                pdf.text(label, x + 8, y + height - 8);
+                pdf.setFontSize(9);
+                const labelText = pdf.splitTextToSize(label, width - 16)[0] || '';
+                pdf.setTextColor(255, 255, 255);
+                pdf.text(labelText, x + 8, y + height - 8);
             } catch (err) {
                 console.error('Error adding photo to PDF:', err);
             }
@@ -13046,6 +13010,79 @@
                 finalPhotos.push(...catPhotos);
             }
             return finalPhotos;
+        }
+
+        /**
+         * Compress an arbitrary photos array into a ZIP file (used for local record downloads)
+         * @param {Array} photos - array of photo objects with base64Data, category, name/label
+         * @param {string} roNumber
+         * @returns {Promise<Blob>} ZIP file blob
+         */
+        async function createPhotosZipFromArray(photos, roNumber) {
+            if (typeof JSZip === 'undefined') throw new Error('JSZip library not loaded');
+            const realPhotos = (photos || []).filter(p => !p.isSeparator && p.base64Data);
+            if (realPhotos.length === 0) return null;
+
+            const zip = new JSZip();
+            const timestamp = new Date().toISOString().slice(0, 10);
+            const root = zip.folder(`photos_${roNumber || 'draft'}_${timestamp}`);
+
+            const catFolderNames = {
+                voil: '1_VOIL_Vehicle_ID',
+                conditioning: '2_COND_Total_Loss',
+                upd: '3_UPD_Prior_Damage',
+                scope: '4_SCOPE_Storm_Damage'
+            };
+            const catCounters = {};
+
+            for (const photo of realPhotos) {
+                const cat = (photo.category && catFolderNames[photo.category]) ? photo.category : 'scope';
+                catCounters[cat] = (catCounters[cat] || 0) + 1;
+                const idx = catCounters[cat];
+
+                let baseName = photo.name || photo.label || `Photo_${idx}.jpg`;
+                let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');
+                if (!safeBase.toLowerCase().endsWith('.jpg')) safeBase += '.jpg';
+                const filename = `${String(idx).padStart(2, '0')} - ${safeBase}`;
+
+                const binaryData = atob(photo.base64Data);
+                const bytes = new Uint8Array(binaryData.length);
+                for (let j = 0; j < binaryData.length; j++) bytes[j] = binaryData.charCodeAt(j);
+
+                const folderLabel = catFolderNames[cat] || '5_Other';
+                root.folder(folderLabel).file(filename, bytes, { binary: true });
+            }
+
+            return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+        }
+
+        /**
+         * Download locally stored photos for a record as a ZIP (no Airtable/GHL involved)
+         */
+        async function downloadLocalRecordPhotos(roNumber, zipFilename) {
+            showToast('<i data-lucide="package" class="lucide-icon"></i> Building photo package...', 'info');
+            try {
+                const forms = getSavedForms();
+                const localForm = forms['form_' + roNumber];
+                const photos = (localForm && localForm.photos) ? localForm.photos : [];
+
+                if (photos.length === 0) {
+                    showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> No local photos found for this record', 'warning');
+                    return;
+                }
+
+                const zipBlob = await createPhotosZipFromArray(photos, roNumber);
+                if (!zipBlob) {
+                    showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> No photos to package', 'warning');
+                    return;
+                }
+
+                await saveFileToDevice(zipBlob, zipFilename);
+                showToast(`<i data-lucide="check-circle" class="lucide-icon"></i> Downloaded: ${zipFilename}`, 'success');
+            } catch (err) {
+                console.error('Local photo download error:', err);
+                showToast('<i data-lucide="x-circle" class="lucide-icon"></i> Failed to create photo package', 'error');
+            }
         }
 
         /**
@@ -13374,7 +13411,11 @@
                             showToast(`<i data-lucide="send" class="lucide-icon"></i> Uploading ${zipSizeMB}MB photo package...`, 'info');
 
                             const timestamp = new Date().toISOString().slice(0, 10);
-                            const zipFilename = `photos_${formData.roNumber || 'scope'}_${timestamp}.zip`;
+                            const _roNum = (formData.roNumber || 'scope').replace(/\s+/g, '-');
+                            const _yr = formData.year || '';
+                            const _mk = (formData.make || '').replace(/\s+/g, '-');
+                            const _mdl = (formData.model || '').replace(/\s+/g, '-');
+                            const zipFilename = `DentScope_Photos_${[_roNum, _yr, _mk, _mdl].filter(Boolean).join('_')}_${timestamp}.zip`;
 
                             // Try Google Drive first if configured
                             updatePhotoUploadProgress(50, '<i data-lucide="link" class="lucide-icon"></i> Connecting to upload service...');
@@ -13580,204 +13621,288 @@
             showToast('<i data-lucide="wifi-off" class="lucide-icon"></i> You are offline. Data will sync when connected.', 'info');
         });
 
+        // Load logo.webp and return a white-tinted PNG data URL for embedding in PDF
+        async function loadWhiteLogoDataUrl() {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.filter = 'brightness(0) invert(1)';
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/png'));
+                    } catch (e) {
+                        resolve(null);
+                    }
+                };
+                img.onerror = () => resolve(null);
+                img.src = 'logo.webp';
+            });
+        }
+
+        // Collect damaged panels from the form DOM
+        function collectDamagedPanels() {
+            const panels = [];
+            document.querySelectorAll('.panel-box').forEach(box => {
+                const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
+                const dcVal = box.querySelector('input[name$="_dc"]')?.value || '';
+                const osVal = box.querySelector('input[name$="_os"]')?.value || '';
+                const riItems = [];
+                box.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
+                    const label = cb.closest('.checkbox-item')?.querySelector('span')?.textContent?.trim();
+                    if (label && !label.includes('R&R')) riItems.push(label);
+                });
+                const rrChecked = box.querySelector('input[name$="_rr"]')?.checked || false;
+                if (dcVal || osVal || riItems.length > 0 || rrChecked) {
+                    panels.push({ name: panelName, dc: dcVal || '-', os: osVal || '-', ri: riItems.join(', ') || '-', rr: rrChecked ? 'Y' : '' });
+                }
+            });
+            return panels;
+        }
+
+        // Draw the cover/summary page directly with jsPDF (no html2canvas)
+        async function buildCoverPage(pdf, formData) {
+            const W = 612, H = 792, M = 36;
+            const CW = W - M * 2;
+
+            // ── Dark background ──────────────────────────────────────────
+            pdf.setFillColor(10, 10, 10);
+            pdf.rect(0, 0, W, H, 'F');
+
+            // ── Header band (solid brand blue) ───────────────────────────
+            const HEADER_H = 68;
+            pdf.setFillColor(26, 108, 255);
+            pdf.rect(0, 0, W, HEADER_H, 'F');
+            // Darker right strip for depth
+            pdf.setFillColor(12, 77, 156);
+            pdf.rect(W * 0.55, 0, W * 0.45, HEADER_H, 'F');
+
+            // ── Logo (white) ─────────────────────────────────────────────
+            const logoData = await loadWhiteLogoDataUrl();
+            if (logoData) {
+                pdf.addImage(logoData, 'PNG', M, 13, 110, 42);
+            } else {
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(18);
+                pdf.text('DENT EXPERTS', M, 46);
+            }
+
+            // ── Header right-side text ────────────────────────────────────
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(13);
+            pdf.setTextColor(255, 255, 255);
+            pdf.text('PDR DAMAGE SCOPE', W - M, 32, { align: 'right' });
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(8);
+            pdf.setTextColor(180, 200, 240);
+            const hSub = `RO#: ${formData.roNumber || 'N/A'}  \u2022  Est: ${formData.estimator || 'N/A'}  \u2022  ${new Date().toLocaleDateString()}`;
+            pdf.text(hSub, W - M, 50, { align: 'right' });
+
+            let y = HEADER_H + 14;
+
+            // ── Vehicle Info card ─────────────────────────────────────────
+            const VCARD_H = 100;
+            pdf.setFillColor(22, 22, 22);
+            pdf.setDrawColor(50, 55, 65);
+            pdf.setLineWidth(0.5);
+            pdf.roundedRect(M, y, CW, VCARD_H, 5, 5, 'FD');
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(7);
+            pdf.setTextColor(26, 108, 255);
+            pdf.text('VEHICLE INFORMATION', M + 10, y + 13);
+
+            const vFields = [
+                ['VIN', formData.vin],        ['Year', formData.year],
+                ['Make', formData.make],       ['Model', formData.model],
+                ['Color', formData.color],     ['Location', formData.location],
+                ['Insured', formData.insuredName], ['Carrier', formData.insuranceCompany],
+                ['Claim #', formData.claimNumber], ['Odometer', formData.odometer],
+            ];
+            const LABEL_W = 46;
+            const colHalfW = CW / 2 - 16; // max value width per column
+            const col1X = M + 10, col2X = M + CW / 2 + 6;
+            let fy = y + 26;
+            vFields.forEach(([label, val], i) => {
+                const x = i % 2 === 0 ? col1X : col2X;
+                if (i > 0 && i % 2 === 0) fy += 13;
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(7.5);
+                pdf.setTextColor(100, 110, 130);
+                pdf.text(label + ':', x, fy);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(215, 220, 230);
+                const valStr = pdf.splitTextToSize(String(val || '\u2014'), colHalfW - LABEL_W)[0] || '\u2014';
+                pdf.text(valStr, x + LABEL_W, fy);
+            });
+
+            y += VCARD_H + 12;
+
+            // ── Damage Assessment table ───────────────────────────────────
+            const includeTable = true;
+            if (includeTable) {
+                const panels = collectDamagedPanels();
+                if (panels.length > 0) {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(26, 108, 255);
+                    pdf.text('DAMAGE ASSESSMENT', M, y + 10);
+                    y += 16;
+
+                    const ROW_H = 16;
+                    const cols = [
+                        { label: 'Panel',  w: 178, align: 'left'   },
+                        { label: 'DC',     w: 44,  align: 'center'  },
+                        { label: 'OS',     w: 44,  align: 'center'  },
+                        { label: 'R&I',    w: 246, align: 'left'    },
+                        { label: 'R&R',    w: 28,  align: 'center'  },
+                    ];
+
+                    // Header row
+                    pdf.setFillColor(20, 38, 72);
+                    pdf.rect(M, y, CW, ROW_H, 'F');
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(7.5);
+                    pdf.setTextColor(180, 200, 240);
+                    let cx = M;
+                    cols.forEach(col => {
+                        const tx = col.align === 'center' ? cx + col.w / 2 : cx + 4;
+                        pdf.text(col.label, tx, y + 11, { align: col.align });
+                        cx += col.w;
+                    });
+                    y += ROW_H;
+
+                    // Data rows
+                    panels.forEach((panel, idx) => {
+                        pdf.setFillColor(idx % 2 === 0 ? 18 : 24, idx % 2 === 0 ? 18 : 24, idx % 2 === 0 ? 18 : 24);
+                        pdf.rect(M, y, CW, ROW_H, 'F');
+                        pdf.setDrawColor(40, 42, 48);
+                        pdf.setLineWidth(0.3);
+                        pdf.line(M, y + ROW_H, M + CW, y + ROW_H);
+
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(7.5);
+                        pdf.setTextColor(205, 210, 220);
+                        const vals = [panel.name, panel.dc, panel.os, panel.ri, panel.rr];
+                        cx = M;
+                        cols.forEach((col, ci) => {
+                            const rawVal = vals[ci] || '';
+                            const capped = pdf.splitTextToSize(rawVal, col.w - 8)[0] || '';
+                            const tx = col.align === 'center' ? cx + col.w / 2 : cx + 4;
+                            pdf.text(capped, tx, y + 11, { align: col.align });
+                            cx += col.w;
+                        });
+                        y += ROW_H;
+                    });
+                    y += 10;
+                }
+            }
+
+            // ── Photos section ────────────────────────────────────────────
+            const FOOTER_Y = H - 50; // keep content above footer area
+            if (selectedPhotos.length > 0 && y < FOOTER_Y) {
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(7);
+                pdf.setTextColor(26, 108, 255);
+                pdf.text('PHOTOS', M, y + 10);
+                y += 16;
+
+                if (pdfPhotoMode === 'thumbnails') {
+                    const THUMB_W = (CW - 8) / 3;
+                    const THUMB_H = 58;
+                    const maxRows = Math.max(1, Math.floor((FOOTER_Y - y) / (THUMB_H + 4)));
+                    const maxPhotos = maxRows * 3;
+                    const photosToShow = selectedPhotos.slice(0, maxPhotos);
+                    for (let i = 0; i < photosToShow.length; i++) {
+                        try {
+                            const photo = photosToShow[i];
+                            const imgSrc = `data:${photo.mimeType};base64,${photo.base64Data}`;
+                            const px = M + (i % 3) * (THUMB_W + 4);
+                            const py = y + Math.floor(i / 3) * (THUMB_H + 4);
+                            pdf.addImage(imgSrc, 'JPEG', px, py, THUMB_W, THUMB_H, undefined, 'FAST');
+                        } catch (e) { /* skip bad photo */ }
+                    }
+                    y += Math.ceil(photosToShow.length / 3) * (THUMB_H + 4) + 6;
+                } else {
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(130, 140, 155);
+                    pdf.text(`${selectedPhotos.length} photo(s) included on following pages`, M, y);
+                    y += 16;
+                }
+            }
+
+            // ── Notes ─────────────────────────────────────────────────────
+            const notes = document.getElementById('notes')?.value?.trim() || '';
+            if (notes && y < FOOTER_Y) {
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(7);
+                pdf.setTextColor(26, 108, 255);
+                pdf.text('NOTES', M, y + 10);
+                y += 16;
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(8);
+                pdf.setTextColor(200, 205, 215);
+                const LINE_H = 10;
+                const maxNoteLines = Math.floor((FOOTER_Y - y) / LINE_H);
+                const lines = pdf.splitTextToSize(notes, CW).slice(0, maxNoteLines);
+                if (lines.length > 0) pdf.text(lines, M, y);
+            }
+
+            // ── Footer ────────────────────────────────────────────────────
+            pdf.setDrawColor(45, 50, 60);
+            pdf.setLineWidth(0.5);
+            pdf.line(M, H - 24, W - M, H - 24);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7);
+            pdf.setTextColor(60, 65, 75);
+            pdf.text(`Generated by Dent Experts PDR Scope App  \u2022  ${new Date().toLocaleString()}`, W / 2, H - 12, { align: 'center' });
+        }
+
         // Main PDF generation function
         async function generatePDF() {
+            const exportBtn = document.querySelector('.export-btn');
+            const originalHTML = exportBtn.innerHTML;
             try {
                 haptic('medium');
-
-                // Disable button and show loading
-                const exportBtn = document.querySelector('.export-btn');
-                const originalHTML = exportBtn.innerHTML;
                 exportBtn.disabled = true;
                 exportBtn.innerHTML = '<span class="spinner"></span> Generating PDF...';
 
-                // Collect form data
                 const formData = collectFormData();
 
-                // Check if jsPDF is loaded
                 if (typeof window.jspdf === 'undefined') {
                     throw new Error('PDF library not loaded. Please refresh the page.');
                 }
 
-                // Populate the hidden template
-                populatePDFTemplate(formData);
-
-                // Wait a bit for DOM to update
-                await new Promise(resolve => setTimeout(resolve, 100));
-
-                // Render template to canvas
-                const template = document.getElementById('pdfTemplate');
-                const canvas = await html2canvas(template, {
-                    scale: 2,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    width: 612,
-                    height: 792
-                });
-
-                // Create PDF
                 const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'pt',
-                    format: 'letter'
-                });
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
 
-                // Add rendered image to PDF
-                const imgData = canvas.toDataURL('image/png');
-                pdf.addImage(imgData, 'PNG', 0, 0, 612, 792);
+                await buildCoverPage(pdf, formData);
 
-                // === ADD PHOTO PAGES (4 photos per page, 2x2 grid) ===
                 if (selectedPhotos.length > 0) {
                     await addPhotoPages(pdf, selectedPhotos);
                 }
 
-                // Share or download PDF
                 await sharePDF(pdf, formData);
 
-                // Reset button
                 exportBtn.disabled = false;
                 exportBtn.innerHTML = originalHTML;
 
             } catch (error) {
                 console.error('PDF generation error:', error);
                 showToast('<i data-lucide="x-circle" class="lucide-icon"></i> PDF generation failed: ' + error.message, 'error');
-
-                // Reset button
-                const exportBtn = document.querySelector('.export-btn');
                 exportBtn.disabled = false;
-                exportBtn.innerHTML = '<span><i data-lucide="file-down" class="lucide-icon"></i></span> Export as PDF';
+                exportBtn.innerHTML = originalHTML;
             }
         }
 
-        // Populate PDF template with form data
-        function populatePDFTemplate(formData) {
-            // Header info
-            document.getElementById('pdf-ro').textContent = formData.roNumber || 'N/A';
-            document.getElementById('pdf-estimator').textContent = formData.estimator || 'N/A';
-            document.getElementById('pdf-date').textContent = new Date().toLocaleDateString();
-
-            // Vehicle info
-            document.getElementById('pdf-vin').textContent = formData.vin || '';
-            document.getElementById('pdf-year').textContent = formData.year || '';
-            document.getElementById('pdf-make').textContent = formData.make || '';
-            document.getElementById('pdf-model').textContent = formData.model || '';
-            document.getElementById('pdf-color').textContent = formData.color || '';
-            document.getElementById('pdf-trim').textContent = formData.trim || '';
-            document.getElementById('pdf-insured').textContent = formData.insuredName || '';
-            document.getElementById('pdf-carrier').textContent = formData.insuranceCompany || '';
-            document.getElementById('pdf-claim').textContent = formData.claimNumber || '';
-            document.getElementById('pdf-odometer').textContent = formData.odometer || '';
-
-            // Damage assessment table
-            const includeTable = document.getElementById('includeTextVersion').checked;
-            const damageSection = document.getElementById('pdf-damage-section');
-
-            if (includeTable) {
-                damageSection.style.display = 'block';
-                const tbody = document.getElementById('pdf-panel-rows');
-                tbody.innerHTML = '';
-
-                // Get all panels with damage
-                const panels = [];
-                document.querySelectorAll('.panel-box').forEach(box => {
-                    const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
-                    const dcInput = box.querySelector('input[name$="_dc"]');
-                    const osInput = box.querySelector('input[name$="_os"]');
-                    const dcVal = dcInput ? dcInput.value : '';
-                    const osVal = osInput ? osInput.value : '';
-
-                    // Get R&I items
-                    const riItems = [];
-                    box.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
-                        const label = cb.closest('.checkbox-item')?.querySelector('span')?.textContent?.trim();
-                        if (label && !label.includes('R&R')) {
-                            riItems.push(label);
-                        }
-                    });
-
-                    // Get R&R status
-                    const rrCheckbox = box.querySelector('input[name$="_rr"]');
-                    const rrChecked = rrCheckbox ? rrCheckbox.checked : false;
-
-                    // Only add panels with some damage
-                    if (dcVal || osVal || riItems.length > 0 || rrChecked) {
-                        panels.push({
-                            name: panelName,
-                            dc: dcVal || '-',
-                            os: osVal || '-',
-                            ri: riItems.join(', ') || '-',
-                            rr: rrChecked ? '✓' : ''
-                        });
-                    }
-                });
-
-                // Add rows to table
-                panels.forEach(panel => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${panel.name}</td>
-                        <td style="text-align: center;">${panel.dc}</td>
-                        <td style="text-align: center;">${panel.os}</td>
-                        <td>${panel.ri}</td>
-                        <td style="text-align: center;">${panel.rr}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-                // If no panels, add a note
-                if (panels.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No damage recorded</td></tr>';
-                }
-            } else {
-                damageSection.style.display = 'none';
-            }
-
-            // Photos section
-            const photosSection = document.getElementById('pdf-photos-section');
-            const photoGrid = document.getElementById('pdf-photo-grid');
-
-            if (pdfPhotoMode === 'thumbnails' && selectedPhotos.length > 0) {
-                photosSection.style.display = 'block';
-                photoGrid.innerHTML = '';
-
-                // Add up to 6 photos as thumbnails
-                const photosToShow = selectedPhotos.slice(0, 6);
-                photosToShow.forEach(photo => {
-                    const img = document.createElement('img');
-                    img.src = photo.data;
-                    img.style.width = '100%';
-                    img.style.height = '80px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '4px';
-                    photoGrid.appendChild(img);
-                });
-            } else if (selectedPhotos.length > 0) {
-                photosSection.style.display = 'block';
-                photoGrid.innerHTML = `<p style="font-size: 8pt; color: #666; margin: 0;">${selectedPhotos.length} photo(s) attached separately</p>`;
-            } else {
-                photosSection.style.display = 'none';
-            }
-
-            // Notes
-            const notesSection = document.getElementById('pdf-notes-section');
-            const notesText = document.getElementById('pdf-notes-text');
-            const notes = document.getElementById('notes')?.value?.trim() || '';
-
-            if (notes) {
-                notesSection.style.display = 'block';
-                notesText.textContent = notes;
-            } else {
-                notesSection.style.display = 'none';
-            }
-
-            // Timestamp
-            document.getElementById('pdf-timestamp').textContent = new Date().toLocaleString();
-        }
-
-        // Share PDF using iOS Share Sheet or download
+        // Build filename and trigger direct download
         async function sharePDF(pdf, formData) {
-            // Create filename — include key details for easy identification
+            // Build filename
             const timestamp = new Date().toISOString().slice(0, 10);
             const roNum = formData.roNumber || 'draft';
             const lastName = (formData.insuredName || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
@@ -13787,78 +13912,31 @@
             const nameParts = [roNum, lastName, year, make, model].filter(Boolean);
             const fileName = `DentScope_${nameParts.join('_')}_${timestamp}.pdf`;
 
-            // Convert PDF to Blob
-            const pdfBlob = pdf.output('blob');
-            const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+            const blob = pdf.output('blob');
+            const blobUrl = URL.createObjectURL(blob);
 
-            // Check if Web Share API is supported
-            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                try {
-                    const filesToShare = [pdfFile];
+            // iOS (including iPad in desktop mode) — open blob in new tab,
+            // user taps the share icon → Save to Files
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-                    // If photos attached mode, add photo files
-                    if (pdfPhotoMode === 'attached' && selectedPhotos.length > 0) {
-                        for (let i = 0; i < selectedPhotos.length; i++) {
-                            const photo = selectedPhotos[i];
-                            // Convert base64 to File
-                            const photoFile = base64ToFile(
-                                photo.data,
-                                photo.name || `Photo_${i + 1}.jpg`,
-                                'image/jpeg'
-                            );
-                            filesToShare.push(photoFile);
-                        }
-                    }
-
-                    // Open iOS Share Sheet
-                    await navigator.share({
-                        title: `Dent Scope - ${roNum}`,
-                        text: `PDR Scope for ${formData.insuredName || 'Customer'}`,
-                        files: filesToShare
-                    });
-
-                    showToast('<i data-lucide="check-circle" class="lucide-icon"></i> PDF shared successfully!', 'success');
-                    haptic('success');
-
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        console.error('Share failed:', error);
-                        // Fallback to download
-                        fallbackDownloadPDF(pdf, fileName);
-                    }
-                    // If AbortError, user cancelled - do nothing
-                }
+            if (isIOS) {
+                window.open(blobUrl, '_blank');
+                showToast('<i data-lucide="share" class="lucide-icon"></i> Tap the share icon to save', 'info');
             } else {
-                // Fallback for non-supporting browsers
-                fallbackDownloadPDF(pdf, fileName);
+                // Desktop — trigger standard browser download
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 300);
+                showToast('<i data-lucide="download" class="lucide-icon"></i> PDF downloaded!', 'success');
             }
-        }
-
-        // Fallback: Download PDF
-        function fallbackDownloadPDF(pdf, fileName) {
-            pdf.save(fileName);
-            showToast('<i data-lucide="download" class="lucide-icon"></i> PDF downloaded', 'success');
             haptic('success');
         }
-
-        // Helper: Convert base64 to File object
-        function base64ToFile(base64Data, filename, mimeType) {
-            // Remove data URL prefix if present
-            const base64 = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
-
-            // Decode base64
-            const byteString = atob(base64);
-            const arrayBuffer = new ArrayBuffer(byteString.length);
-            const uint8Array = new Uint8Array(arrayBuffer);
-
-            for (let i = 0; i < byteString.length; i++) {
-                uint8Array[i] = byteString.charCodeAt(i);
-            }
-
-            // Create File
-            return new File([uint8Array], filename, { type: mimeType });
-        }
-
 
         // 2. Submit Data Function
         // ==================== GHL API CONFIGURATION ====================
@@ -16915,40 +16993,49 @@
             populateContractTemplateDropdown('topBarContractSelect');
 
             const hasPdf = f['PDF Report'] && f['PDF Report'][0];
-            const hasPhotos = f['Photo Package'] && f['Photo Package'][0];
+            const roNum = (f['RO Number'] || 'RO').replace(/\s+/g, '-');
+            const custLastName = (f['Customer Name'] || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
+            const yr = f.Year || '';
+            const mk = (f.Make || '').replace(/\s+/g, '-');
+            const mdl = (f.Model || '').replace(/\s+/g, '-');
+            const dateStr = new Date().toISOString().slice(0, 10);
 
-            if (hasPdf || hasPhotos) {
-                const roNum = (f['RO Number'] || 'RO').replace(/\s+/g, '-');
-                const custLastName = (f['Customer Name'] || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
-                const yr = f.Year || '';
-                const mk = (f.Make || '').replace(/\s+/g, '-');
-                const mdl = (f.Model || '').replace(/\s+/g, '-');
-                const dateStr = new Date().toISOString().slice(0, 10);
-
-                if (hasPdf) {
-                    const pdfFilename = `DentScope_${[roNum, custLastName, yr, mk, mdl].filter(Boolean).join('_')}_${dateStr}.pdf`;
-                    const pdfUrl = f['PDF Report'][0].url;
-                    if (topBarPdfBtn) {
-                        topBarPdfBtn.style.display = 'inline-flex';
-                        topBarPdfBtn.onclick = () => downloadFileWithName(pdfUrl, pdfFilename);
-                    }
-                } else if (topBarPdfBtn) {
-                    topBarPdfBtn.style.display = 'none';
+            // PDF comes from Airtable attachment
+            if (hasPdf) {
+                const pdfFilename = `DentScope_${[roNum, custLastName, yr, mk, mdl].filter(Boolean).join('_')}_${dateStr}.pdf`;
+                const pdfUrl = f['PDF Report'][0].url;
+                if (topBarPdfBtn) {
+                    topBarPdfBtn.style.display = 'inline-flex';
+                    topBarPdfBtn.onclick = () => downloadFileWithName(pdfUrl, pdfFilename);
                 }
+            } else if (topBarPdfBtn) {
+                topBarPdfBtn.style.display = 'none';
+            }
 
-                if (hasPhotos) {
-                    const zipFilename = `photos_${[roNum, yr, mk, mdl].filter(Boolean).join('_')}.zip`;
-                    const zipUrl = f['Photo Package'][0].url;
-                    if (topBarPhotosBtn) {
-                        topBarPhotosBtn.style.display = 'inline-flex';
-                        topBarPhotosBtn.onclick = () => downloadFileWithName(zipUrl, zipFilename);
-                    }
-                } else if (topBarPhotosBtn) {
-                    topBarPhotosBtn.style.display = 'none';
+            // Photos: prefer locally stored photos; fall back to Airtable package if local not found
+            const localForms = getSavedForms();
+            const localForm = localForms['form_' + f['RO Number']];
+            const localPhotoCount = (localForm && localForm.photos) ? localForm.photos.filter(p => !p.isSeparator && p.base64Data).length : 0;
+            const hasAirtablePhotos = f['Photo Package'] && f['Photo Package'][0];
+            const zipFilename = `DentScope_Photos_${[roNum, yr, mk, mdl].filter(Boolean).join('_')}_${dateStr}.zip`;
+
+            if (localPhotoCount > 0) {
+                // Local photos available — zip and download entirely on-device
+                if (topBarPhotosBtn) {
+                    topBarPhotosBtn.style.display = 'inline-flex';
+                    topBarPhotosBtn.title = `Download ${localPhotoCount} photos`;
+                    topBarPhotosBtn.onclick = () => downloadLocalRecordPhotos(f['RO Number'], zipFilename);
                 }
-            } else {
-                if (topBarPdfBtn) topBarPdfBtn.style.display = 'none';
-                if (topBarPhotosBtn) topBarPhotosBtn.style.display = 'none';
+            } else if (hasAirtablePhotos) {
+                // No local copy — fall back to the uploaded package with a proper filename
+                const zipUrl = f['Photo Package'][0].url;
+                if (topBarPhotosBtn) {
+                    topBarPhotosBtn.style.display = 'inline-flex';
+                    topBarPhotosBtn.title = 'Download photos';
+                    topBarPhotosBtn.onclick = () => downloadFileWithName(zipUrl, zipFilename);
+                }
+            } else if (topBarPhotosBtn) {
+                topBarPhotosBtn.style.display = 'none';
             }
 
             // Notes
@@ -17031,25 +17118,53 @@
             }
         }
 
-        // Download a remote file and force the correct filename/extension
+        // Save a blob to the device with the correct filename.
+        // On iOS/iPadOS uses the Web Share API (share sheet → Save to Files).
+        // On desktop (macOS/Windows Chrome/Firefox/Safari), uses blob URL + a.download directly.
+        async function saveFileToDevice(blob, filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const mimeMap = { zip: 'application/zip', pdf: 'application/pdf', jpg: 'image/jpeg', png: 'image/png' };
+            const mimeType = mimeMap[ext] || blob.type || 'application/octet-stream';
+
+            // iOS/iPadOS only — includes iPad using "Request Desktop Website" mode
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+            if (isIOS && navigator.canShare) {
+                const file = new File([blob], filename, { type: mimeType });
+                try {
+                    await navigator.share({ files: [file], title: filename });
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                    console.warn('Share failed, falling back to download:', e.message);
+                }
+            }
+
+            // Desktop + Android: direct download
+            const blobUrl = URL.createObjectURL(new Blob([blob], { type: mimeType }));
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        }
+
+        // Fetch a remote file and save it to the device with a proper filename
         async function downloadFileWithName(url, filename) {
             try {
                 showToast('⬇️ Preparing download...', 'info');
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Download failed');
+                const response = await fetch(url, { credentials: 'omit' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+                await saveFileToDevice(blob, filename);
                 showToast(`<i data-lucide="check-circle" class="lucide-icon"></i> Downloaded: ${filename}`, 'success');
             } catch (err) {
-                console.error('Download failed, falling back to window.open:', err);
-                showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Could not download directly — opening in browser', 'warning');
+                console.error('Download failed:', err.message);
+                showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> Could not prepare download — opening in browser`, 'warning');
                 window.open(url, '_blank');
             }
         }

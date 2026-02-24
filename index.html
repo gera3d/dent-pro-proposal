@@ -49,16 +49,43 @@
             --brand-accent-secondary: #0C4D9C;
         }
 
-        /* Hide scrollbar for iOS PWA feel */
-        ::-webkit-scrollbar {
-            display: none;
+        /* Scrollbar styles for desktop (pointer: fine) */
+        @media (pointer: fine) {
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            html {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
+            }
         }
 
-        html {
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE/Edge */
+        /* Hide scrollbar on touch devices for native PWA feel */
+        @media (pointer: coarse) {
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            html {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
         }
 
         body {
@@ -111,6 +138,281 @@
             color: #1A6CFF;
             margin-bottom: 16px;
             font-weight: 600;
+        }
+
+        /* Record Creation Animation inside Modal */
+        .record-creation-state {
+            display: none;
+            /* toggled by JS */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: relative;
+            background: linear-gradient(135deg, rgba(8, 8, 10, 0.4), rgba(15, 15, 18, 0.4));
+            border-radius: 0 0 16px 16px;
+            /* match modal bottom corners */
+            min-height: 400px;
+        }
+
+        /* Ambient glow in the background */
+        .record-creation-state::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(26, 108, 255, 0.15) 0%, rgba(26, 108, 255, 0) 70%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
+            pointer-events: none;
+        }
+
+        .record-creation-state.show::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .record-creation-state.show {
+            opacity: 1;
+        }
+
+        .job-creation-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .record-creation-state.show .job-creation-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .document-icon-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, rgba(30, 30, 35, 0.9), rgba(15, 15, 18, 0.9));
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 24px 48px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+        }
+
+        .record-creation-state.show .document-icon-wrapper {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Rotating border effect */
+        .document-icon-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent 0%, transparent 40%, #1A6CFF 50%, transparent 60%, transparent 100%);
+            animation: rotate-glow 3s linear infinite;
+        }
+
+        .document-icon-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: #111;
+            border-radius: 26px;
+            z-index: 1;
+        }
+
+        @keyframes rotate-glow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .document-icon-wrapper i {
+            position: relative;
+            z-index: 2;
+            width: 44px;
+            height: 44px;
+            color: #fff;
+            filter: drop-shadow(0 0 12px rgba(26, 108, 255, 0.7));
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .record-creation-state.show .document-icon-wrapper i {
+            animation: icon-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.3s;
+        }
+
+        @keyframes icon-pop {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scan-box-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 4;
+            font-size: 13px;
+            font-weight: 800;
+            color: #1A6CFF;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-right: -1.5px;
+            /* Counter-balance the trailing letter spacing */
+            opacity: 0;
+            transform: translate(-50%, -40%);
+            filter: drop-shadow(0 0 8px rgba(26, 108, 255, 0.6));
+            transition: all 0.3s;
+        }
+
+        .record-creation-state.show .scan-box-text {
+            animation: text-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.5s;
+        }
+
+        @keyframes text-pop {
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Premium Scan Line */
+        .scan-line {
+            position: absolute;
+            z-index: 3;
+            top: -20%;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to bottom, transparent, rgba(26, 108, 255, 0.1) 48%, rgba(26, 108, 255, 0.9) 50%, rgba(26, 108, 255, 0.1) 52%, transparent);
+            transform: translateY(-100%);
+            animation: premium-scan 2.5s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes premium-scan {
+            0% {
+                transform: translateY(-150%);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(350%);
+                opacity: 0;
+            }
+        }
+
+        .creation-text-group {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .job-creation-title {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+        }
+
+        .job-creation-details {
+            font-size: 17px;
+            color: #8E8E93;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+            line-height: 1.5;
+        }
+
+        .job-creation-status {
+            font-size: 15px;
+            color: #1A6CFF;
+            font-weight: 600;
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: rgba(26, 108, 255, 0.1);
+            border-radius: 24px;
+            border: 1px solid rgba(26, 108, 255, 0.2);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 16px rgba(26, 108, 255, 0.1);
+            margin-left: auto;
+            margin-right: auto;
+            transition-property: opacity, transform, background, color;
+            /* Allow dynamic updates */
+        }
+
+        .job-creation-status.success {
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.1);
+        }
+
+        .record-creation-state.show .job-creation-title,
+        .record-creation-state.show .job-creation-details,
+        .record-creation-state.show .job-creation-status {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .form-group {
@@ -287,19 +589,21 @@
             position: relative;
         }
 
-        .dropdown-search-wrapper::before {
-            content: '<i data-lucide="search" class="lucide-icon"></i>';
+        .dropdown-search-wrapper .lucide-icon {
             position: absolute;
             left: 24px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 14px;
+            width: 14px;
+            height: 14px;
             opacity: 0.5;
+            color: #fff;
+            pointer-events: none;
         }
 
         .dropdown-search {
             width: 100%;
-            padding: 12px 16px 12px 40px;
+            padding: 12px 16px 12px 40px !important;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -3756,6 +4060,8 @@
             font-weight: 700;
             color: #fff;
             letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
         }
 
         .refresh-btn {
@@ -3789,7 +4095,6 @@
 
         .parts-filters input,
         .parts-filters select {
-            flex: 1;
             padding: 16px 20px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3827,8 +4132,8 @@
         }
 
         .summary-card {
-            padding: 24px 20px;
-            border-radius: 16px;
+            padding: 16px 12px;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -3917,12 +4222,53 @@
             box-shadow: 0 0 30px rgba(26, 108, 255, 0.2);
         }
 
+        .summary-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card.vehicles .summary-icon,
+        .summary-card.total .summary-icon {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.15);
+        }
+
+        .summary-card.pending .summary-icon {
+            background: rgba(255, 69, 58, 0.15);
+            color: #FF453A;
+            box-shadow: 0 0 20px rgba(255, 69, 58, 0.15);
+        }
+
+        .summary-card.in-progress .summary-icon {
+            background: rgba(255, 159, 10, 0.15);
+            color: #FF9F0A;
+            box-shadow: 0 0 20px rgba(255, 159, 10, 0.15);
+        }
+
+        .summary-card.complete .summary-icon {
+            background: rgba(26, 108, 255, 0.15);
+            color: #1A6CFF;
+            box-shadow: 0 0 20px rgba(26, 108, 255, 0.15);
+        }
+
+        .summary-card.active .summary-icon {
+            transform: scale(1.1);
+        }
+
         .summary-number {
-            font-size: 42px;
+            font-size: 32px;
             font-weight: 800;
             display: block;
             line-height: 1;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
 
         .summary-card.vehicles .summary-number {
@@ -3942,12 +4288,12 @@
         }
 
         .summary-label {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 8px;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
         }
 
         /* Vehicle List - Premium Cards */
@@ -3965,6 +4311,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             overflow: hidden;
+            animation: recordFadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
         }
 
         .vehicle-card:hover {
@@ -3999,6 +4348,9 @@
         }
 
         .card-location {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: #fff;
             padding: 6px 16px;
@@ -4006,6 +4358,11 @@
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.3px;
+        }
+
+        .card-location .lucide-icon {
+            width: 1.1em;
+            height: 1.1em;
         }
 
         .card-body {
@@ -4187,12 +4544,14 @@
         }
 
         .part-detail-modal {
-            background: #1a1a1a;
-            border-radius: 16px;
-            max-width: 500px;
+            background: linear-gradient(165deg, #1e1e1e, #151515);
+            border-radius: 24px;
             width: 100%;
-            max-height: 80vh;
+            max-width: 680px;
+            max-height: 90vh;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
         }
@@ -4201,28 +4560,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
         }
 
         .part-detail-modal .modal-header h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
             color: #fff;
+            font-weight: 700;
         }
 
         .modal-close-btn {
             background: rgba(255, 255, 255, 0.1);
             border: none;
             color: #fff;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .modal-close-btn .lucide-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .modal-close-btn:hover {
@@ -4262,27 +4635,27 @@
         }
 
         .rr-parts-list {
-            padding: 16px 20px;
-            overflow-y: auto;
-            flex: 1;
+            padding: 0;
+            overflow-y: visible;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .rr-part-row {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .part-header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .rr-part-row:last-child {
-            border-bottom: none;
         }
 
         .part-info {
@@ -4470,8 +4843,11 @@
 
         /* Progress Tracker */
         .progress-tracker {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 0;
         }
 
         .progress-summary {
@@ -4566,12 +4942,29 @@
             font-weight: 700;
             color: #fff;
             letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 12px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            vertical-align: middle;
         }
 
         /* Records Summary Cards - Premium */
         .records-summary {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 28px;
         }
@@ -4597,98 +4990,141 @@
 
         /* Records List - Premium Cards */
         .records-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: block;
+            /* Updated to block for grid rendering */
+            min-height: 200px;
         }
 
         .record-card {
             padding: 0;
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
+            background: rgba(30, 35, 45, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
+            animation: recordFadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            position: relative;
+        }
+
+        .record-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(26, 108, 255, 0.06), transparent 60%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .record-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes recordFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .record-card:hover {
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
-            border-color: rgba(255, 255, 255, 0.18);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            border-color: rgba(26, 108, 255, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(26, 108, 255, 0.1);
         }
 
-        .record-card .card-header {
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .record-card .card-body {
+        /* Top row: avatar + name + status */
+        .record-card .card-profile {
             display: flex;
-            gap: 18px;
-            padding: 18px 20px;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 22px 16px;
         }
 
-        .record-card .card-thumbnail {
-            width: 90px;
-            height: 90px;
-            min-width: 90px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-            border-radius: 14px;
+        .record-card .card-avatar {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1A6CFF 0%, #00f2fe 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .record-card .card-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .record-card .card-thumbnail .placeholder {
-            font-size: 36px;
-            opacity: 0.35;
-        }
-
-        .record-card .card-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-top: 4px;
-        }
-
-        .record-card .card-vehicle {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 800;
             color: #fff;
-            letter-spacing: -0.2px;
+            box-shadow: 0 6px 16px rgba(26, 108, 255, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
-        .record-card .card-customer {
-            font-size: 15px;
+        .record-card .card-profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .record-card .card-customer-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .record-card .card-vehicle-line {
+            font-size: 14px;
             color: rgba(255, 255, 255, 0.55);
             font-weight: 500;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .record-card .card-meta {
+        /* Bottom info strip */
+        .record-card .card-info-strip {
             display: flex;
-            gap: 16px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.45);
-            margin-top: 8px;
             flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 22px 18px;
         }
 
-        .record-card .card-meta span {
+        .record-card .card-chip {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+        }
+
+        .record-card .card-chip.ro-chip {
+            color: #4facfe;
+            background: rgba(26, 108, 255, 0.1);
+            border-color: rgba(26, 108, 255, 0.15);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            letter-spacing: 0.3px;
+        }
+
+        .record-card .card-chip .lucide-icon {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
         }
 
         .status-badge {
@@ -4723,18 +5159,172 @@
 
         /* Record Detail Modal - Premium */
         .record-detail-modal {
-            background: linear-gradient(165deg, #1e1e1e, #151515);
+            background: #111418;
+            /* Deeper pure dark */
+            background-image: radial-gradient(circle at top right, rgba(26, 108, 255, 0.08), transparent 400px),
+                radial-gradient(circle at bottom left, rgba(0, 198, 255, 0.03), transparent 300px);
             border-radius: 24px;
             width: 100%;
-            max-width: 680px;
+            max-width: 720px;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .record-detail-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            gap: 16px;
+        }
+
+        .record-detail-modal .modal-header h3 {
+            margin: 0;
+            font-size: 17px;
+            color: #fff;
+            font-weight: 700;
+            line-height: 36px;
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Sticky Action Bar */
+        .modal-top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            /* Allow wrapping on small screens */
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background: rgba(17, 20, 24, 0.85);
+            /* Matches modal background */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            gap: 16px;
+        }
+
+        .modal-top-bar-ctx {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 120px;
+            /* Ensure it never shrinks to 0 */
+            flex: 1 1 auto;
+        }
+
+        .modal-top-bar-ctx .ctx-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .modal-top-bar-ctx .ctx-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .modal-top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .modal-action-btn {
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .modal-action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .modal-action-btn.primary {
+            background: linear-gradient(135deg, #1A6CFF 0%, #00f2fe 100%);
+            border: none;
+            box-shadow: 0 4px 12px rgba(26, 108, 255, 0.3);
+        }
+
+        .modal-action-btn.primary:hover {
+            box-shadow: 0 6px 16px rgba(26, 108, 255, 0.4);
+        }
+
+        /* Mobile adjustments for top bar */
+        @media (max-width: 600px) {
+            .modal-top-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+
+            .modal-top-bar-ctx {
+                align-items: center;
+                text-align: center;
+            }
+
+            .modal-top-bar-actions {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                width: 100%;
+            }
+
+            #topBarContractSelect {
+                grid-column: 1 / -1;
+                width: 100%;
+                max-width: 100% !important;
+            }
+
+            .modal-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         .record-detail-content {
-            padding: 28px;
+            padding: 24px 28px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .record-detail-section {
@@ -4781,6 +5371,216 @@
             color: #fff;
             font-size: 16px;
             font-weight: 500;
+        }
+
+        /* PREMIUM PROFILE CARD */
+        .premium-profile-card {
+            background: rgba(30, 35, 45, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle glow effect behind card */
+        .premium-profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top right, rgba(26, 108, 255, 0.15), transparent 40%);
+            pointer-events: none;
+        }
+
+        .premium-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 1;
+        }
+
+        .premium-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1A6CFF 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(26, 108, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .premium-profile-name h5 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .premium-profile-contact {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 500;
+        }
+
+        .premium-profile-contact span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.2s;
+        }
+
+        .premium-profile-contact span:hover {
+            background: rgba(26, 108, 255, 0.15);
+            color: #fff;
+            border-color: rgba(26, 108, 255, 0.3);
+        }
+
+        .premium-profile-contact .lucide-icon {
+            width: 14px;
+            height: 14px;
+            color: #4facfe;
+        }
+
+        .dot-separator {
+            display: none;
+        }
+
+        .premium-profile-details {
+            display: flex;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 8px;
+            gap: 8px;
+            z-index: 1;
+        }
+
+        .premium-detail-bubble {
+            flex: 1;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .premium-detail-bubble:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .premium-detail-bubble .bubble-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+        }
+
+        .premium-detail-bubble .bubble-value {
+            font-size: 15px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* PREMIUM SPEC GRID (Vehicle & Assessment) */
+        .premium-spec-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 4px;
+        }
+
+        .premium-spec-grid[style*="grid-template-columns: repeat(2"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        .premium-spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px 20px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .premium-spec-item:hover {
+            background: rgba(26, 108, 255, 0.05);
+            border-color: rgba(26, 108, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .premium-spec-item.full-width {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: linear-gradient(90deg, rgba(26, 108, 255, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border-left: 3px solid #1A6CFF;
+            border-radius: 16px;
+        }
+
+        .premium-spec-item.full-width .premium-spec-value {
+            font-size: 18px;
+        }
+
+        .premium-spec-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: rgba(255, 255, 255, 0.45);
+            font-weight: 700;
+        }
+
+        .premium-spec-value {
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .premium-spec-value.highlight {
+            color: #4facfe;
+            text-shadow: 0 0 12px rgba(79, 172, 254, 0.3);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            letter-spacing: 1px;
         }
 
         .record-detail-footer {
@@ -4832,9 +5632,36 @@
             margin-bottom: 16px;
         }
 
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-wrapper .lucide-icon {
+            position: absolute;
+            left: 14px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding-left: 42px !important;
+            transition: all 0.2s;
+        }
+
+        .search-input-wrapper input:focus {
+            background: rgba(26, 108, 255, 0.1);
+            border-color: #1A6CFF;
+            box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.15);
+        }
+
         .records-filters input,
         .records-filters select {
-            flex: 1;
             padding: 12px 16px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -4849,6 +5676,88 @@
 
         .records-filters select {
             max-width: 160px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+
+            /* Fix summary cards on mobile */
+            .dashboard-summary,
+            .records-summary {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Fix filters on mobile */
+            .records-filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .records-filters select,
+            .search-input-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        .record-group-header {
+            font-size: 15px;
+            font-weight: 700;
+            color: #a1a1a6;
+            margin: 24px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .record-group-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Loading Skeleton */
+        .skeleton-pulse {
+            animation: skeleton-pulse 1.5s ease-in-out infinite;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.03) 0%,
+                    rgba(255, 255, 255, 0.08) 50%,
+                    rgba(255, 255, 255, 0.03) 100%);
+            background-size: 200% 100%;
+            border-radius: 8px;
+        }
+
+        @keyframes skeleton-pulse {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .loading-state-fancy {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .loading-state-fancy .lucide-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--brand-primary);
         }
 
         /* ==================== LUCIDE ICONS ==================== */
@@ -4858,10 +5767,16 @@
         .lucide-icon {
             width: 1em;
             height: 1em;
-            stroke-width: 2px;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
             vertical-align: -0.15em;
             display: inline-block;
             flex-shrink: 0;
+            shape-rendering: geometricPrecision;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* — Saved Forms bar (font: 13px) — */
@@ -5080,7 +5995,7 @@
                 <div class="vin-progress-bar">
                     <div class="vin-progress-fill" id="vinProgressFill"></div>
                 </div>
-                <p id="vinProgressText">Processing...</p>
+                <p id="vinProgressText">Scanning...</p>
             </div>
             <!-- Result Summary -->
             <div class="vin-scan-result" id="vinScanResult" style="display: none;">
@@ -6885,13 +7800,17 @@
         <!-- PARTS TECH DASHBOARD (Hidden by default) -->
         <div id="partsTechDashboard" class="parts-tech-dashboard" style="display: none;">
             <div class="parts-header">
-                <h2><i data-lucide="wrench" class="lucide-icon"></i> Parts Ordering</h2>
+                <h2><i data-lucide="wrench" class="lucide-icon"></i> Parts Ordering <span id="partsCountBadge"
+                        class="header-badge">0</span></h2>
                 <button class="refresh-btn" onclick="refreshVehicleList()"><i data-lucide="refresh-cw"
                         class="lucide-icon"></i> Refresh</button>
             </div>
 
             <div class="parts-filters">
-                <input type="text" id="vehicleSearch" placeholder="Search RO# or customer...">
+                <div class="search-input-wrapper">
+                    <i data-lucide="search" class="lucide-icon"></i>
+                    <input type="text" id="vehicleSearch" placeholder="Search RO# or customer...">
+                </div>
                 <select id="statusFilter">
                     <option value="all">All</option>
                     <option value="pending">Has Unordered</option>
@@ -6917,48 +7836,54 @@
                                 style="display: none;">
                                 <i data-lucide="file-text" class="lucide-icon"></i> View PDF
                             </button>
-                            <button class="modal-close-btn" onclick="closePartDetail()">✕</button>
+                            <button class="modal-close-btn" onclick="closePartDetail()"><i data-lucide="x"
+                                    class="lucide-icon"></i></button>
                         </div>
                     </div>
 
-                    <!-- Vehicle Info Section -->
-                    <div id="vehicleInfoSection" class="vehicle-info-section">
-                        <!-- Populated dynamically -->
-                    </div>
-
-                    <!-- ETA Date & Notes Section -->
-                    <div class="order-tracking-section"
-                        style="padding: 16px 20px; background: rgba(26, 108, 255, 0.05); border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
-                            <div>
-                                <label
-                                    style="display: block; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;"><i
-                                        data-lucide="calendar" class="lucide-icon"></i>
-                                    ETA Date</label>
-                                <input type="date" id="partEtaDate" class="eta-date-input"
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 14px;"
-                                    onchange="markEtaChanged()">
-                            </div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;"><i
-                                        data-lucide="edit-3" class="lucide-icon"></i>
-                                    Order Notes</label>
-                                <textarea id="partOrderNotes" placeholder="Add notes about this order..."
-                                    style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 14px; resize: none; height: 44px; font-family: inherit;"
-                                    oninput="markNotesChanged()"></textarea>
+                    <div class="record-detail-content">
+                        <!-- Vehicle Info Section -->
+                        <div class="record-detail-section">
+                            <h4><i data-lucide="car-front" class="lucide-icon"></i> Vehicle Info</h4>
+                            <div id="vehicleInfoSection" class="vehicle-info-section">
+                                <!-- Populated dynamically -->
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Progress Tracker -->
-                    <div id="progressTracker" class="progress-tracker">
-                        <!-- Populated dynamically -->
-                    </div>
+                        <!-- ETA Date & Notes Section -->
+                        <div class="record-detail-section">
+                            <h4><i data-lucide="truck" class="lucide-icon"></i> Order Tracking</h4>
+                            <div class="detail-grid" style="grid-template-columns: 1fr 2fr;">
+                                <div class="detail-item">
+                                    <label><i data-lucide="calendar" class="lucide-icon"></i> ETA Date</label>
+                                    <input type="date" id="partEtaDate" class="eta-date-input"
+                                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; margin-top: 6px;"
+                                        onchange="markEtaChanged()">
+                                </div>
+                                <div class="detail-item">
+                                    <label><i data-lucide="edit-3" class="lucide-icon"></i> Order Notes</label>
+                                    <textarea id="partOrderNotes" placeholder="Add notes about this order..."
+                                        style="width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; resize: none; height: 44px; font-family: inherit; margin-top: 6px;"
+                                        oninput="markNotesChanged()"></textarea>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Parts List -->
-                    <div id="rrPartsList" class="rr-parts-list">
-                        <!-- R&R parts will be listed here dynamically -->
+                        <!-- Progress Tracker -->
+                        <div class="record-detail-section">
+                            <h4><i data-lucide="list-checks" class="lucide-icon"></i> Progress Tracker</h4>
+                            <div id="progressTracker" class="progress-tracker">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Parts List -->
+                        <div class="record-detail-section">
+                            <h4><i data-lucide="package" class="lucide-icon"></i> Parts List</h4>
+                            <div id="rrPartsList" class="rr-parts-list">
+                                <!-- R&R parts will be listed here dynamically -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Modal Footer with Save Button -->
@@ -6979,14 +7904,24 @@
         <!-- RECORDS DASHBOARD (Hidden by default) -->
         <div id="recordsDashboard" class="records-dashboard" style="display: none;">
             <div class="records-header">
-                <h2><i data-lucide="clipboard-list" class="lucide-icon"></i> All Records</h2>
+                <h2><i data-lucide="clipboard-list" class="lucide-icon"></i> All Records <span id="recordsCountBadge"
+                        class="header-badge">0</span></h2>
                 <button class="refresh-btn" onclick="refreshRecordsList()"><i data-lucide="refresh-cw"
                         class="lucide-icon"></i> Refresh</button>
             </div>
 
             <div class="records-filters">
-                <input type="text" id="recordsSearch" placeholder="Search RO#, VIN, customer, vehicle..."
-                    oninput="filterRecords()">
+                <div class="search-input-wrapper">
+                    <i data-lucide="search" class="lucide-icon"></i>
+                    <input type="text" id="recordsSearch" placeholder="Search RO#, VIN, customer, vehicle..."
+                        oninput="filterRecords()">
+                </div>
+                <select id="recordsSortFilter" onchange="filterRecords()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="customer">Customer Name (A-Z)</option>
+                    <option value="ro">RO# (A-Z)</option>
+                </select>
                 <select id="recordsStatusFilter" onchange="filterRecords()">
                     <option value="all">All Status</option>
                     <option value="Submitted">Submitted</option>
@@ -7009,29 +7944,78 @@
                 <div class="record-detail-modal">
                     <div class="modal-header">
                         <h3 id="recordDetailTitle">Record Details</h3>
-                        <button class="modal-close-btn" onclick="closeRecordDetail()">✕</button>
+                        <button class="modal-close-btn" onclick="closeRecordDetail()"><i data-lucide="x"
+                                class="lucide-icon"></i></button>
                     </div>
 
-                    <div class="record-detail-content">
-                        <!-- Vehicle Info Section -->
+                    <!-- Modal Top Bar (Sticky Actions) -->
+                    <div id="recordTopBar" class="modal-top-bar" style="display: none;">
+                        <div class="modal-top-bar-ctx">
+                            <div class="ctx-name" id="topBarCustomerName">Customer Name</div>
+                            <div class="ctx-sub" id="topBarVehicleInfo">
+                                <i data-lucide="car-front" style="width: 12px; height: 12px;"></i>
+                                <span>2024 Honda Accord</span>
+                            </div>
+                        </div>
+                        <div class="modal-top-bar-actions">
+                            <!-- Download PDF -->
+                            <button class="modal-action-btn" id="topBarPdfBtn" style="display: none;">
+                                <i data-lucide="file-down" class="lucide-icon"></i> PDF
+                            </button>
+                            <!-- Download Images -->
+                            <button class="modal-action-btn" id="topBarPhotosBtn" style="display: none;">
+                                <i data-lucide="download" class="lucide-icon"></i> Photos
+                            </button>
+                            <!-- Contract Dropdown -->
+                            <select id="topBarContractSelect" class="modal-action-btn"
+                                style="cursor: pointer; max-width: 160px; text-overflow: ellipsis; outline: none; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><polyline points=\'6 9 12 15 18 9\'></polyline></svg>'); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px;">
+                                <option value="" style="color: black;">Template...</option>
+                            </select>
+                            <!-- Send Contract -->
+                            <button class="modal-action-btn primary" id="topBarContractBtn"
+                                onclick="sendContractFromRecord()">
+                                <i data-lucide="send" class="lucide-icon"></i> Send
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Record Creation State (New Single-Popup Animation) -->
+                    <div id="recordCreationState" class="record-creation-state" style="display: none;">
+                        <div class="job-creation-content">
+                            <div class="document-icon-wrapper">
+                                <div id="scanBoxText" class="scan-box-text">STARTING</div>
+                                <div class="scan-line"></div>
+                            </div>
+                            <div class="creation-text-group">
+                                <div class="job-creation-title" id="jobCreationTitle">Creating Record...</div>
+                                <div class="job-creation-details" id="jobCreationDetails"></div>
+                                <div class="job-creation-status" id="jobCreationStatus">
+                                    <i data-lucide="loader" class="spin"></i> Starting sync...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="record-detail-content" id="recordDetailContentContainer">
+                        <!-- Customer & Insurance Section -->
                         <div class="record-detail-section">
-                            <h4>Vehicle Information</h4>
-                            <div id="recordVehicleInfo" class="detail-grid">
+                            <h4><i data-lucide="user" class="lucide-icon"></i> Customer & Insurance</h4>
+                            <div id="recordCustomerInfo">
                                 <!-- Populated dynamically -->
                             </div>
                         </div>
 
-                        <!-- Customer & Insurance Section -->
+                        <!-- Vehicle Info Section -->
                         <div class="record-detail-section">
-                            <h4>Customer & Insurance</h4>
-                            <div id="recordCustomerInfo" class="detail-grid">
+                            <h4><i data-lucide="car-front" class="lucide-icon"></i> Vehicle Information</h4>
+                            <div id="recordVehicleInfo">
                                 <!-- Populated dynamically -->
                             </div>
                         </div>
 
                         <!-- Contact Edit Section -->
                         <div class="record-detail-section" id="recordContactEditSection">
-                            <h4>Contact (Edit)</h4>
+                            <h4><i data-lucide="user-pen" class="lucide-icon"></i> Contact (Edit)</h4>
                             <div class="detail-grid">
                                 <div class="detail-item">
                                     <label>Customer Name</label>
@@ -7060,48 +8044,30 @@
 
                         <!-- Assessment Section -->
                         <div class="record-detail-section">
-                            <h4>Assessment Details</h4>
-                            <div id="recordAssessmentInfo" class="detail-grid">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Attachments Section -->
-                        <div class="record-detail-section" id="recordAttachmentsSection" style="display: none;">
-                            <h4>Attachments</h4>
-                            <div id="recordAttachments" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <h4><i data-lucide="clipboard-check" class="lucide-icon"></i> Assessment Details</h4>
+                            <div id="recordAssessmentInfo">
                                 <!-- Populated dynamically -->
                             </div>
                         </div>
 
                         <!-- Notes Section -->
                         <div class="record-detail-section" id="recordNotesSection" style="display: none;">
-                            <h4>Notes</h4>
+                            <h4><i data-lucide="message-square" class="lucide-icon"></i> Notes</h4>
                             <div id="recordNotes" class="detail-item full-width">
                                 <!-- Populated dynamically -->
                             </div>
                         </div>
 
-                        <!-- Contracts Section -->
+                        <!-- Contracts History Section (Simplified) -->
                         <div class="record-detail-section" id="recordContractsSection">
-                            <h4><i data-lucide="file-text" class="lucide-icon"></i> Send Document</h4>
-                            <div class="record-contract-picker">
-                                <select id="recordContractWorkflowSelect">
-                                    <option value="">Choose document template...</option>
-                                </select>
-                                <button type="button" class="record-contract-send-btn" id="recordContractSendBtn"
-                                    onclick="sendContractFromRecord()">
-                                    <i data-lucide="send" class="lucide-icon"></i> Send Contract
-                                </button>
-                            </div>
-                            <div id="recordContractStatus" class="record-contract-status" style="display: none;"></div>
-                            <div id="recordContractHistory" class="record-contract-history">
+                            <h4><i data-lucide="file-check" class="lucide-icon"></i> Contract History</h4>
+                            <div id="recordContractHistory" class="record-contract-history" style="margin-top: 0;">
                                 <div class="contract-history-empty">No contracts sent yet</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="record-detail-footer">
+                    <div class="record-detail-footer" id="recordDetailFooterContainer">
                         <button class="load-to-form-btn" onclick="loadRecordToForm()">
                             <i data-lucide="pencil" class="lucide-icon"></i> Load to Form
                         </button>
@@ -7230,7 +8196,7 @@
                 <div class="ocr-progress-bar">
                     <div class="ocr-progress-fill" id="ocrProgressFill"></div>
                 </div>
-                <p id="ocrProgressText">Initializing OCR...</p>
+                <p id="ocrProgressText">Scanning...</p>
             </div>
         </div>
 
@@ -8846,6 +9812,16 @@
             animation: auto-fill-glow 0.5s ease;
         }
 
+        /* Persistent filled value styling - high specificity to beat grid styles */
+        input.has-valid-value,
+        select.has-valid-value,
+        textarea.has-valid-value,
+        .general-info-grid input.has-valid-value,
+        .general-info-grid select.has-valid-value {
+            border-color: #1A6CFF !important;
+            background-color: rgba(26, 108, 255, 0.08) !important;
+        }
+
         @keyframes auto-fill-glow {
             0% {
                 box-shadow: 0 0 0 rgba(26, 108, 255, 0);
@@ -8857,6 +9833,55 @@
 
             100% {
                 box-shadow: 0 0 12px rgba(26, 108, 255, 0.25);
+            }
+        }
+
+        /* --- RO Generator Tally Animations --- */
+        .ro-tallying {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            color: #1A6CFF !important;
+            border-color: #1A6CFF !important;
+            background: rgba(26, 108, 255, 0.1) !important;
+            box-shadow: 0 0 15px rgba(26, 108, 255, 0.3) !important;
+            animation: pulse-tally 0.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-tally {
+            from {
+                box-shadow: 0 0 5px rgba(26, 108, 255, 0.2);
+            }
+
+            to {
+                box-shadow: 0 0 20px rgba(26, 108, 255, 0.5);
+            }
+        }
+
+        .ro-locked-in {
+            animation: ro-lock-flash 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes ro-lock-flash {
+            0% {
+                transform: scale(1);
+                border-color: #1A6CFF;
+                background: rgba(26, 108, 255, 0.3);
+                box-shadow: 0 0 30px rgba(26, 108, 255, 0.8);
+                color: #ffffff;
+            }
+
+            40% {
+                transform: scale(1.05);
+                border-color: #3A95FF;
+                background: rgba(58, 149, 255, 0.2);
+                box-shadow: 0 0 40px rgba(58, 149, 255, 0.6);
+            }
+
+            100% {
+                transform: scale(1);
+                border-color: rgba(26, 108, 255, 0.4);
+                background: rgba(255, 255, 255, 0.05);
+                box-shadow: 0 0 0 rgba(26, 108, 255, 0);
             }
         }
 
@@ -9100,38 +10125,60 @@
             background: linear-gradient(135deg, #2A85FF 0%, #1A6CFF 100%);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 4px 10px;
-            font-size: 0.8em;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 0.85em;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
-            transition: all 0.2s ease;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(26, 108, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(26, 108, 255, 0.25);
         }
 
         .inside-input-btn:hover:not(:disabled) {
             background: linear-gradient(135deg, #3A95FF 0%, #2A85FF 100%);
-            box-shadow: 0 4px 12px rgba(26, 108, 255, 0.4);
+            box-shadow: 0 4px 14px rgba(26, 108, 255, 0.4);
+            transform: translateY(-50%) scale(1.02);
+            border-radius: 6px;
+        }
+
+        .inside-input-btn:active:not(:disabled) {
+            transform: translateY(-50%) scale(0.97);
         }
 
         .inside-input-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.75;
             cursor: not-allowed;
-            background: #555;
+            background: linear-gradient(135deg, #2A85FF 0%, #1A6CFF 100%);
+            filter: grayscale(0.5);
             box-shadow: none;
         }
 
         .inside-input-btn .icon {
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: transform 0.3s ease;
         }
 
+        .inside-input-btn.spinning {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+        }
+
         .inside-input-btn.spinning .icon {
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
+            transform-origin: center;
+        }
+
+        .inside-input-btn .lucide-icon {
+            margin-right: 0 !important;
+            /* Prevent global right margin from breaking the center of rotation */
+            width: 16px;
+            height: 16px;
         }
 
         /* Lucide Icons Custom Styling */
@@ -9264,6 +10311,9 @@
             const btn = document.getElementById('generateRoBtn');
             const input = document.getElementById('roNumber');
 
+            // Prevent multiple clicks restarting the animation
+            if (input.dataset.isAnimating === 'true') return;
+
             if (btn) {
                 btn.disabled = true;
                 btn.classList.add('spinning');
@@ -9275,11 +10325,35 @@
             const dd = String(now.getDate()).padStart(2, '0');
             const prefix = `DE-${yy}${mm}${dd}-`;
 
+            // Start Tally Animation
+            input.dataset.isAnimating = 'true';
+            input.classList.remove('auto-filled', 'ro-locked-in');
+            input.classList.add('ro-tallying');
+
+            // Find a realistic starting point rather than random numbers
+            let currentLocalCount = parseInt(localStorage.getItem(`ro_counter_${yy}${mm}${dd}`) || '0');
+
+            const tallyInterval = setInterval(() => {
+                // Tally progressively upward to mimic real tallying
+                currentLocalCount++;
+                const countStr = currentLocalCount.toString().padStart(3, '0');
+                input.value = `${prefix}${countStr}`;
+            }, 35); // 35ms provides a fast, sequential counting effect
+
             try {
                 let nextRo = await fetchNextROFromAirtable(prefix);
 
+                clearInterval(tallyInterval);
+                input.dataset.isAnimating = 'false';
+                input.classList.remove('ro-tallying');
+
                 if (nextRo) {
                     input.value = nextRo;
+
+                    // Add glow effect to show it settled
+                    input.classList.add('ro-locked-in');
+                    setTimeout(() => input.classList.remove('ro-locked-in'), 1500);
+
                     if (!isSilent) showToast('RO Number Generated', 'success');
 
                     // Update local storage counter so local fallback stays somewhat accurate
@@ -9288,14 +10362,60 @@
                         const count = parseInt(parts[2], 10);
                         localStorage.setItem(`ro_counter_${yy}${mm}${dd}`, count);
                     }
+
+                    // Immediately reserve the RO number in Airtable to prevent race conditions
+                    if (navigator.onLine && !isSilent) { // Only reserve drafts on manual clicks, not silent loads to save API calls
+                        try {
+                            const config = await loadAirtableConfig();
+                            if (config && config.apiKey && config.baseId && config.tableName) {
+                                // Create a draft record
+                                const draftRecord = {
+                                    fields: {
+                                        'RO Number': nextRo,
+                                        'Status': 'Draft' // Optional, if you have a Status field that allows 'Draft'
+                                    }
+                                };
+
+                                const endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+                                const draftRes = await fetch(endpoint, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': `Bearer ${config.apiKey}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(draftRecord)
+                                });
+
+                                if (draftRes.ok) {
+                                    const draftData = await draftRes.json();
+                                    if (draftData.id) {
+                                        // Store the Airtable record ID in the input element for later use
+                                        input.dataset.airtableRecordId = draftData.id;
+                                        console.log('✅ Reserved RO in Airtable:', draftData.id);
+                                    }
+                                }
+                            }
+                        } catch (draftErr) {
+                            console.warn("Could not reserve draft RO:", draftErr);
+                        }
+                    }
+
                 } else if (!isSilent) {
                     // Fallback to local
                     input.value = generateNextRO();
+                    input.classList.add('ro-locked-in');
+                    setTimeout(() => input.classList.remove('ro-locked-in'), 1500);
                     showToast('Offline fallback RO used', 'warning');
                 }
             } catch (err) {
+                clearInterval(tallyInterval);
+                input.dataset.isAnimating = 'false';
+                input.classList.remove('ro-tallying');
+
                 if (!isSilent) {
                     input.value = generateNextRO();
+                    input.classList.add('ro-locked-in');
+                    setTimeout(() => input.classList.remove('ro-locked-in'), 1500);
                     showToast('Offline fallback RO used', 'warning');
                 }
             } finally {
@@ -9303,11 +10423,50 @@
                     btn.disabled = false;
                     btn.classList.remove('spinning');
                 }
+                updateFieldBackground(input); // Trigger background update for the generated RO
             }
+        }
+
+        // --- Feature: Highlight fields with valid values ---
+        function updateFieldBackground(el) {
+            // Skip buttons, hidden fields, checkboxes, radios, and specifically the VIN scanner input which has its own styling
+            if (!el || el.type === 'button' || el.type === 'submit' || el.type === 'hidden' || el.type === 'checkbox' || el.type === 'radio' || el.id === 'scannerPlaceholder') return;
+
+            if (el.value && el.value.trim() !== '') {
+                el.classList.add('has-valid-value');
+            } else {
+                el.classList.remove('has-valid-value');
+            }
+        }
+
+        function updateAllFieldBackgrounds() {
+            const fields = document.querySelectorAll('input:not([type="button"]):not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select, textarea');
+            fields.forEach(updateFieldBackground);
+        }
+
+        function setupValidValueListeners() {
+            // Listen to all inputs globally
+            document.addEventListener('input', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    updateFieldBackground(e.target);
+                }
+            });
+
+            document.addEventListener('change', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+                    updateFieldBackground(e.target);
+                }
+            });
+
+            // Initial pass for any prefilled values
+            setTimeout(updateAllFieldBackgrounds, 200);
         }
 
         // INITIALIZATION
         document.addEventListener('DOMContentLoaded', () => {
+            // Setup global listeners for valid value background highlighting
+            setupValidValueListeners();
+
             loadDropdowns();
             loadSavedFormsList();
 
@@ -9573,6 +10732,9 @@
                 // Clear draft
                 localStorage.removeItem(DRAFT_KEY);
 
+                // Re-evaluate background colors
+                setTimeout(updateAllFieldBackgrounds, 100);
+
                 showToast('<i data-lucide="file-plus" class="lucide-icon"></i> New form started', 'success');
             }
         }
@@ -9583,7 +10745,12 @@
             }
         }
 
+        let _suppressToasts = false;
+
         function showToast(message, type = 'success') {
+            // During the submit animation, suppress info/success toasts to avoid duplicates
+            if (_suppressToasts && (type === 'info' || type === 'success')) return;
+
             const toast = document.getElementById('toast');
             toast.innerHTML = message;
             toast.className = 'toast ' + type;
@@ -9622,11 +10789,13 @@
             dropdown.className = 'searchable-dropdown';
             dropdown.innerHTML = `
                 <div class="dropdown-search-wrapper">
+                    <i data-lucide="search" class="lucide-icon"></i>
                     <input type="text" class="dropdown-search" placeholder="${placeholder}">
                 </div>
                 <div class="dropdown-options"></div>
             `;
             wrapper.appendChild(dropdown);
+            refreshIcons();
 
             const searchInput = dropdown.querySelector('.dropdown-search');
             const optionsContainer = dropdown.querySelector('.dropdown-options');
@@ -9708,6 +10877,7 @@
                             No results for "${filter}"
                         </div>
                     `;
+                    refreshIcons();
                 }
             }
 
@@ -10131,11 +11301,17 @@
             const slotDef = slots && currentGuideSlotIndex < slots.length
                 ? slots[currentGuideSlotIndex] : null;
 
+            const catPrefix = currentPhotoCategory.toUpperCase();
+            const timestampSuffix = Date.now().toString().slice(-4);
+            const photoName = slotDef
+                ? `${catPrefix} - ${slotDef.label.replace(/—/g, '-')} - ${timestampSuffix}.jpg`
+                : `${catPrefix} - Photo - ${timestampSuffix}.jpg`;
+
             const photo = {
                 base64Data: base64Data,
                 mimeType: 'image/jpeg',
-                name: slotDef ? `${currentPhotoCategory.toUpperCase()}_${slotDef.id}_${Date.now()}.jpg` : `${currentPhotoCategory.toUpperCase()}_Photo_${Date.now()}.jpg`,
-                label: slotDef ? `${currentPhotoCategory.toUpperCase()} — ${slotDef.label}` : `${currentPhotoCategory.toUpperCase()} — Misc`,
+                name: photoName,
+                label: slotDef ? `${catPrefix} — ${slotDef.label}` : `${catPrefix} — Misc`,
                 category: currentPhotoCategory,
                 slot: slotDef ? slotDef.id : null,
                 checklistSlot: slotDef ? slotDef.checklistSlot : null,
@@ -10924,11 +12100,17 @@
             files.forEach(file => {
                 compressImage(file, (compressedBase64, mimeType) => {
                     const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
+                    const catName = catNames[cat] || cat.toUpperCase();
+
+                    const fileParts = file.name.split('.');
+                    const ext = fileParts.length > 1 ? '.' + fileParts.pop() : '';
+                    const baseName = fileParts.join('.');
+
                     selectedPhotos.push({
                         base64Data: compressedBase64,
                         mimeType: mimeType,
-                        name: `${catNames[cat] || cat.toUpperCase()}_${file.name}`,
-                        label: `${catNames[cat] || cat.toUpperCase()} \u2014 ${file.name}`,
+                        name: `${catName} - ${baseName}${ext}`,
+                        label: `${catName} \u2014 ${file.name}`,
                         category: cat
                     });
                     renderCategoryPreviews();
@@ -11158,15 +12340,17 @@
 
             // Photos - skip Google Apps Script if not available (standalone PWA mode)
             if (selectedPhotos.length > 0 && typeof google !== 'undefined' && google.script) {
-                google.script.run
-                    .withSuccessHandler((photoUrls) => {
-                        submitData(photoUrls);
-                    })
-                    .withFailureHandler(err => {
-                        showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Photo upload failed: ' + err, 'error');
-                        submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
-                    })
-                    .uploadMultiplePhotos(selectedPhotos, roNumber);
+                getPhotosWithSeparators().then(photosPayload => {
+                    google.script.run
+                        .withSuccessHandler((photoUrls) => {
+                            submitData(photoUrls);
+                        })
+                        .withFailureHandler(err => {
+                            showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Photo upload failed: ' + err, 'error');
+                            submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
+                        })
+                        .uploadMultiplePhotos(photosPayload, roNumber);
+                });
             } else {
                 // PWA mode or no photos - submit without photo upload
                 submitData([]);
@@ -11806,6 +12990,64 @@
         // PHOTO ZIP & UPLOAD FUNCTIONS
         // =============================================
 
+        async function generateCategorySeparator(categoryName) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1200;
+                canvas.height = 800;
+                const ctx = canvas.getContext('2d');
+
+                // Draw background
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw text
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 120px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
+                const displayCat = catNames[categoryName.toLowerCase()] || categoryName.toUpperCase();
+                ctx.fillText(displayCat, canvas.width / 2, canvas.height / 2);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                resolve({
+                    base64Data: dataUrl.split(',')[1],
+                    mimeType: 'image/jpeg',
+                    name: `${displayCat} - 00 SEPARATOR.jpg`,
+                    label: `${displayCat} \u2014 Section Divider`,
+                    category: categoryName.toLowerCase(),
+                    isSeparator: true
+                });
+            });
+        }
+
+        async function getPhotosWithSeparators() {
+            if (selectedPhotos.length === 0) return [];
+
+            // Define expected order
+            const order = ['voil', 'conditioning', 'upd', 'scope'];
+            const presentCats = new Set(selectedPhotos.map(p => p.category || 'scope'));
+
+            const catsToInclude = order.filter(c => presentCats.has(c));
+            for (const c of presentCats) {
+                if (!catsToInclude.includes(c)) catsToInclude.push(c);
+            }
+
+            const finalPhotos = [];
+
+            for (const cat of catsToInclude) {
+                // Generate and push separator
+                const separator = await generateCategorySeparator(cat);
+                finalPhotos.push(separator);
+
+                // Push actual photos for this category
+                const catPhotos = selectedPhotos.filter(p => (p.category || 'scope') === cat);
+                finalPhotos.push(...catPhotos);
+            }
+            return finalPhotos;
+        }
+
         /**
          * Compress all selected photos into a ZIP file
          * @returns {Promise<Blob>} ZIP file blob
@@ -11817,6 +13059,8 @@
             if (selectedPhotos.length === 0) {
                 return null;
             }
+
+            const photosToProcess = await getPhotosWithSeparators();
 
             const zip = new JSZip();
             const timestamp = new Date().toISOString().slice(0, 10);
@@ -11833,18 +13077,18 @@
 
             const catCounters = { voil: 0, conditioning: 0, upd: 0, scope: 0 };
 
-            for (let i = 0; i < selectedPhotos.length; i++) {
-                const photo = selectedPhotos[i];
+            for (let i = 0; i < photosToProcess.length; i++) {
+                const photo = photosToProcess[i];
                 const cat = (photo.category && catFolderNames[photo.category]) ? photo.category : 'scope';
                 catCounters[cat]++;
                 const idx = catCounters[cat];
 
-                // Build filename from label or original name
-                let baseName = photo.label
-                    ? photo.label
-                    : (photo.name || `photo_${idx}`);
-                const safeBase = baseName.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-                const filename = `${String(idx).padStart(2, '0')}_${safeBase}.jpg`;
+                // Build readable filename from name or label
+                let baseName = photo.name || photo.label || `Photo_${idx}.jpg`;
+                // Clean up weird characters but keep spaces and hyphens readable
+                let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');
+                if (!safeBase.toLowerCase().endsWith('.jpg')) safeBase += '.jpg';
+                const filename = `${String(idx).padStart(2, '0')} - ${safeBase}`;
 
                 // Convert base64 to binary
                 const binaryData = atob(photo.base64Data);
@@ -11864,7 +13108,7 @@
                 compressionOptions: { level: 6 }
             });
 
-            console.log(`<i data-lucide="package" class="lucide-icon"></i> Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${selectedPhotos.length} photos in ${Object.values(catFolderNames).length} category folders`);
+            console.log(`<i data-lucide="package" class="lucide-icon"></i> Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${photosToProcess.length} photos in ${Object.values(catFolderNames).length} category folders`);
             return zipBlob;
         }
 
@@ -12244,14 +13488,28 @@
 
                 console.log('Sending Record:', JSON.stringify(record, null, 2));
 
-                const endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+                const draftRecordId = document.getElementById('roNumber').dataset.airtableRecordId;
+
+                let endpoint, method;
+                if (draftRecordId) {
+                    // We have a reserved draft, update it using PATCH
+                    console.log('Updating existing Airtable Draft ID:', draftRecordId);
+                    endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}/${draftRecordId}`;
+                    method = 'PATCH';
+                } else {
+                    // No drafted record or it failed to create earlier, fallback to POST
+                    console.log('No draft found, creating new Airtable Record');
+                    endpoint = `https://api.airtable.com/v0/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+                    method = 'POST';
+                }
+
                 const response = await fetch(endpoint, {
-                    method: 'POST',
+                    method: method,
                     headers: {
                         'Authorization': `Bearer ${config.apiKey}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(record)
+                    body: JSON.stringify(draftRecordId ? { fields: record.fields } : record) // PATCH requires exactly { fields: {...} } or { records: [{id: ..., fields: {...}}] } for bulk. For single record updating via its URL, it's just { fields: {...} }
                 });
 
                 if (!response.ok) {
@@ -13452,7 +14710,7 @@
                 return;
             }
 
-            select.innerHTML = '<option value="">Choose document template...</option>';
+            select.innerHTML = '<option value="">Choose template...</option>';
             templates.forEach(tmpl => {
                 const opt = document.createElement('option');
                 opt.value = tmpl._id || tmpl.id;
@@ -13463,15 +14721,18 @@
 
         // ---- Send contract from Records detail modal ----
         async function sendContractFromRecord() {
-            const select = document.getElementById('recordContractWorkflowSelect');
-            const sendBtn = document.getElementById('recordContractSendBtn');
-            const statusEl = document.getElementById('recordContractStatus');
+            const sendBtn = document.getElementById('topBarContractBtn');
+            const select = document.getElementById('topBarContractSelect');
+            const originalBtnHtml = sendBtn ? sendBtn.innerHTML : '<i data-lucide="send" class="lucide-icon"></i> Send Contract';
+
             const templateId = select?.value;
 
             if (!templateId) {
-                showRecordContractStatus('Please select a document template', 'warning');
+                showToast('Please select a document template', 'warning');
                 return;
             }
+
+            const templateName = select.options[select.selectedIndex]?.textContent || 'Document';
 
             const record = allRecords.find(r => r.id === currentDetailRecordId);
             if (!record) return;
@@ -13487,27 +14748,25 @@
             console.log('DEBUG: Contract Data:', { customerName, email, phone, roNumber, fields: f });
 
             if (!customerName) {
-                showRecordContractStatus('Customer name is required', 'warning');
+                showToast('Customer name is required to send contract', 'warning');
                 return;
             }
 
             if (!email) {
-                showRecordContractStatus('Customer email is required for document delivery', 'warning');
+                showToast('Customer email is required for document delivery', 'warning');
                 return;
             }
 
             if (!navigator.onLine) {
-                showRecordContractStatus('You are offline', 'warning');
+                showToast('You are offline', 'warning');
                 return;
             }
 
-            // Get template name from dropdown
-            const templateName = select.options[select.selectedIndex]?.textContent || 'Document';
-
             // UI: sending state
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = 'Sending...';
-            showRecordContractStatus('Finding contact in GHL...', 'info');
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Preparing...';
+            }
 
             let contactId = null;
 
@@ -13540,21 +14799,22 @@
                 if (existingContact) {
                     contactId = existingContact.id;
                     console.log('Found existing GHL contact:', contactId);
-                    showRecordContractStatus('Contact found, syncing vehicle data...', 'info');
+                    if (sendBtn) {
+                        sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing...';
+                        refreshIcons();
+                    }
+
                     // Push all record data into custom fields — pass edited name so GHL contact stays in sync
                     await prepareContactForSend(contactId, f, customerName);
-                    // Verify DND is actually off
-                    showRecordContractStatus('Verifying delivery channels are open...', 'info');
+
+                    if (sendBtn) sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Verifying...';
                     await ensureEmailDndOff(contactId);
 
                     // ── PROBE: test if GHL's messaging service actually accepts sends ──
-                    // GHL has a known desync: Contacts API may show dnd=false but the
-                    // Conversations API still blocks with "DND is active". The only fix
-                    // is to delete the contact and recreate it fresh.
                     const probeOk = await probeEmailDelivery(contactId);
                     if (!probeOk) {
                         console.warn('DND is STUCK on contact — deleting and recreating...');
-                        showRecordContractStatus('<i data-lucide="alert-triangle" class="lucide-icon"></i> Fixing stuck DND — recreating contact...', 'warning');
+                        if (sendBtn) sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Fixing DND...';
                         contactId = await recreateContact(contactId, {
                             firstName: existingContact.firstName || customerName.split(' ')[0] || 'Customer',
                             lastName: existingContact.lastName || customerName.split(' ').slice(1).join(' ') || '',
@@ -13567,10 +14827,16 @@
                         console.log('Contact recreated with clean DND:', contactId);
                     }
 
-                    showRecordContractStatus('Contact ready, sending document...', 'info');
+                    if (sendBtn) {
+                        sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Sending...';
+                        refreshIcons();
+                    }
                 } else {
                     // ── CREATE new contact (two-phase DND approach) ──
-                    showRecordContractStatus('Creating contact in GHL...', 'info');
+                    if (sendBtn) {
+                        sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Creating...';
+                        refreshIcons();
+                    }
                     const nameParts = customerName.split(' ');
                     const firstName = nameParts[0] || 'Customer';
                     const lastName = nameParts.slice(1).join(' ') || '';
@@ -13613,23 +14879,28 @@
                     console.log('Created new GHL contact:', contactId);
 
                     // Wait for GHL workflows to fire (auto-DND, tags, etc.)
-                    showRecordContractStatus('Waiting for GHL to process contact...', 'info');
+                    if (sendBtn) {
+                        sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Waiting...';
+                        refreshIcons();
+                    }
                     console.log('Waiting 4s for GHL workflows to complete...');
                     await new Promise(r => setTimeout(r, 4000));
 
-                    // Phase 2: Force DND off AFTER workflows complete
-                    showRecordContractStatus('Enabling delivery channels...', 'info');
+                    if (sendBtn) {
+                        sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Enabling...';
+                        refreshIcons();
+                    }
                     console.log('Phase 2: Forcing DND off on new contact...');
                     await forceDndOff(contactId);
                     await new Promise(r => setTimeout(r, 1000));
 
                     // Verify DND is actually off
-                    showRecordContractStatus('Verifying delivery channels are open...', 'info');
+                    if (sendBtn) sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Verifying...';
                     await ensureEmailDndOff(contactId);
                 }
 
                 // Step 2: Send template directly via Proposals API
-                showRecordContractStatus('Sending document...', 'info');
+                if (sendBtn) sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Sending...';
                 console.log(`Sending template ${templateId} to contact ${contactId}`);
                 const sendResult = await sendGHLTemplate(templateId, contactId);
 
@@ -13682,18 +14953,27 @@
                 saveContractData(contractData);
 
                 // Step 4: Success
-                showRecordContractStatus('Document sent successfully!', 'success');
                 renderRecordContractHistory(roNumber);
                 showToast(`${templateName} sent to ${customerName}`, 'success');
                 haptic('success');
 
+                if (sendBtn) {
+                    sendBtn.innerHTML = '<i data-lucide="check" class="lucide-icon"></i> Sent!';
+                    sendBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    sendBtn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                    setTimeout(() => {
+                        sendBtn.innerHTML = originalBtnHtml;
+                        sendBtn.style.background = '';
+                        sendBtn.style.boxShadow = '';
+                    }, 3000);
+                }
+
             } catch (err) {
                 console.error('Contract send error:', err);
-                showRecordContractStatus(`Failed: ${err.message} [C:${contactId}|T:${templateId}|E:${email}]`, 'error');
                 showToast(`Contract failed: ${err.message}`, 'error');
             } finally {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i data-lucide="send" class="lucide-icon"></i> Send Contract';
+                if (sendBtn) sendBtn.disabled = false;
+                refreshIcons();
             }
         }
 
@@ -13805,14 +15085,8 @@
         }
 
         function showRecordContractStatus(msg, type) {
-            const el = document.getElementById('recordContractStatus');
-            if (!el) return;
-            el.textContent = msg;
-            el.className = `record-contract-status ${type}`;
-            el.style.display = 'block';
-            if (type === 'success' || type === 'warning') {
-                setTimeout(() => { el.style.display = 'none'; }, 6000);
-            }
+            // Function retained just in case it's called elsewhere, changing to Toast fallback
+            if (type === 'error' || type === 'warning') showToast(msg, type);
         }
 
         // ---- Render contract history in records detail modal ----
@@ -14058,7 +15332,8 @@
             sendBtn.disabled = true;
             sendBtn.classList.remove('ready');
             sendBtn.classList.add('sending');
-            sendBtn.innerHTML = 'Sending...';
+            sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Sending...';
+            refreshIcons();
 
             try {
                 // Step 1: Upsert contact
@@ -14100,7 +15375,8 @@
                 sendBtn.disabled = false;
                 sendBtn.classList.remove('sending');
                 sendBtn.classList.add('ready');
-                sendBtn.innerHTML = 'Send';
+                sendBtn.innerHTML = '<i data-lucide="send" class="lucide-icon"></i> Send';
+                refreshIcons();
             }
         }
 
@@ -14212,12 +15488,49 @@
                 rawData[key] = checklistBundles[key].join(', ');
             });
 
+            // Transition UI instantly to single-popup creation state
+            const submittedRo = rawData.roNumber || '';
+            const submittedVehicle = [rawData.year, rawData.make, rawData.model].filter(Boolean).join(' ');
+
+            // Suppress info/success toasts during animation
+            _suppressToasts = true;
+
+            switchMode('records');
+
+            const modal = document.getElementById('recordDetailModal');
+            const cState = document.getElementById('recordCreationState');
+            const cContent = document.getElementById('recordDetailContentContainer');
+            const cFooter = document.getElementById('recordDetailFooterContainer');
+            const detailsEl = document.getElementById('jobCreationDetails');
+            const statusEl = document.getElementById('jobCreationStatus');
+
+            document.getElementById('recordDetailTitle').textContent = 'Submitting Record...';
+            if (cContent) cContent.style.display = 'none';
+            if (cFooter) cFooter.style.display = 'none';
+            if (cState) {
+                cState.style.display = 'flex';
+                // Reset classes for status
+                statusEl.className = 'job-creation-status';
+                detailsEl.innerHTML = `<strong style="color: #fff;">RO# ${submittedRo}</strong><br>${submittedVehicle}`;
+                statusEl.innerHTML = '<i data-lucide="loader" class="spin"></i> Uploading to Airtable...';
+                const scanBoxText = document.getElementById('scanBoxText');
+                if (scanBoxText) scanBoxText.textContent = 'AIRTABLE';
+                lucide.createIcons({ root: cState });
+            }
+
+            modal.classList.add('show');
+            if (cState) setTimeout(() => cState.classList.add('show'), 50);
+
             try {
                 const airtableResult = await uploadToAirtable();
 
                 if (airtableResult) {
-                    const submittedRo = rawData.roNumber || '';
-                    const submittedVehicle = [rawData.year, rawData.make, rawData.model].filter(Boolean).join(' ');
+                    if (statusEl) {
+                        statusEl.innerHTML = '<i data-lucide="image" class="lucide-icon spin"></i> Syncing Photos to GHL...';
+                        const scanBoxText = document.getElementById('scanBoxText');
+                        if (scanBoxText) scanBoxText.textContent = 'PHOTOS';
+                        lucide.createIcons({ root: cState });
+                    }
 
                     // Capture GHL data NOW — before clearDraft() resets the form fields
                     const ghlFormData = {
@@ -14235,21 +15548,29 @@
                         roNumber: rawData.roNumber || ''
                     };
 
-                    showToast(`<i data-lucide="check-circle" class="lucide-icon"></i> Scope saved — ${submittedRo}${submittedVehicle ? ' · ' + submittedVehicle : ''}`, 'success');
                     clearDraft();
 
                     // Submit to GHL CRM with selected pipeline
+                    let ghlSuccess = false;
                     try {
                         submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Uploading Photos)...';
                         refreshIcons();
                         const ghlUploadResult = await uploadAllPhotosToGHL();
                         ghlFormData.categoryUrls = ghlUploadResult.categoryUrls;
 
+                        if (statusEl) {
+                            statusEl.innerHTML = '<i data-lucide="user-plus" class="lucide-icon spin"></i> Creating GHL Contact...';
+                            const scanBoxText = document.getElementById('scanBoxText');
+                            if (scanBoxText) scanBoxText.textContent = 'CONTACT';
+                            lucide.createIcons({ root: cState });
+                        }
+
                         submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Creating Contact & Opportunity)...';
                         refreshIcons();
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
-                            showToast('<i data-lucide="check-circle" class="lucide-icon"></i> GHL opportunity created', 'success');
+                            ghlSuccess = true;
+                            // Toast removed, handled by animation
                         } else {
                             console.warn('GHL submission did not return success:', ghlResult);
                             showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> GHL sync failed: ${ghlResult.error || 'Unknown error'}`, 'warning');
@@ -14262,24 +15583,55 @@
                     // Reset the form so it's ready for the next vehicle
                     resetForm();
 
-                    // Switch to Records and pre-filter to the submitted RO so the scoper
-                    // can immediately see what was captured and know what happens next
-                    switchMode('records');
+                    if (statusEl) {
+                        statusEl.innerHTML = '<i data-lucide="check-circle" class="lucide-icon"></i> Sync Complete!';
+                        const scanBoxText = document.getElementById('scanBoxText');
+                        if (scanBoxText) {
+                            scanBoxText.textContent = 'DONE';
+                            scanBoxText.style.color = '#34d399'; // Green success color
+                        }
+                        statusEl.classList.add('success');
+                        lucide.createIcons({ root: cState });
+                    }
+
+                    // Background Refresh
+                    await refreshRecordsList();
+
+                    // Wait for a brief moment for visual satisfaction
+                    await new Promise(resolve => setTimeout(resolve, 800));
+
                     const searchEl = document.getElementById('recordsSearch');
                     if (searchEl) {
                         searchEl.value = submittedRo;
                     }
-                    refreshRecordsList();
+
+                    filterRecords();
+
+                    // Find and Open the newly created record
+                    const newRecord = allRecords.find(r => r.fields['RO Number'] === submittedRo);
+                    if (newRecord) {
+                        openRecordDetail(newRecord.id);
+                    } else {
+                        // Fallback if record not found
+                        closeRecordDetail();
+                        showToast('Record created, but could not be loaded immediately.', 'warning');
+                    }
+
                 } else {
+                    closeRecordDetail();
+                    switchMode('scoper');
                     showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Airtable upload failed', 'error');
                 }
             } catch (error) {
                 console.error('Submit error:', error);
+                closeRecordDetail();
+                switchMode('scoper');
                 showToast(`<i data-lucide="x-circle" class="lucide-icon"></i> Error: ${error.message}`, 'error');
             }
 
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Submit Scope';
+            _suppressToasts = false;
         }
 
         function resetForm() {
@@ -14553,7 +15905,16 @@
         async function refreshVehicleList() {
             haptic();
             const listEl = document.getElementById('vehicleList');
-            listEl.innerHTML = '<div class="loading-state">⏳ Loading vehicles...</div>';
+            listEl.innerHTML = `
+                <div class="loading-state-fancy">
+                    <i data-lucide="loader-2" class="lucide-icon spin" style="width:36px; height:36px;"></i>
+                    <p style="margin-top: 16px; color: rgba(255,255,255,0.7); font-weight: 500;">Loading vehicles...</p>
+                    <div style="margin-top: 32px; width: 100%;">
+                        <div class="skeleton-pulse" style="height: 120px; border-radius: 18px; margin-bottom: 16px; background: rgba(255,255,255,0.05);"></div>
+                        <div class="skeleton-pulse" style="height: 120px; border-radius: 18px; margin-bottom: 16px; background: rgba(255,255,255,0.05);"></div>
+                        <div class="skeleton-pulse" style="height: 120px; border-radius: 18px; background: rgba(255,255,255,0.05);"></div>
+                    </div>
+                </div>`;
 
             try {
                 allVehicles = await fetchVehiclesFromAirtable();
@@ -14561,6 +15922,7 @@
             } catch (err) {
                 console.error('Vehicle fetch error:', err);
                 listEl.innerHTML = `<div class="error-state"><i data-lucide="x-circle" class="lucide-icon"></i> ${err.message}</div>`;
+                refreshIcons();
             }
         }
 
@@ -14600,22 +15962,32 @@
             // Render dashboard summary with clickable filters
             summaryEl.innerHTML = `
                 <div class="summary-card vehicles ${currentDashboardFilter === 'all' ? 'active' : ''}" onclick="setDashboardFilter('all')">
+                    <div class="summary-icon"><i data-lucide="car" class="lucide-icon"></i></div>
                     <span class="summary-number">${vehiclesWithRR.length}</span>
                     <span class="summary-label">Vehicles</span>
                 </div>
                 <div class="summary-card pending ${currentDashboardFilter === 'pending' ? 'active' : ''}" onclick="setDashboardFilter('pending')">
+                    <div class="summary-icon"><i data-lucide="shopping-cart" class="lucide-icon"></i></div>
                     <span class="summary-number">${totalPending}</span>
                     <span class="summary-label">To Order</span>
                 </div>
                 <div class="summary-card in-progress ${currentDashboardFilter === 'in-progress' ? 'active' : ''}" onclick="setDashboardFilter('in-progress')">
+                    <div class="summary-icon"><i data-lucide="loader" class="lucide-icon"></i></div>
                     <span class="summary-number">${totalInProgress}</span>
                     <span class="summary-label">In Progress</span>
                 </div>
                 <div class="summary-card complete ${currentDashboardFilter === 'complete' ? 'active' : ''}" onclick="setDashboardFilter('complete')">
+                    <div class="summary-icon"><i data-lucide="check-circle" class="lucide-icon"></i></div>
                     <span class="summary-number">${totalComplete}</span>
                     <span class="summary-label">Complete</span>
                 </div>
             `;
+
+            // Update badge
+            const badgeEl = document.getElementById('partsCountBadge');
+            if (badgeEl) {
+                badgeEl.textContent = vehiclesWithRR.length;
+            }
 
             // Filter displayed vehicles based on selection
             let displayedVehicles = vehiclesWithRR;
@@ -14640,12 +16012,13 @@
             if (displayedVehicles.length === 0) {
                 const emptyMsg = currentDashboardFilter === 'all'
                     ? '<i data-lucide="package-x" class="lucide-hero"></i><br>No vehicles with R&R parts found'
-                    : '<i data-lucide="search" class="lucide-icon"></i> No vehicles match this filter';
+                    : '<i data-lucide="search" class="lucide-hero"></i><br>No vehicles match this filter';
                 listEl.innerHTML = `<div class="empty-state">${emptyMsg}</div>`;
+                refreshIcons();
                 return;
             }
 
-            listEl.innerHTML = displayedVehicles.map(v => {
+            listEl.innerHTML = displayedVehicles.map((v, index) => {
                 const rrParts = extractRRParts(v);
                 const f = v.fields;
 
@@ -14684,6 +16057,7 @@
 
                 return `
                     <div class="vehicle-card ${hasPending ? 'has-pending' : ''} ${allDone ? 'all-done' : ''}" 
+                         style="animation-delay: ${index * 0.05}s"
                          onclick="openPartDetail('${v.id}')">
                         <div class="card-header">
                             <span class="card-ro">RO# ${f['RO Number'] || 'N/A'}</span>
@@ -14713,6 +16087,7 @@
                     </div>
                 `;
             }).join('');
+            refreshIcons();
         }
 
         function openPartDetail(recordId) {
@@ -14738,30 +16113,30 @@
             const infoSection = document.getElementById('vehicleInfoSection');
             const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleDateString() : 'N/A';
             infoSection.innerHTML = `
-                <div class="vehicle-info-grid">
-                    <div class="info-item">
-                        <span class="info-label">VIN:</span>
-                        <span class="info-value">${f.VIN || 'N/A'}</span>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>VIN</label>
+                        <div class="value">${f.VIN || 'N/A'}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Customer:</span>
-                        <span class="info-value">${f['Customer Name'] || 'N/A'}</span>
+                    <div class="detail-item">
+                        <label>Customer</label>
+                        <div class="value">${f['Customer Name'] || 'N/A'}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Color:</span>
-                        <span class="info-value">${f.Color || 'N/A'}</span>
+                    <div class="detail-item">
+                        <label>Color</label>
+                        <div class="value">${f.Color || 'N/A'}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Insurance:</span>
-                        <span class="info-value">${f['Insurance Company'] || 'N/A'}</span>
+                    <div class="detail-item">
+                        <label>Insurance</label>
+                        <div class="value">${f['Insurance Company'] || 'N/A'}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value">${f.Location || 'N/A'}</span>
+                    <div class="detail-item">
+                        <label>Location</label>
+                        <div class="value">${f.Location || 'N/A'}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Submitted:</span>
-                        <span class="info-value">${submittedDate}</span>
+                    <div class="detail-item">
+                        <label>Submitted</label>
+                        <div class="value">${submittedDate}</div>
                     </div>
                 </div>
             `;
@@ -15207,7 +16582,13 @@
         async function refreshRecordsList() {
             haptic();
             const listEl = document.getElementById('recordsList');
-            listEl.innerHTML = '<div class="loading-state">⏳ Loading records...</div>';
+            listEl.innerHTML = `
+                <div class="loading-state-fancy">
+                    <div class="skeleton-pulse" style="width: 100%; height: 130px; border-radius: 18px;"></div>
+                    <div class="skeleton-pulse" style="width: 100%; height: 130px; border-radius: 18px;"></div>
+                    <div class="skeleton-pulse" style="width: 100%; height: 130px; border-radius: 18px;"></div>
+                </div>
+            `;
 
             try {
                 allRecords = await fetchVehiclesFromAirtable();  // Reuse existing fetch function
@@ -15234,67 +16615,148 @@
             // Render summary cards
             summaryEl.innerHTML = `
                 <div class="summary-card total ${currentRecordsFilter === 'all' ? 'active' : ''}" onclick="setRecordsFilter('all')">
+                    <div class="summary-icon"><i data-lucide="database" class="lucide-icon"></i></div>
                     <span class="summary-number">${stats.total}</span>
                     <span class="summary-label">Total</span>
                 </div>
                 <div class="summary-card pending ${currentRecordsFilter === 'Submitted' ? 'active' : ''}" onclick="setRecordsFilter('Submitted')">
+                    <div class="summary-icon"><i data-lucide="inbox" class="lucide-icon"></i></div>
                     <span class="summary-number">${stats.submitted}</span>
                     <span class="summary-label">Submitted</span>
                 </div>
+                <div class="summary-card in-progress ${currentRecordsFilter === 'In Progress' ? 'active' : ''}" onclick="setRecordsFilter('In Progress')">
+                    <div class="summary-icon"><i data-lucide="loader" class="lucide-icon"></i></div>
+                    <span class="summary-number">${stats.inProgress}</span>
+                    <span class="summary-label">In Progress</span>
+                </div>
                 <div class="summary-card complete ${currentRecordsFilter === 'Complete' ? 'active' : ''}" onclick="setRecordsFilter('Complete')">
+                    <div class="summary-icon"><i data-lucide="check-circle" class="lucide-icon"></i></div>
                     <span class="summary-number">${stats.complete}</span>
                     <span class="summary-label">Complete</span>
                 </div>
             `;
 
+            // Update badge
+            const badgeEl = document.getElementById('recordsCountBadge');
+            if (badgeEl) {
+                badgeEl.textContent = stats.total;
+            }
+
             if (records.length === 0) {
-                listEl.innerHTML = '<div class="empty-state"><i data-lucide="file-question" class="lucide-hero"></i><br>No vehicles added yet.<br><small style="opacity:0.7">Scan a VIN or fill the form to get started.</small></div>';
+                listEl.innerHTML = '<div class="empty-state"><i data-lucide="folder-open" class="lucide-hero"></i><br>No vehicles added yet.<br><small style="opacity:0.7">Scan a VIN or fill the form to get started.</small></div>';
+                refreshIcons();
                 return;
             }
 
             // Filter records based on current filter and search
             let displayedRecords = filterRecordsData(records);
 
+            // Sort records
+            displayedRecords = sortRecordsData(displayedRecords);
+
             if (displayedRecords.length === 0) {
-                listEl.innerHTML = '<div class="empty-state"><i data-lucide="search" class="lucide-icon"></i> No records match your filter</div>';
+                listEl.innerHTML = '<div class="empty-state"><i data-lucide="search" class="lucide-hero"></i><br>No records match your filter</div>';
+                refreshIcons();
                 return;
             }
 
-            listEl.innerHTML = displayedRecords.map(r => {
-                const f = r.fields;
-                const status = f.Status || 'Submitted';
-                const statusClass = status.toLowerCase().replace(/\s+/g, '-');
-                const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleDateString() : 'N/A';
-                const vehicleInfo = [f.Year, f.Make, f.Model].filter(Boolean).join(' ') || 'Vehicle Info N/A';
-                const thumbnailUrl = f.Thumbnail && f.Thumbnail[0] ?
-                    (f.Thumbnail[0].thumbnails?.small?.url || f.Thumbnail[0].url) : null;
+            const sortFilter = document.getElementById('recordsSortFilter')?.value || 'newest';
+            const isDateSorted = sortFilter === 'newest' || sortFilter === 'oldest';
 
-                return `
-                    <div class="record-card" onclick="openRecordDetail('${r.id}')">
-                        <div class="card-header">
-                            <span class="card-ro">RO# ${f['RO Number'] || 'N/A'}</span>
-                            <span class="status-badge ${statusClass}">${status}</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-thumbnail">
-                                ${thumbnailUrl
-                        ? `<img src="${thumbnailUrl}" alt="Vehicle">`
-                        : `<i data-lucide="car" class="lucide-hero" style="width:32px; height:32px; margin:0;"></i>`
-                    }
-                            </div>
-                            <div class="card-content">
-                                <div class="card-vehicle">${vehicleInfo}${f.Color ? ' • ' + f.Color : ''}</div>
-                                <div class="card-customer">${f['Customer Name'] || 'Customer Not Set'}</div>
-                                <div class="card-meta">
-                                    <span><i data-lucide="calendar" class="lucide-icon"></i> ${submittedDate}</span>
-                                    ${f['Insurance Company'] ? `<span><i data-lucide="building" class="lucide-icon"></i> ${f['Insurance Company']}</span>` : ''}
-                                    ${f['Photo Count'] ? `<span><i data-lucide="camera" class="lucide-icon"></i> ${f['Photo Count']}</span>` : ''}
-                                </div>
-                            </div>
+            let htmlString = '';
+
+            if (isDateSorted) {
+                // Group by date
+                const grouped = {};
+                displayedRecords.forEach(r => {
+                    const submittedDate = r.fields['Submitted At'];
+                    const dateObj = submittedDate ? new Date(submittedDate) : new Date(0);
+                    // Use locale date string with full weekday and month
+                    const dateStr = submittedDate ? dateObj.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown Date';
+                    if (!grouped[dateStr]) grouped[dateStr] = [];
+                    grouped[dateStr].push(r);
+                });
+
+                // Get keys in chronological appearance order (based on current sorted array)
+                const orderedKeys = [];
+                displayedRecords.forEach(r => {
+                    const submittedDate = r.fields['Submitted At'];
+                    const dateObj = submittedDate ? new Date(submittedDate) : new Date(0);
+                    const dateStr = submittedDate ? dateObj.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown Date';
+                    if (!orderedKeys.includes(dateStr)) orderedKeys.push(dateStr);
+                });
+
+                let globalIndex = 0;
+                htmlString = orderedKeys.map(dateKey => {
+                    const groupTitleHtml = `<div class="record-group-header"><i data-lucide="calendar" class="lucide-icon"></i> ${dateKey}</div>`;
+                    const cardsHtml = grouped[dateKey].map(r => {
+                        const html = generateRecordCardHtml(r, globalIndex);
+                        globalIndex++;
+                        return html;
+                    }).join('');
+                    return `${groupTitleHtml}<div class="record-group-grid">${cardsHtml}</div>`;
+                }).join('');
+            } else {
+                // Flat grid rendering
+                htmlString = `<div class="record-group-grid">` + displayedRecords.map((r, index) => generateRecordCardHtml(r, index)).join('') + `</div>`;
+            }
+
+            listEl.innerHTML = htmlString;
+            refreshIcons();
+        }
+
+        function generateRecordCardHtml(r, index) {
+            const f = r.fields;
+            const status = f.Status || 'Submitted';
+            const statusClass = status.toLowerCase().replace(/\s+/g, '-');
+            const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleDateString() : '';
+            const vehicleInfo = [f.Year, f.Make, f.Model].filter(Boolean).join(' ') || 'Vehicle N/A';
+            const customerName = f['Customer Name'] || 'No Customer';
+            const initials = customerName !== 'No Customer'
+                ? customerName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                : '?';
+
+            return `
+                <div class="record-card" style="animation-delay: ${index * 0.05}s" onclick="openRecordDetail('${r.id}')">
+                    <div class="card-profile">
+                        <div class="card-avatar">${initials}</div>
+                        <div class="card-profile-info">
+                            <div class="card-customer-name">${customerName}</div>
+                            <div class="card-vehicle-line">${vehicleInfo}${f.Color ? ' · ' + f.Color : ''}</div>
                         </div>
                     </div>
-                `;
-            }).join('');
+                    <div class="card-info-strip">
+                        <span class="status-badge ${statusClass}">${status}</span>
+                        <span class="card-chip ro-chip">RO# ${f['RO Number'] || 'N/A'}</span>
+                        ${f['Insurance Company'] ? `<span class="card-chip"><i data-lucide="shield" class="lucide-icon"></i> ${f['Insurance Company']}</span>` : ''}
+                        ${submittedDate ? `<span class="card-chip"><i data-lucide="calendar" class="lucide-icon"></i> ${submittedDate}</span>` : ''}
+                        ${f['Photo Count'] ? `<span class="card-chip"><i data-lucide="camera" class="lucide-icon"></i> ${f['Photo Count']}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function sortRecordsData(records) {
+            const sortFilter = document.getElementById('recordsSortFilter')?.value || 'newest';
+
+            return [...records].sort((a, b) => {
+                const dateA = new Date(a.fields['Submitted At'] || 0).getTime();
+                const dateB = new Date(b.fields['Submitted At'] || 0).getTime();
+                const nameA = (a.fields['Customer Name'] || '').toLowerCase();
+                const nameB = (b.fields['Customer Name'] || '').toLowerCase();
+                const roA = (a.fields['RO Number'] || '').toLowerCase();
+                const roB = (b.fields['RO Number'] || '').toLowerCase();
+
+                if (sortFilter === 'oldest') {
+                    return dateA - dateB;
+                } else if (sortFilter === 'customer') {
+                    return nameA.localeCompare(nameB);
+                } else if (sortFilter === 'ro') {
+                    return roA.localeCompare(roB);
+                }
+                // default newest
+                return dateB - dateA;
+            });
         }
 
         let currentRecordsFilter = 'all';
@@ -15358,29 +16820,31 @@
 
             // Vehicle Info
             document.getElementById('recordVehicleInfo').innerHTML = `
-                <div class="detail-item">
-                    <label>VIN</label>
-                    <div class="value">${f.VIN || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Year</label>
-                    <div class="value">${f.Year || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Make</label>
-                    <div class="value">${f.Make || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Model</label>
-                    <div class="value">${f.Model || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Color</label>
-                    <div class="value">${f.Color || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Odometer</label>
-                    <div class="value">${f.Odometer || 'N/A'}</div>
+                <div class="premium-spec-grid">
+                    <div class="premium-spec-item full-width">
+                        <span class="premium-spec-label">VIN</span>
+                        <span class="premium-spec-value highlight">${f.VIN || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Year</span>
+                        <span class="premium-spec-value">${f.Year || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Make</span>
+                        <span class="premium-spec-value">${f.Make || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Model</span>
+                        <span class="premium-spec-value">${f.Model || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Color</span>
+                        <span class="premium-spec-value">${f.Color || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Odometer</span>
+                        <span class="premium-spec-value">${f.Odometer || 'N/A'}</span>
+                    </div>
                 </div>
             `;
 
@@ -15389,30 +16853,35 @@
             const displayEmail = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']) || 'N/A';
             const displayPhone = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']) || 'N/A';
 
+            const displayInitials = displayName !== 'N/A' ? displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+
             document.getElementById('recordCustomerInfo').innerHTML = `
-                <div class="detail-item">
-                    <label>Customer Name</label>
-                    <div class="value">${displayName}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Email</label>
-                    <div class="value">${displayEmail}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Phone</label>
-                    <div class="value">${displayPhone}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Insurance</label>
-                    <div class="value">${f['Insurance Company'] || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Claim Number</label>
-                    <div class="value">${f['Claim Number'] || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Location</label>
-                    <div class="value">${f.Location || 'N/A'}</div>
+                <div class="premium-profile-card">
+                    <div class="premium-profile-header">
+                        <div class="premium-avatar">${displayInitials}</div>
+                        <div class="premium-profile-name">
+                            <h5>${displayName}</h5>
+                            <div class="premium-profile-contact">
+                                <span title="Phone"><i data-lucide="phone" class="lucide-icon"></i> ${displayPhone}</span>
+                                <span class="dot-separator">●</span>
+                                <span title="Email"><i data-lucide="mail" class="lucide-icon"></i> ${displayEmail}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="premium-profile-details">
+                        <div class="premium-detail-bubble">
+                            <span class="bubble-label">Insurance</span>
+                            <span class="bubble-value">${f['Insurance Company'] || 'N/A'}</span>
+                        </div>
+                        <div class="premium-detail-bubble">
+                            <span class="bubble-label">Claim #</span>
+                            <span class="bubble-value">${f['Claim Number'] || 'N/A'}</span>
+                        </div>
+                        <div class="premium-detail-bubble">
+                            <span class="bubble-label">Location</span>
+                            <span class="bubble-value">${f.Location || 'N/A'}</span>
+                        </div>
+                    </div>
                 </div>
             `;
 
@@ -15430,58 +16899,77 @@
             // Assessment Info
             const submittedDate = f['Submitted At'] ? new Date(f['Submitted At']).toLocaleString() : 'N/A';
             document.getElementById('recordAssessmentInfo').innerHTML = `
-                <div class="detail-item">
-                    <label>Estimator</label>
-                    <div class="value">${f.Estimator || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Status</label>
-                    <div class="value">${f.Status || 'Submitted'}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Submitted</label>
-                    <div class="value">${submittedDate}</div>
-                </div>
-                <div class="detail-item">
-                    <label>Photo Count</label>
-                    <div class="value">${f['Photo Count'] || '0'}</div>
+                <div class="premium-spec-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Estimator</span>
+                        <span class="premium-spec-value">${f.Estimator || 'N/A'}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Status</span>
+                        <span class="premium-spec-value">
+                            <span style="display:inline-block; padding: 2px 8px; border-radius: 12px; background: rgba(26,108,255,0.2); color: #1A6CFF; font-size: 13px;">${f.Status || 'Submitted'}</span>
+                        </span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Submitted</span>
+                        <span class="premium-spec-value">${submittedDate}</span>
+                    </div>
+                    <div class="premium-spec-item">
+                        <span class="premium-spec-label">Photo Count</span>
+                        <span class="premium-spec-value">${f['Photo Count'] || '0'}</span>
+                    </div>
                 </div>
             `;
 
-            // Attachments
-            const attachmentsSection = document.getElementById('recordAttachmentsSection');
-            const attachmentsEl = document.getElementById('recordAttachments');
+            // Top Bar Elements
+            const topBar = document.getElementById('recordTopBar');
+            const topBarCustomerName = document.getElementById('topBarCustomerName');
+            const topBarVehicleInfo = document.getElementById('topBarVehicleInfo');
+            const topBarPdfBtn = document.getElementById('topBarPdfBtn');
+            const topBarPhotosBtn = document.getElementById('topBarPhotosBtn');
+
+            // Set Top Bar Context
+            if (topBarCustomerName) topBarCustomerName.textContent = getFieldValue(f, ['Customer Name', 'Customer', 'Name']) || 'No Customer';
+            if (topBarVehicleInfo) topBarVehicleInfo.innerHTML = `<i data-lucide="car-front" style="width: 14px; height: 14px; margin-right: 4px; display: inline-block; vertical-align: text-bottom;"></i><span>${[f.Year, f.Make, f.Model].filter(Boolean).join(' ') || 'Vehicle N/A'}</span>`;
+
+            // Populate Contract Dropdown
+            populateContractTemplateDropdown('topBarContractSelect');
+
             const hasPdf = f['PDF Report'] && f['PDF Report'][0];
             const hasPhotos = f['Photo Package'] && f['Photo Package'][0];
 
             if (hasPdf || hasPhotos) {
-                attachmentsSection.style.display = 'block';
                 const roNum = (f['RO Number'] || 'RO').replace(/\s+/g, '-');
                 const custLastName = (f['Customer Name'] || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
                 const yr = f.Year || '';
                 const mk = (f.Make || '').replace(/\s+/g, '-');
                 const mdl = (f.Model || '').replace(/\s+/g, '-');
                 const dateStr = new Date().toISOString().slice(0, 10);
-                let attachmentsHtml = '';
+
                 if (hasPdf) {
                     const pdfFilename = `DentScope_${[roNum, custLastName, yr, mk, mdl].filter(Boolean).join('_')}_${dateStr}.pdf`;
-                    attachmentsHtml += `
-                        <button class="view-attachments-btn" onclick="downloadFileWithName('${f['PDF Report'][0].url}', '${pdfFilename}')">
-                            <i data-lucide="file-down" class="lucide-icon"></i> Download PDF
-                        </button>
-                    `;
+                    const pdfUrl = f['PDF Report'][0].url;
+                    if (topBarPdfBtn) {
+                        topBarPdfBtn.style.display = 'inline-flex';
+                        topBarPdfBtn.onclick = () => downloadFileWithName(pdfUrl, pdfFilename);
+                    }
+                } else if (topBarPdfBtn) {
+                    topBarPdfBtn.style.display = 'none';
                 }
+
                 if (hasPhotos) {
                     const zipFilename = `photos_${[roNum, yr, mk, mdl].filter(Boolean).join('_')}.zip`;
-                    attachmentsHtml += `
-                        <button class="view-attachments-btn" onclick="downloadFileWithName('${f['Photo Package'][0].url}', '${zipFilename}')">
-                            <i data-lucide="download" class="lucide-icon"></i> Download Photos
-                        </button>
-                    `;
+                    const zipUrl = f['Photo Package'][0].url;
+                    if (topBarPhotosBtn) {
+                        topBarPhotosBtn.style.display = 'inline-flex';
+                        topBarPhotosBtn.onclick = () => downloadFileWithName(zipUrl, zipFilename);
+                    }
+                } else if (topBarPhotosBtn) {
+                    topBarPhotosBtn.style.display = 'none';
                 }
-                attachmentsEl.innerHTML = attachmentsHtml;
             } else {
-                attachmentsSection.style.display = 'none';
+                if (topBarPdfBtn) topBarPdfBtn.style.display = 'none';
+                if (topBarPhotosBtn) topBarPhotosBtn.style.display = 'none';
             }
 
             // Notes
@@ -15495,7 +16983,6 @@
             }
 
             // Contracts section
-            populateContractTemplateDropdown('recordContractWorkflowSelect');
             const roNumber = f['RO Number'] || '';
             renderRecordContractHistory(roNumber);
             // Reset status
@@ -15504,8 +16991,65 @@
 
             refreshIcons();
 
-            // Show modal
-            document.getElementById('recordDetailModal').classList.add('show');
+            // Show modal and handle creation state fade out if applicable
+            const modal = document.getElementById('recordDetailModal');
+            const cState = document.getElementById('recordCreationState');
+            const cContent = document.getElementById('recordDetailContentContainer');
+            const cFooter = document.getElementById('recordDetailFooterContainer');
+
+            if (cState && cState.classList.contains('show')) {
+                // Hide top bar during creation state animation
+                if (topBar) topBar.style.display = 'none';
+
+                // Smooth transition from creating state to record detail state
+                cState.classList.remove('show');
+
+                setTimeout(() => {
+                    cState.style.display = 'none';
+
+                    if (topBar) {
+                        topBar.style.display = 'flex';
+                        topBar.style.opacity = '0';
+                        topBar.style.transition = 'opacity 0.4s ease';
+                    }
+                    if (cContent) {
+                        cContent.style.display = 'block';
+                        cContent.style.opacity = '0';
+                        cContent.style.transition = 'opacity 0.4s ease';
+                    }
+                    if (cFooter) {
+                        cFooter.style.display = 'flex';
+                        cFooter.style.opacity = '0';
+                        cFooter.style.transition = 'opacity 0.4s ease';
+                    }
+
+                    // Trigger reflow
+                    void cContent?.offsetWidth;
+
+                    if (topBar) topBar.style.opacity = '1';
+                    if (cContent) cContent.style.opacity = '1';
+                    if (cFooter) cFooter.style.opacity = '1';
+                }, 500); // Wait for cState to fade out
+            } else {
+                // Normal open
+                if (cState) {
+                    cState.classList.remove('show');
+                    cState.style.display = 'none';
+                }
+                if (topBar) {
+                    topBar.style.display = 'flex';
+                    topBar.style.opacity = '1';
+                }
+                if (cContent) {
+                    cContent.style.display = 'block';
+                    cContent.style.opacity = '1';
+                }
+                if (cFooter) {
+                    cFooter.style.display = 'flex';
+                    cFooter.style.opacity = '1';
+                }
+                modal.classList.add('show');
+            }
         }
 
         // Download a remote file and force the correct filename/extension
@@ -15533,7 +17077,35 @@
 
         function closeRecordDetail() {
             haptic();
-            document.getElementById('recordDetailModal').classList.remove('show');
+            const modal = document.getElementById('recordDetailModal');
+            const cState = document.getElementById('recordCreationState');
+            const cContent = document.getElementById('recordDetailContentContainer');
+            const cFooter = document.getElementById('recordDetailFooterContainer');
+            const topBar = document.getElementById('recordTopBar');
+
+            // Reset creation state if it was active
+            if (cState) {
+                cState.classList.remove('show');
+                cState.style.display = 'none';
+            }
+            // Restore content/footer/topBar to default visibility
+            if (topBar) {
+                topBar.style.display = 'none';
+                topBar.style.opacity = '';
+                topBar.style.transition = '';
+            }
+            if (cContent) {
+                cContent.style.display = '';
+                cContent.style.opacity = '';
+                cContent.style.transition = '';
+            }
+            if (cFooter) {
+                cFooter.style.display = '';
+                cFooter.style.opacity = '';
+                cFooter.style.transition = '';
+            }
+
+            modal.classList.remove('show');
             currentDetailRecordId = null;
         }
 
@@ -15869,14 +17441,14 @@
             content.style.display = 'none';
             progress.style.display = 'block';
             progressFill.style.width = '10%';
-            progressText.innerHTML = '<i data-lucide="camera" class="lucide-icon"></i> Processing image...';
+            progressText.innerHTML = '<i data-lucide="camera" class="lucide-icon"></i> Scanning...';
 
             const reader = new FileReader();
             reader.onload = async function (e) {
                 const base64Image = e.target.result.split(',')[1];
 
                 progressFill.style.width = '20%';
-                progressText.innerHTML = '<i data-lucide="refresh-cw" class="lucide-icon"></i> Sending to Google Vision...';
+                progressText.innerHTML = '<i data-lucide="refresh-cw" class="lucide-icon"></i> Scanning...';
 
                 try {
                     // console.log('[VIN Scan] Sending to Google Vision...');
@@ -15897,7 +17469,7 @@
                     );
 
                     progressFill.style.width = '50%';
-                    progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Extracting VIN...';
+                    progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Scanning...';
 
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -15915,7 +17487,7 @@
                     // console.log('[VIN Scan] Detected text:', fullText);
 
                     progressFill.style.width = '70%';
-                    progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Searching for VIN...';
+                    progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Scanning...';
 
                     // VIN check digit validation function
                     function validateVinCheckDigit(vin) {
@@ -16005,7 +17577,7 @@
 
                     // If no validated VIN, try NHTSA
                     if (!vin && allMatches.length > 0) {
-                        progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Verifying with NHTSA...';
+                        progressText.innerHTML = '<i data-lucide="search" class="lucide-icon"></i> Scanning...';
 
                         for (const candidate of allMatches.slice(0, 5)) {
                             try {
@@ -16134,8 +17706,8 @@
                 // Show progress
                 progress.style.display = 'block';
                 progressFill.style.width = '20%';
-                progressText.textContent = 'Uploading to Google Vision...';
-                status.innerHTML = '<i data-lucide="refresh-cw" class="lucide-icon"></i> Processing with Google AI...';
+                progressText.textContent = 'Scanning...';
+                status.innerHTML = '<i data-lucide="refresh-cw" class="lucide-icon"></i> Scanning...';
 
                 try {
                     // console.log('[Vision API] Sending image to Google Vision...');
@@ -16158,7 +17730,7 @@
                     );
 
                     progressFill.style.width = '60%';
-                    progressText.textContent = 'Analyzing text...';
+                    progressText.textContent = 'Scanning...';
 
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -16170,7 +17742,7 @@
                     // console.log('[Vision API] Full response:', data);
 
                     progressFill.style.width = '80%';
-                    progressText.textContent = 'Searching for VIN...';
+                    progressText.textContent = 'Scanning...';
 
                     // Extract text from response
                     const annotations = data.responses?.[0]?.textAnnotations;
@@ -16422,6 +17994,8 @@
             window.addEventListener('load', renderIcons);
         })();
     </script>
+
+    <!-- End of Body -->
 
     <!-- Lucide Icons: loaded at bottom of body so DOM is fully parsed -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" onload="lucide.createIcons();" onerror="console.warn('Lucide CDN failed, retrying...'); 

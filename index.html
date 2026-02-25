@@ -7784,7 +7784,7 @@
             <div class="parts-filters">
                 <div class="search-input-wrapper">
                     <i data-lucide="search" class="lucide-icon"></i>
-                    <input type="text" id="vehicleSearch" placeholder="Search RO# or customer...">
+                    <input type="text" id="vehicleSearch" placeholder="Search Claim#, RO# or customer...">
                 </div>
                 <select id="statusFilter">
                     <option value="all">All</option>
@@ -7888,7 +7888,7 @@
             <div class="records-filters">
                 <div class="search-input-wrapper">
                     <i data-lucide="search" class="lucide-icon"></i>
-                    <input type="text" id="recordsSearch" placeholder="Search RO#, VIN, customer, vehicle..."
+                    <input type="text" id="recordsSearch" placeholder="Search Claim#, RO#, VIN, customer..."
                         oninput="filterRecords()">
                 </div>
                 <select id="recordsSortFilter" onchange="filterRecords()">
@@ -8054,18 +8054,24 @@
         <!-- HIDDEN PDF TEMPLATE -->
         <div id="pdfTemplate">
             <!-- HEADER — full-width gradient banner -->
-            <div style="background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%); padding: 14px 24px; margin: -36px -36px 16px -36px; display: flex; align-items: center; justify-content: space-between;">
-                <img src="logo.webp" alt="Dent Experts" style="height: 42px; width: auto; filter: brightness(0) invert(1);">
+            <div
+                style="background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%); padding: 14px 24px; margin: -36px -36px 16px -36px; display: flex; align-items: center; justify-content: space-between;">
+                <img src="logo.webp" alt="Dent Experts"
+                    style="height: 42px; width: auto; filter: brightness(0) invert(1);">
                 <div style="text-align: right;">
-                    <div style="color: #ffffff; font-size: 11pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">PDR Damage Scope</div>
+                    <div
+                        style="color: #ffffff; font-size: 11pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">
+                        PDR Damage Scope</div>
                     <div style="color: rgba(255,255,255,0.65); font-size: 7pt; margin-top: 4px;">
-                        RO#: <span id="pdf-ro"></span> &nbsp;&bull;&nbsp; Est: <span id="pdf-estimator"></span> &nbsp;&bull;&nbsp; <span id="pdf-date"></span>
+                        RO#: <span id="pdf-ro"></span> &nbsp;&bull;&nbsp; Est: <span id="pdf-estimator"></span>
+                        &nbsp;&bull;&nbsp; <span id="pdf-date"></span>
                     </div>
                 </div>
             </div>
 
             <!-- VEHICLE INFO card -->
-            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+            <div
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
                 <div class="pdf-section-label">Vehicle Information</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; font-size: 8pt;">
                     <div><span style="color: rgba(255,255,255,0.4);">VIN:</span> <span id="pdf-vin"></span></div>
@@ -8074,10 +8080,13 @@
                     <div><span style="color: rgba(255,255,255,0.4);">Model:</span> <span id="pdf-model"></span></div>
                     <div><span style="color: rgba(255,255,255,0.4);">Color:</span> <span id="pdf-color"></span></div>
                     <div><span style="color: rgba(255,255,255,0.4);">Trim:</span> <span id="pdf-trim"></span></div>
-                    <div><span style="color: rgba(255,255,255,0.4);">Insured:</span> <span id="pdf-insured"></span></div>
-                    <div><span style="color: rgba(255,255,255,0.4);">Carrier:</span> <span id="pdf-carrier"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Insured:</span> <span id="pdf-insured"></span>
+                    </div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Carrier:</span> <span id="pdf-carrier"></span>
+                    </div>
                     <div><span style="color: rgba(255,255,255,0.4);">Claim #:</span> <span id="pdf-claim"></span></div>
-                    <div><span style="color: rgba(255,255,255,0.4);">Odometer:</span> <span id="pdf-odometer"></span></div>
+                    <div><span style="color: rgba(255,255,255,0.4);">Odometer:</span> <span id="pdf-odometer"></span>
+                    </div>
                 </div>
             </div>
 
@@ -8111,11 +8120,13 @@
             <!-- NOTES -->
             <div id="pdf-notes-section" style="margin-bottom: 12px;">
                 <div class="pdf-section-label">Notes</div>
-                <p id="pdf-notes-text" style="font-size: 8pt; margin: 0; white-space: pre-wrap; color: rgba(255,255,255,0.8);"></p>
+                <p id="pdf-notes-text"
+                    style="font-size: 8pt; margin: 0; white-space: pre-wrap; color: rgba(255,255,255,0.8);"></p>
             </div>
 
             <!-- FOOTER -->
-            <div style="position: absolute; bottom: 20px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+            <div
+                style="position: absolute; bottom: 20px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
                 Generated by Dent Experts PDR Scope App &nbsp;&bull;&nbsp; <span id="pdf-timestamp"></span>
             </div>
         </div>
@@ -12989,6 +13000,8 @@
         async function getPhotosWithSeparators() {
             if (selectedPhotos.length === 0) return [];
 
+            const claimNum = document.getElementById('claimNumber')?.value || 'N/A';
+
             // Define expected order
             const order = ['voil', 'conditioning', 'upd', 'scope'];
             const presentCats = new Set(selectedPhotos.map(p => p.category || 'scope'));
@@ -12999,14 +13012,23 @@
             }
 
             const finalPhotos = [];
+            const catPrefixes = { conditioning: '01', scope: '02', voil: '03', upd: '04' };
 
             for (const cat of catsToInclude) {
+                const prefix = catPrefixes[cat] || '05';
+
                 // Generate and push separator
                 const separator = await generateCategorySeparator(cat);
+                separator.name = `${prefix}_${claimNum} - ${separator.name}`;
                 finalPhotos.push(separator);
 
                 // Push actual photos for this category
-                const catPhotos = selectedPhotos.filter(p => (p.category || 'scope') === cat);
+                const catPhotos = selectedPhotos.filter(p => (p.category || 'scope') === cat).map(p => {
+                    return {
+                        ...p,
+                        name: `${prefix}_${claimNum} - ${p.name}`
+                    };
+                });
                 finalPhotos.push(...catPhotos);
             }
             return finalPhotos;
@@ -13018,39 +13040,48 @@
          * @param {string} roNumber
          * @returns {Promise<Blob>} ZIP file blob
          */
-        async function createPhotosZipFromArray(photos, roNumber) {
+        async function createPhotosZipFromArray(photos, roNumber, formData = null) {
             if (typeof JSZip === 'undefined') throw new Error('JSZip library not loaded');
             const realPhotos = (photos || []).filter(p => !p.isSeparator && p.base64Data);
             if (realPhotos.length === 0) return null;
 
             const zip = new JSZip();
-            const timestamp = new Date().toISOString().slice(0, 10);
-            const root = zip.folder(`photos_${roNumber || 'draft'}_${timestamp}`);
+            const claimNum = formData?.claimNumber || document.getElementById('claimNumber')?.value || 'N/A';
+            const custName = formData?.customerName || document.getElementById('customerName')?.value || 'Customer';
+            const folderName = `${claimNum} - ${custName} - ${roNumber || 'Draft'}`.replace(/[\/\\]/g, '-');
+            const root = zip.folder(folderName);
 
-            const catFolderNames = {
-                voil: '1_VOIL_Vehicle_ID',
-                conditioning: '2_COND_Total_Loss',
-                upd: '3_UPD_Prior_Damage',
-                scope: '4_SCOPE_Storm_Damage'
-            };
+            const catPrefixes = { conditioning: '01', scope: '02', voil: '03', upd: '04' };
             const catCounters = {};
+            const usedFilenames = new Set();
 
             for (const photo of realPhotos) {
-                const cat = (photo.category && catFolderNames[photo.category]) ? photo.category : 'scope';
+                const cat = photo.category || 'scope';
                 catCounters[cat] = (catCounters[cat] || 0) + 1;
                 const idx = catCounters[cat];
 
                 let baseName = photo.name || photo.label || `Photo_${idx}.jpg`;
                 let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');
                 if (!safeBase.toLowerCase().endsWith('.jpg')) safeBase += '.jpg';
-                const filename = `${String(idx).padStart(2, '0')} - ${safeBase}`;
+
+                const prefix = catPrefixes[cat] || '05';
+                let filename = `${prefix}_${claimNum} - ${safeBase}`;
+
+                // Deduplicate file names
+                let counter = 1;
+                while (usedFilenames.has(filename.toLowerCase())) {
+                    const nameParts = filename.split('.');
+                    const ext = nameParts.pop();
+                    filename = `${nameParts.join('.')} (${counter}).${ext}`;
+                    counter++;
+                }
+                usedFilenames.add(filename.toLowerCase());
 
                 const binaryData = atob(photo.base64Data);
                 const bytes = new Uint8Array(binaryData.length);
                 for (let j = 0; j < binaryData.length; j++) bytes[j] = binaryData.charCodeAt(j);
 
-                const folderLabel = catFolderNames[cat] || '5_Other';
-                root.folder(folderLabel).file(filename, bytes, { binary: true });
+                root.file(filename, bytes, { binary: true });
             }
 
             return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
@@ -13071,7 +13102,7 @@
                     return;
                 }
 
-                const zipBlob = await createPhotosZipFromArray(photos, roNumber);
+                const zipBlob = await createPhotosZipFromArray(photos, roNumber, localForm);
                 if (!zipBlob) {
                     showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> No photos to package', 'warning');
                     return;
@@ -13100,52 +13131,49 @@
             const photosToProcess = await getPhotosWithSeparators();
 
             const zip = new JSZip();
-            const timestamp = new Date().toISOString().slice(0, 10);
-            const folderName = `photos_${roNumber || 'draft'}_${timestamp}`;
+            const claimNum = document.getElementById('claimNumber')?.value || 'N/A';
+            const custName = document.getElementById('customerName')?.value || 'Customer';
+            const folderName = `${claimNum} - ${custName} - ${roNumber || 'Draft'}`.replace(/[\/\\]/g, '-');
             const root = zip.folder(folderName);
-
-            // Organize into category subfolders
-            const catFolderNames = {
-                voil: '1_VOIL_Vehicle_ID',
-                conditioning: '2_COND_Total_Loss',
-                upd: '3_UPD_Prior_Damage',
-                scope: '4_SCOPE_Storm_Damage'
-            };
-
-            const catCounters = { voil: 0, conditioning: 0, upd: 0, scope: 0 };
+            const usedFilenames = new Set();
 
             for (let i = 0; i < photosToProcess.length; i++) {
                 const photo = photosToProcess[i];
-                const cat = (photo.category && catFolderNames[photo.category]) ? photo.category : 'scope';
-                catCounters[cat]++;
-                const idx = catCounters[cat];
+                if (photo.isSeparator) continue; // Skip separators for Zip export
 
-                // Build readable filename from name or label
-                let baseName = photo.name || photo.label || `Photo_${idx}.jpg`;
-                // Clean up weird characters but keep spaces and hyphens readable
+                let baseName = photo.name || photo.label || `Photo_${i}.jpg`;
                 let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');
                 if (!safeBase.toLowerCase().endsWith('.jpg')) safeBase += '.jpg';
-                const filename = `${String(idx).padStart(2, '0')} - ${safeBase}`;
 
-                // Convert base64 to binary
+                // Name is already prefixed in getPhotosWithSeparators
+                let filename = safeBase;
+
+                // Deduplicate file names
+                let counter = 1;
+                while (usedFilenames.has(filename.toLowerCase())) {
+                    const nameParts = filename.split('.');
+                    const ext = nameParts.pop();
+                    filename = `${nameParts.join('.')} (${counter}).${ext}`;
+                    counter++;
+                }
+                usedFilenames.add(filename.toLowerCase());
+
                 const binaryData = atob(photo.base64Data);
                 const bytes = new Uint8Array(binaryData.length);
                 for (let j = 0; j < binaryData.length; j++) {
                     bytes[j] = binaryData.charCodeAt(j);
                 }
 
-                const subfolder = root.folder(catFolderNames[cat]);
-                subfolder.file(filename, bytes, { binary: true });
+                root.file(filename, bytes, { binary: true });
             }
 
-            // Generate ZIP blob
             const zipBlob = await zip.generateAsync({
                 type: 'blob',
                 compression: 'DEFLATE',
                 compressionOptions: { level: 6 }
             });
 
-            console.log(`<i data-lucide="package" class="lucide-icon"></i> Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB with ${photosToProcess.length} photos in ${Object.values(catFolderNames).length} category folders`);
+            console.log(`<i data-lucide="package" class="lucide-icon"></i> Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB in flat folder`);
             return zipBlob;
         }
 
@@ -13631,9 +13659,21 @@
                         canvas.width = img.naturalWidth;
                         canvas.height = img.naturalHeight;
                         const ctx = canvas.getContext('2d');
-                        ctx.filter = 'brightness(0) invert(1)';
                         ctx.drawImage(img, 0, 0);
-                        resolve(canvas.toDataURL('image/png'));
+                        // Make logo white; bake blue header bg into transparent pixels
+                        // so jsPDF never needs to handle PNG alpha (avoids white-box artifact)
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const d = imageData.data;
+                        for (let i = 0; i < d.length; i += 4) {
+                            if (d[i + 3] > 10) {
+                                d[i] = 255; d[i + 1] = 255; d[i + 2] = 255; d[i + 3] = 255;
+                            } else {
+                                // Transparent → brand blue header background
+                                d[i] = 26; d[i + 1] = 108; d[i + 2] = 255; d[i + 3] = 255;
+                            }
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                        resolve(canvas.toDataURL('image/jpeg', 0.95));
                     } catch (e) {
                         resolve(null);
                     }
@@ -13647,17 +13687,33 @@
         function collectDamagedPanels() {
             const panels = [];
             document.querySelectorAll('.panel-box').forEach(box => {
-                const panelName = box.querySelector('.panel-header')?.textContent?.trim() || '';
+                // Get only the first text node — avoids picking up the injected "Done" label
+                const headerEl = box.querySelector('.panel-header');
+                const panelName = Array.from(headerEl?.childNodes || [])
+                    .find(n => n.nodeType === Node.TEXT_NODE)?.textContent?.trim()
+                    || headerEl?.textContent?.trim() || '';
+
                 const dcVal = box.querySelector('input[name$="_dc"]')?.value || '';
                 const osVal = box.querySelector('input[name$="_os"]')?.value || '';
+                const coinVal = box.querySelector('input[name$="_coin"]')?.value || '';
+
+                // R&I: checkboxes whose name contains "_ri_" (e.g. lf_fender_ri_lamp)
                 const riItems = [];
-                box.querySelectorAll('.checkbox-item input[type="checkbox"]:checked').forEach(cb => {
-                    const label = cb.closest('.checkbox-item')?.querySelector('span')?.textContent?.trim();
-                    if (label && !label.includes('R&R')) riItems.push(label);
+                box.querySelectorAll('input[name*="_ri_"]:checked').forEach(cb => {
+                    const row = cb.closest('tr');
+                    const partName = row?.querySelectorAll('td')[1]?.textContent?.trim();
+                    if (partName) riItems.push(partName);
                 });
-                const rrChecked = box.querySelector('input[name$="_rr"]')?.checked || false;
-                if (dcVal || osVal || riItems.length > 0 || rrChecked) {
-                    panels.push({ name: panelName, dc: dcVal || '-', os: osVal || '-', ri: riItems.join(', ') || '-', rr: rrChecked ? 'Y' : '' });
+
+                // R&R: any checkbox whose name contains "_rr_" is checked
+                const rrChecked = !!box.querySelector('input[name*="_rr_"]:checked');
+
+                // Only include panels with actual damage (dc/os default '0' means no damage)
+                const hasDamage = (dcVal !== '' && dcVal !== '0') ||
+                    (osVal !== '' && osVal !== '0') ||
+                    riItems.length > 0 || rrChecked;
+                if (hasDamage) {
+                    panels.push({ name: panelName, dc: dcVal || '-', coin: coinVal || '-', os: osVal || '-', ri: riItems.join(', ') || '-', rr: rrChecked ? 'Y' : '' });
                 }
             });
             return panels;
@@ -13683,7 +13739,7 @@
             // ── Logo (white) ─────────────────────────────────────────────
             const logoData = await loadWhiteLogoDataUrl();
             if (logoData) {
-                pdf.addImage(logoData, 'PNG', M, 13, 110, 42);
+                pdf.addImage(logoData, 'JPEG', M, 13, 110, 42);
             } else {
                 pdf.setTextColor(255, 255, 255);
                 pdf.setFont('helvetica', 'bold');
@@ -13705,7 +13761,7 @@
             let y = HEADER_H + 14;
 
             // ── Vehicle Info card ─────────────────────────────────────────
-            const VCARD_H = 100;
+            const VCARD_H = 128;
             pdf.setFillColor(22, 22, 22);
             pdf.setDrawColor(50, 55, 65);
             pdf.setLineWidth(0.5);
@@ -13717,11 +13773,12 @@
             pdf.text('VEHICLE INFORMATION', M + 10, y + 13);
 
             const vFields = [
-                ['VIN', formData.vin],        ['Year', formData.year],
-                ['Make', formData.make],       ['Model', formData.model],
-                ['Color', formData.color],     ['Location', formData.location],
+                ['VIN', formData.vin], ['Year', formData.year],
+                ['Make', formData.make], ['Model', formData.model],
+                ['Color', formData.color], ['Location', formData.location],
                 ['Insured', formData.insuredName], ['Carrier', formData.insuranceCompany],
                 ['Claim #', formData.claimNumber], ['Odometer', formData.odometer],
+                ['Email', formData.customerEmail], ['Phone', formData.customerPhone],
             ];
             const LABEL_W = 46;
             const colHalfW = CW / 2 - 16; // max value width per column
@@ -13755,11 +13812,12 @@
 
                     const ROW_H = 16;
                     const cols = [
-                        { label: 'Panel',  w: 178, align: 'left'   },
-                        { label: 'DC',     w: 44,  align: 'center'  },
-                        { label: 'OS',     w: 44,  align: 'center'  },
-                        { label: 'R&I',    w: 246, align: 'left'    },
-                        { label: 'R&R',    w: 28,  align: 'center'  },
+                        { label: 'Panel', w: 160, align: 'left' },
+                        { label: 'DC', w: 52, align: 'center' },
+                        { label: 'Size', w: 44, align: 'center' },
+                        { label: 'OS', w: 36, align: 'center' },
+                        { label: 'R&I', w: 218, align: 'left' },
+                        { label: 'R&R', w: 30, align: 'center' },
                     ];
 
                     // Header row
@@ -13787,7 +13845,8 @@
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(7.5);
                         pdf.setTextColor(205, 210, 220);
-                        const vals = [panel.name, panel.dc, panel.os, panel.ri, panel.rr];
+                        const coinLabel = panel.coin && panel.coin !== '-' ? panel.coin.charAt(0).toUpperCase() + panel.coin.slice(1) : '-';
+                        const vals = [panel.name, panel.dc, coinLabel, panel.os, panel.ri, panel.rr];
                         cx = M;
                         cols.forEach((col, ci) => {
                             const rawVal = vals[ci] || '';
@@ -13918,7 +13977,7 @@
             // iOS (including iPad in desktop mode) — open blob in new tab,
             // user taps the share icon → Save to Files
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
             if (isIOS) {
                 window.open(blobUrl, '_blank');
@@ -16607,7 +16666,7 @@
 
             let filtered = allVehicles.filter(v => {
                 const f = v.fields;
-                const text = `${f['RO Number'] || ''} ${f['Customer Name'] || ''} ${f.Year || ''} ${f.Make || ''} ${f.Model || ''}`.toLowerCase();
+                const text = `${f['Claim Number'] || ''} ${f['RO Number'] || ''} ${f['Customer Name'] || ''} ${f.Year || ''} ${f.Make || ''} ${f.Model || ''}`.toLowerCase();
                 return text.includes(search);
             });
 
@@ -16784,6 +16843,7 @@
                     </div>
                     <div class="card-info-strip">
                         <span class="status-badge ${statusClass}">${status}</span>
+                        ${f['Claim Number'] ? `<span class="card-chip claim-chip">Claim# ${f['Claim Number']}</span>` : ''}
                         <span class="card-chip ro-chip">RO# ${f['RO Number'] || 'N/A'}</span>
                         ${f['Insurance Company'] ? `<span class="card-chip"><i data-lucide="shield" class="lucide-icon"></i> ${f['Insurance Company']}</span>` : ''}
                         ${submittedDate ? `<span class="card-chip"><i data-lucide="calendar" class="lucide-icon"></i> ${submittedDate}</span>` : ''}
@@ -16839,6 +16899,7 @@
                 filtered = filtered.filter(r => {
                     const f = r.fields;
                     const searchText = [
+                        f['Claim Number'],
                         f['RO Number'],
                         f.VIN,
                         f['Customer Name'],
@@ -17128,7 +17189,7 @@
 
             // iOS/iPadOS only — includes iPad using "Request Desktop Website" mode
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
             if (isIOS && navigator.canShare) {
                 const file = new File([blob], filename, { type: mimeType });

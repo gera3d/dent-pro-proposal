@@ -1166,6 +1166,7 @@
             transition: opacity 0.15s, background 0.15s;
             line-height: 1;
             vertical-align: middle;
+            flex-shrink: 0;
         }
 
         .panel-photo-btn:hover {
@@ -8854,8 +8855,15 @@
             border-left: 4px solid #1A6CFF;
             padding-left: 10px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            gap: 6px;
+        }
+
+        .panel-title-text {
+            flex: 1 1 auto;
+            min-width: 0;
+            line-height: 1.2;
         }
 
         /* DONE TOGGLE STYLES */
@@ -8871,6 +8879,9 @@
             padding: 4px 8px;
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-left: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .panel-done-toggle input {
@@ -8898,6 +8909,37 @@
         .panel-box.is-complete .panel-done-toggle {
             background: #1A6CFF;
             color: #fff;
+        }
+
+        /* Tablet/iPad fit: keep header controls compact so labels don't crowd */
+        @media (min-width: 768px) and (max-width: 1100px) {
+            .panel-header {
+                font-size: 13px;
+                letter-spacing: 0.35px;
+                padding-left: 8px;
+                gap: 5px;
+            }
+
+            .panel-title-text {
+                line-height: 1.15;
+            }
+
+            .panel-done-toggle {
+                font-size: 10px;
+                padding: 3px 6px;
+                gap: 4px;
+            }
+
+            .panel-done-toggle input {
+                width: 14px;
+                height: 14px;
+            }
+
+            .panel-photo-btn {
+                margin-left: 2px;
+                font-size: 13px;
+                padding: 2px 3px;
+            }
         }
 
         .panel-ratings {
@@ -10199,7 +10241,8 @@
     <script>
         // CONFIGURATION
         const CONFIG = {
-            photoFolderId: 'YOUR_FOLDER_ID_HERE'
+            photoFolderId: 'YOUR_FOLDER_ID_HERE',
+            driveScriptUrl: 'https://script.google.com/macros/s/AKfycbzliw6vJpduhKK5EUPQ1uJUu37NdPCiYJ4xSI2pP1Em6Qr_pjNqFvhA9HW3y0rkVwFQyw/exec'
         };
 
         // STATE
@@ -11811,10 +11854,35 @@
             initAutoSave();
         });
 
+        function getPanelDisplayName(panelBox) {
+            const headerEl = panelBox?.querySelector('.panel-header');
+            if (!headerEl) return 'Panel';
+
+            const spanTitle = headerEl.querySelector('.panel-title-text')?.textContent?.trim();
+            if (spanTitle) return spanTitle;
+
+            const dataTitle = headerEl.dataset.panelTitle?.trim();
+            if (dataTitle) return dataTitle;
+
+            const textNodeTitle = Array.from(headerEl.childNodes || [])
+                .find(n => n.nodeType === Node.TEXT_NODE && n.textContent?.trim())?.textContent?.trim();
+            if (textNodeTitle) return textNodeTitle;
+
+            return headerEl.textContent?.trim() || 'Panel';
+        }
+
         function initPanelToggles() {
             document.querySelectorAll('.panel-box').forEach(box => {
                 const header = box.querySelector('.panel-header');
                 if (!header) return;
+
+                const panelTitle = getPanelDisplayName(box);
+                header.dataset.panelTitle = panelTitle;
+                header.textContent = '';
+                const titleEl = document.createElement('span');
+                titleEl.className = 'panel-title-text';
+                titleEl.textContent = panelTitle;
+                header.appendChild(titleEl);
 
                 // Derive a unique name for this panel
                 const refInput = box.querySelector('input[name]');
@@ -12538,7 +12606,7 @@
                 const dcVal = dcInput ? dcInput.value : '';
                 const osVal = osInput ? parseInt(osInput.value) || 0 : 0;
                 if (dcVal) {
-                    const panelName = box.querySelector('.panel-header')?.textContent?.trim() || 'Panel';
+                    const panelName = getPanelDisplayName(box);
                     summary += `• ${panelName}: ${dcVal} dents`;
                     if (osVal > 0) summary += ` (${osVal} OS)`;
                     summary += '\n';
@@ -12967,31 +13035,120 @@
 
         async function generateCategorySeparator(categoryName) {
             return new Promise((resolve) => {
+                const W = 1200, H = 800;
                 const canvas = document.createElement('canvas');
-                canvas.width = 1200;
-                canvas.height = 800;
+                canvas.width = W; canvas.height = H;
                 const ctx = canvas.getContext('2d');
 
-                // Draw background
-                ctx.fillStyle = '#1a1a1a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
+                const catColors = { voil: '#1A6CFF', conditioning: '#F59E0B', upd: '#EF4444', scope: '#10B981' };
+                const catSubtitles = {
+                    voil:         'Vehicle Overview Image List',
+                    conditioning: 'Pre-Existing Condition Documentation',
+                    upd:          'Unrelated Prior Damage',
+                    scope:        'Hail Damage Scope Photos'
+                };
 
-                // Draw text
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 120px sans-serif';
+                const key        = categoryName.toLowerCase();
+                const displayCat = catNames[key] || categoryName.toUpperCase();
+                const accent     = catColors[key] || '#1A6CFF';
+                const subtitle   = catSubtitles[key] || '';
+
+                // ── Background ───────────────────────────────────────────────
+                ctx.fillStyle = '#0D1117';
+                ctx.fillRect(0, 0, W, H);
+
+                // Subtle accent corner glow
+                const glow = ctx.createRadialGradient(W * 0.88, H * 0.12, 0, W * 0.88, H * 0.12, 480);
+                glow.addColorStop(0, accent + '22');
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.fillRect(0, 0, W, H);
+
+                // ── Left accent bar (12px) ───────────────────────────────────
+                ctx.fillStyle = accent;
+                ctx.fillRect(0, 0, 12, H);
+
+                // ── Header strip ─────────────────────────────────────────────
+                ctx.fillStyle = 'rgba(255,255,255,0.035)';
+                ctx.fillRect(12, 0, W - 12, 80);
+
+                ctx.fillStyle = 'rgba(255,255,255,0.80)';
+                ctx.font = 'bold 24px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('DENT EXPERTS', 56, 36);
+
+                ctx.fillStyle = 'rgba(255,255,255,0.32)';
+                ctx.font = '13px sans-serif';
+                ctx.fillText('EXCELLENCE IN HAIL REPAIR', 56, 58);
+
+                // ── Pill badge ───────────────────────────────────────────────
+                const pillW = 190, pillH = 40, pillX = 56, pillY = 104;
+                ctx.beginPath();
+                ctx.roundRect(pillX, pillY, pillW, pillH, 20);
+                ctx.fillStyle = accent + '28';
+                ctx.fill();
+                ctx.strokeStyle = accent + 'AA';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.fillStyle = accent;
+                ctx.font = 'bold 16px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
-                const displayCat = catNames[categoryName.toLowerCase()] || categoryName.toUpperCase();
-                ctx.fillText(displayCat, canvas.width / 2, canvas.height / 2);
+                ctx.fillText('PHOTO SECTION', pillX + pillW / 2, pillY + pillH / 2);
 
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                // ── Auto-size main text to fit canvas ────────────────────────
+                const maxTextW = W - 112;
+                let fontSize = 160;
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                while (ctx.measureText(displayCat).width > maxTextW && fontSize > 48) {
+                    fontSize -= 2;
+                    ctx.font = `bold ${fontSize}px sans-serif`;
+                }
+                const textW = ctx.measureText(displayCat).width;
+
+                // Vertically center the text block between pill and bottom strip
+                const capH    = fontSize * 0.72;
+                const blockH  = capH + 10 + 5 + 18 + 28; // cap + gap + underline + gap + subtitle
+                const areaTop = 162, areaBot = 730;
+                const blockTop = areaTop + (areaBot - areaTop - blockH) / 2;
+                const baseline = blockTop + capH;
+
+                // Main category name
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText(displayCat, 56, baseline);
+
+                // Underline — exact measured width
+                ctx.fillStyle = accent;
+                ctx.fillRect(56, baseline + 10, textW, 5);
+
+                // Subtitle
+                ctx.fillStyle = 'rgba(255,255,255,0.48)';
+                ctx.font = '26px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(subtitle, 56, baseline + 10 + 5 + 14);
+
+                // ── Bottom strip ─────────────────────────────────────────────
+                ctx.fillStyle = 'rgba(255,255,255,0.035)';
+                ctx.fillRect(12, H - 60, W - 12, 60);
+
+                ctx.fillStyle = 'rgba(255,255,255,0.32)';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('dentexperts.com', W - 48, H - 30);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
                 resolve({
                     base64Data: dataUrl.split(',')[1],
                     mimeType: 'image/jpeg',
                     name: `${displayCat} - 00 SEPARATOR.jpg`,
                     label: `${displayCat} \u2014 Section Divider`,
-                    category: categoryName.toLowerCase(),
+                    category: key,
                     isSeparator: true
                 });
             });
@@ -13687,11 +13844,7 @@
         function collectDamagedPanels() {
             const panels = [];
             document.querySelectorAll('.panel-box').forEach(box => {
-                // Get only the first text node — avoids picking up the injected "Done" label
-                const headerEl = box.querySelector('.panel-header');
-                const panelName = Array.from(headerEl?.childNodes || [])
-                    .find(n => n.nodeType === Node.TEXT_NODE)?.textContent?.trim()
-                    || headerEl?.textContent?.trim() || '';
+                const panelName = getPanelDisplayName(box);
 
                 const dcVal = box.querySelector('input[name$="_dc"]')?.value || '';
                 const osVal = box.querySelector('input[name$="_os"]')?.value || '';
@@ -14089,6 +14242,99 @@
 
             await Promise.all(promises);
             return { categoryUrls };
+        }
+
+        // ==================== GOOGLE DRIVE UPLOAD ====================
+        async function uploadToGoogleDrive(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName) {
+            if (!CONFIG.driveScriptUrl) return null;
+
+            const CATEGORY_ORDER  = ['voil', 'conditioning', 'upd', 'scope'];
+            const CATEGORY_LABELS = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
+            const BRAND_FOLDER    = 'Dent Experts';
+
+            // Build human-readable folder name: "Jane Smith - CLM-001 - 2022 Toyota Camry"
+            const namePart    = (insuredName || 'Unknown').trim();
+            const claimPart   = (claimNumber || roNumber || 'No-Claim').trim();
+            const vehiclePart = [year, make, model].filter(Boolean).join(' ');
+            const folderName  = vehiclePart
+                ? `${namePart} - ${claimPart} - ${vehiclePart}`
+                : `${namePart} - ${claimPart}`;
+
+            // Build uploads with per-category numbering.
+            // Separators get "00", then photos are 01, 02, 03... per category.
+            // Files sort alphabetically in Drive: COND - 00, COND - 01 … VOIL - 00, VOIL - 01 …
+            const BATCH_SIZE = 5;
+            const uploads = [];
+
+            if (photos && photos.length > 0) {
+                // Group by category preserving original order within each group
+                const grouped = {};
+                CATEGORY_ORDER.forEach(cat => { grouped[cat] = []; });
+                photos.forEach(photo => {
+                    const cat = photo.category || 'scope';
+                    if (!grouped[cat]) grouped[cat] = [];
+                    grouped[cat].push(photo);
+                });
+
+                for (const cat of CATEGORY_ORDER) {
+                    const catPhotos = grouped[cat];
+                    if (!catPhotos || catPhotos.length === 0) continue;
+                    const catLabel = CATEGORY_LABELS[cat] || cat.toUpperCase();
+                    let photoNum = 0;
+                    catPhotos.forEach(photo => {
+                        const isSep = photo.isSeparator;
+                        const num   = isSep ? '00' : String(++photoNum).padStart(2, '0');
+                        const rawLabel   = photo.label || photo.name || 'Photo';
+                        const shortLabel = isSep ? 'Section Divider'
+                            : rawLabel.includes('\u2014') ? rawLabel.split('\u2014')[1].trim()
+                            : rawLabel;
+                        uploads.push({
+                            fileName:   `${catLabel} - ${num} - ${shortLabel}.jpg`,
+                            base64Data: photo.base64Data,
+                            mimeType:   photo.mimeType || 'image/jpeg'
+                        });
+                    });
+                }
+            }
+
+            // Append PDF if provided
+            if (pdfBase64 && pdfFileName) {
+                uploads.push({ fileName: pdfFileName, base64Data: pdfBase64, mimeType: 'application/pdf' });
+            }
+
+            if (uploads.length === 0) return null;
+
+            let done = 0;
+            let failed = 0;
+
+            const driveStatusEl = document.querySelector('#scanBoxText') || document.querySelector('.scan-box-text');
+
+            // Files land at: Shared Drive > Dent Experts > [folderName] > files
+            const uploadOne = (u) => fetch(CONFIG.driveScriptUrl, {
+                method: 'POST',
+                mode:   'no-cors',
+                body:   JSON.stringify({
+                    action:      'uploadPhoto',
+                    brandFolder: BRAND_FOLDER,
+                    folderName,
+                    fileName:    u.fileName,
+                    base64Data:  u.base64Data,
+                    mimeType:    u.mimeType
+                })
+            }).then(() => {
+                done++;
+                if (driveStatusEl) driveStatusEl.textContent = `DRIVE ${done}/${uploads.length}`;
+            }).catch(err => {
+                failed++;
+                console.error(`Drive: upload error for ${u.fileName}:`, err);
+            });
+
+            for (let i = 0; i < uploads.length; i += BATCH_SIZE) {
+                await Promise.all(uploads.slice(i, i + BATCH_SIZE).map(uploadOne));
+            }
+
+            console.log(`Drive: ${done} uploaded, ${failed} failed — folder "Dent Experts/${folderName}"`);
+            return { folderName, count: done, failed };
         }
 
         async function submitToGHL(formData, pipelineKey = 'repair_tracker') {
@@ -14760,9 +15006,10 @@
         }
 
         // ---- Send template to contact via Proposals API ----
-        async function sendGHLTemplate(templateId, contactId, opportunityId) {
+        async function sendGHLTemplate(templateId, contactId, opportunityId, documentName) {
             const url = `${GHL_CONFIG.baseUrl}/proposals/templates/send`;
             const payload = {
+                name:       documentName || 'Repair Authorization',
                 templateId: templateId,
                 userId: GHL_CONFIG.userId,
                 sendDocument: true,
@@ -15018,7 +15265,8 @@
                 // Step 2: Send template directly via Proposals API
                 if (sendBtn) sendBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Sending...';
                 console.log(`Sending template ${templateId} to contact ${contactId}`);
-                const sendResult = await sendGHLTemplate(templateId, contactId);
+                const docName = `${templateName} — ${customerName}${roNumber ? ' (' + roNumber + ')' : ''}`;
+                const sendResult = await sendGHLTemplate(templateId, contactId, null, docName);
 
                 // Step 2b: Send SMS notification (non-blocking — if it fails, email still went through)
                 if (phone) {
@@ -15258,7 +15506,8 @@
 
             try {
                 showToast('Resending document...', 'info');
-                await sendGHLTemplate(contract.templateId, contract.contactId);
+                const resendDocName = contract.templateName || 'Repair Authorization';
+                await sendGHLTemplate(contract.templateId, contract.contactId, null, resendDocName);
 
                 contract.sentAt = new Date().toISOString();
                 contract.sendCount = (contract.sendCount || 1) + 1;
@@ -15461,7 +15710,8 @@
                 const contactId = contactResult.contactId;
 
                 // Step 2: Send template via Proposals API
-                const sendResult = await sendGHLTemplate(templateId, contactId);
+                const docName = `${templateName} — ${customerName}${roNumber ? ' (' + roNumber + ')' : ''}`;
+                const sendResult = await sendGHLTemplate(templateId, contactId, null, docName);
 
                 // Step 3: Save contract record
                 const contractData = getOrCreateContractData(roNumber);
@@ -15649,6 +15899,9 @@
                     }
 
                     // Capture GHL data NOW — before clearDraft() resets the form fields
+                    // For Drive: use photos WITH branded category separators inserted
+                    const drivePhotos = await getPhotosWithSeparators();
+
                     const ghlFormData = {
                         insuredName: rawData.insuredName || '',
                         customerEmail: (rawData.customerEmail || '').trim(),
@@ -15694,6 +15947,48 @@
                     } catch (ghlErr) {
                         console.error('GHL submission error:', ghlErr);
                         showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> GHL sync error: ${ghlErr.message}`, 'error');
+                    }
+
+                    // Upload photos + PDF to Google Drive (non-blocking — won't fail the submission)
+                    if (CONFIG.driveScriptUrl) {
+                        if (statusEl) {
+                            statusEl.innerHTML = '<i data-lucide="hard-drive" class="lucide-icon spin"></i> Uploading to Google Drive...';
+                            const scanBoxText = document.getElementById('scanBoxText');
+                            if (scanBoxText) scanBoxText.textContent = 'DRIVE';
+                            lucide.createIcons({ root: cState });
+                        }
+                        try {
+                            // Generate PDF silently for Drive
+                            let drivePdfBase64 = null, drivePdfFileName = null;
+                            if (typeof window.jspdf !== 'undefined') {
+                                try {
+                                    const { jsPDF } = window.jspdf;
+                                    const drivePdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+                                    await buildCoverPage(drivePdf, rawData);
+                                    if (selectedPhotos.length > 0) await addPhotoPages(drivePdf, selectedPhotos);
+                                    drivePdfBase64 = drivePdf.output('datauristring').split(',')[1];
+                                    const ts = new Date().toISOString().slice(0, 10);
+                                    const lastName = (rawData.insuredName || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
+                                    drivePdfFileName = `DentScope_${[rawData.roNumber, lastName, rawData.year, rawData.make, rawData.model].filter(Boolean).join('_')}_${ts}.pdf`;
+                                } catch (pdfErr) {
+                                    console.warn('PDF for Drive skipped:', pdfErr);
+                                }
+                            }
+
+                            await uploadToGoogleDrive(
+                                rawData.insuredName,
+                                rawData.claimNumber,
+                                rawData.roNumber,
+                                rawData.year,
+                                rawData.make,
+                                rawData.model,
+                                drivePhotos,
+                                drivePdfBase64,
+                                drivePdfFileName
+                            );
+                        } catch (driveErr) {
+                            console.error('Google Drive upload error:', driveErr);
+                        }
                     }
 
                     // Reset the form so it's ready for the next vehicle

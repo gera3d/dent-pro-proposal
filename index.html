@@ -9481,6 +9481,7 @@
 
             .footer-actions-row {
                 flex-direction: column;
+                gap: 8px;
             }
 
             .footer-select {
@@ -9489,10 +9490,19 @@
 
             .footer-buttons {
                 width: 100%;
+                gap: 6px;
             }
 
             .footer-btn {
                 flex: 1;
+                font-size: 12px;
+                padding: 0 8px;
+                gap: 4px;
+            }
+
+            .footer-btn .lucide-icon {
+                width: 14px;
+                height: 14px;
             }
         }
 
@@ -13043,16 +13053,16 @@
                 const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
                 const catColors = { voil: '#1A6CFF', conditioning: '#F59E0B', upd: '#EF4444', scope: '#10B981' };
                 const catSubtitles = {
-                    voil:         'Vehicle Overview Image List',
+                    voil: 'Vehicle Overview Image List',
                     conditioning: 'Pre-Existing Condition Documentation',
-                    upd:          'Unrelated Prior Damage',
-                    scope:        'Hail Damage Scope Photos'
+                    upd: 'Unrelated Prior Damage',
+                    scope: 'Hail Damage Scope Photos'
                 };
 
-                const key        = categoryName.toLowerCase();
+                const key = categoryName.toLowerCase();
                 const displayCat = catNames[key] || categoryName.toUpperCase();
-                const accent     = catColors[key] || '#1A6CFF';
-                const subtitle   = catSubtitles[key] || '';
+                const accent = catColors[key] || '#1A6CFF';
+                const subtitle = catSubtitles[key] || '';
 
                 // ── Background ───────────────────────────────────────────────
                 ctx.fillStyle = '#0D1117';
@@ -13109,8 +13119,8 @@
                 const textW = ctx.measureText(displayCat).width;
 
                 // Vertically center the text block between pill and bottom strip
-                const capH    = fontSize * 0.72;
-                const blockH  = capH + 10 + 5 + 18 + 28; // cap + gap + underline + gap + subtitle
+                const capH = fontSize * 0.72;
+                const blockH = capH + 10 + 5 + 18 + 28; // cap + gap + underline + gap + subtitle
                 const areaTop = 162, areaBot = 730;
                 const blockTop = areaTop + (areaBot - areaTop - blockH) / 2;
                 const baseline = blockTop + capH;
@@ -14248,15 +14258,15 @@
         async function uploadToGoogleDrive(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName) {
             if (!CONFIG.driveScriptUrl) return null;
 
-            const CATEGORY_ORDER  = ['voil', 'conditioning', 'upd', 'scope'];
+            const CATEGORY_ORDER = ['voil', 'conditioning', 'upd', 'scope'];
             const CATEGORY_LABELS = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
-            const BRAND_FOLDER    = 'Dent Experts';
+            const BRAND_FOLDER = 'Dent Experts';
 
             // Build human-readable folder name: "Jane Smith - CLM-001 - 2022 Toyota Camry"
-            const namePart    = (insuredName || 'Unknown').trim();
-            const claimPart   = (claimNumber || roNumber || 'No-Claim').trim();
+            const namePart = (insuredName || 'Unknown').trim();
+            const claimPart = (claimNumber || roNumber || 'No-Claim').trim();
             const vehiclePart = [year, make, model].filter(Boolean).join(' ');
-            const folderName  = vehiclePart
+            const folderName = vehiclePart
                 ? `${namePart} - ${claimPart} - ${vehiclePart}`
                 : `${namePart} - ${claimPart}`;
 
@@ -14283,15 +14293,15 @@
                     let photoNum = 0;
                     catPhotos.forEach(photo => {
                         const isSep = photo.isSeparator;
-                        const num   = isSep ? '00' : String(++photoNum).padStart(2, '0');
-                        const rawLabel   = photo.label || photo.name || 'Photo';
+                        const num = isSep ? '00' : String(++photoNum).padStart(2, '0');
+                        const rawLabel = photo.label || photo.name || 'Photo';
                         const shortLabel = isSep ? 'Section Divider'
                             : rawLabel.includes('\u2014') ? rawLabel.split('\u2014')[1].trim()
-                            : rawLabel;
+                                : rawLabel;
                         uploads.push({
-                            fileName:   `${catLabel} - ${num} - ${shortLabel}.jpg`,
+                            fileName: `${catLabel} - ${num} - ${shortLabel}.jpg`,
                             base64Data: photo.base64Data,
-                            mimeType:   photo.mimeType || 'image/jpeg'
+                            mimeType: photo.mimeType || 'image/jpeg'
                         });
                     });
                 }
@@ -14312,14 +14322,14 @@
             // Files land at: Shared Drive > Dent Experts > [folderName] > files
             const uploadOne = (u) => fetch(CONFIG.driveScriptUrl, {
                 method: 'POST',
-                mode:   'no-cors',
-                body:   JSON.stringify({
-                    action:      'uploadPhoto',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    action: 'uploadPhoto',
                     brandFolder: BRAND_FOLDER,
                     folderName,
-                    fileName:    u.fileName,
-                    base64Data:  u.base64Data,
-                    mimeType:    u.mimeType
+                    fileName: u.fileName,
+                    base64Data: u.base64Data,
+                    mimeType: u.mimeType
                 })
             }).then(() => {
                 done++;
@@ -15009,7 +15019,7 @@
         async function sendGHLTemplate(templateId, contactId, opportunityId, documentName) {
             const url = `${GHL_CONFIG.baseUrl}/proposals/templates/send`;
             const payload = {
-                name:       documentName || 'Repair Authorization',
+                name: documentName || 'Repair Authorization',
                 templateId: templateId,
                 userId: GHL_CONFIG.userId,
                 sendDocument: true,

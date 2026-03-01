@@ -12451,6 +12451,12 @@
 
             files.forEach(file => {
                 compressImage(file, (compressedBase64, mimeType) => {
+                    // Check if compression failed
+                    if (!compressedBase64) {
+                        showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> Failed to process ${file.name}`, 'warning');
+                        return;
+                    }
+
                     const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
                     const catName = catNames[cat] || cat.toUpperCase();
 
@@ -12610,29 +12616,52 @@
         }
 
         function compressImage(file, callback) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_SIZE = 1200;
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    callback(dataUrl.split(',')[1], 'image/jpeg');
+            try {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = () => {
+                        console.error('Failed to load image for compression');
+                        callback(null, null);
+                    };
+                    img.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const MAX_SIZE = 1200;
+
+                            if (width > height && width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            } else if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            callback(dataUrl.split(',')[1], 'image/jpeg');
+                        } catch (err) {
+                            console.error('Canvas compression error:', err);
+                            callback(null, null);
+                        }
+                    };
+                    img.src = e.target.result;
                 };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+                reader.onerror = () => {
+                    console.error('FileReader error during compression');
+                    callback(null, null);
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                console.error('compressImage fatal error:', err);
+                callback(null, null);
+            }
         }
 
         // --- UI HELPER FUNCTIONS ---
@@ -13579,11 +13608,15 @@
                 }
                 usedFilenames.add(filename.toLowerCase());
 
-                const binaryData = atob(photo.base64Data);
-                const bytes = new Uint8Array(binaryData.length);
-                for (let j = 0; j < binaryData.length; j++) bytes[j] = binaryData.charCodeAt(j);
-
-                root.file(filename, bytes, { binary: true });
+                try {
+                    // Optimized memory-safe conversion from base64 to Blob
+                    const mimeType = photo.mimeType || 'image/jpeg';
+                    const fetchRes = await fetch(`data:${mimeType};base64,${photo.base64Data}`);
+                    const blob = await fetchRes.blob();
+                    root.file(filename, blob, { binary: true });
+                } catch (e) {
+                    console.error("Failed to process photo for zip:", e);
+                }
             }
 
             return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
@@ -13660,13 +13693,15 @@
                 }
                 usedFilenames.add(filename.toLowerCase());
 
-                const binaryData = atob(photo.base64Data);
-                const bytes = new Uint8Array(binaryData.length);
-                for (let j = 0; j < binaryData.length; j++) {
-                    bytes[j] = binaryData.charCodeAt(j);
+                try {
+                    // Optimized memory-safe conversion from base64 to Blob
+                    const mimeType = photo.mimeType || 'image/jpeg';
+                    const fetchRes = await fetch(`data:${mimeType};base64,${photo.base64Data}`);
+                    const blob = await fetchRes.blob();
+                    root.file(filename, blob, { binary: true });
+                } catch (e) {
+                    console.error("Failed to process photo for zip:", e);
                 }
-
-                root.file(filename, bytes, { binary: true });
             }
 
             const zipBlob = await zip.generateAsync({
@@ -14547,21 +14582,17 @@
             const promises = selectedPhotos.map(async (photo, index) => {
                 const cat = photo.category || 'scope';
                 const filename = photo.name || `photo_${cat}_${index}.jpg`;
-
-                // convert base64 to Blob
-                const binaryData = atob(photo.base64Data);
-                const arrayBuffer = new ArrayBuffer(binaryData.length);
-                const bytes = new Uint8Array(arrayBuffer);
-                for (let j = 0; j < binaryData.length; j++) {
-                    bytes[j] = binaryData.charCodeAt(j);
-                }
-                const blob = new Blob([bytes], { type: 'image/jpeg' });
-
-                const fd = new FormData();
-                fd.append('file', blob, filename);
-                fd.append('hosted', 'false'); // Must be false when uploading binary data
+                const mimeType = photo.mimeType || 'image/jpeg';
 
                 try {
+                    // Optimized memory-safe conversion from base64 to Blob
+                    const fetchRes = await fetch(`data:${mimeType};base64,${photo.base64Data}`);
+                    const blob = await fetchRes.blob();
+
+                    const fd = new FormData();
+                    fd.append('file', blob, filename);
+                    fd.append('hosted', 'false'); // Must be false when uploading binary data
+
                     const response = await fetch(`${GHL_CONFIG.baseUrl}/medias/upload-file`, {
                         method: 'POST',
                         headers: {

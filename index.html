@@ -7669,23 +7669,11 @@
             </div>
 
             <!-- NOTES + FOOTER -->
-            <div class="section footer-section">
+            <div class="section footer-section" style="margin-bottom: 0;">
                 <div class="notes-box">
                     <label>Notes:</label>
                     <textarea id="notes" rows="4"></textarea>
                 </div>
-            </div>
-
-            <!-- PDF EXPORT SECTION -->
-            <div class="section export-section">
-                <button type="button" class="export-btn" onclick="generatePDF()">
-                    <span><i data-lucide="file-down" class="lucide-icon"></i></span> Download PDF
-                </button>
-
-                <!-- Airtable Upload Button -->
-                <button type="button" class="export-btn airtable-btn" onclick="uploadToAirtable()">
-                    <span><i data-lucide="cloud" class="lucide-icon"></i></span> Upload to Airtable
-                </button>
             </div>
 
             <!-- ==================== CONTRACT PANEL ==================== -->
@@ -7771,8 +7759,11 @@
 
                 <!-- Secondary actions -->
                 <div class="sz-secondary">
+                    <button type="button" class="sz-sec-btn" onclick="generatePDF()">
+                        <i data-lucide="file-text" class="lucide-icon"></i> Save PDF
+                    </button>
                     <button type="button" class="sz-sec-btn" onclick="exportToCSV()">
-                        <i data-lucide="file-down" class="lucide-icon"></i> Export PDF
+                        <i data-lucide="file-spreadsheet" class="lucide-icon"></i> Export CSV
                     </button>
                     <button type="button" class="sz-sec-btn" onclick="nativeShare()">
                         <i data-lucide="share" class="lucide-icon"></i> Share

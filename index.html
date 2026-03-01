@@ -13789,7 +13789,43 @@
             return null;
         }
 
+        /**
+         * Create a persistent Google Drive folder for this claim directly
+         * returns the folder URL if successful.
+         */
+        async function createGoogleDriveFolder(formData) {
+            if (!CONFIG.driveScriptUrl) return null;
+            try {
+                const BRAND_FOLDER = 'Dent Experts';
+                const namePart = (formData.insuredName || 'Unknown').trim();
+                const claimPart = (formData.claimNumber || formData.roNumber || 'No-Claim').trim();
+                const vehiclePart = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
+                const folderName = vehiclePart
+                    ? `${namePart} - ${claimPart} - ${vehiclePart}`
+                    : `${namePart} - ${claimPart}`;
 
+                console.log('<i data-lucide="folder" class="lucide-icon"></i> Creating Drive Folder:', folderName);
+                const res = await fetch(CONFIG.driveScriptUrl, {
+                    method: 'POST',
+                    // mode: 'no-cors' -> we need the response, so we don't use no-cors if we expect JSON back. 
+                    // GAS web apps configured as "Anyone" allow CORS.
+                    body: JSON.stringify({
+                        action: 'createFolder',
+                        brandFolder: BRAND_FOLDER,
+                        folderName: folderName
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success && result.folderUrl) {
+                    console.log('<i data-lucide="check-circle" class="lucide-icon"></i> Drive Folder Created:', result.folderUrl);
+                    return result.folderUrl;
+                }
+            } catch (e) {
+                console.warn('Failed to create Drive folder:', e);
+            }
+            return null;
+        }
 
         // Upload to Airtable with PDF attachment (Hybrid: Drive or file.io)
         async function uploadToAirtable() {
@@ -13806,6 +13842,13 @@
                 await ensureAirtableFields(config);
 
                 const formData = collectFormData();
+
+                // --- Pre-flight: Create Google Drive Master Folder ---
+                showToast('<i data-lucide="folder" class="lucide-icon"></i> Setting up Drive workspace...', 'info');
+                const driveFolderUrl = await createGoogleDriveFolder(formData);
+                if (driveFolderUrl) {
+                    formData.driveUrl = driveFolderUrl;
+                }
 
                 // Step 1: Generate PDF
                 let pdfUrl = null;
@@ -14090,6 +14133,11 @@
                         { url: photoZipUrl }
                     ];
                     record.fields['Photo Count'] = selectedPhotos.length;
+                }
+
+                // Attach Google Drive Folder Link
+                if (formData.driveUrl) {
+                    record.fields['Google Drive Folder'] = formData.driveUrl;
                 }
 
                 console.log('Sending Record:', JSON.stringify(record, null, 2));
@@ -14556,6 +14604,7 @@
                 technician_name: 'XOdGZsGCmyjFmZO1eHsw',
                 ro_number: 'cHqj3TzHR1qipS5zXv4L',
                 color: 'ljDkfmAAhoJFkZuUii0C',
+                drive_folder: 'eqOuNgi7Z3D7xk1q2GBQ',
             },
             // Documents & Contracts via GHL Proposals API
             // GET  /proposals/templates       — list document templates
@@ -14789,6 +14838,11 @@
             if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
             if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
             if (formData.color && GHL_CONFIG.customFields.color) customFields.push({ id: GHL_CONFIG.customFields.color, value: formData.color });
+
+            // Add Google Drive Folder Link if available
+            if (formData.driveUrl && GHL_CONFIG.customFields.drive_folder) {
+                customFields.push({ id: GHL_CONFIG.customFields.drive_folder, value: formData.driveUrl });
+            }
 
             return customFields;
         }

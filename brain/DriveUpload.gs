@@ -14,11 +14,37 @@ function doPost(e) {
     const { action } = payload;
 
     if (action === 'uploadPhoto') return handleUploadPhoto(payload);
+    if (action === 'createFolder') return handleCreateFolder(payload);
 
     return respond({ success: false, error: 'Unknown action: ' + action });
   } catch (err) {
     return respond({ success: false, error: err.toString() });
   }
+}
+
+function handleCreateFolder(payload) {
+  const { brandFolder, folderName } = payload;
+
+  let parentId = ROOT_FOLDER_ID;
+  if (brandFolder) parentId = getOrCreateSubFolder(parentId, brandFolder);
+  
+  // getOrCreateSubFolder only returns ID. We need the webViewLink, so we fetch it
+  const folderId = getOrCreateSubFolder(parentId, folderName);
+  
+  const folder = Drive.Files.get(folderId, { fields: 'id,webViewLink', supportsAllDrives: true });
+  
+  // Make folder viewable by anyone with the link
+  Drive.Permissions.create(
+    { role: 'reader', type: 'anyone' },
+    folder.id,
+    { supportsAllDrives: true }
+  );
+
+  return respond({
+    success: true,
+    folderId: folder.id,
+    folderUrl: folder.webViewLink
+  });
 }
 
 function handleUploadPhoto(payload) {

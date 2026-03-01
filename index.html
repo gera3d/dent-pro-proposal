@@ -6032,6 +6032,14 @@
                 </select>
             </div>
             <div class="meta-group">
+                <label>Status</label>
+                <select id="status" class="toolbar-input" required>
+                    <option value="Complete">✓ Complete</option>
+                    <option value="Partial">◐ Partial</option>
+                    <option value="Supplement">+ Supplement</option>
+                </select>
+            </div>
+            <div class="meta-group">
                 <label>GHL Pipeline</label>
                 <div class="pipeline-seg" id="pipelineSeg">
                     <button type="button" class="pipeline-seg-btn active" data-value="repair_tracker"
@@ -6041,6 +6049,18 @@
                 </div>
                 <input type="hidden" id="pipelineSelect" value="repair_tracker">
             </div>
+        </div>
+
+        <!-- Progress Pill: live-updating as you fill the form -->
+        <div class="progress-pill" id="progressPill">
+            <span id="pillPhotos"><i data-lucide="camera" class="lucide-icon"></i> <span id="pillPhotoCount">0</span>
+                photos</span>
+            <span class="pill-divider">•</span>
+            <span id="pillPanels"><i data-lucide="layout-grid" class="lucide-icon"></i> <span
+                    id="pillPanelCount">0</span> panels</span>
+            <span class="pill-divider">•</span>
+            <span id="pillDents"><i data-lucide="zap" class="lucide-icon"></i> <span id="pillDentCount">0</span>
+                dents</span>
         </div>
 
         <form id="scopeForm">
@@ -7710,65 +7730,53 @@
                 </div>
             </div>
 
-            <div class="submit-bar">
-                <!-- Estimate Display -->
-                <div class="estimate-bar hidden" id="estimateBar">
-                    <div>
-                        <div class="estimate-label">PDR Estimate</div>
-                        <div class="estimate-amount" id="estimateTotal">$0</div>
+            <!-- Review & Submit Zone: appears at the end of the form -->
+            <div class="submit-zone" id="submitZone">
+                <!-- Live summary -->
+                <div class="sz-summary">
+                    <div class="sz-stat">
+                        <span class="sz-stat-value" id="szPhotoCount">0</span>
+                        <span class="sz-stat-label">Photos</span>
                     </div>
-                    <button type="button" class="estimate-toggle" onclick="toggleEstimate()">
-                        <i data-lucide="eye" class="lucide-icon"></i> Show
+                    <div class="sz-stat-divider"></div>
+                    <div class="sz-stat">
+                        <span class="sz-stat-value" id="szPanelCount">0</span>
+                        <span class="sz-stat-label">Panels</span>
+                    </div>
+                    <div class="sz-stat-divider"></div>
+                    <div class="sz-stat">
+                        <span class="sz-stat-value" id="szDentCount">0</span>
+                        <span class="sz-stat-label">Dents</span>
+                    </div>
+                    <div class="sz-stat-divider"></div>
+                    <div class="sz-stat">
+                        <span class="sz-stat-value" id="szOsCount">0</span>
+                        <span class="sz-stat-label">Oversized</span>
+                    </div>
+                </div>
+
+                <!-- Primary submit button -->
+                <button type="button" class="sz-submit-btn" id="submitBtn" onclick="submitForm()">
+                    <span class="sz-submit-idle">
+                        <i data-lucide="send" class="lucide-icon"></i>
+                        Submit to Dent Experts
+                    </span>
+                    <span class="sz-submit-loading" style="display:none;">
+                        <span class="sz-spinner"></span> Submitting…
+                    </span>
+                    <span class="sz-submit-done" style="display:none;">
+                        <i data-lucide="check-circle-2" class="lucide-icon"></i> Submitted!
+                    </span>
+                </button>
+
+                <!-- Secondary actions -->
+                <div class="sz-secondary">
+                    <button type="button" class="sz-sec-btn" onclick="exportToCSV()">
+                        <i data-lucide="file-down" class="lucide-icon"></i> Export PDF
                     </button>
-                </div>
-
-                <!-- Stats Row -->
-                <div class="footer-stats-row" style="display:none;">
-                    <div class="stat-box dents">
-                        <span class="stat-label">Panels w/Damage</span>
-                        <span class="stat-value" id="liveDentCount">0</span>
-                    </div>
-                    <div class="stat-box oversized">
-                        <span class="stat-label">Oversized</span>
-                        <span class="stat-value" id="liveOsCount">0</span>
-                    </div>
-                    <div class="stat-box parts">
-                        <span class="stat-label">R&I Parts</span>
-                        <span class="stat-value" id="liveRiCount">0</span>
-                    </div>
-                    <div class="stat-box parts">
-                        <span class="stat-label">R&R Parts</span>
-                        <span class="stat-value" id="liveRrCount">0</span>
-                    </div>
-                    <div class="stat-box" id="saveStatusBox" style="display:none;">
-                        <span class="stat-label">Status</span>
-                        <span class="stat-value" id="saveStatus">Saved</span>
-                    </div>
-                </div>
-
-
-                <!-- Actions Row -->
-                <div class="footer-actions-row">
-                    <select id="status" class="footer-select" required>
-                        <option value="Complete">✓ Complete</option>
-                        <option value="Partial">◐ Partial</option>
-                        <option value="Supplement">+ Supplement</option>
-                    </select>
-
-                    <div class="footer-buttons">
-                        <button type="button" class="footer-btn orange" onclick="exportToCSV()">
-                            <i data-lucide="file-down" class="lucide-icon"></i> Export
-                        </button>
-                        <button type="button" class="footer-btn blue" onclick="nativeShare()">
-                            <i data-lucide="share" class="lucide-icon"></i> Share
-                        </button>
-                        <button type="button" class="footer-btn teal" onclick="uploadToAirtable()">
-                            <i data-lucide="cloud" class="lucide-icon"></i> Airtable
-                        </button>
-                        <button type="button" class="footer-btn green" id="submitBtn" onclick="submitForm()">
-                            <i data-lucide="check-circle" class="lucide-icon"></i> Submit
-                        </button>
-                    </div>
+                    <button type="button" class="sz-sec-btn" onclick="nativeShare()">
+                        <i data-lucide="share" class="lucide-icon"></i> Share
+                    </button>
                 </div>
             </div>
         </form>
@@ -9292,28 +9300,279 @@
         }
 
         /* REBUILT FOOTER CSS */
-        .submit-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(15, 15, 15, 0.98) 0%, rgba(20, 20, 20, 0.95) 100%);
-            backdrop-filter: blur(16px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        /* ========================================
+           PROGRESS PILL
+        ======================================== */
+        .progress-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 10px 0;
+            background: transparent;
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .progress-pill span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .progress-pill .lucide-icon {
+            width: 14px;
+            height: 14px;
+            color: #555;
+        }
+
+        .progress-pill .pill-divider {
+            color: #333;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .progress-pill span[id] {
+            color: #999;
+            transition: color 0.3s ease;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-pill span.active {
+            color: #1A6CFF;
+        }
+
+        .progress-pill span.active .lucide-icon {
+            color: #1A6CFF;
+        }
+
+        .progress-pill span.active span[id] {
+            color: #fff;
+        }
+
+        /* ========================================
+           SUBMIT ZONE (end of form)
+        ======================================== */
+        .submit-zone {
+            margin: 40px 0 24px;
+            padding: 28px 24px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
-            padding: 12px 16px;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
-            z-index: 9999;
+            gap: 20px;
+        }
+
+        /* Summary stats row */
+        .sz-summary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .sz-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 24px;
+            flex: 1;
+        }
+
+        .sz-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sz-stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        .sz-stat-divider {
+            width: 1px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+        }
+
+        /* Primary submit button */
+        .sz-submit-btn {
+            width: 100%;
+            height: 58px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #1A6CFF 0%, #0050E6 100%);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 20px rgba(26, 108, 255, 0.35);
+            letter-spacing: 0.01em;
+        }
+
+        .sz-submit-btn:hover {
+            box-shadow: 0 8px 32px rgba(26, 108, 255, 0.55);
+            transform: translateY(-1px);
+        }
+
+        .sz-submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .sz-submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Idle shimmer animation */
+        .sz-submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+            animation: sz-shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes sz-shimmer {
+            0% {
+                left: -100%;
+            }
+
+            40% {
+                left: 150%;
+            }
+
+            100% {
+                left: 150%;
+            }
+        }
+
+        .sz-submit-btn .lucide-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Success state */
+        .sz-submit-btn.done {
+            background: linear-gradient(135deg, #1DB954 0%, #159040 100%);
+            box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);
+            animation: none;
+        }
+
+        .sz-submit-btn.done::after {
+            display: none;
+        }
+
+        /* Spinner */
+        .sz-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: sz-spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes sz-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Secondary buttons */
+        .sz-secondary {
+            display: flex;
             gap: 10px;
         }
 
+        .sz-sec-btn {
+            flex: 1;
+            height: 44px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .sz-sec-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .sz-sec-btn .lucide-icon {
+            width: 15px;
+            height: 15px;
+        }
+
+        @media (max-width: 500px) {
+            .sz-stat {
+                padding: 0 12px;
+            }
+
+            .sz-stat-value {
+                font-size: 22px;
+            }
+
+            .sz-submit-btn {
+                height: 54px;
+                font-size: 16px;
+            }
+
+            .submit-zone {
+                margin: 24px 0 16px;
+                padding: 20px 16px 20px;
+            }
+        }
+
+        /* ========================================
+           OLD SUBMIT-BAR (kept for stat-box reuse
+           in other parts of the app if any)
+        ======================================== */
         .footer-stats-row {
             display: flex;
             justify-content: space-around;
             gap: 8px;
             width: 100%;
         }
+
+
 
         .stat-box {
             display: flex;
@@ -12059,24 +12318,59 @@
             });
 
             // Update UI - use panelsWithDamage as the "Dent Count" display showing # of panels
-            const dentEl = document.getElementById('liveDentCount');
+            const dentEl = document.getElementById('liveDentCount'); // Legacy (kept for fallback)
             const osEl = document.getElementById('liveOsCount');
             const riEl = document.getElementById('liveRiCount');
             const rrEl = document.getElementById('liveRrCount');
 
+            // --- New Progress Pill & Submit Zone Stats ---
+            const photoCount = selectedPhotos.length;
+
+            // Progress Pill
+            const pillPhotos = document.getElementById('pillPhotoCount');
+            const pillPanels = document.getElementById('pillPanelCount');
+            const pillDents = document.getElementById('pillDentCount');
+
+            if (pillPhotos) pillPhotos.parentElement.classList.toggle('active', photoCount > 0);
+            if (pillPanels) pillPanels.parentElement.classList.toggle('active', panelsWithDamage > 0);
+
+            // Submit Zone
+            const szPhotos = document.getElementById('szPhotoCount');
+            const szPanels = document.getElementById('szPanelCount');
+            const szDents = document.getElementById('szDentCount');
+            const szOs = document.getElementById('szOsCount');
+
             // Helper to animate stat changes
             function animateStat(el, newValue) {
                 if (el && el.textContent !== String(newValue)) {
+                    // Create a small pop effect
+                    el.style.transform = 'scale(1.2)';
+                    el.style.transition = 'transform 0.1s ease';
                     el.textContent = newValue;
                     el.classList.add('updated');
-                    setTimeout(() => el.classList.remove('updated'), 300);
+
+                    setTimeout(() => {
+                        el.style.transform = 'scale(1)';
+                        el.classList.remove('updated');
+                    }, 150);
                 }
             }
 
+            // Legacy
             animateStat(dentEl, panelsWithDamage);
             animateStat(osEl, totalOs);
             animateStat(riEl, totalRi);
             animateStat(rrEl, totalRr);
+
+            // New stats
+            animateStat(pillPhotos, photoCount);
+            animateStat(pillPanels, panelsWithDamage);
+            animateStat(pillDents, totalOs); // Using OS map for "total dents" metric for now
+
+            animateStat(szPhotos, photoCount);
+            animateStat(szPanels, panelsWithDamage);
+            animateStat(szDents, panelsWithDamage); // Keeping simple panels count for dents display
+            animateStat(szOs, totalOs);
         }
 
         // ==================== PRICING CALCULATOR ====================
@@ -12402,8 +12696,13 @@
             }
 
             // All validation passed - proceed with submission
-            submitBtn.textContent = 'Processing...';
             submitBtn.disabled = true;
+
+            // Show loading state, hide idle
+            const idleSpan = submitBtn.querySelector('.sz-submit-idle');
+            const loadingSpan = submitBtn.querySelector('.sz-submit-loading');
+            if (idleSpan) idleSpan.style.display = 'none';
+            if (loadingSpan) loadingSpan.style.display = 'inline-flex';
 
             // Photos - skip Google Apps Script if not available (standalone PWA mode)
             if (selectedPhotos.length > 0 && typeof google !== 'undefined' && google.script) {
@@ -12414,7 +12713,12 @@
                         })
                         .withFailureHandler(err => {
                             showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Photo upload failed: ' + err, 'error');
-                            submitBtn.textContent = 'Submit Scope'; submitBtn.disabled = false;
+                            // Reset button
+                            submitBtn.disabled = false;
+                            const idleSpan = submitBtn.querySelector('.sz-submit-idle');
+                            const loadingSpan = submitBtn.querySelector('.sz-submit-loading');
+                            if (idleSpan) idleSpan.style.display = 'inline-flex';
+                            if (loadingSpan) loadingSpan.style.display = 'none';
                         })
                         .uploadMultiplePhotos(photosPayload, roNumber);
                 });
@@ -12423,6 +12727,46 @@
                 submitData([]);
             }
         }
+
+        // Helper to reset Submit button state securely
+        function resetSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            if (!btn) return;
+            btn.disabled = false;
+
+            // Target specific DOM structure
+            const idleDiv = btn.querySelector('.sz-submit-idle');
+            const loadDiv = btn.querySelector('.sz-submit-loading');
+            const doneDiv = btn.querySelector('.sz-submit-done');
+
+            if (idleDiv) idleDiv.style.display = 'flex';
+            if (loadDiv) loadDiv.style.display = 'none';
+            if (doneDiv) doneDiv.style.display = 'none';
+            btn.classList.remove('done');
+        }
+
+        // Add a listener to reset button if form is changed after submit
+        document.getElementById('scopeForm').addEventListener('input', resetSubmitButton);
+
+        // Helper to reset Submit button state securely
+        function resetSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            if (!btn) return;
+            btn.disabled = false;
+
+            // Target specific DOM structure
+            const idleDiv = btn.querySelector('.sz-submit-idle');
+            const loadDiv = btn.querySelector('.sz-submit-loading');
+            const doneDiv = btn.querySelector('.sz-submit-done');
+
+            if (idleDiv) idleDiv.style.display = 'flex';
+            if (loadDiv) loadDiv.style.display = 'none';
+            if (doneDiv) doneDiv.style.display = 'none';
+            btn.classList.remove('done');
+        }
+
+        // Add a listener to reset button if form is changed after submit
+        document.getElementById('scopeForm').addEventListener('input', resetSubmitButton);
 
         // Validation helper functions
         function showValidationError(fieldId, message) {

@@ -6,7 +6,7 @@
 //   Extensions → Advanced Google Services → turn ON "Drive API"
 // ============================================================
 
-const ROOT_FOLDER_ID = '0AP5KXgHm4n4gUk9PVA'; // Dent Experts shared drive
+const ROOT_FOLDER_ID = '18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ'; // Dent Pro Google Drive folder
 
 function doPost(e) {
   try {
@@ -78,12 +78,8 @@ function getOrCreateSubFolder(parentId, name) {
     // Search for existing folder in Shared Drive
     const safe    = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const results = Drive.Files.list({
-      q:                        `name='${safe}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-      supportsAllDrives:        true,
-      includeItemsFromAllDrives: true,
-      corpora:                  'drive',
-      driveId:                  ROOT_FOLDER_ID,
-      fields:                   'files(id)'
+      q:      `name='${safe}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+      fields: 'files(id)'
     });
 
     let folderId;

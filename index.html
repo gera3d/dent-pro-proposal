@@ -13424,14 +13424,14 @@
 
                 // Generate and push separator
                 const separator = await generateCategorySeparator(cat);
-                separator.name = `${prefix}_${claimNum} - ${separator.name}`;
+                separator.name = `${prefix}_${claimNum} - 00 - ${separator.name}`;
                 finalPhotos.push(separator);
 
                 // Push actual photos for this category
                 const catPhotos = selectedPhotos.filter(p => (p.category || 'scope') === cat).map(p => {
                     return {
                         ...p,
-                        name: `${prefix}_${claimNum} - ${p.name}`
+                        name: `${prefix}_${claimNum} - 01 - ${p.name}`
                     };
                 });
                 finalPhotos.push(...catPhotos);
@@ -13447,7 +13447,7 @@
          */
         async function createPhotosZipFromArray(photos, roNumber, formData = null) {
             if (typeof JSZip === 'undefined') throw new Error('JSZip library not loaded');
-            const realPhotos = (photos || []).filter(p => !p.isSeparator && p.base64Data);
+            const realPhotos = (photos || []).filter(p => p.base64Data);
             if (realPhotos.length === 0) return null;
 
             const zip = new JSZip();
@@ -13468,6 +13468,11 @@
                 let baseName = photo.name || photo.label || `Photo_${idx}.jpg`;
                 let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');
                 if (!safeBase.toLowerCase().endsWith('.jpg')) safeBase += '.jpg';
+
+                // If it's a separator, force '00' numbering logic so it appears first
+                if (photo.isSeparator) {
+                    safeBase = `00 - ${safeBase}`;
+                }
 
                 const prefix = catPrefixes[cat] || '05';
                 let filename = `${prefix}_${claimNum} - ${safeBase}`;
@@ -13504,14 +13509,27 @@
             try {
                 const forms = getSavedForms();
                 const localForm = forms['form_' + roNumber];
-                const photos = (localForm && localForm.photos) ? localForm.photos : [];
+                let photos = (localForm && localForm.photos) ? localForm.photos : [];
 
                 if (photos.length === 0) {
                     showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> No local photos found for this record', 'warning');
                     return;
                 }
 
-                const zipBlob = await createPhotosZipFromArray(photos, roNumber, localForm);
+                let photosToZip = [...photos];
+                const presentCats = new Set(photosToZip.map(p => p.category || 'scope'));
+
+                // Inject missing separators so the downloaded ZIP has title cards
+                for (const cat of presentCats) {
+                    if (!photosToZip.find(p => p.category === cat && p.isSeparator)) {
+                        const sep = await generateCategorySeparator(cat);
+                        // Make it forcefully 00 for local arrays that don't pass through getPhotosWithSeparators
+                        sep.name = `00 - ${sep.name}`;
+                        photosToZip.push(sep);
+                    }
+                }
+
+                const zipBlob = await createPhotosZipFromArray(photosToZip, roNumber, localForm);
                 if (!zipBlob) {
                     showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> No photos to package', 'warning');
                     return;
@@ -13548,7 +13566,6 @@
 
             for (let i = 0; i < photosToProcess.length; i++) {
                 const photo = photosToProcess[i];
-                if (photo.isSeparator) continue; // Skip separators for Zip export
 
                 let baseName = photo.name || photo.label || `Photo_${i}.jpg`;
                 let safeBase = baseName.replace(/—/g, '-').replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim().replace(/\s+/g, ' ');

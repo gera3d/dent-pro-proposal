@@ -13061,132 +13061,6 @@
         }
 
         // =============================================
-        // PDF EXPORT FUNCTIONALITY
-        // =============================================
-
-        // Global config for PDF export
-        const pdfPhotoMode = 'attached'; // photos always go on full-size separate pages
-
-
-
-        // =============================================
-        // PHOTO PAGES FOR PDF (2x2 grid with labels)
-        // =============================================
-
-        async function addPhotoPages(pdf, photos) {
-            const catOrder = ['voil', 'conditioning', 'upd', 'scope'];
-            const catTitles = {
-                voil: 'VOIL \u2014 Vehicle Identification & Overview',
-                conditioning: 'CONDITIONING \u2014 Potential Total Loss',
-                upd: 'UPD \u2014 Unrelated Prior Damage',
-                scope: 'SCOPE \u2014 Storm Damage'
-            };
-
-            const pageWidth = 612;
-            const pageHeight = 792;
-            const margin = 10;
-            const photoWidth = (pageWidth - margin * 3) / 2;
-            const photoHeight = (pageHeight - margin * 3) / 2;
-
-            for (const cat of catOrder) {
-                const catPhotos = photos.filter(p => (p.category || 'scope') === cat);
-                if (catPhotos.length === 0) continue;
-
-                // Category header page
-                pdf.addPage();
-                pdf.setFillColor(10, 10, 10);
-                pdf.rect(0, 0, pageWidth, pageHeight, 'F');
-
-                // Accent bar
-                const barColors = {
-                    voil: [26, 108, 255],
-                    conditioning: [255, 159, 10],
-                    upd: [255, 69, 58],
-                    scope: [48, 209, 88]
-                };
-                const [r, g, b] = barColors[cat] || [255, 255, 255];
-                pdf.setFillColor(r, g, b);
-                pdf.rect(0, 0, 6, pageHeight, 'F');
-
-                // Category title text
-                pdf.setTextColor(r, g, b);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(20);
-                pdf.text(catTitles[cat] || cat.toUpperCase(), 30, 60);
-
-                // Photo count
-                pdf.setTextColor(160, 160, 160);
-                pdf.setFontSize(13);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text(`${catPhotos.length} photo${catPhotos.length !== 1 ? 's' : ''}`, 30, 85);
-
-                // Grid of photos on this header page (up to 4)
-                const firstBatch = catPhotos.slice(0, 4);
-                const topOffset = 110;
-                const gridHeight = (pageHeight - topOffset - margin * 3) / 2;
-
-                for (let i = 0; i < firstBatch.length; i++) {
-                    const col = i % 2;
-                    const row = Math.floor(i / 2);
-                    const x = margin + col * (photoWidth + margin);
-                    const y = topOffset + row * (gridHeight + margin);
-                    await addPhotoWithLabel(pdf, firstBatch[i], x, y, photoWidth, gridHeight, [r, g, b]);
-                }
-
-                // Remaining photos, 4 per page
-                const rest = catPhotos.slice(4);
-                for (let i = 0; i < rest.length; i++) {
-                    if (i % 4 === 0) {
-                        pdf.addPage();
-                        pdf.setFillColor(26, 26, 26);
-                        pdf.rect(0, 0, pageWidth, pageHeight, 'F');
-                        pdf.setFillColor(r, g, b);
-                        pdf.rect(0, 0, 4, pageHeight, 'F');
-                    }
-                    const posInGrid = i % 4;
-                    const x = margin + (posInGrid % 2) * (photoWidth + margin);
-                    const y = margin + Math.floor(posInGrid / 2) * (photoHeight + margin);
-                    await addPhotoWithLabel(pdf, rest[i], x, y, photoWidth, photoHeight, [r, g, b]);
-                }
-            }
-        }
-
-        async function addPhotoWithLabel(pdf, photo, x, y, width, height, accentColor = [26, 108, 255]) {
-            try {
-                const imgData = `data:${photo.mimeType};base64,${photo.base64Data}`;
-                const labelHeight = 25;
-
-                pdf.addImage(imgData, 'JPEG', x, y, width, height - labelHeight, undefined, 'FAST');
-
-                // Dark label banner
-                pdf.setFillColor(0, 0, 0);
-                pdf.rect(x, y + height - labelHeight, width, labelHeight, 'F');
-
-                // Accent line in category color
-                pdf.setDrawColor(...accentColor);
-                pdf.setLineWidth(2);
-                pdf.line(x, y + height - labelHeight, x + width, y + height - labelHeight);
-
-                // Build label text
-                let label = photo.label;
-                if (!label) {
-                    const catNames = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
-                    const catTag = catNames[photo.category] || 'SCOPE';
-                    label = photo.name ? `${catTag} - ${photo.name}` : catTag;
-                }
-
-                // Truncate to fit within photo width
-                pdf.setFont('helvetica', 'normal');
-                pdf.setFontSize(9);
-                const labelText = pdf.splitTextToSize(label, width - 16)[0] || '';
-                pdf.setTextColor(255, 255, 255);
-                pdf.text(labelText, x + 8, y + height - 8);
-            } catch (err) {
-                console.error('Error adding photo to PDF:', err);
-            }
-        }
-
-        // =============================================
         // AIRTABLE INTEGRATION
         // =============================================
 
@@ -14450,30 +14324,11 @@
                 pdf.setTextColor(26, 108, 255);
                 pdf.text('PHOTOS', M, y + 10);
                 y += 16;
-
-                if (pdfPhotoMode === 'thumbnails') {
-                    const THUMB_W = (CW - 8) / 3;
-                    const THUMB_H = 58;
-                    const maxRows = Math.max(1, Math.floor((FOOTER_Y - y) / (THUMB_H + 4)));
-                    const maxPhotos = maxRows * 3;
-                    const photosToShow = selectedPhotos.slice(0, maxPhotos);
-                    for (let i = 0; i < photosToShow.length; i++) {
-                        try {
-                            const photo = photosToShow[i];
-                            const imgSrc = `data:${photo.mimeType};base64,${photo.base64Data}`;
-                            const px = M + (i % 3) * (THUMB_W + 4);
-                            const py = y + Math.floor(i / 3) * (THUMB_H + 4);
-                            pdf.addImage(imgSrc, 'JPEG', px, py, THUMB_W, THUMB_H, undefined, 'FAST');
-                        } catch (e) { /* skip bad photo */ }
-                    }
-                    y += Math.ceil(photosToShow.length / 3) * (THUMB_H + 4) + 6;
-                } else {
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(130, 140, 155);
-                    pdf.text(`${selectedPhotos.length} photo(s) included on following pages`, M, y);
-                    y += 16;
-                }
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(8);
+                pdf.setTextColor(130, 140, 155);
+                pdf.text(`${selectedPhotos.length} photo(s) submitted separately to Google Drive`, M, y);
+                y += 16;
             }
 
             // ── Notes ─────────────────────────────────────────────────────

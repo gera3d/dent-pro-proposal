@@ -2694,7 +2694,7 @@
         .camera-viewport video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .camera-viewport-flash {
@@ -6836,9 +6836,47 @@
                             </table>
                         </div>
 
+                        <!-- Left Cab Corner (Ratings Only) -->
+                        <div class="panel-box mini">
+                            <div class="panel-header">Left Cab Corner</div>
+                            <div class="panel-ratings">
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('l_cab_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="l_cab_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('l_cab_dc', 1)">+</button>
+                                        <input type="hidden" name="l_cab_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="l_cab_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('l_cab', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="l_cab_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('l_cab_os', -1)">-</button>
+                                        <div class="stepper-value" id="l_cab_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('l_cab_os', 1)">+</button>
+                                        <input type="hidden" name="l_cab_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                         <!-- Left Quarter -->
                         <div class="panel-box">
-                            <div class="panel-header">Left Quarter/Bed</div>
+                            <div class="panel-header">L/Quart/Bed</div>
                             <div class="panel-ratings">
                                 <label>DC:
                                     <div class="stepper-wrapper">
@@ -6908,44 +6946,6 @@
                             </table>
                         </div>
 
-                        <!-- Left Cab Corner (Ratings Only) -->
-                        <div class="panel-box mini">
-                            <div class="panel-header">Left Cab Corner</div>
-                            <div class="panel-ratings">
-                                <label>DC:
-                                    <div class="stepper-wrapper">
-                                        <button type="button" class="stepper-btn minus"
-                                            onclick="updateDentCount('l_cab_dc', -1)">-</button>
-                                        <div class="stepper-value placeholder" id="l_cab_dc_display">0</div>
-                                        <button type="button" class="stepper-btn plus"
-                                            onclick="updateDentCount('l_cab_dc', 1)">+</button>
-                                        <input type="hidden" name="l_cab_dc" value="" class="stepper-input">
-                                    </div>
-                                </label>
-                                <div class="coin-selector disabled" id="l_cab_coin_wrapper">
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'dime')"
-                                        data-size="dime">Dime</button>
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'nickel')"
-                                        data-size="nickel">Nickel</button>
-                                    <button type="button" class="coin-btn selected"
-                                        onclick="updateCoinSize('l_cab', 'quarter')"
-                                        data-size="quarter">Quarter</button>
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('l_cab', 'half')"
-                                        data-size="half">Half $</button>
-                                    <input type="hidden" name="l_cab_coin" value="quarter">
-                                </div>
-                                <label>OS:
-                                    <div class="stepper-wrapper os-stepper">
-                                        <button type="button" class="stepper-btn minus"
-                                            onclick="updateOsCount('l_cab_os', -1)">-</button>
-                                        <div class="stepper-value" id="l_cab_os_display">0</div>
-                                        <button type="button" class="stepper-btn plus"
-                                            onclick="updateOsCount('l_cab_os', 1)">+</button>
-                                        <input type="hidden" name="l_cab_os" value="0" class="stepper-input">
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- CENTER COLUMN (Schematic + Top/Bottom Panels) -->
@@ -7554,9 +7554,47 @@
                             </table>
                         </div>
 
+                        <!-- Right Cab Corner (Ratings Only) -->
+                        <div class="panel-box mini">
+                            <div class="panel-header">Right Cab Corner</div>
+                            <div class="panel-ratings">
+                                <label>DC:
+                                    <div class="stepper-wrapper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateDentCount('r_cab_dc', -1)">-</button>
+                                        <div class="stepper-value placeholder" id="r_cab_dc_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateDentCount('r_cab_dc', 1)">+</button>
+                                        <input type="hidden" name="r_cab_dc" value="" class="stepper-input">
+                                    </div>
+                                </label>
+                                <div class="coin-selector disabled" id="r_cab_coin_wrapper">
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'dime')"
+                                        data-size="dime">Dime</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'nickel')"
+                                        data-size="nickel">Nickel</button>
+                                    <button type="button" class="coin-btn selected"
+                                        onclick="updateCoinSize('r_cab', 'quarter')"
+                                        data-size="quarter">Quarter</button>
+                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'half')"
+                                        data-size="half">Half $</button>
+                                    <input type="hidden" name="r_cab_coin" value="quarter">
+                                </div>
+                                <label>OS:
+                                    <div class="stepper-wrapper os-stepper">
+                                        <button type="button" class="stepper-btn minus"
+                                            onclick="updateOsCount('r_cab_os', -1)">-</button>
+                                        <div class="stepper-value" id="r_cab_os_display">0</div>
+                                        <button type="button" class="stepper-btn plus"
+                                            onclick="updateOsCount('r_cab_os', 1)">+</button>
+                                        <input type="hidden" name="r_cab_os" value="0" class="stepper-input">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                         <!-- Right Quarter -->
                         <div class="panel-box">
-                            <div class="panel-header">Right Quarter/Bed</div>
+                            <div class="panel-header">R/Quart/Bed</div>
                             <div class="panel-ratings">
                                 <label>DC:
                                     <div class="stepper-wrapper">
@@ -7626,44 +7664,6 @@
                             </table>
                         </div>
 
-                        <!-- Right Cab Corner (Ratings Only) -->
-                        <div class="panel-box mini">
-                            <div class="panel-header">Right Cab Corner</div>
-                            <div class="panel-ratings">
-                                <label>DC:
-                                    <div class="stepper-wrapper">
-                                        <button type="button" class="stepper-btn minus"
-                                            onclick="updateDentCount('r_cab_dc', -1)">-</button>
-                                        <div class="stepper-value placeholder" id="r_cab_dc_display">0</div>
-                                        <button type="button" class="stepper-btn plus"
-                                            onclick="updateDentCount('r_cab_dc', 1)">+</button>
-                                        <input type="hidden" name="r_cab_dc" value="" class="stepper-input">
-                                    </div>
-                                </label>
-                                <div class="coin-selector disabled" id="r_cab_coin_wrapper">
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'dime')"
-                                        data-size="dime">Dime</button>
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'nickel')"
-                                        data-size="nickel">Nickel</button>
-                                    <button type="button" class="coin-btn selected"
-                                        onclick="updateCoinSize('r_cab', 'quarter')"
-                                        data-size="quarter">Quarter</button>
-                                    <button type="button" class="coin-btn" onclick="updateCoinSize('r_cab', 'half')"
-                                        data-size="half">Half $</button>
-                                    <input type="hidden" name="r_cab_coin" value="quarter">
-                                </div>
-                                <label>OS:
-                                    <div class="stepper-wrapper os-stepper">
-                                        <button type="button" class="stepper-btn minus"
-                                            onclick="updateOsCount('r_cab_os', -1)">-</button>
-                                        <div class="stepper-value" id="r_cab_os_display">0</div>
-                                        <button type="button" class="stepper-btn plus"
-                                            onclick="updateOsCount('r_cab_os', 1)">+</button>
-                                        <input type="hidden" name="r_cab_os" value="0" class="stepper-input">
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -13449,16 +13449,16 @@
 
                 ctx.fillStyle = 'rgba(255,255,255,0.80)';
                 ctx.font = 'bold 24px sans-serif';
-                ctx.textAlign = 'left';
+                ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('DENT EXPERTS', 56, 36);
+                ctx.fillText('DENT EXPERTS', W / 2, 36);
 
                 ctx.fillStyle = 'rgba(255,255,255,0.32)';
                 ctx.font = '13px sans-serif';
-                ctx.fillText('EXCELLENCE IN HAIL REPAIR', 56, 58);
+                ctx.fillText('EXCELLENCE IN HAIL REPAIR', W / 2, 58);
 
                 // ── Pill badge ───────────────────────────────────────────────
-                const pillW = 190, pillH = 40, pillX = 56, pillY = 104;
+                const pillW = 190, pillH = 40, pillX = (W - pillW) / 2, pillY = 104;
                 ctx.beginPath();
                 ctx.roundRect(pillX, pillY, pillW, pillH, 20);
                 ctx.fillStyle = accent + '28';
@@ -13491,20 +13491,20 @@
 
                 // Main category name
                 ctx.fillStyle = '#FFFFFF';
-                ctx.textAlign = 'left';
+                ctx.textAlign = 'center';
                 ctx.textBaseline = 'alphabetic';
-                ctx.fillText(displayCat, 56, baseline);
+                ctx.fillText(displayCat, W / 2, baseline);
 
                 // Underline — exact measured width
                 ctx.fillStyle = accent;
-                ctx.fillRect(56, baseline + 10, textW, 5);
+                ctx.fillRect((W - textW) / 2, baseline + 10, textW, 5);
 
                 // Subtitle
                 ctx.fillStyle = 'rgba(255,255,255,0.48)';
                 ctx.font = '26px sans-serif';
-                ctx.textAlign = 'left';
+                ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
-                ctx.fillText(subtitle, 56, baseline + 10 + 5 + 14);
+                ctx.fillText(subtitle, W / 2, baseline + 10 + 5 + 14);
 
                 // ── Bottom strip ─────────────────────────────────────────────
                 ctx.fillStyle = 'rgba(255,255,255,0.035)';
@@ -13512,9 +13512,9 @@
 
                 ctx.fillStyle = 'rgba(255,255,255,0.32)';
                 ctx.font = '16px sans-serif';
-                ctx.textAlign = 'right';
+                ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('dentexperts.com', W - 48, H - 30);
+                ctx.fillText('dentexperts.com', W / 2, H - 30);
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
                 resolve({
@@ -13543,7 +13543,7 @@
             }
 
             const finalPhotos = [];
-            const catPrefixes = { conditioning: '01', scope: '02', voil: '03', upd: '04' };
+            const catPrefixes = { voil: '01', conditioning: '02', upd: '03', scope: '04' };
 
             for (const cat of catsToInclude) {
                 const prefix = catPrefixes[cat] || '05';
@@ -13582,7 +13582,7 @@
             const folderName = `${claimNum} - ${custName} - ${roNumber || 'Draft'}`.replace(/[\/\\]/g, '-');
             const root = zip.folder(folderName);
 
-            const catPrefixes = { conditioning: '01', scope: '02', voil: '03', upd: '04' };
+            const catPrefixes = { voil: '01', conditioning: '02', upd: '03', scope: '04' };
             const catCounters = {};
             const usedFilenames = new Set();
 
@@ -14523,9 +14523,9 @@
 
                 await buildCoverPage(pdf, formData);
 
-                if (selectedPhotos.length > 0) {
-                    await addPhotoPages(pdf, selectedPhotos);
-                }
+                // PHOTOS REMOVED: To reduce PDF size and prevent timeout/compression errors on upload,
+                // we no longer embed the full-res photos directly into the PDF scope sheet.
+                // The photos are uploaded separately in the background.
 
                 await sharePDF(pdf, formData);
 
@@ -14691,6 +14691,8 @@
             const BATCH_SIZE = 5;
             const uploads = [];
 
+            const PREFIXES = { voil: '01', conditioning: '02', upd: '03', scope: '04' };
+
             if (photos && photos.length > 0) {
                 // Group by category preserving original order within each group
                 const grouped = {};
@@ -14705,6 +14707,7 @@
                     const catPhotos = grouped[cat];
                     if (!catPhotos || catPhotos.length === 0) continue;
                     const catLabel = CATEGORY_LABELS[cat] || cat.toUpperCase();
+                    const prefix = PREFIXES[cat] || '05';
                     let photoNum = 0;
                     catPhotos.forEach(photo => {
                         const isSep = photo.isSeparator;
@@ -14714,7 +14717,7 @@
                             : rawLabel.includes('\u2014') ? rawLabel.split('\u2014')[1].trim()
                                 : rawLabel;
                         uploads.push({
-                            fileName: `${catLabel} - ${num} - ${shortLabel}.jpg`,
+                            fileName: `${prefix} - ${catLabel} - ${num} - ${shortLabel}.jpg`,
                             base64Data: photo.base64Data,
                             mimeType: photo.mimeType || 'image/jpeg'
                         });
@@ -14722,12 +14725,7 @@
                 }
             }
 
-            // Append PDF if provided
-            if (pdfBase64 && pdfFileName) {
-                uploads.push({ fileName: pdfFileName, base64Data: pdfBase64, mimeType: 'application/pdf' });
-            }
-
-            if (uploads.length === 0) return null;
+            if (uploads.length === 0 && !pdfBase64) return null;
 
             let done = 0;
             let failed = 0;
@@ -14756,6 +14754,13 @@
 
             for (let i = 0; i < uploads.length; i += BATCH_SIZE) {
                 await Promise.all(uploads.slice(i, i + BATCH_SIZE).map(uploadOne));
+            }
+
+            // Upload PDF last if provided
+            if (pdfBase64 && pdfFileName) {
+                // Prepend '05' so it sorts correctly after photos
+                const docsFileName = pdfFileName.startsWith('05') ? pdfFileName : `05 - ${pdfFileName}`;
+                await uploadOne({ fileName: docsFileName, base64Data: pdfBase64, mimeType: 'application/pdf' });
             }
 
             console.log(`Drive: ${done} uploaded, ${failed} failed — folder "Dent Experts/${folderName}"`);
@@ -16395,7 +16400,10 @@
                                     const { jsPDF } = window.jspdf;
                                     const drivePdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
                                     await buildCoverPage(drivePdf, rawData);
-                                    if (selectedPhotos.length > 0) await addPhotoPages(drivePdf, selectedPhotos);
+
+                                    // PHOTOS REMOVED: PDF now only contains the scope sheet coverage
+                                    // Photos are separately zipped and uploaded
+
                                     drivePdfBase64 = drivePdf.output('datauristring').split(',')[1];
                                     const ts = new Date().toISOString().slice(0, 10);
                                     const lastName = (rawData.insuredName || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
@@ -17606,16 +17614,19 @@
         function setRecordsFilter(filter) {
             haptic();
             currentRecordsFilter = filter;
+            const dropdown = document.getElementById('recordsStatusFilter');
+            if (dropdown) dropdown.value = filter;
             renderRecordsList(allRecords);
         }
 
         function filterRecords() {
+            const dropdown = document.getElementById('recordsStatusFilter');
+            if (dropdown) currentRecordsFilter = dropdown.value;
             renderRecordsList(allRecords);
         }
 
         function filterRecordsData(records) {
             const search = document.getElementById('recordsSearch')?.value?.toLowerCase() || '';
-            const statusFilter = document.getElementById('recordsStatusFilter')?.value || 'all';
 
             let filtered = records;
 
@@ -17640,9 +17651,8 @@
             }
 
             // Apply status filter (from dropdown or summary card click)
-            const activeFilter = statusFilter !== 'all' ? statusFilter : currentRecordsFilter;
-            if (activeFilter !== 'all') {
-                filtered = filtered.filter(r => (r.fields.Status || 'Submitted') === activeFilter);
+            if (currentRecordsFilter !== 'all') {
+                filtered = filtered.filter(r => (r.fields.Status || 'Submitted') === currentRecordsFilter);
             }
 
             return filtered;
@@ -18802,11 +18812,11 @@
 
 
         // ==================== APP BUTTON (Install/Update) ====================
-        // ==================== APP BUTTON (Install/Update) ====================
-        // Logic moved to Training_Guide.html
+        // ==================== AP         (I         date) ====================
+        // Logic moved to Training         ml
 
         /*
-         * App Button logic removed and transferred to Training page.
+         * App Bu         c removed and transferred to Training page.
          * Previous location: index.html
          */
 

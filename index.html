@@ -3854,6 +3854,7 @@
             color: #fff;
             font-size: 14px;
             font-family: inherit;
+            appearance: none;
             -webkit-appearance: none;
         }
 
@@ -10623,7 +10624,8 @@
             input.classList.add('ro-tallying');
 
             // Find a realistic starting point rather than random numbers
-            let currentLocalCount = parseInt(localStorage.getItem(`ro_counter_${yy}${mm}${dd}`) || '0');
+            let originalLocalCount = parseInt(localStorage.getItem(`ro_counter_${yy}${mm}${dd}`) || '0');
+            let currentLocalCount = originalLocalCount;
 
             const tallyInterval = setInterval(() => {
                 // Tally progressively upward to mimic real tallying
@@ -10640,6 +10642,17 @@
                 input.classList.remove('ro-tallying');
 
                 if (nextRo) {
+                    const roParts = nextRo.split('-');
+                    if (roParts.length >= 3) {
+                        const airtableCount = parseInt(roParts[roParts.length - 1], 10);
+                        // If Airtable's count is less than or equal to what we already knew locally,
+                        // it means Airtable hasn't indexed the latest record yet. Advance locally.
+                        if (airtableCount <= originalLocalCount) {
+                            const nextCount = originalLocalCount + 1;
+                            nextRo = `${prefix}${String(nextCount).padStart(3, '0')}`;
+                        }
+                    }
+
                     input.value = nextRo;
 
                     // Add glow effect to show it settled
@@ -10994,39 +11007,9 @@
 
         function startNewForm() {
             if (confirm('Start a new blank form?\n\nMake sure you\'ve saved your current work.')) {
-                // Reset form
-                document.getElementById('scopeForm').reset();
-                document.getElementById('roNumber').value = generateNextRO();
-                handleGenerateRO(true);
-                document.getElementById('estimator').value = '';
-
-                // Reset dropdown selection
-                document.getElementById('savedFormsDropdown').value = '';
-
-                // Reset photos
-                selectedPhotos = [];
-                renderPreviews();
-
-                // Clear panel complete states
-                document.querySelectorAll('.panel-box.is-complete').forEach(box => {
-                    box.classList.remove('is-complete');
-                });
-
-                // Reset Steppers
-                document.querySelectorAll('input[name$="_dc"]').forEach(el => updateDentCount(el.name, 0));
-                document.querySelectorAll('input[name$="_os"]').forEach(el => updateOsCount(el.name, 0));
-                document.querySelectorAll('input[name$="_coin"]').forEach(el => updateCoinSize(el.name.replace('_coin', ''), 'quarter'));
-
-                // Update UI
-                updateVinCounter();
-                updateSummary();
-
-                // Clear draft
-                localStorage.removeItem(DRAFT_KEY);
-
-                // Re-evaluate background colors
-                setTimeout(updateAllFieldBackgrounds, 100);
-
+                resetForm();
+                const dropdown = document.getElementById('savedFormsDropdown');
+                if (dropdown) dropdown.value = '';
                 showToast('<i data-lucide="file-plus" class="lucide-icon"></i> New form started', 'success');
             }
         }
@@ -16368,12 +16351,26 @@
                 if (el) el.value = '';
             });
             // Reset selects outside form to first option
-            // NOTE: 'estimator' is intentionally excluded — it is sticky per device
-            ['year', 'make', 'location', 'insuranceCompany', 'status'].forEach(id => {
+            ['estimator', 'year', 'make', 'location', 'insuranceCompany', 'status'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el && el.tagName === 'SELECT') el.selectedIndex = 0;
                 else if (el) el.value = '';
             });
+
+            // Reset custom searchable select UIs — dispatch a 'change' event so the wrapper's
+            // own listener fires and correctly updates the trigger button text/style.
+            // Use setTimeout to ensure this runs AFTER form.reset() has fully settled.
+            setTimeout(() => {
+                document.querySelectorAll('.searchable-select-wrapper').forEach(wrapper => {
+                    const select = wrapper.querySelector('select');
+                    const trigger = wrapper.querySelector('.searchable-select-trigger');
+                    if (select && trigger) {
+                        select.selectedIndex = 0;
+                        trigger.textContent = select.options[0]?.text || 'Select Insurance';
+                        trigger.classList.add('placeholder');
+                    }
+                });
+            }, 0);
 
             // 3. Reset DC stepper display divs
             document.querySelectorAll('[id$="_dc_display"]').forEach(el => {
@@ -16427,6 +16424,10 @@
             // 10. Reset live summary to zero
             updateSummary();
 
+            // 10.5 Clear active Photo Category Tabs (these have the colored/orange outlines Judah mentioned)
+            document.querySelectorAll('.photo-cat-tab.active').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.photo-cat-panel.panel-open').forEach(panel => panel.classList.remove('panel-open'));
+
             // 11. Close success modal
             document.getElementById('successModal').style.display = 'none';
 
@@ -16442,7 +16443,6 @@
                 handleGenerateRO(true);
             }
 
-            // Estimator stickiness removed per request
         }
 
         // ==================== PARTS TECH MODE ====================
@@ -18195,7 +18195,7 @@
 
             // Check for API key
             if (!GOOGLE_VISION_API_KEY) {
-                showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Google Vision API key not configured', 'error');
+                showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Scanner API key not configured', 'error');
                 return;
             }
 
@@ -18452,7 +18452,7 @@
 
             // Check for API key
             if (!GOOGLE_VISION_API_KEY) {
-                showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Google Vision API key not configured', 'error');
+                showToast('<i data-lucide="alert-triangle" class="lucide-icon"></i> Scanner API key not configured', 'error');
                 status.innerHTML = '<i data-lucide="x-circle" class="lucide-icon"></i> API key missing - contact admin';
                 return;
             }

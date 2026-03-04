@@ -12599,48 +12599,107 @@
         }
 
         function compressImage(file, callback) {
-            try {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onerror = () => {
-                        console.error('Failed to load image for compression');
+            // Helper: draw an image element onto a scaled canvas and return base64
+            function drawAndEncode(img, resolve) {
+                try {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_SIZE = 1200;
+
+                    if (width > height && width > MAX_SIZE) {
+                        height = Math.round(height * MAX_SIZE / width);
+                        width = MAX_SIZE;
+                    } else if (height > MAX_SIZE) {
+                        width = Math.round(width * MAX_SIZE / height);
+                        height = MAX_SIZE;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    resolve(dataUrl.split(',')[1], 'image/jpeg');
+                } catch (err) {
+                    console.error('Canvas compression error:', err);
+                    resolve(null, null);
+                }
+            }
+
+            // Attempt 1: createObjectURL (fastest; works with HEIC on iOS 16+ Safari)
+            function tryObjectURL() {
+                const objectUrl = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    drawAndEncode(img, (b64, mime) => {
+                        URL.revokeObjectURL(objectUrl);
+                        if (b64) {
+                            callback(b64, mime);
+                        } else {
+                            tryFileReader(); // fall through
+                        }
+                    });
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    console.warn('createObjectURL path failed for', file.name, '— trying FileReader');
+                    tryFileReader();
+                };
+                img.src = objectUrl;
+            }
+
+            // Attempt 2: FileReader dataURL (wider compat, slower on large files)
+            function tryFileReader() {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => drawAndEncode(img, callback);
+                        img.onerror = () => {
+                            console.error('FileReader image load failed for', file.name);
+                            tryRawFallback();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => {
+                        console.error('FileReader error during compression for', file.name);
+                        tryRawFallback();
+                    };
+                    reader.readAsDataURL(file);
+                } catch (err) {
+                    console.error('FileReader fatal error:', err);
+                    tryRawFallback();
+                }
+            }
+
+            // Attempt 3: Read raw bytes and pass uncompressed (last resort - avoids silent loss)
+            function tryRawFallback() {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const bytes = new Uint8Array(e.target.result);
+                        let binary = '';
+                        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+                        const b64 = btoa(binary);
+                        const mime = file.type || 'image/jpeg';
+                        console.warn('Using raw fallback for', file.name, '— no compression applied');
+                        callback(b64, mime);
+                    };
+                    reader.onerror = () => {
+                        console.error('Raw fallback also failed for', file.name);
                         callback(null, null);
                     };
-                    img.onload = () => {
-                        try {
-                            const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-                            const MAX_SIZE = 1200;
-
-                            if (width > height && width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            } else if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
-
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                            callback(dataUrl.split(',')[1], 'image/jpeg');
-                        } catch (err) {
-                            console.error('Canvas compression error:', err);
-                            callback(null, null);
-                        }
-                    };
-                    img.src = e.target.result;
-                };
-                reader.onerror = () => {
-                    console.error('FileReader error during compression');
+                    reader.readAsArrayBuffer(file);
+                } catch (err) {
+                    console.error('compressImage all attempts failed:', err);
                     callback(null, null);
-                };
-                reader.readAsDataURL(file);
+                }
+            }
+
+            try {
+                tryObjectURL();
             } catch (err) {
                 console.error('compressImage fatal error:', err);
                 callback(null, null);

@@ -383,7 +383,7 @@
     </style>
     <script>
         // ==================== APP BUTTON (Install/Update) ====================
-        const LOCAL_APP_VERSION = '2026.02.04.01';
+        const LOCAL_APP_VERSION = '2026.03.01.04';
         let deferredInstallPrompt = null;
         let appButtonState = 'checking'; // checking, install, update, current
 
@@ -482,7 +482,10 @@
                     await Promise.all(cacheNames.map(name => caches.delete(name)));
 
                     console.log('[Update] Caches cleared, reloading...');
-                    window.location.reload(true);
+                    // Force a true hard-reload by navigating to a cache-busted URL
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('_cb', Date.now());
+                    window.location.href = url.toString();
                 } catch (err) {
                     console.error('[Update] Error:', err);
                     alert('Update failed. Please clear your browser cache manually.');
@@ -902,7 +905,8 @@
                 <div style="margin-bottom: 8px; padding-left: 16px;">10 dents × $60 = <strong
                         style="color: #fff;">$600</strong></div>
                 <div style="margin-bottom: 8px;"><span style="color: #FF3B30;">4 oversized</span> × $33.75 premium =
-                    <strong style="color: #fff;">$135</strong></div>
+                    <strong style="color: #fff;">$135</strong>
+                </div>
                 <div style="margin-bottom: 8px;"><span style="color: #007AFF;">6 R&I parts</span> × $40 = <strong
                         style="color: #fff;">$240</strong></div>
                 <div style="border-top: 1px solid #444; padding-top: 8px; margin-top: 8px;"><strong
@@ -920,7 +924,8 @@
                 <div style="margin-bottom: 8px; padding-left: 16px;">45 dents × $45 = <strong
                         style="color: #fff;">$2,025</strong></div>
                 <div style="margin-bottom: 8px;"><span style="color: #FF3B30;">12 oversized</span> × $27 premium =
-                    <strong style="color: #fff;">$324</strong></div>
+                    <strong style="color: #fff;">$324</strong>
+                </div>
                 <div style="margin-bottom: 8px;"><span style="color: #007AFF;">10 R&I parts</span> × $40 = <strong
                         style="color: #fff;">$400</strong></div>
                 <div style="margin-bottom: 8px;"><span style="color: #007AFF;">2 R&R parts</span> × $55 = <strong

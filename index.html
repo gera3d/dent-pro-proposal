@@ -13485,7 +13485,7 @@
                 }
             }
 
-            return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+            return zip.generateAsync({ type: 'blob', compression: 'STORE' });
         }
 
         /**
@@ -13587,8 +13587,7 @@
 
             const zipBlob = await zip.generateAsync({
                 type: 'blob',
-                compression: 'DEFLATE',
-                compressionOptions: { level: 6 }
+                compression: 'STORE'
             });
 
             console.log(`<i data-lucide="package" class="lucide-icon"></i> Created ZIP: ${(zipBlob.size / 1024 / 1024).toFixed(2)} MB in flat folder`);

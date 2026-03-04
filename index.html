@@ -5934,6 +5934,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- ZIP Compression Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- HEIC/HEIF → JPEG converter (pure JS, works on all browsers/Android/Chrome) -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 </head>
 
 <body>
@@ -12444,8 +12446,10 @@
                     const catName = catNames[cat] || cat.toUpperCase();
 
                     const fileParts = file.name.split('.');
-                    const ext = fileParts.length > 1 ? '.' + fileParts.pop() : '';
+                    const origExt = fileParts.length > 1 ? fileParts.pop().toLowerCase() : 'jpg';
                     const baseName = fileParts.join('.');
+                    // If we converted from HEIC to JPEG, update extension to .jpg
+                    const ext = (mimeType === 'image/jpeg' && /heic|heif/.test(origExt)) ? '.jpg' : (origExt ? '.' + origExt : '.jpg');
 
                     selectedPhotos.push({
                         base64Data: compressedBase64,
@@ -12598,108 +12602,114 @@
             renderPreviews();
         }
 
-        function compressImage(file, callback) {
-            // Helper: draw an image element onto a scaled canvas and return base64
-            function drawAndEncode(img, resolve) {
+        /**
+         * compressImage — universal cross-platform image processor.
+         *
+         * Strategy:
+         *   1. Detect HEIC/HEIF by MIME type OR magic bytes (handles iPhone photos
+         *      even when the browser reports the wrong type or wrong extension).
+         *   2. If HEIC → convert to JPEG blob using heic2any (pure-JS, works on
+         *      Chrome, Android, old iOS — no native HEIC support needed).
+         *   3. Draw result into a scaled canvas → compress to JPEG @ 80%.
+         *   4. Last resort: send raw bytes so a photo is NEVER silently lost.
+         */
+        async function compressImage(file, callback) {
+            const MAX_SIZE = 1200;
+            const JPEG_QUALITY = 0.8;
+
+            // ── Step 1: detect HEIC by magic bytes (first 12 bytes) ─────────────
+            async function isHeic(f) {
+                if (/heic|heif/i.test(f.type)) return true;
                 try {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_SIZE = 1200;
-
-                    if (width > height && width > MAX_SIZE) {
-                        height = Math.round(height * MAX_SIZE / width);
-                        width = MAX_SIZE;
-                    } else if (height > MAX_SIZE) {
-                        width = Math.round(width * MAX_SIZE / height);
-                        height = MAX_SIZE;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                    resolve(dataUrl.split(',')[1], 'image/jpeg');
-                } catch (err) {
-                    console.error('Canvas compression error:', err);
-                    resolve(null, null);
+                    const buf = await f.slice(0, 12).arrayBuffer();
+                    const b = new Uint8Array(buf);
+                    // ftyp box at offset 4 with 'heic', 'heis', 'hevx', 'mif1' etc.
+                    const ftyp = String.fromCharCode(b[4], b[5], b[6], b[7]);
+                    const brand = String.fromCharCode(b[8], b[9], b[10], b[11]);
+                    return ftyp === 'ftyp' && /heic|heis|hevx|heim|heix|hevm|mif1/i.test(brand);
+                } catch (e) {
+                    return false;
                 }
             }
 
-            // Attempt 1: createObjectURL (fastest; works with HEIC on iOS 16+ Safari)
-            function tryObjectURL() {
-                const objectUrl = URL.createObjectURL(file);
-                const img = new Image();
-                img.onload = () => {
-                    drawAndEncode(img, (b64, mime) => {
-                        URL.revokeObjectURL(objectUrl);
-                        if (b64) {
-                            callback(b64, mime);
-                        } else {
-                            tryFileReader(); // fall through
+            // ── Step 2: draw blob/objectURL into canvas → JPEG base64 ───────────
+            function blobToCanvas(blob) {
+                return new Promise((resolve) => {
+                    const url = URL.createObjectURL(blob);
+                    const img = new Image();
+                    img.onload = () => {
+                        try {
+                            let w = img.width, h = img.height;
+                            if (w > h && w > MAX_SIZE) { h = Math.round(h * MAX_SIZE / w); w = MAX_SIZE; }
+                            else if (h > MAX_SIZE) { w = Math.round(w * MAX_SIZE / h); h = MAX_SIZE; }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w; canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                            const dataUrl = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
+                            URL.revokeObjectURL(url);
+                            resolve({ b64: dataUrl.split(',')[1], mime: 'image/jpeg' });
+                        } catch (e) {
+                            URL.revokeObjectURL(url);
+                            console.error('Canvas draw failed:', e);
+                            resolve(null);
                         }
-                    });
-                };
-                img.onerror = () => {
-                    URL.revokeObjectURL(objectUrl);
-                    console.warn('createObjectURL path failed for', file.name, '— trying FileReader');
-                    tryFileReader();
-                };
-                img.src = objectUrl;
+                    };
+                    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+                    img.src = url;
+                });
             }
 
-            // Attempt 2: FileReader dataURL (wider compat, slower on large files)
-            function tryFileReader() {
-                try {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = new Image();
-                        img.onload = () => drawAndEncode(img, callback);
-                        img.onerror = () => {
-                            console.error('FileReader image load failed for', file.name);
-                            tryRawFallback();
-                        };
-                        img.src = e.target.result;
-                    };
-                    reader.onerror = () => {
-                        console.error('FileReader error during compression for', file.name);
-                        tryRawFallback();
-                    };
-                    reader.readAsDataURL(file);
-                } catch (err) {
-                    console.error('FileReader fatal error:', err);
-                    tryRawFallback();
-                }
-            }
-
-            // Attempt 3: Read raw bytes and pass uncompressed (last resort - avoids silent loss)
-            function tryRawFallback() {
-                try {
+            // ── Step 3: raw-bytes last resort ────────────────────────────────────
+            function rawFallback(f) {
+                return new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const bytes = new Uint8Array(e.target.result);
-                        let binary = '';
-                        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-                        const b64 = btoa(binary);
-                        const mime = file.type || 'image/jpeg';
-                        console.warn('Using raw fallback for', file.name, '— no compression applied');
-                        callback(b64, mime);
+                        let bin = '';
+                        for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+                        console.warn('compressImage: raw fallback used for', f.name);
+                        resolve({ b64: btoa(bin), mime: f.type || 'image/jpeg' });
                     };
-                    reader.onerror = () => {
-                        console.error('Raw fallback also failed for', file.name);
-                        callback(null, null);
-                    };
-                    reader.readAsArrayBuffer(file);
-                } catch (err) {
-                    console.error('compressImage all attempts failed:', err);
-                    callback(null, null);
-                }
+                    reader.onerror = () => resolve(null);
+                    reader.readAsArrayBuffer(f);
+                });
             }
 
+            // ── Main flow ────────────────────────────────────────────────────────
             try {
-                tryObjectURL();
+                let workingBlob = file;
+
+                // Convert HEIC → JPEG blob first (works on ALL browsers)
+                if (await isHeic(file)) {
+                    if (typeof heic2any === 'undefined') {
+                        console.warn('heic2any not loaded — attempting raw canvas decode');
+                    } else {
+                        try {
+                            console.log('compressImage: HEIC detected, converting', file.name);
+                            workingBlob = await heic2any({ blob: file, toType: 'image/jpeg', quality: JPEG_QUALITY });
+                            // heic2any can return an array for multi-frame HEICs
+                            if (Array.isArray(workingBlob)) workingBlob = workingBlob[0];
+                        } catch (heicErr) {
+                            console.error('heic2any conversion failed:', heicErr);
+                            // fall through — blobToCanvas will try anyway
+                        }
+                    }
+                }
+
+                // Draw to canvas (works for JPEG, PNG, WebP, GIF, and converted HEIC)
+                const result = await blobToCanvas(workingBlob);
+                if (result) {
+                    callback(result.b64, result.mime);
+                    return;
+                }
+
+                // Last resort — send raw bytes uncompressed
+                const raw = await rawFallback(file);
+                if (raw) {
+                    callback(raw.b64, raw.mime);
+                } else {
+                    callback(null, null);
+                }
             } catch (err) {
                 console.error('compressImage fatal error:', err);
                 callback(null, null);
@@ -15357,8 +15367,8 @@
         // ---- Send template to contact via Proposals API ----
         async function sendGHLTemplate(templateId, contactId, opportunityId, documentName) {
             const url = `${GHL_CONFIG.baseUrl}/proposals/templates/send`;
+            // NOTE: GHL API rejects a `name` field here (422 "property name should not exist")
             const payload = {
-                name: documentName || 'Repair Authorization',
                 templateId: templateId,
                 userId: GHL_CONFIG.userId,
                 sendDocument: true,

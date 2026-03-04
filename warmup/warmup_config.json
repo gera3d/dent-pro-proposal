@@ -1,13 +1,13 @@
 {
   "start_date": "2026-02-12",
   "status": "active",
-  "day_number": 20,
-  "total_runs": 20,
-  "last_run": "2026-03-03",
+  "day_number": 21,
+  "total_runs": 21,
+  "last_run": "2026-03-04",
   "last_run_result": {
-    "date": "2026-03-03",
-    "removed": 75,
-    "readded": 70,
-    "errors": 23
+    "date": "2026-03-04",
+    "removed": 84,
+    "readded": 84,
+    "errors": 0
   }
 }

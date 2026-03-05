@@ -10563,7 +10563,7 @@
                     throw new Error('Airtable config missing');
                 }
 
-                const formula = `BEGINS_WITH({RO Number}, '${prefix}')`;
+                const formula = `FIND('${prefix}', {RO Number}) = 1`;
                 const query = new URLSearchParams({
                     'filterByFormula': formula,
                     'fields[]': 'RO Number',
@@ -12651,7 +12651,7 @@
                 const options = {
                     maxSizeMB: 1,           // Max file size
                     maxWidthOrHeight: 1600, // Max width/height
-                    useWebWorker: true,     // VERY IMPORTANT for iPad: run in background thread to avoid OOM
+                    useWebWorker: false,    // Disabled for iOS Incognito compatibility (Blob Workers are blocked). Sequential logic handles OOM.
                     initialQuality: 0.7     // Lower quality for faster uploads
                 };
 
@@ -13941,15 +13941,9 @@
                             const _mdl = (formData.model || '').replace(/\s+/g, '-');
                             const zipFilename = `DentScope_Photos_${[_roNum, _yr, _mk, _mdl].filter(Boolean).join('_')}_${timestamp}.zip`;
 
-                            // Try Google Drive first if configured
-                            updatePhotoUploadProgress(50, '<i data-lucide="link" class="lucide-icon"></i> Connecting to upload service...');
-                            photoZipUrl = await uploadToGoogleDrive(zipBlob, zipFilename);
-
-                            // Fallback to temporary hosting services
-                            if (!photoZipUrl) {
-                                updatePhotoUploadProgress(60, '<i data-lucide="send" class="lucide-icon"></i> Uploading to backup service...');
-                                photoZipUrl = await uploadZipToHost(zipBlob, zipFilename);
-                            }
+                            // Upload ZIP to temporary host so Airtable can grab it
+                            updatePhotoUploadProgress(50, '<i data-lucide="send" class="lucide-icon"></i> Uploading photo zip...');
+                            photoZipUrl = await uploadZipToHost(zipBlob, zipFilename);
 
                             if (photoZipUrl) {
                                 updatePhotoUploadProgress(100, '<i data-lucide="check-circle" class="lucide-icon"></i> Photos uploaded successfully!');
@@ -14778,8 +14772,13 @@
             const email = formData.customerEmail;
             const phone = formData.customerPhone;
 
+            // GHL requires either an email or phone to create/upsert a contact successfully.
+            // If the user left both blank, we generate a safe dummy email so the record still syncs.
+            let finalEmail = email;
             if (!email && !phone) {
-                return { success: false, error: 'Email or phone required' };
+                const safeClaim = (formData.claimNumber || formData.roNumber || 'unknown').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                finalEmail = `no-email-${safeClaim}@dentexperts.com`;
+                console.log('No email or phone provided. Using dummy email for GHL:', finalEmail);
             }
 
             const nameParts = (formData.insuredName || '').split(' ');
@@ -14791,7 +14790,7 @@
                 locationId: GHL_CONFIG.locationId,
                 firstName: firstName,
                 lastName: lastName,
-                email: email || undefined,
+                email: finalEmail || undefined,
                 phone: phone || undefined,
                 source: 'Dent Experts Form',
                 customFields: customFields,
@@ -14799,8 +14798,8 @@
                 dndSettings: { ...GHL_DND_SETTINGS }
             };
 
-            // Search for existing contact
-            const searchQuery = email || phone;
+            // Search for existing contact ideally by whatever the user provided, else the claim number dummy 
+            const searchQuery = email || phone || finalEmail;
             try {
                 // GHL search endpoint: GET /contacts/ with query param (NOT /contacts/search)
                 const searchResponse = await fetch(

@@ -13462,7 +13462,7 @@
 
             const zip = new JSZip();
             const claimNum = formData?.claimNumber || document.getElementById('claimNumber')?.value || 'N/A';
-            const custName = formData?.customerName || document.getElementById('customerName')?.value || 'Customer';
+            const custName = String(formData?.insuredName || formData?.customerName || document.getElementById('insuredName')?.value || document.getElementById('customerName')?.value || 'Customer');
             const folderName = `${claimNum} - ${custName} - ${roNumber || 'Draft'}`.replace(/[\/\\]/g, '-');
             const root = zip.folder(folderName);
 
@@ -13582,7 +13582,7 @@
 
             const zip = new JSZip();
             const claimNum = document.getElementById('claimNumber')?.value || 'N/A';
-            const custName = document.getElementById('customerName')?.value || 'Customer';
+            const custName = document.getElementById('insuredName')?.value || document.getElementById('customerName')?.value || 'Customer';
             const folderName = `${claimNum} - ${custName} - ${roNumber || 'Draft'}`.replace(/[\/\\]/g, '-');
             const root = zip.folder(folderName);
             const usedFilenames = new Set();
@@ -13727,7 +13727,6 @@
                     // GAS web apps configured as "Anyone" allow CORS.
                     body: JSON.stringify({
                         action: 'createFolder',
-                        brandFolder: BRAND_FOLDER,
                         folderName: folderName
                     })
                 });
@@ -14584,7 +14583,7 @@
             const BRAND_FOLDER = 'Dent Experts';
 
             // Build human-readable folder name: "Jane Smith - CLM-001 - 2022 Toyota Camry"
-            const namePart = (insuredName || 'Unknown').trim();
+            const namePart = String(insuredName || 'Unknown').trim();
             const claimPart = (claimNumber || roNumber || 'No-Claim').trim();
             const vehiclePart = [year, make, model].filter(Boolean).join(' ');
             const folderName = vehiclePart
@@ -14654,7 +14653,6 @@
                 mode: 'no-cors',
                 body: JSON.stringify({
                     action: 'uploadPhoto',
-                    brandFolder: BRAND_FOLDER,
                     folderName,
                     fileName: u.fileName,
                     base64Data: u.base64Data,

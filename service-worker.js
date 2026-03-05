@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.03.04.01';
+const APP_VERSION = '2026.03.04.02';
 const CACHE_NAME = 'dent-experts-v' + APP_VERSION;
 const ASSETS_TO_CACHE = [
     './',
@@ -24,6 +24,9 @@ self.addEventListener('install', (e) => {
                     return fetch(cacheBustUrl).then(response => {
                         if (!response.ok) throw new Error('Fetch failed for ' + url);
                         return cache.put(url, response);
+                    }).catch(err => {
+                        // Don't fail entire install if one asset is missing
+                        console.warn('[Service Worker] Could not cache:', url, err.message);
                     });
                 })
             );
@@ -34,49 +37,77 @@ self.addEventListener('install', (e) => {
 });
 
 // Fetch Event
-// - HTML / navigation requests → NETWORK-FIRST (always get fresh code when online)
-// - version.json → NETWORK-ONLY (for update checks)
-// - Everything else (images, fonts, css) → CACHE-FIRST (fast offline loads)
+// - Only handle GET requests — POST/PUT/DELETE are passed through untouched (Cache API doesn't support them)
+// - version.json / config.json → NETWORK-FIRST, fallback to a 503 if not cached
+// - api.* calls → NETWORK-ONLY, never cache
+// - HTML / navigation → NETWORK-FIRST, cache the response for offline
+// - Everything else (images, fonts, css) → CACHE-FIRST
 self.addEventListener('fetch', (e) => {
-    const url = e.request.url;
+    const req = e.request;
 
-    // version.json — always from network
+    // CRITICAL: Only intercept GET requests. POST/PUT/DELETE must pass through as-is.
+    // Attempting to cache non-GET requests throws "Request method 'POST' is unsupported".
+    if (req.method !== 'GET') {
+        return; // Let the browser handle it normally
+    }
+
+    const url = req.url;
+
+    // version.json / config.json — always try network, fallback to cache or 503
     if (url.includes('version.json') || url.includes('config.json')) {
         e.respondWith(
-            fetch(e.request).catch(() => caches.match(e.request))
-        );
-        return;
-    }
-
-    // API calls — NEVER cache, always fetch from network
-    if (url.includes('api.airtable.com') || url.includes('airtableusercontent.com') || url.includes('api.gohighlevel.com') || url.includes('tmpfiles.org')) {
-        e.respondWith(fetch(e.request));
-        return;
-    }
-
-    // HTML / navigation requests — NETWORK-FIRST
-    // This ensures code changes are picked up immediately when online.
-    if (e.request.mode === 'navigate' || url.endsWith('.html') || url.endsWith('/')) {
-        e.respondWith(
-            fetch(e.request).then((response) => {
-                // Cache the fresh response for offline use
-                const clone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
-                return response;
-            }).catch(() => {
-                // Offline — fall back to cache
-                return caches.match(e.request);
+            fetch(req).catch(() => {
+                return caches.match(req).then(cached => {
+                    if (cached) return cached;
+                    // Return a valid 503 response instead of undefined
+                    return new Response('{"error":"offline"}', {
+                        status: 503,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                });
             })
         );
         return;
     }
 
-    // All other assets — CACHE-FIRST
+    // API calls — NEVER cache, always pass straight to network
+    if (
+        url.includes('api.airtable.com') ||
+        url.includes('airtableusercontent.com') ||
+        url.includes('airtable.com') ||
+        url.includes('api.gohighlevel.com') ||
+        url.includes('services.leadconnectorhq.com') ||
+        url.includes('tmpfiles.org') ||
+        url.includes('script.google.com') ||
+        url.includes('googleapis.com') ||
+        url.includes('leadconnectorhq.com')
+    ) {
+        e.respondWith(fetch(req));
+        return;
+    }
+
+    // HTML / navigation requests — NETWORK-FIRST
+    if (req.mode === 'navigate' || url.endsWith('.html') || url.endsWith('/')) {
+        e.respondWith(
+            fetch(req).then((response) => {
+                // Cache the fresh response for offline use
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+                return response;
+            }).catch(() => {
+                // Offline — fall back to cache
+                return caches.match(req);
+            })
+        );
+        return;
+    }
+
+    // All other GET assets — CACHE-FIRST
     e.respondWith(
-        caches.match(e.request).then((r) => {
-            return r || fetch(e.request).then((response) => {
+        caches.match(req).then((r) => {
+            return r || fetch(req).then((response) => {
                 return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(e.request, response.clone());
+                    cache.put(req, response.clone());
                     return response;
                 });
             });

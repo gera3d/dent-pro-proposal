@@ -12427,41 +12427,61 @@
             }
         }
 
-        function handlePhotoSelect(event, category) {
+        async function handlePhotoSelect(event, category) {
             const files = Array.from(event.target.files);
             if (files.length === 0) return;
 
             const cat = category || currentPhotoCategory || 'scope';
+            const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
+            const catName = catNames[cat] || cat.toUpperCase();
 
-            files.forEach(file => {
-                compressImage(file, (compressedBase64, mimeType) => {
-                    // Check if compression failed
-                    if (!compressedBase64) {
-                        showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> Failed to process ${file.name}`, 'warning');
-                        return;
-                    }
-
-                    const catNames = { voil: 'VOIL', conditioning: 'CONDITIONING', upd: 'UPD', scope: 'SCOPE' };
-                    const catName = catNames[cat] || cat.toUpperCase();
-
-                    // Determine extension from the returned mimeType
-                    let ext = '.jpg';
-                    if (mimeType.includes('png')) ext = '.png';
-                    if (mimeType.includes('webp')) ext = '.webp';
-
-                    const baseName = file.name.replace(/\.[^/.]+$/, '');
-
-                    selectedPhotos.push({
-                        base64Data: compressedBase64,
-                        mimeType: mimeType, // Always use actual mimeType from compressImage
-                        name: `${catName} - ${baseName}${ext}`,
-                        label: `${catName} \u2014 ${file.name}`,
-                        category: cat
-                    });
-                    renderCategoryPreviews();
-                });
+            // Wrap compressImage in a Promise for sequential execution
+            const compressAsync = (file) => new Promise(resolve => {
+                compressImage(file, (base64, mime) => resolve({ base64, mime }));
             });
-            event.target.value = ''; // Reset input so same file can be re-selected
+
+            if (files.length > 1) {
+                showToast(`<i data-lucide="loader" class="lucide-icon spin"></i> Processing ${files.length} photos...`, 'info', 3000);
+            }
+
+            // Process sequentially to prevent Safari Out-Of-Memory crashes on iPads
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                if (files.length > 3) {
+                    showToast(`Compressing ${i + 1} of ${files.length}...`, 'info', 1000);
+                }
+
+                const { base64: compressedBase64, mime: mimeType } = await compressAsync(file);
+
+                if (!compressedBase64) {
+                    showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> Failed to process ${file.name}`, 'warning');
+                    continue;
+                }
+
+                let ext = '.jpg';
+                if (mimeType.includes('png')) ext = '.png';
+                if (mimeType.includes('webp')) ext = '.webp';
+
+                const baseName = file.name.replace(/\.[^/.]+$/, '');
+
+                selectedPhotos.push({
+                    base64Data: compressedBase64,
+                    mimeType: mimeType,
+                    name: `${catName} - ${baseName}${ext}`,
+                    label: `${catName} \u2014 ${file.name}`,
+                    category: cat
+                });
+
+                // Render preview immediately after each photo finishes
+                renderCategoryPreviews();
+            }
+
+            if (files.length > 1) {
+                showToast(`<i data-lucide="check-circle" class="lucide-icon"></i> Added ${files.length} photos`, 'success');
+            }
+
+            event.target.value = ''; // Reset input
         }
 
         // Open the gallery file picker for a specific category
@@ -12653,12 +12673,33 @@
                     ctx.drawImage(bitmap, 0, 0, w, h);
                     bitmap.close();
 
-                    // Lower quality to 0.7 for much smaller internet uploads
-                    const dataUrl = canvas.toDataURL(outMime, 0.7);
+                    // Aggressive iOS Memory Fallback:
+                    // If toDataURL fails (returns empty/short string due to OOM),
+                    // recursively shrink the canvas by 50% until it succeeds.
+                    let dataUrl = canvas.toDataURL(outMime, 0.7);
+                    let attempts = 0;
+
+                    while ((!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) && attempts < 3) {
+                        console.warn(`iOS silent canvas failure, downscaling by 50% (Attempt ${attempts + 1})`);
+                        w = Math.round(w * 0.5);
+                        h = Math.round(h * 0.5);
+
+                        const smCanvas = document.createElement('canvas');
+                        smCanvas.width = w;
+                        smCanvas.height = h;
+                        smCanvas.getContext('2d').drawImage(canvas, 0, 0, w, h);
+
+                        dataUrl = smCanvas.toDataURL(outMime, 0.7);
+                        attempts++;
+                    }
 
                     if (dataUrl && dataUrl !== 'data:,' && dataUrl.length > 100) {
                         // Success! Return here so we don't run the fallback below
                         callback(dataUrl.split(',')[1], outMime);
+                        return;
+                    } else {
+                        console.warn('Bitmap extraction totally failed even after downscaling. Trying rawFallback.');
+                        rawFallback(file);
                         return;
                     }
                 }

@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.03.04.02';
+const APP_VERSION = '2026.03.04.03';
 const CACHE_NAME = 'dent-experts-v' + APP_VERSION;
 const ASSETS_TO_CACHE = [
     './',
@@ -42,6 +42,9 @@ self.addEventListener('install', (e) => {
 // - api.* calls → NETWORK-ONLY, never cache
 // - HTML / navigation → NETWORK-FIRST, cache the response for offline
 // - Everything else (images, fonts, css) → CACHE-FIRST
+// Transparent 1×1 GIF used as a fallback for missing favicon to avoid SW errors
+const EMPTY_GIF = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 self.addEventListener('fetch', (e) => {
     const req = e.request;
 
@@ -52,6 +55,20 @@ self.addEventListener('fetch', (e) => {
     }
 
     const url = req.url;
+
+    // favicon.ico — return an inline transparent 1×1 GIF to avoid network errors
+    if (url.endsWith('favicon.ico') || url.includes('favicon.ico')) {
+        e.respondWith(
+            caches.match(req).then(cached => {
+                if (cached) return cached;
+                return new Response(
+                    Uint8Array.from(atob(EMPTY_GIF), c => c.charCodeAt(0)),
+                    { status: 200, headers: { 'Content-Type': 'image/gif' } }
+                );
+            })
+        );
+        return;
+    }
 
     // version.json / config.json — always try network, fallback to cache or 503
     if (url.includes('version.json') || url.includes('config.json')) {
@@ -105,11 +122,19 @@ self.addEventListener('fetch', (e) => {
     // All other GET assets — CACHE-FIRST
     e.respondWith(
         caches.match(req).then((r) => {
-            return r || fetch(req).then((response) => {
-                return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(req, response.clone());
-                    return response;
-                });
+            if (r) return r;
+            return fetch(req).then((response) => {
+                // Only cache valid, same-origin responses
+                if (response && response.status === 200 && response.type !== 'opaque') {
+                    return caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(req, response.clone());
+                        return response;
+                    });
+                }
+                return response;
+            }).catch(() => {
+                // Prevent unhandled rejection — return a 404 instead of crashing the SW
+                return new Response('Not found', { status: 404, statusText: 'Not Found' });
             });
         })
     );

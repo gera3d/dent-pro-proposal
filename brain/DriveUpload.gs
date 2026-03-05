@@ -6,7 +6,7 @@
 //   Extensions → Advanced Google Services → turn ON "Drive API"
 // ============================================================
 
-const ROOT_FOLDER_ID = '18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ'; // Dent Pro Google Drive folder
+const ROOT_FOLDER_ID = '18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ'; // Dent Pro Google Drive folder (ID matches URL: https://drive.google.com/drive/folders/18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ)
 
 function doPost(e) {
   try {
@@ -26,7 +26,6 @@ function handleCreateFolder(payload) {
   const { brandFolder, folderName } = payload;
 
   let parentId = ROOT_FOLDER_ID;
-  if (brandFolder) parentId = getOrCreateSubFolder(parentId, brandFolder);
   
   // getOrCreateSubFolder only returns ID. We need the webViewLink, so we fetch it
   const folderId = getOrCreateSubFolder(parentId, folderName);
@@ -50,9 +49,8 @@ function handleCreateFolder(payload) {
 function handleUploadPhoto(payload) {
   const { brandFolder, folderName, fileName, base64Data, mimeType } = payload;
 
-  // Build path: ROOT > [brandFolder if provided] > folderName
+  // Build path: ROOT > folderName
   let parentId = ROOT_FOLDER_ID;
-  if (brandFolder) parentId = getOrCreateSubFolder(parentId, brandFolder);
   const folderId = getOrCreateSubFolder(parentId, folderName);
 
   const decoded = Utilities.base64Decode(base64Data);
@@ -105,7 +103,9 @@ function getOrCreateSubFolder(parentId, name) {
     const safe    = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const results = Drive.Files.list({
       q:      `name='${safe}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-      fields: 'files(id)'
+      fields: 'files(id)',
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true
     });
 
     let folderId;

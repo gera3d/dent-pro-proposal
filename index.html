@@ -10557,37 +10557,12 @@
         }
 
         async function fetchNextROFromAirtable(prefix) {
-            try {
-                const config = await loadAirtableConfig();
-                if (!config || !config.apiKey || !config.baseId || !config.tableId) {
-                    throw new Error('Airtable config missing');
-                }
-
-                const formula = `FIND('${prefix}', {RO Number}) = 1`;
-                const query = new URLSearchParams({
-                    'filterByFormula': formula,
-                    'fields[]': 'RO Number',
-                    'sort[0][field]': 'RO Number',
-                    'sort[0][direction]': 'desc',
-                    'maxRecords': '1'
-                });
-
-                const url = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}?${query.toString()}`;
-
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${config.apiKey}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Airtable API error: ${response.status}`);
-                }
-
-                const data = await response.json();
-
+            // Helper: parse RO records and return the next RO string
+            function parseNextRO(data, prefix) {
                 if (data.records && data.records.length > 0) {
-                    const lastRo = data.records[0].fields['RO Number'] || '';
+                    // Try common field name variants
+                    const rec = data.records[0].fields;
+                    const lastRo = rec['RO Number'] || rec['RO#'] || rec['ro_number'] || rec['RO'] || '';
                     const parts = lastRo.split('-');
                     if (parts.length >= 3) {
                         const suffix = parts[parts.length - 1];
@@ -10598,8 +10573,49 @@
                     }
                 }
                 return `${prefix}001`; // First of the day
+            }
+
+            try {
+                const config = await loadAirtableConfig();
+                if (!config || !config.apiKey || !config.baseId || !config.tableId) {
+                    throw new Error('Airtable config missing');
+                }
+
+                const baseUrl = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
+                const headers = { 'Authorization': `Bearer ${config.apiKey}` };
+
+                // Try BEGINS_WITH formula first (most compatible)
+                const tryFormula = async (formula) => {
+                    const query = new URLSearchParams({
+                        'filterByFormula': formula,
+                        'fields[]': 'RO Number',
+                        'sort[0][field]': 'RO Number',
+                        'sort[0][direction]': 'desc',
+                        'maxRecords': '1'
+                    });
+                    const res = await fetch(`${baseUrl}?${query.toString()}`, { headers });
+                    if (!res.ok) return null;
+                    return res.json();
+                };
+
+                // Attempt 1: BEGINS_WITH formula
+                let data = await tryFormula(`BEGINS_WITH({RO Number}, '${prefix}')`);
+
+                // Attempt 2: FIND formula (in case BEGINS_WITH isn't supported)
+                if (!data) {
+                    data = await tryFormula(`FIND('${prefix}', {RO Number}) = 1`);
+                }
+
+                if (data) {
+                    return parseNextRO(data, prefix);
+                }
+
+                // Both formulas failed — fall back to localStorage counter
+                console.warn('[RO] Airtable formula failed, using local counter fallback');
+                return null;
+
             } catch (err) {
-                console.error("Failed to fetch RO from Airtable:", err);
+                console.warn('fetchNextROFromAirtable error:', err.message);
                 return null;
             }
         }

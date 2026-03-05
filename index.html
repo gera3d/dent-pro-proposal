@@ -13460,6 +13460,8 @@
                 if (!catsToInclude.includes(c)) catsToInclude.push(c);
             }
 
+            const finalPhotos = [];
+
             // We DO NOT prefix the array here, as createPhotosZipFromArray and Google Drive formatting will apply prefixes!
             for (const cat of catsToInclude) {
                 // Generate and push separator
@@ -14062,24 +14064,34 @@
                     }
                 };
 
+                // Safely resolve optional attachment/link fields
+                const pdfReportField = resolveFieldName(fieldMap, ['PDF Report', 'PDF', 'Report']);
+                const photoPackageField = resolveFieldName(fieldMap, ['Photo Package', 'Photo Zip', 'Photos ZIP', 'Photos']);
+                const photoCountField = resolveFieldName(fieldMap, ['Photo Count', 'Number of Photos']);
+                const driveFolderField = resolveFieldName(fieldMap, ['Google Drive Folder', 'Drive Folder', 'Drive Link', 'Google Drive']);
+
                 // Attach PDF Link
-                if (pdfUrl) {
-                    record.fields['PDF Report'] = [
+                if (pdfUrl && pdfReportField) {
+                    record.fields[pdfReportField] = [
                         { url: pdfUrl }
                     ];
                 }
 
                 // Attach Photo Package ZIP
-                if (photoZipUrl) {
-                    record.fields['Photo Package'] = [
+                if (photoZipUrl && photoPackageField) {
+                    record.fields[photoPackageField] = [
                         { url: photoZipUrl }
                     ];
-                    record.fields['Photo Count'] = selectedPhotos.length;
+                }
+
+                // Set Photo Count
+                if (photoZipUrl && photoCountField) {
+                    record.fields[photoCountField] = selectedPhotos.length;
                 }
 
                 // Attach Google Drive Folder Link
-                if (formData.driveUrl) {
-                    record.fields['Google Drive Folder'] = formData.driveUrl;
+                if (formData.driveUrl && driveFolderField) {
+                    record.fields[driveFolderField] = formData.driveUrl;
                 }
 
                 console.log('Sending Record:', JSON.stringify(record, null, 2));

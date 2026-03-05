@@ -16,7 +16,17 @@ self.addEventListener('install', (e) => {
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('[Service Worker] Caching all: app shell and content');
-            return cache.addAll(ASSETS_TO_CACHE);
+
+            // Bypass browser HTTP cache to assure we only cache fresh files
+            return Promise.all(
+                ASSETS_TO_CACHE.map(url => {
+                    const cacheBustUrl = url + (url.includes('?') ? '&' : '?') + '_cb=' + Date.now();
+                    return fetch(cacheBustUrl).then(response => {
+                        if (!response.ok) throw new Error('Fetch failed for ' + url);
+                        return cache.put(url, response);
+                    });
+                })
+            );
         })
     );
     // Force this service worker to become active immediately

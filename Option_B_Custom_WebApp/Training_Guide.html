@@ -473,23 +473,39 @@
                 }
 
                 try {
-                    const registrations = await navigator.serviceWorker.getRegistrations();
-                    for (const registration of registrations) {
-                        await registration.unregister();
+                    // 1. Tell SW to clear caches directly
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_CACHE' });
                     }
 
-                    const cacheNames = await caches.keys();
-                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    // 2. Unregister all service workers to release control
+                    if ('serviceWorker' in navigator) {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (const registration of registrations) {
+                            await registration.unregister();
+                        }
+                    }
 
-                    console.log('[Update] Caches cleared, reloading...');
-                    // Force a true hard-reload by navigating to a cache-busted URL
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('_cb', Date.now());
-                    window.location.href = url.toString();
+                    // 3. Delete all Cache Storage APIs for this origin
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    }
+
+                    console.log('[Update] Caches cleared, busting HTTP cache...');
+
+                    // 4. Force browser to drop old files from standard HTTP cache
+                    await fetch('../index.html', { cache: 'reload' }).catch(() => { });
+                    await fetch('../service-worker.js', { cache: 'reload' }).catch(() => { });
+                    await fetch('../version.json', { cache: 'reload' }).catch(() => { });
+
+                    // 5. Hard navigate to the root index.html with a timestamp to guarantee a fresh load
+                    window.location.href = '../index.html?updated=' + Date.now();
                 } catch (err) {
                     console.error('[Update] Error:', err);
                     alert('Update failed. Please clear your browser cache manually.');
                     setAppButtonState('update');
+                    if (btn) btn.disabled = false;
                 }
             }
         }

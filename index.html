@@ -5934,6 +5934,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- ZIP Compression Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Image Compression Library -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </head>
 
 <body>
@@ -12628,7 +12631,7 @@
                 reader.onload = (e) => {
                     const dataUrl = e.target.result;
                     const base64 = dataUrl.split(',')[1];
-                    console.warn('compressImage: canvas decode failed, using raw fallback for', f.name);
+                    console.warn('compressImage: imageCompression failed, using raw fallback for', f.name);
                     callback(base64, f.type || 'image/jpeg');
                 };
                 reader.onerror = () => {
@@ -12639,109 +12642,37 @@
             }
 
             try {
-                // iOS converts HEIC into massive JPEGs by default
-                let outMime = 'image/jpeg';
-                if (file.type === 'image/png') outMime = 'image/png';
-                else if (file.type === 'image/webp') outMime = 'image/webp';
-
-                const MAX = 1200;
-                let w, h;
-
-                // --- Step 1: NATIVE BACKGROUND DECODE (Memory Safe) ---
-                // createImageBitmap prevents massive JS heap memory spikes by decoding in C++
-                let bitmap;
-                try {
-                    if (window.createImageBitmap) {
-                        bitmap = await window.createImageBitmap(file);
-                    }
-                } catch (e) {
-                    console.warn("createImageBitmap failed or unsupported, using classic IMG", e);
+                if (typeof imageCompression === 'undefined') {
+                    console.warn('browser-image-compression library not loaded. Falling back to raw file.');
+                    return rawFallback(file);
                 }
 
-                if (bitmap) {
-                    w = bitmap.width;
-                    h = bitmap.height;
-                    if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-                    else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-
-                    // Draw and immediately close bitmap to free native memory
-                    ctx.drawImage(bitmap, 0, 0, w, h);
-                    bitmap.close();
-
-                    // Aggressive iOS Memory Fallback:
-                    // If toDataURL fails (returns empty/short string due to OOM),
-                    // recursively shrink the canvas by 50% until it succeeds.
-                    let dataUrl = canvas.toDataURL(outMime, 0.7);
-                    let attempts = 0;
-
-                    while ((!dataUrl || dataUrl === 'data:,' || dataUrl.length < 100) && attempts < 3) {
-                        console.warn(`iOS silent canvas failure, downscaling by 50% (Attempt ${attempts + 1})`);
-                        w = Math.round(w * 0.5);
-                        h = Math.round(h * 0.5);
-
-                        const smCanvas = document.createElement('canvas');
-                        smCanvas.width = w;
-                        smCanvas.height = h;
-                        smCanvas.getContext('2d').drawImage(canvas, 0, 0, w, h);
-
-                        dataUrl = smCanvas.toDataURL(outMime, 0.7);
-                        attempts++;
-                    }
-
-                    if (dataUrl && dataUrl !== 'data:,' && dataUrl.length > 100) {
-                        // Success! Return here so we don't run the fallback below
-                        callback(dataUrl.split(',')[1], outMime);
-                        return;
-                    } else {
-                        console.warn('Bitmap extraction totally failed even after downscaling. Trying rawFallback.');
-                        rawFallback(file);
-                        return;
-                    }
-                }
-
-                // --- Step 2: CLASSIC DOM IMG FALLBACK ---
-                const url = URL.createObjectURL(file);
-                const img = new Image();
-
-                img.onload = () => {
-                    URL.revokeObjectURL(url);
-                    w = img.width;
-                    h = img.height;
-
-                    if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-                    else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-
-                    const dataUrl = canvas.toDataURL(outMime, 0.7);
-                    if (dataUrl && dataUrl !== 'data:,' && dataUrl.length > 100) {
-                        callback(dataUrl.split(',')[1], outMime);
-                    } else {
-                        console.warn('Canvas silent failure in classic mode, triggering rawFallback');
-                        rawFallback(file);
-                    }
+                // Settings for browser-image-compression
+                const options = {
+                    maxSizeMB: 1,           // Max file size
+                    maxWidthOrHeight: 1600, // Max width/height
+                    useWebWorker: true,     // VERY IMPORTANT for iPad: run in background thread to avoid OOM
+                    initialQuality: 0.7     // Lower quality for faster uploads
                 };
 
-                img.onerror = () => {
-                    URL.revokeObjectURL(url);
-                    console.warn('compressImage: failed to load classic Image, triggering rawFallback');
+                const compressedBlob = await imageCompression(file, options);
+
+                // Convert the newly compressed Blob to Base64
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    const base64 = dataUrl.split(',')[1];
+                    callback(base64, compressedBlob.type);
+                };
+                reader.onerror = () => {
+                    console.warn('FileReader failed after imageCompression, triggering rawFallback');
                     rawFallback(file);
                 };
-
-                img.src = url;
+                reader.readAsDataURL(compressedBlob);
 
             } catch (err) {
-                console.error('All compression attempts failed:', err);
-                // Cannot call rawFallback here if file is invalid, but try anyway
-                callback(null, null);
+                console.warn('imageCompression library threw an error, triggering rawFallback:', err);
+                rawFallback(file);
             }
         }
 

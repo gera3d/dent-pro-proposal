@@ -8,6 +8,18 @@
 
 const ROOT_FOLDER_ID = '18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ'; // Dent Pro Google Drive folder (ID matches URL: https://drive.google.com/drive/folders/18_h9VuOx6kwXsJ1MG6jsKle78ENTBQjQ)
 
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
+    if (action === 'createFolder') {
+      return handleCreateFolder(e.parameter);
+    }
+    return respond({ success: false, error: 'Unknown action: ' + action });
+  } catch (err) {
+    return respond({ success: false, error: err.toString() });
+  }
+}
+
 function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);

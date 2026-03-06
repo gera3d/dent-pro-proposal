@@ -5927,6 +5927,64 @@
             font-size: 15px;
             line-height: 1.7;
         }
+
+        /* Background Upload Manager */
+        .bg-upload-manager {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(20, 20, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10005;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            pointer-events: none;
+            min-width: 280px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .bg-upload-manager.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .bg-upload-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .bg-upload-content .lucide-icon {
+            width: 20px;
+            height: 20px;
+            color: #1A6CFF;
+        }
+
+        .bg-upload-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .bg-upload-progress-bar {
+            height: 100%;
+            background: #1A6CFF;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 
 
@@ -6881,7 +6939,7 @@
                         </div>
                         <!-- Left Quarter -->
                         <div class="panel-box">
-                            <div class="panel-header">L/Quart/Bed</div>
+                            <div class="panel-header">L / Quart / Bed</div>
                             <div class="panel-ratings">
                                 <label>DC:
                                     <div class="stepper-wrapper">
@@ -7173,6 +7231,11 @@
                                     <td><input type="checkbox" name="roof_ri_ant"></td>
                                     <td>Antenna</td>
                                     <td><input type="checkbox" name="roof_rr_ant"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="roof_ri_backglass"></td>
+                                    <td>Back Glass</td>
+                                    <td><input type="checkbox" name="roof_rr_backglass"></td>
                                 </tr>
                             </table>
                         </div>
@@ -7599,7 +7662,7 @@
                         </div>
                         <!-- Right Quarter -->
                         <div class="panel-box">
-                            <div class="panel-header">R/Quart/Bed</div>
+                            <div class="panel-header">R / Quart / Bed</div>
                             <div class="panel-ratings">
                                 <label>DC:
                                     <div class="stepper-wrapper">
@@ -8868,6 +8931,9 @@
             flex: 1 1 auto;
             min-width: 0;
             line-height: 1.2;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
         }
 
         /* DONE TOGGLE STYLES */
@@ -10897,6 +10963,52 @@
                     showToast('<i data-lucide="x-circle" class="lucide-icon"></i> Save failed: ' + e.message, 'error');
                 }
             }
+        }
+
+        // ── R&I / R&R SCOPE SUMMARY HELPER ──────────────────────────────────────
+        // Converts checked riParts/rrParts objects into a human-readable bullet list.
+        // Used by: Airtable field, GHL note, GHL custom field, PDF cover page.
+        function buildScopeSummaryText(riParts, rrParts) {
+            const L = {
+                hood_ri_windshield: 'Hood \u2013 Windshield', hood_ri_cowl: 'Hood \u2013 Cowl', hood_ri_hood: 'Hood \u2013 Hood',
+                roof_ri_hilamp: 'Roof \u2013 Hi-Mt Lamp', roof_ri_headliner: 'Roof \u2013 Headliner',
+                roof_ri_sunroof: 'Roof \u2013 Sunroof', roof_ri_l_mldg: 'Roof \u2013 L Roof Mldg',
+                roof_ri_r_mldg: 'Roof \u2013 R Roof Mldg', roof_ri_rack: 'Roof \u2013 Roof Rack',
+                roof_ri_ant: 'Roof \u2013 Antenna', roof_ri_backglass: 'Roof \u2013 Back Glass',
+                deck_ri_llamp: 'Deck \u2013 L Lamp(s)', deck_ri_rlamp: 'Deck \u2013 R Lamp(s)',
+                deck_ri_handle: 'Deck \u2013 Handle', deck_ri_spoiler: 'Deck \u2013 Spoiler',
+                deck_ri_ant: 'Deck \u2013 Antenna', deck_ri_tonneau: 'Deck \u2013 Tonneau Cover',
+                lf_fender_ri_lamp: 'L Fender \u2013 Lamp(s)', lf_fender_ri_mldg: 'L Fender \u2013 Side Mldg',
+                lf_fender_ri_emblem: 'L Fender \u2013 Emblem', lf_fender_ri_liner: 'L Fender \u2013 Liner/Flare',
+                rf_fender_ri_lamp: 'R Fender \u2013 Lamp(s)', rf_fender_ri_mldg: 'R Fender \u2013 Side Mldg',
+                rf_fender_ri_emblem: 'R Fender \u2013 Emblem', rf_fender_ri_liner: 'R Fender \u2013 Liner/Flare',
+                lf_door_ri_mirror: 'LF Door \u2013 Mirror', lf_door_ri_uppermldg: 'LF Door \u2013 Upper Mldg',
+                lf_door_ri_beltmldg: 'LF Door \u2013 Belt Mldg', lf_door_ri_applique: 'LF Door \u2013 Applique',
+                lf_door_ri_trim: 'LF Door \u2013 Trim Panel', lf_door_ri_door: 'LF Door \u2013 Door', lf_door_ri_handle: 'LF Door \u2013 Handle',
+                rf_door_ri_mirror: 'RF Door \u2013 Mirror', rf_door_ri_uppermldg: 'RF Door \u2013 Upper Mldg',
+                rf_door_ri_beltmldg: 'RF Door \u2013 Belt Mldg', rf_door_ri_applique: 'RF Door \u2013 Applique',
+                rf_door_ri_trim: 'RF Door \u2013 Trim Panel', rf_door_ri_door: 'RF Door \u2013 Door', rf_door_ri_handle: 'RF Door \u2013 Handle',
+                lr_door_ri_uppermldg: 'LR Door \u2013 Upper Mldg', lr_door_ri_beltmldg: 'LR Door \u2013 Belt Mldg',
+                lr_door_ri_applique: 'LR Door \u2013 Applique', lr_door_ri_trim: 'LR Door \u2013 Trim Panel',
+                lr_door_ri_door: 'LR Door \u2013 Door', lr_door_ri_handle: 'LR Door \u2013 Handle',
+                rr_door_ri_uppermldg: 'RR Door \u2013 Upper Mldg', rr_door_ri_beltmldg: 'RR Door \u2013 Belt Mldg',
+                rr_door_ri_applique: 'RR Door \u2013 Applique', rr_door_ri_trim: 'RR Door \u2013 Trim Panel',
+                rr_door_ri_door: 'RR Door \u2013 Door', rr_door_ri_handle: 'RR Door \u2013 Handle',
+                lr_quarter_ri_lamp: 'L Quarter \u2013 Lamp(s)', lr_quarter_ri_mldg: 'L Quarter \u2013 Side Mldg',
+                lr_quarter_ri_glass: 'L Quarter \u2013 Glass', lr_quarter_ri_liner: 'L Quarter \u2013 Liner/Flare',
+                lr_quarter_ri_bedcap: 'L Quarter \u2013 Bed Cap',
+                rr_quarter_ri_lamp: 'R Quarter \u2013 Lamp(s)', rr_quarter_ri_mldg: 'R Quarter \u2013 Side Mldg',
+                rr_quarter_ri_glass: 'R Quarter \u2013 Glass', rr_quarter_ri_liner: 'R Quarter \u2013 Liner/Flare',
+                rr_quarter_ri_bedcap: 'R Quarter \u2013 Bed Cap',
+            };
+            const lbl = k => L[k] || k.replace(/_r[ir]_/, ' \u2013 ');
+            const riList = Object.keys(riParts || {}).map(lbl);
+            const rrList = Object.keys(rrParts || {}).map(k => lbl(k.replace('_rr_', '_ri_')));
+            if (!riList.length && !rrList.length) return '';
+            let t = '\u2500\u2500 R&I / R&R SCOPE SUMMARY \u2500\u2500';
+            if (riList.length) t += '\n\nR&I (Remove & Install):\n' + riList.map(i => `  \u2022 ${i}`).join('\n');
+            if (rrList.length) t += '\n\nR&R (Remove & Replace):\n' + rrList.map(i => `  \u2022 ${i}`).join('\n');
+            return t;
         }
 
         function collectFormData() {
@@ -13737,14 +13849,13 @@
                     : `${namePart} - ${claimPart}`;
 
                 console.log('<i data-lucide="folder" class="lucide-icon"></i> Creating Drive Folder:', folderName);
-                const res = await fetch(CONFIG.driveScriptUrl, {
-                    method: 'POST',
-                    // mode: 'no-cors' -> we need the response, so we don't use no-cors if we expect JSON back. 
-                    // GAS web apps configured as "Anyone" allow CORS.
-                    body: JSON.stringify({
-                        action: 'createFolder',
-                        folderName: folderName
-                    })
+
+                const url = new URL(CONFIG.driveScriptUrl);
+                url.searchParams.append('action', 'createFolder');
+                url.searchParams.append('folderName', folderName);
+
+                const res = await fetch(url.toString(), {
+                    method: 'GET'
                 });
 
                 const result = await res.json();
@@ -14045,6 +14156,12 @@
                     }
                 };
 
+                const scopeSummaryText = buildScopeSummaryText(riParts, rrParts);
+                if (scopeSummaryText) {
+                    const scopeField = fieldMap ? resolveFieldName(fieldMap, ['R&I/R&R Scope', 'Scope Summary', 'R&I/R&R', 'Scope']) : 'R&I/R&R Scope';
+                    if (scopeField) record.fields[scopeField] = scopeSummaryText;
+                }
+
                 // Safely resolve optional attachment/link fields
                 const pdfReportField = resolveFieldName(fieldMap, ['PDF Report', 'PDF', 'Report']);
                 const photoPackageField = resolveFieldName(fieldMap, ['Photo Package', 'Photo Zip', 'Photos ZIP', 'Photos']);
@@ -14108,6 +14225,7 @@
                 }
 
                 const result = await response.json();
+                result._driveFolderUrl = formData.driveUrl; // Attach it to the result object to pass back to UI
                 console.log('Airtable Success:', result);
                 showToast('<i data-lucide="check-circle" class="lucide-icon"></i> Uploaded to Airtable!', 'success');
                 haptic('success');
@@ -14277,7 +14395,7 @@
             let y = HEADER_H + 14;
 
             // ── Vehicle Info card ─────────────────────────────────────────
-            const VCARD_H = 128;
+            const VCARD_H = 168; // increased from 128: 12 fields in 2 cols = 6 rows × 13pt + 26pt header needs ~104pt; 168 gives safe headroom
             pdf.setFillColor(22, 22, 22);
             pdf.setDrawColor(50, 55, 65);
             pdf.setLineWidth(0.5);
@@ -14377,8 +14495,33 @@
                 }
             }
 
+            // ── R&I / R&R Scope Summary ───────────────────────────────────
+            const FOOTER_Y = H - 50;
+            const riKeys = Object.keys(formData.riParts || {});
+            const rrKeys = Object.keys(formData.rrParts || {});
+            if ((riKeys.length || rrKeys.length) && y < FOOTER_Y - 30) {
+                y += 8;
+                pdf.setFont('helvetica', 'bold'); pdf.setFontSize(7); pdf.setTextColor(26, 108, 255);
+                pdf.text('R\u0026I / R\u0026R SCOPE SUMMARY', M, y + 10); y += 18;
+
+                const colMid = M + CW / 2;
+                pdf.setFontSize(7.5); pdf.setTextColor(100, 110, 130);
+                pdf.text('R\u0026I \u2014 Remove \u0026 Install', M, y);
+                pdf.text('R\u0026R \u2014 Remove \u0026 Replace', colMid, y); y += 11;
+
+                const PART_L = { hood_ri_windshield: 'Hood \u2013 Windshield', hood_ri_cowl: 'Hood \u2013 Cowl', hood_ri_hood: 'Hood \u2013 Hood', roof_ri_hilamp: 'Roof \u2013 Hi-Mt Lamp', roof_ri_headliner: 'Roof \u2013 Headliner', roof_ri_sunroof: 'Roof \u2013 Sunroof', roof_ri_l_mldg: 'Roof \u2013 L Roof Mldg', roof_ri_r_mldg: 'Roof \u2013 R Roof Mldg', roof_ri_rack: 'Roof \u2013 Roof Rack', roof_ri_ant: 'Roof \u2013 Antenna', roof_ri_backglass: 'Roof \u2013 Back Glass', deck_ri_llamp: 'Deck \u2013 L Lamp(s)', deck_ri_rlamp: 'Deck \u2013 R Lamp(s)', deck_ri_handle: 'Deck \u2013 Handle', deck_ri_spoiler: 'Deck \u2013 Spoiler', deck_ri_ant: 'Deck \u2013 Antenna', deck_ri_tonneau: 'Deck \u2013 Tonneau Cover', lf_fender_ri_lamp: 'L Fender \u2013 Lamp(s)', lf_fender_ri_mldg: 'L Fender \u2013 Side Mldg', lf_fender_ri_emblem: 'L Fender \u2013 Emblem', lf_fender_ri_liner: 'L Fender \u2013 Liner/Flare', rf_fender_ri_lamp: 'R Fender \u2013 Lamp(s)', rf_fender_ri_mldg: 'R Fender \u2013 Side Mldg', rf_fender_ri_emblem: 'R Fender \u2013 Emblem', rf_fender_ri_liner: 'R Fender \u2013 Liner/Flare', lf_door_ri_mirror: 'LF Door \u2013 Mirror', lf_door_ri_uppermldg: 'LF Door \u2013 Upper Mldg', lf_door_ri_beltmldg: 'LF Door \u2013 Belt Mldg', lf_door_ri_applique: 'LF Door \u2013 Applique', lf_door_ri_trim: 'LF Door \u2013 Trim Panel', lf_door_ri_door: 'LF Door \u2013 Door', lf_door_ri_handle: 'LF Door \u2013 Handle', rf_door_ri_mirror: 'RF Door \u2013 Mirror', rf_door_ri_uppermldg: 'RF Door \u2013 Upper Mldg', rf_door_ri_beltmldg: 'RF Door \u2013 Belt Mldg', rf_door_ri_applique: 'RF Door \u2013 Applique', rf_door_ri_trim: 'RF Door \u2013 Trim Panel', rf_door_ri_door: 'RF Door \u2013 Door', rf_door_ri_handle: 'RF Door \u2013 Handle', lr_door_ri_uppermldg: 'LR Door \u2013 Upper Mldg', lr_door_ri_beltmldg: 'LR Door \u2013 Belt Mldg', lr_door_ri_applique: 'LR Door \u2013 Applique', lr_door_ri_trim: 'LR Door \u2013 Trim Panel', lr_door_ri_door: 'LR Door \u2013 Door', lr_door_ri_handle: 'LR Door \u2013 Handle', rr_door_ri_uppermldg: 'RR Door \u2013 Upper Mldg', rr_door_ri_beltmldg: 'RR Door \u2013 Belt Mldg', rr_door_ri_applique: 'RR Door \u2013 Applique', rr_door_ri_trim: 'RR Door \u2013 Trim Panel', rr_door_ri_door: 'RR Door \u2013 Door', rr_door_ri_handle: 'RR Door \u2013 Handle', lr_quarter_ri_lamp: 'L Quarter \u2013 Lamp(s)', lr_quarter_ri_mldg: 'L Quarter \u2013 Side Mldg', lr_quarter_ri_glass: 'L Quarter \u2013 Glass', lr_quarter_ri_liner: 'L Quarter \u2013 Liner/Flare', lr_quarter_ri_bedcap: 'L Quarter \u2013 Bed Cap', rr_quarter_ri_lamp: 'R Quarter \u2013 Lamp(s)', rr_quarter_ri_mldg: 'R Quarter \u2013 Side Mldg', rr_quarter_ri_glass: 'R Quarter \u2013 Glass', rr_quarter_ri_liner: 'R Quarter \u2013 Liner/Flare', rr_quarter_ri_bedcap: 'R Quarter \u2013 Bed Cap' };
+                const lbl = k => PART_L[k] || k.replace(/_r[ir]_/, ' \u2013 ');
+
+                pdf.setFont('helvetica', 'normal'); pdf.setTextColor(205, 210, 220);
+                const maxRows = Math.max(riKeys.length, rrKeys.length);
+                for (let i = 0; i < maxRows && y < FOOTER_Y; i++, y += 10) {
+                    if (riKeys[i]) pdf.text(`\u2022 ${lbl(riKeys[i])}`, M, y);
+                    if (rrKeys[i]) pdf.text(`\u2022 ${lbl(rrKeys[i].replace('_rr_', '_ri_'))}`, colMid, y);
+                }
+                y += 6;
+            }
+
             // ── Photos section ────────────────────────────────────────────
-            const FOOTER_Y = H - 50; // keep content above footer area
             if (selectedPhotos.length > 0 && y < FOOTER_Y) {
                 pdf.setFont('helvetica', 'bold');
                 pdf.setFontSize(7);
@@ -14436,6 +14579,17 @@
 
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+
+                // Build riParts/rrParts from collectFormData() output for buildCoverPage
+                if (!formData.riParts) {
+                    const ri = {}, rr = {};
+                    Object.keys(formData).forEach(k => {
+                        if (k.includes('_ri_') && formData[k] === true) ri[k] = true;
+                        if (k.includes('_rr_') && formData[k] === true) rr[k] = true;
+                    });
+                    formData.riParts = ri;
+                    formData.rrParts = rr;
+                }
 
                 await buildCoverPage(pdf, formData);
 
@@ -14590,9 +14744,96 @@
             return { categoryUrls };
         }
 
-        // ==================== GOOGLE DRIVE UPLOAD ====================
-        async function uploadToGoogleDrive(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName) {
-            if (!CONFIG.driveScriptUrl) return null;
+        // ==================== BACKGROUND UPLOAD QUEUE ====================
+        let bgUploadQueue = [];
+        let isBgUploading = false;
+        let totalBgUploadsCurrentJob = 0;
+        let completedBgUploadsCurrentJob = 0;
+
+        function addPhotoToBackgroundQueue(uploadsList) {
+            bgUploadQueue.push(...uploadsList);
+            totalBgUploadsCurrentJob += uploadsList.length;
+            processBackgroundUploads();
+        }
+
+        async function processBackgroundUploads() {
+            if (isBgUploading || bgUploadQueue.length === 0) return;
+            isBgUploading = true;
+
+            const managerEl = document.getElementById('bgUploadManager');
+            const bgSpinner = document.getElementById('bgUploadSpinner');
+            const bgSuccessIcon = document.getElementById('bgUploadSuccessIcon');
+            const bgUploadText = document.getElementById('bgUploadText');
+            const progressEl = document.getElementById('bgUploadProgressBar');
+
+            // Reset UI State for uploading
+            bgUploadText.innerHTML = 'Uploading <span id="bgUploadCount"></span> photos to Drive...';
+            const countEl = document.getElementById('bgUploadCount');
+
+            managerEl.classList.add('show');
+            bgSpinner.style.display = 'block';
+            bgSuccessIcon.style.display = 'none';
+
+            while (bgUploadQueue.length > 0) {
+                const uploadsRemaining = bgUploadQueue.length;
+                countEl.textContent = uploadsRemaining;
+
+                if (totalBgUploadsCurrentJob > 0) {
+                    const percent = (completedBgUploadsCurrentJob / totalBgUploadsCurrentJob) * 100;
+                    progressEl.style.width = percent + '%';
+                }
+
+                // Pop batch of BATCH_SIZE
+                const BATCH_SIZE = 3;
+                const batch = bgUploadQueue.splice(0, BATCH_SIZE);
+
+                const uploadOne = (u) => fetch(CONFIG.driveScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'uploadPhoto',
+                        folderName: u.folderName,
+                        fileName: u.fileName,
+                        base64Data: u.base64Data,
+                        mimeType: u.mimeType
+                    })
+                }).then(() => {
+                    completedBgUploadsCurrentJob++;
+                }).catch(err => {
+                    console.error(`Background Drive upload error for ${u.fileName}:`, err);
+                });
+
+                await Promise.all(batch.map(uploadOne));
+            }
+
+            // Finished uploading current batch
+            progressEl.style.width = '100%';
+            bgUploadText.innerHTML = 'Upload Complete!';
+            bgSpinner.style.display = 'none';
+            bgSuccessIcon.style.display = 'block';
+
+            // Reset counters for next job
+            totalBgUploadsCurrentJob = 0;
+            completedBgUploadsCurrentJob = 0;
+            isBgUploading = false;
+
+            // Wait 3 seconds, then hide the UI
+            setTimeout(() => {
+                if (!isBgUploading) { // Only hide if another job didn't start in the meantime
+                    managerEl.classList.remove('show');
+                    setTimeout(() => {
+                        if (!isBgUploading) {
+                            bgUploadText.innerHTML = 'Uploading <span id="bgUploadCount">0</span> photos to Drive...';
+                            progressEl.style.width = '0%';
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+
+        // ==================== GOOGLE DRIVE QUEUE LOADER ====================
+        function queueGoogleDriveUploads(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName) {
+            if (!CONFIG.driveScriptUrl) return;
 
             const CATEGORY_ORDER = ['voil', 'conditioning', 'upd', 'scope'];
             const CATEGORY_LABELS = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
@@ -14606,16 +14847,10 @@
                 ? `${namePart} - ${claimPart} - ${vehiclePart}`
                 : `${namePart} - ${claimPart}`;
 
-            // Build uploads with per-category numbering.
-            // Separators get "00", then photos are 01, 02, 03... per category.
-            // Files sort alphabetically in Drive: COND - 00, COND - 01 … VOIL - 00, VOIL - 01 …
-            const BATCH_SIZE = 5;
             const uploads = [];
-
             const PREFIXES = { voil: '01', conditioning: '02', upd: '03', scope: '04' };
 
             if (photos && photos.length > 0) {
-                // Group by category preserving original order within each group
                 const grouped = {};
                 CATEGORY_ORDER.forEach(cat => { grouped[cat] = []; });
                 photos.forEach(photo => {
@@ -14648,6 +14883,7 @@
                         }
 
                         uploads.push({
+                            folderName: folderName,
                             fileName: `${prefix} - ${catLabel} - ${num} - ${shortLabel}${ext}`,
                             base64Data: photo.base64Data,
                             mimeType: photo.mimeType || 'image/jpeg'
@@ -14656,45 +14892,14 @@
                 }
             }
 
-            if (uploads.length === 0 && !pdfBase64) return null;
-
-            let done = 0;
-            let failed = 0;
-
-            const driveStatusEl = document.querySelector('#scanBoxText') || document.querySelector('.scan-box-text');
-
-            // Files land at: Shared Drive > Dent Experts > [folderName] > files
-            const uploadOne = (u) => fetch(CONFIG.driveScriptUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    action: 'uploadPhoto',
-                    folderName,
-                    fileName: u.fileName,
-                    base64Data: u.base64Data,
-                    mimeType: u.mimeType
-                })
-            }).then(() => {
-                done++;
-                if (driveStatusEl) driveStatusEl.textContent = `DRIVE ${done}/${uploads.length}`;
-            }).catch(err => {
-                failed++;
-                console.error(`Drive: upload error for ${u.fileName}:`, err);
-            });
-
-            for (let i = 0; i < uploads.length; i += BATCH_SIZE) {
-                await Promise.all(uploads.slice(i, i + BATCH_SIZE).map(uploadOne));
-            }
-
-            // Upload PDF last if provided
             if (pdfBase64 && pdfFileName) {
-                // Prepend '05' so it sorts correctly after photos
                 const docsFileName = pdfFileName.startsWith('05') ? pdfFileName : `05 - ${pdfFileName}`;
-                await uploadOne({ fileName: docsFileName, base64Data: pdfBase64, mimeType: 'application/pdf' });
+                uploads.push({ folderName: folderName, fileName: docsFileName, base64Data: pdfBase64, mimeType: 'application/pdf' });
             }
 
-            console.log(`Drive: ${done} uploaded, ${failed} failed — folder "Dent Experts/${folderName}"`);
-            return { folderName, count: done, failed };
+            if (uploads.length > 0) {
+                addPhotoToBackgroundQueue(uploads);
+            }
         }
 
         async function submitToGHL(formData, pipelineKey = 'repair_tracker') {
@@ -14734,13 +14939,27 @@
                     }
 
                     if (hasPhotos) {
+                        // Append R&I/R&R scope summary so estimator has it in GHL note
+                        if (formData.driveUrl) {
+                            noteBody = `🔗 Google Drive Folder: ${formData.driveUrl}\n\n` + noteBody;
+                        }
+                        const scopeBlock = buildScopeSummaryText(formData.riParts, formData.rrParts);
+                        if (scopeBlock) noteBody += '\n\n' + scopeBlock;
                         await addGHLNote(contact.contactId, noteBody.trim());
                     }
                 } else if (formData.photoUrls && formData.photoUrls.length > 0) {
                     // Fallback for old way
                     const links = formData.photoUrls.join('\n');
-                    const noteBody = `Uploaded Damage Photos:\n${links}`;
-                    await addGHLNote(contact.contactId, noteBody);
+                    const scopeBlock = buildScopeSummaryText(formData.riParts, formData.rrParts);
+                    let noteBody = `Uploaded Damage Photos:\n${links}${scopeBlock ? '\n\n' + scopeBlock : ''}`;
+                    if (formData.driveUrl) {
+                        noteBody = `🔗 Google Drive Folder: ${formData.driveUrl}\n\n` + noteBody;
+                    }
+                    await addGHLNote(contact.contactId, noteBody.trim());
+                } else if (formData.driveUrl) {
+                    const scopeBlock = buildScopeSummaryText(formData.riParts, formData.rrParts);
+                    const noteBody = `<i data-lucide="hard-drive" class="lucide-icon"></i> Project Files (${formData.roNumber || 'N/A'})\n=================================\n\n🔗 Google Drive Folder:\n${formData.driveUrl}\n\n${scopeBlock || ''}`;
+                    await addGHLNote(contact.contactId, noteBody.trim());
                 }
 
                 // Step 4 is no longer needed:
@@ -14762,19 +14981,29 @@
 
         function getGHLCustomFields(formData) {
             const customFields = [];
-            if (formData.vin) customFields.push({ id: GHL_CONFIG.customFields.vin, value: formData.vin });
+            // Use GHL_CUSTOM_FIELDS throughout — single verified source of truth for field IDs
+            const push = (id, val) => { if (id && val) customFields.push({ id, value: String(val) }); };
 
-            // Combined Year Make Model
+            push(GHL_CUSTOM_FIELDS.vin, formData.vin);
+            push(GHL_CUSTOM_FIELDS.roNumber, formData.roNumber);
+            push(GHL_CUSTOM_FIELDS.claimNumber, formData.claimNumber);  // was using wrong ID — fixed
+            push(GHL_CUSTOM_FIELDS.insurance, formData.insurance || formData.insuranceCompany);
+            push(GHL_CUSTOM_FIELDS.estimator, formData.estimator);
+            push(GHL_CUSTOM_FIELDS.color, formData.color);
+            push(GHL_CUSTOM_FIELDS.deductible, formData.deductible);
+
             const ymm = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
-            if (ymm) customFields.push({ id: GHL_CONFIG.customFields.year_make_model, value: ymm });
+            push(GHL_CUSTOM_FIELDS.yearMakeModel, ymm);
 
-            if (formData.insurance) customFields.push({ id: GHL_CONFIG.customFields.insurance_company, value: formData.insurance });
-            if (formData.claimNumber) customFields.push({ id: GHL_CONFIG.customFields.claim_number, value: formData.claimNumber });
-            if (formData.estimator) customFields.push({ id: GHL_CONFIG.customFields.technician_name, value: formData.estimator });
-            if (formData.roNumber) customFields.push({ id: GHL_CONFIG.customFields.ro_number, value: formData.roNumber });
-            if (formData.color && GHL_CONFIG.customFields.color) customFields.push({ id: GHL_CONFIG.customFields.color, value: formData.color });
+            // Scope Summary — R&I/R&R items (populated after feature 2 is added)
+            const scopeSummary = (typeof buildScopeSummaryText === 'function')
+                ? buildScopeSummaryText(formData.riParts, formData.rrParts)
+                : '';
+            if (scopeSummary && GHL_CUSTOM_FIELDS.scope_summary) {
+                push(GHL_CUSTOM_FIELDS.scope_summary, scopeSummary);
+            }
 
-            // Add Google Drive Folder Link if available
+            // Drive folder still uses GHL_CONFIG since it may not be in GHL_CUSTOM_FIELDS yet
             if (formData.driveUrl && GHL_CONFIG.customFields.drive_folder) {
                 customFields.push({ id: GHL_CONFIG.customFields.drive_folder, value: formData.driveUrl });
             }
@@ -15034,7 +15263,8 @@
             claimNumber: 'Qcsf5Kk2MrNp1UP9kdDt',
             estimator: 'oAiKQXcP4Z3B6KbdRF6N',
             deductible: 'gNl6srVoXFU7JQGrKGl2',
-            color: 'ljDkfmAAhoJFkZuUii0C'
+            color: 'ljDkfmAAhoJFkZuUii0C',
+            scope_summary: '3a0GzC9CbrogiFBcpNte'  // Auto-created via GHL API
         };
 
         // Build customFields array from Airtable record fields
@@ -15058,6 +15288,9 @@
             push(GHL_CUSTOM_FIELDS.estimator, f.Estimator);
             push(GHL_CUSTOM_FIELDS.deductible, f.Deductible);
             if (GHL_CUSTOM_FIELDS.color) push(GHL_CUSTOM_FIELDS.color, f.Color);
+            if (GHL_CUSTOM_FIELDS.scope_summary && (f['R&I/R&R Scope'] || f['Scope Summary'])) {
+                push(GHL_CUSTOM_FIELDS.scope_summary, f['R&I/R&R Scope'] || f['Scope Summary']);
+            }
 
             return cf;
         }
@@ -16181,9 +16414,11 @@
                 model: document.getElementById('model').value,
                 color: document.getElementById('color').value,
                 insurance: document.getElementById('insuranceCompany').value,
+                insuranceCompany: document.getElementById('insuranceCompany').value, // alias buildCoverPage expects
                 claimNumber: document.getElementById('claimNumber').value,
                 location: document.getElementById('location').value,
                 estimator: document.getElementById('estimator').value,
+                odometer: document.getElementById('odometer')?.value || '',  // was missing — needed by buildCoverPage
                 notes: document.getElementById('notes').value,
                 status: document.getElementById('status').value,
                 photoUrls: photoUrls
@@ -16223,6 +16458,15 @@
             Object.keys(checklistBundles).forEach(key => {
                 rawData[key] = checklistBundles[key].join(', ');
             });
+
+            // Build R&I / R&R parts maps from DOM so they're available to GHL + PDF
+            const riParts = {}, rrParts = {};
+            document.querySelectorAll('#scopeForm input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.name.includes('_ri_')) riParts[cb.name] = true;
+                if (cb.name.includes('_rr_')) rrParts[cb.name] = true;
+            });
+            rawData.riParts = riParts;
+            rawData.rrParts = rrParts;
 
             // Transition UI instantly to single-popup creation state
             const submittedRo = rawData.roNumber || '';
@@ -16269,6 +16513,10 @@
                     }
 
                     // Capture GHL data NOW — before clearDraft() resets the form fields
+                    if (airtableResult._driveFolderUrl) {
+                        rawData.driveUrl = airtableResult._driveFolderUrl;
+                    }
+
                     // For Drive: use photos WITH branded category separators inserted
                     const drivePhotos = await getPhotosWithSeparators();
 
@@ -16292,24 +16540,23 @@
                     // Submit to GHL CRM with selected pipeline
                     let ghlSuccess = false;
                     try {
-                        submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Uploading Photos)...';
-                        refreshIcons();
-                        const ghlUploadResult = await uploadAllPhotosToGHL();
-                        ghlFormData.categoryUrls = ghlUploadResult.categoryUrls;
-
                         if (statusEl) {
-                            statusEl.innerHTML = '<i data-lucide="user-plus" class="lucide-icon spin"></i> Creating GHL Contact...';
+                            statusEl.innerHTML = '<i data-lucide="user-plus" class="lucide-icon spin"></i> Syncing to GHL...';
                             const scanBoxText = document.getElementById('scanBoxText');
                             if (scanBoxText) scanBoxText.textContent = 'CONTACT';
                             lucide.createIcons({ root: cState });
                         }
 
-                        submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL (Creating Contact & Opportunity)...';
+                        // Just pass the drive folder URL to GHL instead of uploading all photos
+                        if (rawData.driveUrl) {
+                            ghlFormData.driveUrl = rawData.driveUrl;
+                        }
+
+                        submitBtn.innerHTML = '<i data-lucide="loader" class="lucide-icon spin"></i> Syncing to GHL...';
                         refreshIcons();
                         const ghlResult = await submitToGHL(ghlFormData, selectedPipelineKey);
                         if (ghlResult && ghlResult.success) {
                             ghlSuccess = true;
-                            // Toast removed, handled by animation
                         } else {
                             console.warn('GHL submission did not return success:', ghlResult);
                             showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> GHL sync failed: ${ghlResult.error || 'Unknown error'}`, 'warning');
@@ -16319,14 +16566,8 @@
                         showToast(`<i data-lucide="alert-triangle" class="lucide-icon"></i> GHL sync error: ${ghlErr.message}`, 'error');
                     }
 
-                    // Upload photos + PDF to Google Drive (non-blocking — won't fail the submission)
+                    // Background Queue photos + PDF to Google Drive
                     if (CONFIG.driveScriptUrl) {
-                        if (statusEl) {
-                            statusEl.innerHTML = '<i data-lucide="hard-drive" class="lucide-icon spin"></i> Uploading to Google Drive...';
-                            const scanBoxText = document.getElementById('scanBoxText');
-                            if (scanBoxText) scanBoxText.textContent = 'DRIVE';
-                            lucide.createIcons({ root: cState });
-                        }
                         try {
                             // Generate PDF silently for Drive
                             let drivePdfBase64 = null, drivePdfFileName = null;
@@ -16335,10 +16576,6 @@
                                     const { jsPDF } = window.jspdf;
                                     const drivePdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
                                     await buildCoverPage(drivePdf, rawData);
-
-                                    // PHOTOS REMOVED: PDF now only contains the scope sheet coverage
-                                    // Photos are separately zipped and uploaded
-
                                     drivePdfBase64 = drivePdf.output('datauristring').split(',')[1];
                                     const ts = new Date().toISOString().slice(0, 10);
                                     const lastName = (rawData.insuredName || '').trim().split(' ').filter(Boolean).slice(-1)[0] || '';
@@ -16348,7 +16585,7 @@
                                 }
                             }
 
-                            await uploadToGoogleDrive(
+                            queueGoogleDriveUploads(
                                 rawData.insuredName,
                                 rawData.claimNumber,
                                 rawData.roNumber,
@@ -16360,7 +16597,7 @@
                                 drivePdfFileName
                             );
                         } catch (driveErr) {
-                            console.error('Google Drive upload error:', driveErr);
+                            console.error('Google Drive queue error:', driveErr);
                         }
                     }
 
@@ -18859,6 +19096,21 @@
             lastTouchEnd = now;
         }, false);
     </script>
+    <!-- Background Upload Manager -->
+    <div id="bgUploadManager" class="bg-upload-manager">
+        <div class="bg-upload-content">
+            <i data-lucide="cloud-upload" class="lucide-icon"></i>
+            <span id="bgUploadText">Uploading <span id="bgUploadCount">0</span> photos to Drive...</span>
+            <i id="bgUploadSpinner" data-lucide="loader" class="lucide-icon spin"
+                style="margin-left: auto; color: #1A6CFF;"></i>
+            <i id="bgUploadSuccessIcon" data-lucide="check-circle" class="lucide-icon"
+                style="display: none; color: #34d399; margin-left: auto;"></i>
+        </div>
+        <div class="bg-upload-progress">
+            <div id="bgUploadProgressBar" class="bg-upload-progress-bar"></div>
+        </div>
+    </div>
+
 </body>
 
 </html>

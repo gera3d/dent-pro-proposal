@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.03.04.03';
+const APP_VERSION = '2026.03.05.02';
 const CACHE_NAME = 'dent-experts-v' + APP_VERSION;
 const ASSETS_TO_CACHE = [
     './',

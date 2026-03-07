@@ -2791,10 +2791,23 @@
             background: rgba(0, 0, 0, 0.9);
         }
 
+        .camera-status-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 116px;
+        }
+
         .camera-count {
             color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             min-width: 80px;
+        }
+
+        .camera-hardware-hint {
+            color: rgba(255, 255, 255, 0.48);
+            font-size: 11px;
+            letter-spacing: 0.02em;
         }
 
         .camera-shutter {
@@ -2812,6 +2825,10 @@
             transform: scale(0.9);
         }
 
+        .camera-shutter.is-firing {
+            transform: scale(0.9);
+        }
+
         .camera-shutter::after {
             content: '';
             position: absolute;
@@ -2826,6 +2843,10 @@
         }
 
         .camera-shutter:active::after {
+            background: #e0e0e0;
+        }
+
+        .camera-shutter.is-firing::after {
             background: #e0e0e0;
         }
 
@@ -8308,8 +8329,11 @@
         <div class="camera-strip" id="cameraStrip"></div>
 
         <div class="camera-controls">
-            <div class="camera-count" id="cameraCount">0 photos</div>
-            <button type="button" class="camera-shutter" onclick="capturePhoto()" title="Take Photo"></button>
+            <div class="camera-status-block">
+                <div class="camera-count" id="cameraCount">0 photos</div>
+                <div class="camera-hardware-hint">Vol +/- shutter on supported devices</div>
+            </div>
+            <button type="button" class="camera-shutter" onclick="capturePhoto()" title="Take Photo" aria-label="Take photo"></button>
             <button type="button" class="camera-done-btn" onclick="closeCameraModal(true)">Done</button>
         </div>
     </div>
@@ -11575,6 +11599,9 @@
         let photoFacingMode = 'environment'; // 'environment' = rear, 'user' = front
         let sessionPhotos = []; // Photos captured in this session
         let currentGuideSlotIndex = 0; // Active guided slot index
+        let lastVolumeShutterAt = 0;
+        let volumeShutterPulseTimeout = null;
+        const activeVolumeShutterKeys = new Set();
 
         // ==================== PHOTO SLOT GUIDE DATA ====================
         const PHOTO_SLOTS = {
@@ -11691,9 +11718,81 @@
             if (typeof haptic === 'function') haptic('light');
         }
 
+        function isPhotoCameraModalOpen() {
+            const modal = document.getElementById('photoCameraModal');
+            return !!modal && window.getComputedStyle(modal).display !== 'none';
+        }
+
+        function isVolumeShutterKeyEvent(event) {
+            const keyName = String(event.key || '').toLowerCase();
+            const codeName = String(event.code || '').toLowerCase();
+            const legacyCode = Number(event.keyCode || event.which || 0);
+
+            return codeName === 'audiovolumeup'
+                || codeName === 'audiovolumedown'
+                || codeName === 'volumeup'
+                || codeName === 'volumedown'
+                || keyName === 'audiovolumeup'
+                || keyName === 'audiovolumedown'
+                || keyName === 'volumeup'
+                || keyName === 'volumedown'
+                || legacyCode === 24
+                || legacyCode === 25;
+        }
+
+        function getVolumeShutterKeyId(event) {
+            return String(event.code || event.key || event.keyCode || event.which || 'volume-shutter');
+        }
+
+        function pulseCameraShutter() {
+            const shutterButton = document.querySelector('.camera-shutter');
+            if (!shutterButton) return;
+
+            clearTimeout(volumeShutterPulseTimeout);
+            shutterButton.classList.add('is-firing');
+            volumeShutterPulseTimeout = setTimeout(() => {
+                shutterButton.classList.remove('is-firing');
+                volumeShutterPulseTimeout = null;
+            }, 140);
+        }
+
+        function handleVolumeShutterKeydown(event) {
+            if (!isVolumeShutterKeyEvent(event) || !isPhotoCameraModalOpen()) return;
+
+            const target = event.target;
+            if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) {
+                return;
+            }
+
+            const keyId = getVolumeShutterKeyId(event);
+            const now = Date.now();
+            if (event.repeat || activeVolumeShutterKeys.has(keyId) || (now - lastVolumeShutterAt) < 250) {
+                event.preventDefault();
+                return;
+            }
+
+            activeVolumeShutterKeys.add(keyId);
+            lastVolumeShutterAt = now;
+            event.preventDefault();
+            pulseCameraShutter();
+            capturePhoto();
+        }
+
+        function handleVolumeShutterKeyup(event) {
+            if (!isVolumeShutterKeyEvent(event)) return;
+            activeVolumeShutterKeys.delete(getVolumeShutterKeyId(event));
+        }
+
+        document.addEventListener('keydown', handleVolumeShutterKeydown, true);
+        document.addEventListener('keyup', handleVolumeShutterKeyup, true);
+        window.addEventListener('blur', () => activeVolumeShutterKeys.clear());
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) activeVolumeShutterKeys.clear();
+        });
+
         function capturePhoto() {
             const video = document.getElementById('cameraVideo');
-            if (!video || !video.srcObject) return;
+            if (!video || !video.srcObject || !video.videoWidth || !video.videoHeight) return;
 
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
@@ -11874,6 +11973,11 @@
         function closeCameraModal(savePhotos = true) {
             const modal = document.getElementById('photoCameraModal');
             modal.style.display = 'none';
+            activeVolumeShutterKeys.clear();
+            clearTimeout(volumeShutterPulseTimeout);
+            volumeShutterPulseTimeout = null;
+            const shutterButton = document.querySelector('.camera-shutter');
+            if (shutterButton) shutterButton.classList.remove('is-firing');
 
             // Stop camera stream
             stopPhotoCameraStream();

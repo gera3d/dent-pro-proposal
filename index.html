@@ -6001,7 +6001,8 @@
     <div class="container">
         <!-- NEW HEADER DESIGN (Split Layout) -->
         <div class="brand-bar">
-            <div class="logo"><img src="logo.webp" alt="Dent Experts Logo"></div>
+            <div class="logo"><span style="font-weight: 800; font-size: 1.2rem; letter-spacing: 1px;">DAMAGE
+                    REPORT</span></div>
 
             <!-- Mode Toggle for Scoper vs Parts Tech vs Records -->
             <div class="mode-toggle">
@@ -6734,12 +6735,15 @@
                                     <td>Emblem</td>
                                     <td><input type="checkbox" name="lf_fender_rr_emblem"></td>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="lf_fender_ri_liner"></td>
-                                    <td>Liner/Flare</td>
-                                    <td><input type="checkbox" name="lf_fender_rr_liner"></td>
-                                </tr>
                             </table>
+                            <div class="panel-notes" style="margin-top: 12px; padding: 0 4px 12px 4px;">
+                                <label
+                                    style="font-size: 11px; color: #888; font-weight: 500; margin-bottom: 6px; display: block;"><i
+                                        data-lucide="edit-3" class="lucide-icon"
+                                        style="width:12px; height:12px; margin-right:4px;"></i>Notes:</label>
+                                <textarea name="lf_fender_notes" class="part-input" rows="2"
+                                    placeholder="Add specific notes for this panel..."></textarea>
+                            </div>
                         </div>
 
                         <!-- Left Front Door -->
@@ -6815,12 +6819,15 @@
                                     <td>Door</td>
                                     <td><input type="checkbox" name="lf_door_rr_door"></td>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="lf_door_ri_handle"></td>
-                                    <td>Handle</td>
-                                    <td><input type="checkbox" name="lf_door_rr_handle"></td>
-                                </tr>
                             </table>
+                            <div class="panel-notes" style="margin-top: 12px; padding: 0 4px 12px 4px;">
+                                <label
+                                    style="font-size: 11px; color: #888; font-weight: 500; margin-bottom: 6px; display: block;"><i
+                                        data-lucide="edit-3" class="lucide-icon"
+                                        style="width:12px; height:12px; margin-right:4px;"></i>Notes:</label>
+                                <textarea name="lf_door_notes" class="part-input" rows="2"
+                                    placeholder="Add specific notes for this panel..."></textarea>
+                            </div>
                         </div>
 
                         <!-- Left Rear Door -->
@@ -7147,12 +7154,15 @@
                                     <td>Cowl</td>
                                     <td><input type="checkbox" name="hood_rr_cowl"></td>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="hood_ri_hood"></td>
-                                    <td>Hood</td>
-                                    <td><input type="checkbox" name="hood_rr_hood"></td>
-                                </tr>
                             </table>
+                            <div class="panel-notes" style="margin-top: 12px; padding: 0 4px 12px 4px;">
+                                <label
+                                    style="font-size: 11px; color: #888; font-weight: 500; margin-bottom: 6px; display: block;"><i
+                                        data-lucide="edit-3" class="lucide-icon"
+                                        style="width:12px; height:12px; margin-right:4px;"></i>Notes:</label>
+                                <textarea name="hood_notes" class="part-input" rows="2"
+                                    placeholder="Add specific notes for this panel..."></textarea>
+                            </div>
                         </div>
 
                         <!-- Roof -->
@@ -7815,7 +7825,7 @@
                 <button type="button" class="sz-submit-btn" id="submitBtn" onclick="submitForm()">
                     <span class="sz-submit-idle">
                         <i data-lucide="send" class="lucide-icon"></i>
-                        Submit to Dent Experts
+                        Submit Scope
                     </span>
                     <span class="sz-submit-loading" style="display:none;">
                         <span class="sz-spinner"></span> Submitting…
@@ -8124,8 +8134,7 @@
             <!-- HEADER — full-width gradient banner -->
             <div
                 style="background: linear-gradient(135deg, #1A6CFF 0%, #0C4D9C 100%); padding: 14px 24px; margin: -36px -36px 16px -36px; display: flex; align-items: center; justify-content: space-between;">
-                <img src="logo.webp" alt="Dent Experts"
-                    style="height: 42px; width: auto; filter: brightness(0) invert(1);">
+                <div style="color: #ffffff; font-size: 16pt; font-weight: 800; letter-spacing: 1px;">DAMAGE REPORT</div>
                 <div style="text-align: right;">
                     <div
                         style="color: #ffffff; font-size: 11pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">
@@ -8195,7 +8204,7 @@
             <!-- FOOTER -->
             <div
                 style="position: absolute; bottom: 20px; left: 36px; right: 36px; text-align: center; font-size: 7pt; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
-                Generated by Dent Experts PDR Scope App &nbsp;&bull;&nbsp; <span id="pdf-timestamp"></span>
+                Generated by PDR Scope App &nbsp;&bull;&nbsp; <span id="pdf-timestamp"></span>
             </div>
         </div>
     </div>
@@ -13480,11 +13489,11 @@
                 ctx.font = 'bold 24px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('DENT EXPERTS', W / 2, 36);
+                ctx.fillText('DAMAGE REPORT', W / 2, 36);
 
                 ctx.fillStyle = 'rgba(255,255,255,0.32)';
                 ctx.font = '13px sans-serif';
-                ctx.fillText('EXCELLENCE IN HAIL REPAIR', W / 2, 58);
+                ctx.fillText('PDR ASSESSMENT', W / 2, 58);
 
                 // ── Pill badge ───────────────────────────────────────────────
                 const pillW = 200, pillH = 40, pillX = (W - pillW) / 2, pillY = 110;
@@ -13527,12 +13536,6 @@
                 // ── Bottom strip ─────────────────────────────────────────────
                 ctx.fillStyle = 'rgba(255,255,255,0.035)';
                 ctx.fillRect(12, H - 60, W - 12, 60);
-
-                ctx.fillStyle = 'rgba(255,255,255,0.32)';
-                ctx.font = '16px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('dentexperts.com', W / 2, H - 30);
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
                 resolve({
@@ -13840,7 +13843,7 @@
         async function createGoogleDriveFolder(formData) {
             if (!CONFIG.driveScriptUrl) return null;
             try {
-                const BRAND_FOLDER = 'Dent Experts';
+                const BRAND_FOLDER = 'Damage Reports';
                 const namePart = (formData.insuredName || 'Unknown').trim();
                 const claimPart = (formData.claimNumber || formData.roNumber || 'No-Claim').trim();
                 const vehiclePart = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
@@ -14287,39 +14290,7 @@
             showToast('<i data-lucide="wifi-off" class="lucide-icon"></i> You are offline. Data will sync when connected.', 'info');
         });
 
-        // Load logo.webp and return a white-tinted PNG data URL for embedding in PDF
-        async function loadWhiteLogoDataUrl() {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.naturalWidth;
-                        canvas.height = img.naturalHeight;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        // Make logo white; bake blue header bg into transparent pixels
-                        // so jsPDF never needs to handle PNG alpha (avoids white-box artifact)
-                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        const d = imageData.data;
-                        for (let i = 0; i < d.length; i += 4) {
-                            if (d[i + 3] > 10) {
-                                d[i] = 255; d[i + 1] = 255; d[i + 2] = 255; d[i + 3] = 255;
-                            } else {
-                                // Transparent → brand blue header background
-                                d[i] = 26; d[i + 1] = 108; d[i + 2] = 255; d[i + 3] = 255;
-                            }
-                        }
-                        ctx.putImageData(imageData, 0, 0);
-                        resolve(canvas.toDataURL('image/jpeg', 0.95));
-                    } catch (e) {
-                        resolve(null);
-                    }
-                };
-                img.onerror = () => resolve(null);
-                img.src = 'logo.webp';
-            });
-        }
+        // (Logo loading function removed)
 
         // Collect damaged panels from the form DOM
         function collectDamagedPanels() {
@@ -14342,12 +14313,24 @@
                 // R&R: any checkbox whose name contains "_rr_" is checked
                 const rrChecked = !!box.querySelector('input[name*="_rr_"]:checked');
 
+                // Get panel notes
+                const notesInput = box.querySelector('textarea[name$="_notes"]');
+                const panelNotes = notesInput ? notesInput.value.trim() : '';
+
                 // Only include panels with actual damage (dc/os default '0' means no damage)
                 const hasDamage = (dcVal !== '' && dcVal !== '0') ||
                     (osVal !== '' && osVal !== '0') ||
-                    riItems.length > 0 || rrChecked;
+                    riItems.length > 0 || rrChecked || panelNotes !== '';
                 if (hasDamage) {
-                    panels.push({ name: panelName, dc: dcVal || '-', coin: coinVal || '-', os: osVal || '-', ri: riItems.join(', ') || '-', rr: rrChecked ? 'Y' : '' });
+                    panels.push({
+                        name: panelName,
+                        dc: dcVal || '-',
+                        coin: coinVal || '-',
+                        os: osVal || '-',
+                        ri: riItems.join(', ') || '-',
+                        rr: rrChecked ? 'Y' : '',
+                        notes: panelNotes
+                    });
                 }
             });
             return panels;
@@ -14370,16 +14353,11 @@
             pdf.setFillColor(12, 77, 156);
             pdf.rect(W * 0.55, 0, W * 0.45, HEADER_H, 'F');
 
-            // ── Logo (white) ─────────────────────────────────────────────
-            const logoData = await loadWhiteLogoDataUrl();
-            if (logoData) {
-                pdf.addImage(logoData, 'JPEG', M, 13, 110, 42);
-            } else {
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(18);
-                pdf.text('DENT EXPERTS', M, 46);
-            }
+            // ── Title ───────────────────────────────────────────────────
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(18);
+            pdf.text('DAMAGE REPORT', M, 46);
 
             // ── Header right-side text ────────────────────────────────────
             pdf.setFont('helvetica', 'bold');
@@ -14406,13 +14384,23 @@
             pdf.setTextColor(26, 108, 255);
             pdf.text('VEHICLE INFORMATION', M + 10, y + 13);
 
+            // Calculate Total DC and Total OS
+            const panels = collectDamagedPanels();
+            let totalDc = 0;
+            let totalOs = 0;
+            panels.forEach(p => {
+                if (p.dc && p.dc !== '-') totalDc += parseInt(p.dc, 10) || 0;
+                if (p.os && p.os !== '-') totalOs += parseInt(p.os, 10) || 0;
+            });
+
             const vFields = [
                 ['VIN', formData.vin], ['Year', formData.year],
                 ['Make', formData.make], ['Model', formData.model],
-                ['Color', formData.color], ['Location', formData.location],
-                ['Insured', formData.insuredName], ['Carrier', formData.insuranceCompany],
-                ['Claim #', formData.claimNumber], ['Odometer', formData.odometer],
-                ['Email', formData.customerEmail], ['Phone', formData.customerPhone],
+                ['Color', formData.color], ['Status', formData.status || 'N/A'],
+                ['Insured', formData.insuredName], ['Location', formData.location],
+                ['Claim #', formData.claimNumber], ['Carrier', formData.insuranceCompany],
+                ['Total DC', String(totalDc)], ['Odometer', formData.odometer],
+                ['Total OS', String(totalOs)], ['Phone', formData.customerPhone],
             ];
             const LABEL_W = 46;
             const colHalfW = CW / 2 - 16; // max value width per column
@@ -14470,11 +14458,14 @@
 
                     // Data rows
                     panels.forEach((panel, idx) => {
-                        pdf.setFillColor(idx % 2 === 0 ? 18 : 24, idx % 2 === 0 ? 18 : 24, idx % 2 === 0 ? 18 : 24);
+                        const bgFill = idx % 2 === 0 ? 18 : 24;
+                        pdf.setFillColor(bgFill, bgFill, bgFill);
                         pdf.rect(M, y, CW, ROW_H, 'F');
+
                         pdf.setDrawColor(40, 42, 48);
                         pdf.setLineWidth(0.3);
-                        pdf.line(M, y + ROW_H, M + CW, y + ROW_H);
+
+                        // We will draw the bottom line AFTER checking notes, to encapsulate the notes if they exist.
 
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(7.5);
@@ -14490,6 +14481,32 @@
                             cx += col.w;
                         });
                         y += ROW_H;
+
+                        // Notes subheading row
+                        if (panel.notes) {
+                            pdf.setFillColor(bgFill, bgFill, bgFill);
+                            // The notes will take up variable height depending on text wrapping.
+                            // We use a smaller bounding box, indenting slightly from the left.
+                            const notesIndent = 16;
+                            const notesW = CW - notesIndent - 8;
+                            pdf.setFont('helvetica', 'italic');
+                            pdf.setFontSize(7);
+                            pdf.setTextColor(150, 160, 175);
+
+                            const noteLines = pdf.splitTextToSize(`Notes: ${panel.notes}`, notesW);
+                            const notesH = noteLines.length * 9 + 6;
+
+                            pdf.rect(M, y, CW, notesH, 'F');
+
+                            // Draw the notes icon simulation or just text
+                            for (let i = 0; i < noteLines.length; i++) {
+                                pdf.text(noteLines[i], M + notesIndent, y + 9 + (i * 9));
+                            }
+                            y += notesH;
+                        }
+
+                        // Close out the panel grouping
+                        pdf.line(M, y, M + CW, y);
                     });
                     y += 10;
                 }
@@ -14559,7 +14576,7 @@
             pdf.setFont('helvetica', 'normal');
             pdf.setFontSize(7);
             pdf.setTextColor(60, 65, 75);
-            pdf.text(`Generated by Dent Experts PDR Scope App  \u2022  ${new Date().toLocaleString()}`, W / 2, H - 12, { align: 'center' });
+            pdf.text(`Generated by PDR Scope App  \u2022  ${new Date().toLocaleString()}`, W / 2, H - 12, { align: 'center' });
         }
 
         // Main PDF generation function
@@ -14837,7 +14854,7 @@
 
             const CATEGORY_ORDER = ['voil', 'conditioning', 'upd', 'scope'];
             const CATEGORY_LABELS = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
-            const BRAND_FOLDER = 'Dent Experts';
+            const BRAND_FOLDER = 'Damage Reports';
 
             // Build human-readable folder name: "Jane Smith - CLM-001 - 2022 Toyota Camry"
             const namePart = String(insuredName || 'Unknown').trim();
@@ -15020,7 +15037,7 @@
             let finalEmail = email;
             if (!email && !phone) {
                 const safeClaim = (formData.claimNumber || formData.roNumber || 'unknown').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                finalEmail = `no-email-${safeClaim}@dentexperts.com`;
+                finalEmail = `no-email-${safeClaim}@damagereport.com`;
                 console.log('No email or phone provided. Using dummy email for GHL:', finalEmail);
             }
 
@@ -15035,7 +15052,7 @@
                 lastName: lastName,
                 email: finalEmail || undefined,
                 phone: phone || undefined,
-                source: 'Dent Experts Form',
+                source: 'Damage Report Form',
                 customFields: customFields,
                 dnd: false,
                 dndSettings: { ...GHL_DND_SETTINGS }
@@ -15471,7 +15488,7 @@
                         contactId: contactId,
                         subject: 'Delivery Probe — please ignore',
                         html: '<p style="color:#999;font-size:11px">This is an automated delivery test. Please ignore.</p>',
-                        emailFrom: 'Dent Experts <info@mg.mydentexperts.com>'
+                        emailFrom: 'Damage Report <info@mg.mydentexperts.com>'
                     })
                 });
                 if (resp.status === 201) {
@@ -15522,7 +15539,7 @@
                     firstName: contactData.firstName,
                     lastName: contactData.lastName,
                     email: contactData.email,
-                    source: 'Dent Experts Form',
+                    source: 'Damage Report Form',
                     tags: contactData.tags || ['dent-pro']
                 };
                 if (contactData.phone) createPayload.phone = contactData.phone;
@@ -15885,7 +15902,7 @@
                             body: JSON.stringify({
                                 type: 'SMS',
                                 contactId: contactId,
-                                message: `Dent Experts: Your ${templateName} has been sent to your email. Please check your inbox and sign at your earliest convenience.`
+                                message: `Damage Report: Your ${templateName} has been sent to your email. Please check your inbox and sign at your earliest convenience.`
                             })
                         });
                         if (smsResp.ok) {

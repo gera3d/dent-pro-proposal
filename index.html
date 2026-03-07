@@ -2691,10 +2691,91 @@
             background: #111;
         }
 
+        .camera-viewport.tap-enabled {
+            cursor: pointer;
+        }
+
         .camera-viewport video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
+        }
+
+        .camera-tap-hint-badge {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.54);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .camera-tap-hint-icon {
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .camera-tap-reticle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.34);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 4;
+            box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.05);
+        }
+
+        .camera-tap-reticle::before,
+        .camera-tap-reticle::after {
+            content: '';
+            position: absolute;
+            inset: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%);
+            border-radius: 999px;
+        }
+
+        .camera-tap-reticle::before {
+            width: 30px;
+            height: 2px;
+        }
+
+        .camera-tap-reticle::after {
+            width: 2px;
+            height: 30px;
+        }
+
+        .camera-viewport.is-firing .camera-tap-reticle {
+            animation: tapReticlePulse 0.16s ease-out;
+        }
+
+        @keyframes tapReticlePulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(0.92);
+                opacity: 0.7;
+            }
         }
 
         .camera-viewport-flash {
@@ -8308,6 +8389,12 @@
 
         <div class="camera-viewport">
             <video id="cameraVideo" autoplay playsinline muted></video>
+            <div class="camera-tap-hint-badge" id="cameraTapHintBadge">
+                <span class="camera-tap-hint-icon">📸</span>
+                <span class="camera-tap-hint-label">Tap Here<br>To Snap</span>
+            </div>
+            <div class="camera-thumb-zone-label" aria-hidden="true">Top-right thumb zone</div>
+            <div class="camera-tap-reticle" aria-hidden="true"></div>
             <div class="camera-viewport-flash" id="cameraFlash"></div>
             <!-- Guided capture overlay -->
             <div class="camera-guide-overlay" id="cameraGuideOverlay" style="display:none">
@@ -8331,7 +8418,7 @@
         <div class="camera-controls">
             <div class="camera-status-block">
                 <div class="camera-count" id="cameraCount">0 photos</div>
-                <div class="camera-hardware-hint">Vol +/- shutter on supported devices</div>
+                <div class="camera-hardware-hint">Top-right thumb zone snaps fastest</div>
             </div>
             <button type="button" class="camera-shutter" onclick="capturePhoto()" title="Take Photo" aria-label="Take photo"></button>
             <button type="button" class="camera-done-btn" onclick="closeCameraModal(true)">Done</button>
@@ -11655,6 +11742,9 @@
             modal.style.display = 'flex';
             sessionPhotos = [];
 
+            const viewport = document.querySelector('.camera-viewport');
+            if (viewport) viewport.classList.add('tap-enabled');
+
             // Set up guided capture: start at first uncaptured slot
             currentGuideSlotIndex = getFirstUncapturedSlotIndex(currentPhotoCategory);
             updateCameraGuide(currentGuideSlotIndex);
@@ -11746,14 +11836,32 @@
 
         function pulseCameraShutter() {
             const shutterButton = document.querySelector('.camera-shutter');
+            const viewport = document.querySelector('.camera-viewport');
             if (!shutterButton) return;
 
             clearTimeout(volumeShutterPulseTimeout);
             shutterButton.classList.add('is-firing');
+            if (viewport) viewport.classList.add('is-firing');
             volumeShutterPulseTimeout = setTimeout(() => {
                 shutterButton.classList.remove('is-firing');
+                if (viewport) viewport.classList.remove('is-firing');
                 volumeShutterPulseTimeout = null;
             }, 140);
+        }
+
+        function handleCameraViewportTap(event) {
+            if (!isPhotoCameraModalOpen()) return;
+
+            const target = event.target;
+            if (target && target.closest('button, .guide-nav-btn, .camera-strip-item, .remove-btn')) {
+                return;
+            }
+
+            const viewport = document.querySelector('.camera-viewport');
+            if (!viewport) return;
+            if (target !== viewport && !viewport.contains(target)) return;
+
+            capturePhoto();
         }
 
         function handleVolumeShutterKeydown(event) {
@@ -11789,6 +11897,7 @@
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) activeVolumeShutterKeys.clear();
         });
+        document.addEventListener('click', handleCameraViewportTap, true);
 
         function capturePhoto() {
             const video = document.getElementById('cameraVideo');
@@ -11977,7 +12086,9 @@
             clearTimeout(volumeShutterPulseTimeout);
             volumeShutterPulseTimeout = null;
             const shutterButton = document.querySelector('.camera-shutter');
+            const viewport = document.querySelector('.camera-viewport');
             if (shutterButton) shutterButton.classList.remove('is-firing');
+            if (viewport) viewport.classList.remove('is-firing', 'tap-enabled');
 
             // Stop camera stream
             stopPhotoCameraStream();

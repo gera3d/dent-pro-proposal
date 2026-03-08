@@ -14,6 +14,8 @@
     <!-- Lucide Icons loaded at bottom of body for reliable initialization -->
     <!-- Local config fallback for file:// protocol -->
     <script src="config.js" onerror="console.log('config.js not found, will use config.json')"></script>
+    <!-- Native iOS bridge stub — safe no-op in browser, active in Capacitor wrapper -->
+    <script src="capacitor-bridge.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -11742,6 +11744,16 @@
             modal.style.display = 'flex';
             sessionPhotos = [];
 
+            // Activate native volume-button shutter when running inside the iOS wrapper
+            if (window.DentNative && window.DentNative.isNativeWrapper) {
+                showToast('🔊 Native shutter: starting...', 'info');
+                window.DentNative.startVolumeShutter()
+                    .then(() => showToast('✅ Volume listener active — press vol button!', 'success'))
+                    .catch(e => showToast('❌ startVolumeShutter failed: ' + e, 'error'));
+            } else {
+                showToast('ℹ️ PWA mode — tap to capture', 'info');
+            }
+
             const viewport = document.querySelector('.camera-viewport');
             if (viewport) viewport.classList.add('tap-enabled');
 
@@ -11898,6 +11910,14 @@
             if (document.hidden) activeVolumeShutterKeys.clear();
         });
         document.addEventListener('click', handleCameraViewportTap, true);
+
+        // Native iOS volume-button shutter event (forwarded by DentCameraBridgePlugin.swift)
+        window.addEventListener('dent:native-volume-shutter', () => {
+            showToast('📸 Native shutter fired!', 'success');
+            if (!isPhotoCameraModalOpen()) return;
+            pulseCameraShutter();
+            capturePhoto();
+        });
 
         function capturePhoto() {
             const video = document.getElementById('cameraVideo');
@@ -12089,6 +12109,11 @@
             const viewport = document.querySelector('.camera-viewport');
             if (shutterButton) shutterButton.classList.remove('is-firing');
             if (viewport) viewport.classList.remove('is-firing', 'tap-enabled');
+
+            // Deactivate native volume-button shutter
+            if (window.DentNative && window.DentNative.isNativeWrapper) {
+                window.DentNative.stopVolumeShutter();
+            }
 
             // Stop camera stream
             stopPhotoCameraStream();

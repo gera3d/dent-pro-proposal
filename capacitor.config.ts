@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'capacitor-www',
   bundledWebRuntime: false,
   server: {
-    iosScheme: 'capacitor'
+    iosScheme: 'https'   // Use https://localhost so GHL/Airtable CORS rules accept the origin
   },
   ios: {
     contentInset: 'automatic'

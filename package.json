@@ -1,0 +1,21 @@
+{
+  "name": "dent-experts-scoper-wrapper",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Capacitor wrapper scaffold for the Dent Experts Scoper PWA.",
+  "scripts": {
+    "prepare:capacitor": "node scripts/prepare-capacitor-web.mjs",
+    "cap:sync": "npm run prepare:capacitor && npx cap sync",
+    "cap:copy": "npm run prepare:capacitor && npx cap copy",
+    "cap:add:ios": "npm run prepare:capacitor && npx cap add ios",
+    "cap:open:ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/ios": "^7.4.3",
+    "typescript": "^5.9.2"
+  }
+}

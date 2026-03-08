@@ -11,6 +11,8 @@ config.js
 
 # Node modules (if added later)
 node_modules/
+.capacitor/
+capacitor-www/
 
 # OS files
 .DS_Store

@@ -8,6 +8,7 @@ This repo now contains the first wrapper scaffold for an iPad app:
 - `capacitor.config.ts` pointing at a staged web bundle in `capacitor-www/`
 - `scripts/prepare-capacitor-web.mjs` to copy the current static app into the Capacitor bundle folder
 - `capacitor-bridge.js` as a browser-safe native bridge stub
+- `ios/App/App/plugins/DentCameraBridgePlugin.swift` for native volume-button shutter events
 
 ## How The Bridge Works
 
@@ -31,6 +32,12 @@ Prepare web assets for Capacitor:
 npm run prepare:capacitor
 ```
 
+Prepare web assets and include local secret config (local debugging only):
+
+```bash
+CAP_INCLUDE_LOCAL_CONFIG=1 npm run prepare:capacitor
+```
+
 Generate iOS project:
 
 ```bash
@@ -51,4 +58,6 @@ npm run cap:open:ios
 
 ## Current Limitation
 
-This repo now has the wrapper scaffold, but it does not yet include the native Swift plugin that listens for hardware volume button changes. That is the next step after the iOS shell is generated and opened in Xcode.
+- By default, Capacitor bundle prep does **not** include local `config.json` / `config.js` to avoid shipping secrets.
+- Native wrapper disables service worker registration to prevent stale cache behavior inside WKWebView.
+- If you need live Airtable/GHL calls in a local native debug build, run `CAP_INCLUDE_LOCAL_CONFIG=1 npm run prepare:capacitor` before `npm run cap:sync`.

@@ -9,7 +9,8 @@ const config: CapacitorConfig = {
     iosScheme: 'https'   // Use https://localhost so GHL/Airtable CORS rules accept the origin
   },
   ios: {
-    contentInset: 'automatic'
+    contentInset: 'automatic',
+    backgroundColor: '#000000'
   }
 };
 

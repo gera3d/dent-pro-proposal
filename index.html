@@ -5,15 +5,24 @@
     <!-- Build Version: 2026-02-18 T12:00:00 - Guided Capture: VOIL/CONDITIONING slot-by-slot camera workflow -->
     <base target="_top">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="app-icon.png">
+    <link rel="icon" type="image/png" href="app-icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Google Vision OCR for VIN text recognition -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Lucide Icons loaded at bottom of body for reliable initialization -->
-    <!-- Local config fallback for file:// protocol -->
-    <script src="config.js" onerror="console.log('config.js not found, will use config.json')"></script>
+    <!-- Optional local config for file:// usage -->
+    <script>
+        (function loadOptionalLocalConfig() {
+            if (location.protocol !== 'file:') return;
+            const script = document.createElement('script');
+            script.src = 'config.js';
+            script.onerror = () => console.log('config.js not found, will use config.json');
+            document.head.appendChild(script);
+        })();
+    </script>
     <!-- Native iOS bridge stub — safe no-op in browser, active in Capacitor wrapper -->
     <script src="capacitor-bridge.js"></script>
     <style>
@@ -96,6 +105,7 @@
             min-height: 100vh;
             color: #fff;
             padding: 16px;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
             padding-bottom: 100px;
         }
 
@@ -2658,6 +2668,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
             background: rgba(0, 0, 0, 0.9);
             z-index: 10;
         }
@@ -2701,6 +2712,52 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transform-origin: center center;
+            transition: transform 0.05s linear;
+        }
+
+        /* Zoom row — sits between strip and shutter controls */
+        .camera-zoom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 0 4px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        /* Inner pill */
+        .camera-zoom-pill {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.13);
+            border-radius: 28px;
+            overflow: hidden;
+        }
+        .camera-zoom-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 300;
+            width: 52px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .camera-zoom-btn:active {
+            background: rgba(255, 255, 255, 0.22);
+        }
+        .camera-zoom-indicator {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            min-width: 42px;
+            text-align: center;
+            pointer-events: none;
         }
 
         .camera-tap-hint-badge {
@@ -2800,7 +2857,7 @@
             display: flex;
             gap: 8px;
             padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             overflow-x: auto;
             min-height: 84px;
             align-items: center;
@@ -2870,7 +2927,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px 24px 40px;
+            padding: 20px 24px calc(env(safe-area-inset-bottom, 0px) + 20px);
             background: rgba(0, 0, 0, 0.9);
         }
 
@@ -3075,6 +3132,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
             background: rgba(0, 0, 0, 0.9);
         }
 
@@ -6106,7 +6164,7 @@
         <!-- NEW HEADER DESIGN (Split Layout) -->
         <div class="brand-bar">
             <div class="logo"><span style="font-weight: 800; font-size: 1.2rem; letter-spacing: 1px;">DAMAGE
-                    REPORT</span></div>
+                    REPORT</span><span style="font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-left: 6px; vertical-align: middle;">v0307i</span></div>
 
             <!-- Mode Toggle for Scoper vs Parts Tech vs Records -->
             <div class="mode-toggle">
@@ -6123,7 +6181,7 @@
 
             <div class="brand-bar-right">
                 <a href="Option_B_Custom_WebApp/Training_Guide.html" class="help-link"><i data-lucide="book-open"
-                        class="lucide-icon"></i> Training</a>
+                        class="lucide-icon"></i><span class="help-link-label"> Training</span></a>
             </div>
         </div>
 
@@ -6258,7 +6316,7 @@
                 </div>
                 <div class="info-group col-span-2">
                     <label>Claim #</label>
-                    <input type="text" id="claimNumber" required placeholder="e.g. 123-456-789">
+                    <input type="text" id="claimNumber" required placeholder="e.g. 123-456-789" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
 
 
@@ -6277,7 +6335,7 @@
 
                 <div class="info-group col-span-1">
                     <label>Odometer</label>
-                    <input type="text" id="odometer" placeholder="e.g. 45,200">
+                    <input type="text" id="odometer" placeholder="e.g. 45,200" inputmode="numeric" pattern="[0-9]*">
                 </div>
 
                 <div class="info-group col-span-1">
@@ -6291,7 +6349,7 @@
                     <label>VIN # <span id="vinCounter" class="vin-counter">0/17</span></label>
                     <div class="vin-row">
                         <input type="text" id="vin" maxlength="17" oninput="updateVinCounter()"
-                            placeholder="17 Characters">
+                            placeholder="17 Characters" autocorrect="off" autocapitalize="characters" spellcheck="false" autocomplete="off">
                         <button type="button" class="scan-btn" onclick="copyVin()" title="Copy VIN"><i
                                 data-lucide="clipboard-list" class="lucide-icon"></i></button>
                         <button type="button" class="scan-btn" onclick="startScanner()" title="Scan VIN"><i
@@ -8395,7 +8453,6 @@
                 <span class="camera-tap-hint-icon">📸</span>
                 <span class="camera-tap-hint-label">Tap Here<br>To Snap</span>
             </div>
-            <div class="camera-thumb-zone-label" aria-hidden="true">Top-right thumb zone</div>
             <div class="camera-tap-reticle" aria-hidden="true"></div>
             <div class="camera-viewport-flash" id="cameraFlash"></div>
             <!-- Guided capture overlay -->
@@ -8416,6 +8473,15 @@
 
         <!-- Photo Strip Preview -->
         <div class="camera-strip" id="cameraStrip"></div>
+
+        <!-- Zoom controls row -->
+        <div class="camera-zoom-bar">
+            <div class="camera-zoom-pill">
+                <button type="button" class="camera-zoom-btn" onclick="setPhotoZoom(photoZoomLevel - 0.5)">−</button>
+                <span class="camera-zoom-indicator" id="cameraZoomIndicator">1×</span>
+                <button type="button" class="camera-zoom-btn" onclick="setPhotoZoom(photoZoomLevel + 0.5)">+</button>
+            </div>
+        </div>
 
         <div class="camera-controls">
             <div class="camera-status-block">
@@ -10512,6 +10578,16 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 69, 58, 0.2);
         }
 
+        .toast.warning {
+            border-color: rgba(255, 159, 10, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 159, 10, 0.2);
+        }
+
+        .toast.info {
+            border-color: rgba(100, 210, 255, 0.45);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 16px rgba(100, 210, 255, 0.15);
+        }
+
         /* --- Scrollbar Polish (for non-hidden areas) --- */
         .panel-box::-webkit-scrollbar {
             width: 4px;
@@ -10688,6 +10764,189 @@
             margin-bottom: 16px;
             color: #1A6CFF;
         }
+
+        /* ==================== IPHONE / SMALL PHONE OPTIMIZATIONS ==================== */
+
+        /* Respect iPhone X+ home indicator at the bottom */
+        body {
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 100px);
+        }
+
+        /* ---- Brand bar: 2-row stacked layout on iPhone ---- */
+        @media (max-width: 430px) {
+            .brand-bar {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 12px 0 14px;
+            }
+
+            /* Logo on first row (left) */
+            .brand-bar .logo {
+                order: 1;
+            }
+
+            /* Shrink "DAMAGE REPORT" text */
+            .brand-bar .logo span:first-child {
+                font-size: 1rem !important;
+                letter-spacing: 0.5px !important;
+            }
+
+            /* Hide version tag to save space */
+            .brand-bar .logo span:last-child {
+                display: none;
+            }
+
+            /* Training link stays first row (right) */
+            .brand-bar-right {
+                order: 2;
+            }
+
+            /* Show Training icon only — hide label text */
+            .help-link-label {
+                display: none;
+            }
+
+            .help-link {
+                padding: 8px 10px;
+            }
+
+            /* Mode toggle: full-width on second row */
+            .mode-toggle {
+                order: 3;
+                width: 100%;
+            }
+
+            /* Buttons fill the toggle bar equally */
+            .mode-btn {
+                flex: 1;
+                padding: 10px 6px;
+                font-size: 13px;
+                letter-spacing: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+            }
+        }
+
+        /* ---- Records grid: single column on iPhone ---- */
+        @media (max-width: 600px) {
+            .record-group-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Background upload manager: full-width + clear home indicator ---- */
+        @media (max-width: 480px) {
+            .bg-upload-manager {
+                left: 12px;
+                right: 12px;
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+                min-width: unset;
+            }
+        }
+
+        /* ---- Toast notification: float above iPhone home indicator ---- */
+        @media (max-width: 600px) {
+            .toast {
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+                max-width: calc(100% - 40px);
+                text-align: center;
+            }
+        }
+
+        /* ---- Submit zone: extra bottom padding for safe area ---- */
+        @media (max-width: 600px) {
+            .submit-zone {
+                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+            }
+        }
+
+        /* ---- Parts/Records page headers: prevent title wrapping on iPhone ---- */
+        @media (max-width: 430px) {
+            .parts-header h2,
+            .records-header h2 {
+                font-size: 20px;
+                white-space: nowrap;
+                gap: 6px;
+            }
+
+            .refresh-btn {
+                padding: 10px 14px;
+                font-size: 13px;
+                flex-shrink: 0;
+            }
+        }
+
+        /* ---- Parts filters: stack vertically on mobile ---- */
+        @media (max-width: 600px) {
+            .parts-filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .parts-filters .search-input-wrapper,
+            .parts-filters select {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* ---- Record detail modal: full-screen on iPhone ---- */
+        @media (max-width: 600px) {
+            .record-detail-content {
+                padding: 16px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Vehicle card header: stack RO# above location badge on iPhone ---- */
+        @media (max-width: 600px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                padding: 14px 16px;
+            }
+
+            .card-ro {
+                font-size: 16px;
+            }
+
+            .card-location {
+                white-space: nowrap;
+            }
+        }
+
+        /* ---- Record detail modal: fix bubble row overflow on iPhone ---- */
+        @media (max-width: 600px) {
+            .premium-profile-details {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .premium-detail-bubble {
+                min-width: 0;
+            }
+
+            .premium-detail-bubble .bubble-value {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* Tighten modal header padding */
+            .modal-header {
+                padding: 16px;
+            }
+
+            .record-detail-modal {
+                overflow: hidden;
+            }
+        }
     </style>
 
 
@@ -10747,18 +11006,21 @@
         async function fetchNextROFromAirtable(prefix) {
             // Helper: parse RO records and return the next RO string
             function parseNextRO(data, prefix) {
-                if (data.records && data.records.length > 0) {
-                    // Try common field name variants
-                    const rec = data.records[0].fields;
-                    const lastRo = rec['RO Number'] || rec['RO#'] || rec['ro_number'] || rec['RO'] || '';
-                    const parts = lastRo.split('-');
-                    if (parts.length >= 3) {
-                        const suffix = parts[parts.length - 1];
-                        const nextCount = parseInt(suffix, 10) + 1;
-                        if (!isNaN(nextCount)) {
-                            return `${prefix}${String(nextCount).padStart(3, '0')}`;
-                        }
+                let maxCount = 0;
+                const records = data?.records || [];
+                for (const record of records) {
+                    const fields = record?.fields || {};
+                    const ro = fields['RO Number'] || fields['RO#'] || fields['ro_number'] || fields['RO'] || '';
+                    if (!ro || !ro.startsWith(prefix)) continue;
+                    const parts = ro.split('-');
+                    const suffix = parts[parts.length - 1];
+                    const count = parseInt(suffix, 10);
+                    if (!isNaN(count) && count > maxCount) {
+                        maxCount = count;
                     }
+                }
+                if (maxCount > 0) {
+                    return `${prefix}${String(maxCount + 1).padStart(3, '0')}`;
                 }
                 return `${prefix}001`; // First of the day
             }
@@ -10771,31 +11033,35 @@
 
                 const baseUrl = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
                 const headers = { 'Authorization': `Bearer ${config.apiKey}` };
+                const formulaPrefix = prefix.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const fieldCandidates = ['RO Number', 'RO#', 'ro_number', 'RO'];
 
-                // Try BEGINS_WITH formula first (most compatible)
-                const tryFormula = async (formula) => {
-                    const query = new URLSearchParams({
-                        'filterByFormula': formula,
-                        'fields[]': 'RO Number',
-                        'sort[0][field]': 'RO Number',
-                        'sort[0][direction]': 'desc',
-                        'maxRecords': '1'
-                    });
-                    const res = await fetch(`${baseUrl}?${query.toString()}`, { headers });
-                    if (!res.ok) return null;
-                    return res.json();
+                const queryByField = async (fieldName) => {
+                    const escapedField = fieldName.replace(/}/g, '\\}');
+                    const formulas = [
+                        `FIND('${formulaPrefix}', {${escapedField}}) = 1`,
+                        `LEFT({${escapedField}}, ${prefix.length}) = '${formulaPrefix}'`
+                    ];
+
+                    for (const formula of formulas) {
+                        const query = new URLSearchParams({
+                            'filterByFormula': formula,
+                            'fields[]': fieldName,
+                            'maxRecords': '50'
+                        });
+                        const res = await fetch(`${baseUrl}?${query.toString()}`, { headers });
+                        if (!res.ok) continue;
+                        const data = await res.json();
+                        if (data?.records?.length) return data;
+                    }
+                    return null;
                 };
 
-                // Attempt 1: BEGINS_WITH formula
-                let data = await tryFormula(`BEGINS_WITH({RO Number}, '${prefix}')`);
-
-                // Attempt 2: FIND formula (in case BEGINS_WITH isn't supported)
-                if (!data) {
-                    data = await tryFormula(`FIND('${prefix}', {RO Number}) = 1`);
-                }
-
-                if (data) {
-                    return parseNextRO(data, prefix);
+                for (const fieldName of fieldCandidates) {
+                    const data = await queryByField(fieldName);
+                    if (data) {
+                        return parseNextRO(data, prefix);
+                    }
                 }
 
                 // Both formulas failed — fall back to localStorage counter
@@ -10992,11 +11258,20 @@
                 handleGenerateRO(true); // Attempt to silently sync with Airtable
             }
 
-            // Register Service Worker for PWA
+            // Register Service Worker for browser PWA only.
+            // In native Capacitor wrapper, disable SW to avoid stale-cache issues.
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('Service Worker registration failed', err));
+                const isNativeWrapper = !!(window.DentNative && window.DentNative.isNativeWrapper);
+                if (isNativeWrapper) {
+                    navigator.serviceWorker.getRegistrations()
+                        .then((regs) => Promise.all(regs.map((reg) => reg.unregister())))
+                        .then(() => console.log('Service Worker disabled in native wrapper'))
+                        .catch((err) => console.log('Service Worker cleanup failed', err));
+                } else {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(() => console.log('Service Worker registered'))
+                        .catch((err) => console.log('Service Worker registration failed', err));
+                }
             }
         });
 
@@ -11276,7 +11551,7 @@
 
         let _suppressToasts = false;
 
-        function showToast(message, type = 'success') {
+        function showToast(message, type = 'success', duration = 3000) {
             // During the submit animation, suppress info/success toasts to avoid duplicates
             if (_suppressToasts && (type === 'info' || type === 'success')) return;
 
@@ -11286,9 +11561,10 @@
             toast.classList.add('show');
             refreshIcons();
 
-            setTimeout(() => {
+            if (toast._hideTimer) clearTimeout(toast._hideTimer);
+            toast._hideTimer = setTimeout(() => {
                 toast.classList.remove('show');
-            }, 3000);
+            }, duration);
         }
 
         // ==================== ENHANCED SEARCHABLE DROPDOWN ====================
@@ -11686,7 +11962,47 @@
         // ==================== CONTINUOUS CAMERA ====================
         let photoCameraStream = null;
         let photoFacingMode = 'environment'; // 'environment' = rear, 'user' = front
+        let photoZoomLevel = 1;
         let sessionPhotos = []; // Photos captured in this session
+
+        function setPhotoZoom(level) {
+            photoZoomLevel = Math.min(5, Math.max(1, level));
+            const video = document.getElementById('cameraVideo');
+            if (video) video.style.transform = photoZoomLevel === 1 ? '' : `scale(${photoZoomLevel})`;
+            const indicator = document.getElementById('cameraZoomIndicator');
+            if (indicator) {
+                indicator.textContent = photoZoomLevel.toFixed(1).replace(/\.0$/, '') + '×';
+            }
+        }
+
+        let _pinchStartDist = null;
+        let _pinchStartZoom = 1;
+        function initCameraZoomGesture(viewport) {
+            if (!viewport || viewport._zoomBound) return;
+            viewport._zoomBound = true;
+            viewport.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    _pinchStartDist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    _pinchStartZoom = photoZoomLevel;
+                }
+            }, { passive: true });
+            viewport.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2 && _pinchStartDist) {
+                    e.preventDefault();
+                    const dist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    setPhotoZoom(_pinchStartZoom * (dist / _pinchStartDist));
+                }
+            }, { passive: false });
+            viewport.addEventListener('touchend', (e) => {
+                if (e.touches.length < 2) _pinchStartDist = null;
+            }, { passive: true });
+        }
         let currentGuideSlotIndex = 0; // Active guided slot index
         let lastVolumeShutterAt = 0;
         let volumeShutterPulseTimeout = null;
@@ -11746,16 +12062,16 @@
 
             // Activate native volume-button shutter when running inside the iOS wrapper
             if (window.DentNative && window.DentNative.isNativeWrapper) {
-                showToast('🔊 Native shutter: starting...', 'info');
                 window.DentNative.startVolumeShutter()
-                    .then(() => showToast('✅ Volume listener active — press vol button!', 'success'))
-                    .catch(e => showToast('❌ startVolumeShutter failed: ' + e, 'error'));
-            } else {
-                showToast('ℹ️ PWA mode — tap to capture', 'info');
+                    .catch(e => showToast('Volume shutter unavailable', 'error'));
             }
 
             const viewport = document.querySelector('.camera-viewport');
             if (viewport) viewport.classList.add('tap-enabled');
+
+            // Reset zoom to 1x each time camera opens
+            setPhotoZoom(1);
+            initCameraZoomGesture(viewport);
 
             // Set up guided capture: start at first uncaptured slot
             currentGuideSlotIndex = getFirstUncapturedSlotIndex(currentPhotoCategory);
@@ -11772,11 +12088,11 @@
                 // Stop any existing stream first
                 stopPhotoCameraStream();
 
+                // No width/height constraints — letting iOS pick its native resolution
+                // prevents the sensor crop that causes the zoomed-in appearance
                 photoCameraStream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: photoFacingMode,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                        facingMode: photoFacingMode
                     },
                     audio: false
                 });
@@ -11913,7 +12229,6 @@
 
         // Native iOS volume-button shutter event (forwarded by DentCameraBridgePlugin.swift)
         window.addEventListener('dent:native-volume-shutter', () => {
-            showToast('📸 Native shutter fired!', 'success');
             if (!isPhotoCameraModalOpen()) return;
             pulseCameraShutter();
             capturePhoto();
@@ -11928,13 +12243,20 @@
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
 
+            // Crop source to simulate zoom (center crop based on photoZoomLevel)
+            const z = photoZoomLevel || 1;
+            const sw = video.videoWidth / z;
+            const sh = video.videoHeight / z;
+            const sx = (video.videoWidth - sw) / 2;
+            const sy = (video.videoHeight - sh) / 2;
+
             // Flip horizontally if using front camera (mirror effect)
             if (photoFacingMode === 'user') {
                 ctx.translate(canvas.width, 0);
                 ctx.scale(-1, 1);
             }
 
-            ctx.drawImage(video, 0, 0);
+            ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
 
             // Compress to JPEG
             const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
@@ -14080,16 +14402,61 @@
          * Create a persistent Google Drive folder for this claim directly
          * returns the folder URL if successful.
          */
-        async function createGoogleDriveFolder(formData) {
+        function sanitizeDriveFolderPart(value, fallback = 'Unknown', maxLen = 60) {
+            const raw = String(value || '').trim();
+            const base = raw || fallback;
+            return base
+                .replace(/[<>:"/\\|?*\x00-\x1F]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .replace(/^[-_. ]+|[-_. ]+$/g, '')
+                .slice(0, maxLen)
+                .trim() || fallback;
+        }
+
+        function buildDriveFolderName(data, submittedAt = new Date()) {
+            const ts = submittedAt instanceof Date ? submittedAt : new Date(submittedAt);
+            const safeDate = Number.isNaN(ts.getTime()) ? new Date() : ts;
+
+            const namePart = sanitizeDriveFolderPart(data.insuredName, 'Unknown', 50);
+            const claimPart = sanitizeDriveFolderPart(data.claimNumber || data.roNumber, 'No-Claim', 40);
+            const vehiclePart = [
+                sanitizeDriveFolderPart(data.year, '', 10),
+                sanitizeDriveFolderPart(data.make, '', 20),
+                sanitizeDriveFolderPart(data.model, '', 24)
+            ].filter(Boolean).join(' ');
+
+            const datePart = safeDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric'
+            }).replace(',', '');
+            const timePart = safeDate.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            }).replace(/:/g, '-');
+            const zonePart = safeDate.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop() || '';
+            const uniquePart = safeDate.getMilliseconds().toString().padStart(3, '0');
+            const stamp = `${datePart} ${timePart} ${zonePart} - ${uniquePart}`;
+
+            const baseName = vehiclePart
+                ? `${namePart} - ${claimPart} - ${vehiclePart}`
+                : `${namePart} - ${claimPart}`;
+
+            return `${baseName} - ${stamp}`
+                .replace(/[\/\\]/g, '-')
+                .replace(/\s+/g, ' ')
+                .replace(/^[-_. ]+|[-_. ]+$/g, '')
+                .slice(0, 180)
+                .trim();
+        }
+
+        async function createGoogleDriveFolder(formData, folderNameOverride = null) {
             if (!CONFIG.driveScriptUrl) return null;
             try {
-                const BRAND_FOLDER = 'Damage Reports';
-                const namePart = (formData.insuredName || 'Unknown').trim();
-                const claimPart = (formData.claimNumber || formData.roNumber || 'No-Claim').trim();
-                const vehiclePart = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
-                const folderName = vehiclePart
-                    ? `${namePart} - ${claimPart} - ${vehiclePart}`
-                    : `${namePart} - ${claimPart}`;
+                const folderName = folderNameOverride || buildDriveFolderName(formData);
 
                 console.log('<i data-lucide="folder" class="lucide-icon"></i> Creating Drive Folder:', folderName);
 
@@ -14130,7 +14497,8 @@
 
                 // --- Pre-flight: Create Google Drive Master Folder ---
                 showToast('<i data-lucide="folder" class="lucide-icon"></i> Setting up Drive workspace...', 'info');
-                const driveFolderUrl = await createGoogleDriveFolder(formData);
+                formData.driveFolderName = buildDriveFolderName(formData);
+                const driveFolderUrl = await createGoogleDriveFolder(formData, formData.driveFolderName);
                 if (driveFolderUrl) {
                     formData.driveUrl = driveFolderUrl;
                 }
@@ -14435,7 +14803,7 @@
                     record.fields[driveFolderField] = formData.driveUrl;
                 }
 
-                console.log('Sending Record:', JSON.stringify(record, null, 2));
+                console.log('Sending to Airtable: RO#', record.fields?.['RO Number'] || record.fields?.['RO #'] || '?');
 
                 const draftRecordId = document.getElementById('roNumber').dataset.airtableRecordId;
 
@@ -14469,7 +14837,8 @@
 
                 const result = await response.json();
                 result._driveFolderUrl = formData.driveUrl; // Attach it to the result object to pass back to UI
-                console.log('Airtable Success:', result);
+                result._driveFolderName = formData.driveFolderName || '';
+                console.log('Airtable Success: record', result.id || result.records?.[0]?.id || '?');
                 showToast('<i data-lucide="check-circle" class="lucide-icon"></i> Uploaded to Airtable!', 'success');
                 haptic('success');
                 return result;
@@ -14924,13 +15293,17 @@
                 }
             },
             customFields: {
-                vin: 'qKQntVqCwKdmmPaHLnr6',
-                year_make_model: 'IEQTtksAvzxZMTR2EeHJ',
-                insurance_company: 'wcjFn8HG8fhssQWn0TFM',
-                claim_number: 'Y8BZnpg3SgTCaF6eNcwt',
-                technician_name: 'XOdGZsGCmyjFmZO1eHsw',
-                ro_number: 'cHqj3TzHR1qipS5zXv4L',
+                vin: 'Au75x5FoMof3Bsjexmj3',
+                year: 'tRnwHMSfBWl329vr1jsd',
+                make: 's49iwLf4IDkUgKKcQAQ0',
+                model: 'GXMUoOOiBFliQxuAGuzk',
+                year_make_model: '0Ww8VjdC7Bxyj38LmRKi',
+                insurance_company: 'YVIvG2P73p9IltxLHm5v',
+                claim_number: 'Qcsf5Kk2MrNp1UP9kdDt',
+                technician_name: 'oAiKQXcP4Z3B6KbdRF6N',
+                ro_number: 'vyZYQeeI6awFvqjCACE0',
                 color: 'ljDkfmAAhoJFkZuUii0C',
+                deductible: 'gNl6srVoXFU7JQGrKGl2',
                 drive_folder: 'eqOuNgi7Z3D7xk1q2GBQ',
             },
             // Documents & Contracts via GHL Proposals API
@@ -15024,8 +15397,8 @@
             const progressEl = document.getElementById('bgUploadProgressBar');
 
             // Reset UI State for uploading
-            bgUploadText.innerHTML = 'Uploading <span id="bgUploadCount"></span> photos to Drive...';
-            const countEl = document.getElementById('bgUploadCount');
+            bgUploadText.innerHTML = 'Uploading <span class="bg-upload-count"></span> photos to Drive...';
+            const countEl = bgUploadText.querySelector('.bg-upload-count');
 
             managerEl.classList.add('show');
             bgSpinner.style.display = 'block';
@@ -15080,7 +15453,7 @@
                     managerEl.classList.remove('show');
                     setTimeout(() => {
                         if (!isBgUploading) {
-                            bgUploadText.innerHTML = 'Uploading <span id="bgUploadCount">0</span> photos to Drive...';
+                            bgUploadText.innerHTML = 'Uploading <span class="bg-upload-count">0</span> photos to Drive...';
                             progressEl.style.width = '0%';
                         }
                     }, 300);
@@ -15089,20 +15462,22 @@
         }
 
         // ==================== GOOGLE DRIVE QUEUE LOADER ====================
-        function queueGoogleDriveUploads(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName) {
+        function queueGoogleDriveUploads(insuredName, claimNumber, roNumber, year, make, model, photos, pdfBase64, pdfFileName, folderNameOverride = null) {
             if (!CONFIG.driveScriptUrl) return;
 
             const CATEGORY_ORDER = ['voil', 'conditioning', 'upd', 'scope'];
             const CATEGORY_LABELS = { voil: 'VOIL', conditioning: 'COND', upd: 'UPD', scope: 'SCOPE' };
-            const BRAND_FOLDER = 'Damage Reports';
 
-            // Build human-readable folder name: "Jane Smith - CLM-001 - 2022 Toyota Camry"
-            const namePart = String(insuredName || 'Unknown').trim();
-            const claimPart = (claimNumber || roNumber || 'No-Claim').trim();
-            const vehiclePart = [year, make, model].filter(Boolean).join(' ');
-            const folderName = vehiclePart
-                ? `${namePart} - ${claimPart} - ${vehiclePart}`
-                : `${namePart} - ${claimPart}`;
+            // Build human-readable unique folder name:
+            // "Jane Smith - CLM-001 - 2022 Toyota Camry - Mar 08 2026 3-42-19 PM PDT - 127"
+            const folderName = folderNameOverride || buildDriveFolderName({
+                insuredName,
+                claimNumber,
+                roNumber,
+                year,
+                make,
+                model
+            });
 
             const uploads = [];
             const PREFIXES = { voil: '01', conditioning: '02', upd: '03', scope: '04' };
@@ -15236,32 +15611,42 @@
 
 
 
-        function getGHLCustomFields(formData) {
+        function getGHLCustomFields(formData, targetModel = 'contact') {
             const customFields = [];
-            // Use GHL_CUSTOM_FIELDS throughout — single verified source of truth for field IDs
-            const push = (id, val) => { if (id && val) customFields.push({ id, value: String(val) }); };
+            const fieldMap = targetModel === 'opportunity' ? GHL_OPPORTUNITY_FIELDS : GHL_CONTACT_FIELDS;
+            const push = (id, val) => {
+                if (!id || val === undefined || val === null) return;
+                const str = String(val).trim();
+                if (!str) return;
+                customFields.push({ id, value: str });
+            };
 
-            push(GHL_CUSTOM_FIELDS.vin, formData.vin);
-            push(GHL_CUSTOM_FIELDS.roNumber, formData.roNumber);
-            push(GHL_CUSTOM_FIELDS.claimNumber, formData.claimNumber);  // was using wrong ID — fixed
-            push(GHL_CUSTOM_FIELDS.insurance, formData.insurance || formData.insuranceCompany);
-            push(GHL_CUSTOM_FIELDS.estimator, formData.estimator);
-            push(GHL_CUSTOM_FIELDS.color, formData.color);
-            push(GHL_CUSTOM_FIELDS.deductible, formData.deductible);
+            push(fieldMap.vin, formData.vin);
+            push(fieldMap.roNumber, formData.roNumber);
+            push(fieldMap.claimNumber, formData.claimNumber);
+            push(fieldMap.insurance, formData.insurance || formData.insuranceCompany);
+            push(fieldMap.estimator, formData.estimator);
+            push(fieldMap.color, formData.color);
+            push(fieldMap.deductible, formData.deductible);
+
+            // Push individual Y/M/M fields for both contact + opportunity models.
+            push(fieldMap.year, formData.year);
+            push(fieldMap.make, formData.make);
+            push(fieldMap.model, formData.model);
 
             const ymm = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
-            push(GHL_CUSTOM_FIELDS.yearMakeModel, ymm);
+            push(fieldMap.yearMakeModel, ymm);
 
             // Scope Summary — R&I/R&R items (populated after feature 2 is added)
             const scopeSummary = (typeof buildScopeSummaryText === 'function')
                 ? buildScopeSummaryText(formData.riParts, formData.rrParts)
                 : '';
-            if (scopeSummary && GHL_CUSTOM_FIELDS.scope_summary) {
-                push(GHL_CUSTOM_FIELDS.scope_summary, scopeSummary);
+            if (targetModel === 'contact' && scopeSummary && GHL_CONTACT_FIELDS.scope_summary) {
+                push(GHL_CONTACT_FIELDS.scope_summary, scopeSummary);
             }
 
-            // Drive folder still uses GHL_CONFIG since it may not be in GHL_CUSTOM_FIELDS yet
-            if (formData.driveUrl && GHL_CONFIG.customFields.drive_folder) {
+            // Drive folder is a contact custom field.
+            if (targetModel === 'contact' && formData.driveUrl && GHL_CONFIG.customFields.drive_folder) {
                 customFields.push({ id: GHL_CONFIG.customFields.drive_folder, value: formData.driveUrl });
             }
 
@@ -15284,7 +15669,7 @@
             const nameParts = (formData.insuredName || '').split(' ');
             const firstName = nameParts[0] || 'Customer';
             const lastName = nameParts.slice(1).join(' ') || '';
-            const customFields = getGHLCustomFields(formData);
+            const customFields = getGHLCustomFields(formData, 'contact');
 
             const contactPayload = {
                 locationId: GHL_CONFIG.locationId,
@@ -15333,7 +15718,7 @@
                         body: JSON.stringify(updatePayload)
                     });
                     const updateResult = await updateResponse.json();
-                    console.log('Contact Update Response:', updateResult);
+                    // contact update response omitted (PII)
 
                     return { success: true, contactId: existingId };
                 }
@@ -15353,7 +15738,7 @@
             });
 
             const createResult = await createResponse.json();
-            console.log('Contact Create Response:', createResult);
+            // contact create response omitted (PII)
 
             if (createResult.contact && createResult.contact.id) {
                 console.log('Created contact:', createResult.contact.id);
@@ -15378,7 +15763,7 @@
             }
 
 
-            const customFields = getGHLCustomFields(formData);
+            const customFields = getGHLCustomFields(formData, 'opportunity');
 
             // Note: GHL Opportunities API does not accept a "notes" field directly
             // Custom fields are used for additional data instead
@@ -15402,8 +15787,7 @@
             });
 
             const result = await response.json();
-            console.log('Opportunity Create Response:', result);
-            console.log('Custom Fields Sent:', customFields);
+            // opportunity response + custom fields omitted (PII)
 
             if (result.opportunity && result.opportunity.id) {
                 console.log('Created opportunity:', result.opportunity.id);
@@ -15509,7 +15893,8 @@
         }
 
         // ---- GHL custom field IDs (from /locations/{id}/customFields) ----
-        const GHL_CUSTOM_FIELDS = {
+        // Contact model custom fields
+        const GHL_CONTACT_FIELDS = {
             vin: 'Au75x5FoMof3Bsjexmj3',
             year: 'tRnwHMSfBWl329vr1jsd',
             make: 's49iwLf4IDkUgKKcQAQ0',
@@ -15524,29 +15909,42 @@
             scope_summary: '3a0GzC9CbrogiFBcpNte'  // Auto-created via GHL API
         };
 
+        // Opportunity model custom fields (distinct IDs from contact fields in this GHL location)
+        const GHL_OPPORTUNITY_FIELDS = {
+            vin: 'qKQntVqCwKdmmPaHLnr6',
+            year: 'GXbcaZRCof3YSbLxOZw4',
+            make: 'IT75m6gbcLEPeH1blI96',
+            model: 'xUG0HmJIKB0hvU7Ae771',
+            yearMakeModel: 'IEQTtksAvzxZMTR2EeHJ',
+            roNumber: 'cHqj3TzHR1qipS5zXv4L',
+            insurance: 'wcjFn8HG8fhssQWn0TFM',
+            claimNumber: 'Y8BZnpg3SgTCaF6eNcwt',
+            estimator: 'azCw1OZR3Rm9f9NhiQpn'
+        };
+
         // Build customFields array from Airtable record fields
         function buildGHLCustomFields(recordFields) {
             const cf = [];
             const f = recordFields || {};
             const push = (id, val) => { if (val) cf.push({ id, field_value: String(val) }); };
 
-            push(GHL_CUSTOM_FIELDS.vin, f.VIN);
-            push(GHL_CUSTOM_FIELDS.year, f.Year);
-            push(GHL_CUSTOM_FIELDS.make, f.Make);
-            push(GHL_CUSTOM_FIELDS.model, f.Model);
+            push(GHL_CONTACT_FIELDS.vin, f.VIN);
+            push(GHL_CONTACT_FIELDS.year, f.Year);
+            push(GHL_CONTACT_FIELDS.make, f.Make);
+            push(GHL_CONTACT_FIELDS.model, f.Model);
 
             // Combined "Year Make Model" field
             const ymm = [f.Year, f.Make, f.Model].filter(Boolean).join(' ');
-            if (ymm) cf.push({ id: GHL_CUSTOM_FIELDS.yearMakeModel, field_value: ymm });
+            if (ymm) cf.push({ id: GHL_CONTACT_FIELDS.yearMakeModel, field_value: ymm });
 
-            push(GHL_CUSTOM_FIELDS.roNumber, f['RO Number']);
-            push(GHL_CUSTOM_FIELDS.insurance, f['Insurance Company']);
-            push(GHL_CUSTOM_FIELDS.claimNumber, f['Claim Number']);
-            push(GHL_CUSTOM_FIELDS.estimator, f.Estimator);
-            push(GHL_CUSTOM_FIELDS.deductible, f.Deductible);
-            if (GHL_CUSTOM_FIELDS.color) push(GHL_CUSTOM_FIELDS.color, f.Color);
-            if (GHL_CUSTOM_FIELDS.scope_summary && (f['R&I/R&R Scope'] || f['Scope Summary'])) {
-                push(GHL_CUSTOM_FIELDS.scope_summary, f['R&I/R&R Scope'] || f['Scope Summary']);
+            push(GHL_CONTACT_FIELDS.roNumber, f['RO Number']);
+            push(GHL_CONTACT_FIELDS.insurance, f['Insurance Company']);
+            push(GHL_CONTACT_FIELDS.claimNumber, f['Claim Number']);
+            push(GHL_CONTACT_FIELDS.estimator, f.Estimator);
+            push(GHL_CONTACT_FIELDS.deductible, f.Deductible);
+            if (GHL_CONTACT_FIELDS.color) push(GHL_CONTACT_FIELDS.color, f.Color);
+            if (GHL_CONTACT_FIELDS.scope_summary && (f['R&I/R&R Scope'] || f['Scope Summary'])) {
+                push(GHL_CONTACT_FIELDS.scope_summary, f['R&I/R&R Scope'] || f['Scope Summary']);
             }
 
             return cf;
@@ -15967,8 +16365,6 @@
             const email = getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']);
             const phone = getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']);
             const roNumber = f['RO Number'] || '';
-
-            console.log('DEBUG: Contract Data:', { customerName, email, phone, roNumber, fields: f });
 
             if (!customerName) {
                 showToast('Customer name is required to send contract', 'warning');
@@ -16773,6 +17169,9 @@
                     if (airtableResult._driveFolderUrl) {
                         rawData.driveUrl = airtableResult._driveFolderUrl;
                     }
+                    if (airtableResult._driveFolderName) {
+                        rawData.driveFolderName = airtableResult._driveFolderName;
+                    }
 
                     // For Drive: use photos WITH branded category separators inserted
                     const drivePhotos = await getPhotosWithSeparators();
@@ -16851,7 +17250,8 @@
                                 rawData.model,
                                 drivePhotos,
                                 drivePdfBase64,
-                                drivePdfFileName
+                                drivePdfFileName,
+                                rawData.driveFolderName || null
                             );
                         } catch (driveErr) {
                             console.error('Google Drive queue error:', driveErr);
@@ -17022,6 +17422,8 @@
         // ==================== PARTS TECH MODE ====================
 
         let allVehicles = [];  // Cache for filtering
+        let currentMode = null;
+        let vehiclesFetchInFlight = null;
 
         // Panel name mapping for display
         const PANEL_DISPLAY_NAMES = {
@@ -17077,8 +17479,16 @@
             return new Date(b.fields['Submitted At']) - new Date(a.fields['Submitted At']);
         }
 
+        async function fetchVehiclesFromAirtableDeduped() {
+            if (vehiclesFetchInFlight) return vehiclesFetchInFlight;
+            vehiclesFetchInFlight = fetchVehiclesFromAirtable().finally(() => {
+                vehiclesFetchInFlight = null;
+            });
+            return vehiclesFetchInFlight;
+        }
 
         function switchMode(mode) {
+            if (mode === currentMode) return;
             haptic();
             const modeButtons = document.querySelectorAll('.mode-btn');
             modeButtons.forEach(btn => {
@@ -17118,6 +17528,8 @@
                 // Load records when switching to records mode
                 refreshRecordsList();
             }
+
+            currentMode = mode;
         }
 
         async function fetchVehiclesFromAirtable() {
@@ -17146,7 +17558,7 @@
                 }
 
                 const data = await resp.json();
-                console.log('Fetched Airtable Records (Batch):', data.records);
+                console.log('Fetched Airtable batch:', data.records.length, 'records');
                 records = records.concat(data.records);
                 offset = data.offset;
             } while (offset);
@@ -17212,7 +17624,7 @@
                 </div>`;
 
             try {
-                allVehicles = await fetchVehiclesFromAirtable();
+                allVehicles = await fetchVehiclesFromAirtableDeduped();
                 renderVehicleList(allVehicles);
             } catch (err) {
                 console.error('Vehicle fetch error:', err);
@@ -17886,7 +18298,7 @@
             `;
 
             try {
-                allRecords = await fetchVehiclesFromAirtable();  // Reuse existing fetch function
+                allRecords = await fetchVehiclesFromAirtableDeduped();  // Reuse existing fetch function
                 renderRecordsList(allRecords);
             } catch (err) {
                 console.error('Records fetch error:', err);
@@ -19357,7 +19769,7 @@
     <div id="bgUploadManager" class="bg-upload-manager">
         <div class="bg-upload-content">
             <i data-lucide="cloud-upload" class="lucide-icon"></i>
-            <span id="bgUploadText">Uploading <span id="bgUploadCount">0</span> photos to Drive...</span>
+            <span id="bgUploadText">Uploading <span class="bg-upload-count">0</span> photos to Drive...</span>
             <i id="bgUploadSpinner" data-lucide="loader" class="lucide-icon spin"
                 style="margin-left: auto; color: #1A6CFF;"></i>
             <i id="bgUploadSuccessIcon" data-lucide="check-circle" class="lucide-icon"

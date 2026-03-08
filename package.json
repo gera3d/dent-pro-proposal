@@ -5,7 +5,9 @@
   "description": "Capacitor wrapper scaffold for the Dent Experts Scoper PWA.",
   "scripts": {
     "prepare:capacitor": "node scripts/prepare-capacitor-web.mjs",
+    "prepare:capacitor:with-config": "CAP_INCLUDE_LOCAL_CONFIG=1 node scripts/prepare-capacitor-web.mjs",
     "cap:sync": "npm run prepare:capacitor && npx cap sync",
+    "cap:sync:with-config": "npm run prepare:capacitor:with-config && npx cap sync",
     "cap:copy": "npm run prepare:capacitor && npx cap copy",
     "cap:add:ios": "npm run prepare:capacitor && npx cap add ios",
     "cap:open:ios": "npx cap open ios"

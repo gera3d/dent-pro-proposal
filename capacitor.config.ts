@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.dentexperts.scoper',
-  appName: 'Dent Experts Scoper',
+  appName: 'Dent Experts',
   webDir: 'capacitor-www',
   bundledWebRuntime: false,
   server: {

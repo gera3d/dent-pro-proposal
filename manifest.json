@@ -1,5 +1,5 @@
 {
-  "name": "Dent Experts Scoper",
+  "name": "Dent Experts",
   "short_name": "Dent Experts",
   "start_url": "index.html",
   "display": "standalone",
@@ -9,7 +9,8 @@
     {
       "src": "app-icon.png",
       "sizes": "1024x1024",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

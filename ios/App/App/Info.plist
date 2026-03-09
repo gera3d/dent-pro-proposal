@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Dent Experts Scoper</string>
+        <string>Dent Experts</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -46,12 +46,12 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Dent Experts Scoper uses the camera to photograph vehicle damage during PDR assessments.</string>
+	<string>Dent Experts uses the camera to photograph vehicle damage during PDR assessments.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone access is required by the camera system.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Dent Experts Scoper may save assessment photos to your photo library.</string>
+	<string>Dent Experts may save assessment photos to your photo library.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Dent Experts Scoper may save assessment photos to your photo library.</string>
+	<string>Dent Experts may save assessment photos to your photo library.</string>
 </dict>
 </plist>

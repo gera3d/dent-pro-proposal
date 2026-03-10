@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +8,7 @@ const rootDir = path.resolve(__dirname, '..');
 const outputDir = path.join(rootDir, 'capacitor-www');
 
 const includeLocalConfig = process.env.CAP_INCLUDE_LOCAL_CONFIG === '1';
+const forcePlaceholderConfig = process.env.CAP_FORCE_PLACEHOLDER_CONFIG === '1';
 
 const entriesToCopy = [
     'index.html',
@@ -19,10 +20,6 @@ const entriesToCopy = [
     'capacitor-bridge.js',
     'Option_B_Custom_WebApp'
 ];
-
-if (includeLocalConfig) {
-    entriesToCopy.push('config.js', 'config.json');
-}
 
 rmSync(outputDir, { recursive: true, force: true });
 mkdirSync(outputDir, { recursive: true });
@@ -38,9 +35,67 @@ for (const entry of entriesToCopy) {
     cpSync(sourcePath, targetPath, { recursive: true });
 }
 
-if (!includeLocalConfig) {
-    // Keep native builds deterministic and avoid shipping local secrets by default.
-    const fallbackConfigPath = path.join(outputDir, 'config.json');
+if (includeLocalConfig) {
+    const configJsSource = path.join(rootDir, 'config.js');
+    if (existsSync(configJsSource)) {
+        cpSync(configJsSource, path.join(outputDir, 'config.js'));
+    }
+}
+
+function readJsonIfPresent(filePath) {
+    if (!existsSync(filePath)) return null;
+    try {
+        return JSON.parse(readFileSync(filePath, 'utf8'));
+    } catch {
+        return null;
+    }
+}
+
+function hasUsableAirtableConfig(configObject) {
+    const airtable = configObject?.airtable;
+    return Boolean(
+        airtable &&
+        typeof airtable.apiKey === 'string' &&
+        airtable.apiKey.trim() &&
+        typeof airtable.baseId === 'string' &&
+        airtable.baseId.trim() &&
+        (
+            (typeof airtable.tableName === 'string' && airtable.tableName.trim()) ||
+            (typeof airtable.tableId === 'string' && airtable.tableId.trim())
+        )
+    );
+}
+
+function resolveNativeConfigSource() {
+    if (forcePlaceholderConfig) return null;
+
+    const explicitPath = process.env.CAP_CONFIG_PATH?.trim();
+    const candidatePaths = [];
+    if (explicitPath) {
+        candidatePaths.push(path.isAbsolute(explicitPath) ? explicitPath : path.join(rootDir, explicitPath));
+    }
+    candidatePaths.push(
+        path.join(rootDir, 'config.native.json'),
+        path.join(rootDir, 'config.json')
+    );
+
+    for (const candidatePath of candidatePaths) {
+        const parsed = readJsonIfPresent(candidatePath);
+        if (hasUsableAirtableConfig(parsed)) {
+            return candidatePath;
+        }
+    }
+
+    return null;
+}
+
+const resolvedConfigPath = resolveNativeConfigSource();
+const targetConfigPath = path.join(outputDir, 'config.json');
+
+if (resolvedConfigPath) {
+    cpSync(resolvedConfigPath, targetConfigPath);
+} else {
+    // Keep builds deterministic when no usable native config is available.
     const fallbackConfig = {
         airtable: {
             apiKey: '',
@@ -53,12 +108,17 @@ if (!includeLocalConfig) {
             note: 'Files uploaded to tmpfiles.org are immediately downloaded by Airtable.'
         }
     };
-    writeFileSync(fallbackConfigPath, JSON.stringify(fallbackConfig, null, 4));
+    writeFileSync(targetConfigPath, JSON.stringify(fallbackConfig, null, 4));
 }
 
 console.log(`Prepared Capacitor web bundle in ${outputDir}`);
-if (includeLocalConfig) {
-    console.log('Included local config files (CAP_INCLUDE_LOCAL_CONFIG=1).');
+if (resolvedConfigPath) {
+    console.log(`Using native config source: ${path.relative(rootDir, resolvedConfigPath)}`);
+} else if (forcePlaceholderConfig) {
+    console.log('Forced placeholder config (CAP_FORCE_PLACEHOLDER_CONFIG=1).');
 } else {
-    console.log('Skipped local config files. Set CAP_INCLUDE_LOCAL_CONFIG=1 to include them for local native debugging.');
+    console.log('No usable Airtable config found (checked CAP_CONFIG_PATH, config.native.json, config.json). Wrote placeholder config.json.');
+}
+if (includeLocalConfig) {
+    console.log('CAP_INCLUDE_LOCAL_CONFIG=1 enabled: copied config.js when available.');
 }

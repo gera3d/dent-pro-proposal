@@ -22,6 +22,33 @@ public class DentCameraBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     private var lastFireTime: TimeInterval = 0
     private let debounceDuration: TimeInterval = 0.35
 
+    public override func load() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppWillResignActive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleAppWillResignActive() {
+        DispatchQueue.main.async { [weak self] in
+            self?.teardown()
+        }
+    }
+
+    @objc private func handleAppDidEnterBackground() {
+        DispatchQueue.main.async { [weak self] in
+            self?.teardown()
+        }
+    }
+
     // MARK: - Plugin Methods
 
     @objc func startVolumeShutter(_ call: CAPPluginCall) {
@@ -169,6 +196,7 @@ public class DentCameraBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     deinit {
+        NotificationCenter.default.removeObserver(self)
         if isListening {
             AVAudioSession.sharedInstance().removeObserver(
                 self,

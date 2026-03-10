@@ -62,6 +62,7 @@
             /* Brand Accent (Your Dent Experts branding) */
             --brand-accent: #1A6CFF;
             --brand-accent-secondary: #0C4D9C;
+            --native-keyboard-offset: 0px;
         }
 
         /* Scrollbar styles for desktop (pointer: fine) */
@@ -1163,6 +1164,20 @@
             border-color: transparent;
             width: 100%;
             display: block;
+        }
+
+        .modal-icon.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .modal-btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .modal-btn-danger:hover {
+            filter: brightness(1.08);
         }
 
         .modal-btn:active {
@@ -2478,6 +2493,14 @@
             margin-bottom: 20px;
         }
 
+        .vin-scan-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
         .vin-scan-btn {
             display: inline-flex;
             align-items: center;
@@ -2493,7 +2516,7 @@
             font-family: inherit;
             box-shadow: 0 6px 20px rgba(26, 108, 255, 0.4);
             transition: all 0.2s;
-            margin-right: 12px;
+            margin: 0;
         }
 
         .vin-scan-btn:active {
@@ -6202,8 +6225,8 @@
                         class="lucide-icon"></i> Save</button>
                 <button type="button" class="saved-btn delete" onclick="deleteSavedForm()"><i data-lucide="trash-2"
                         class="lucide-icon"></i> Delete</button>
-                <button type="button" class="saved-btn new" onclick="startNewForm()"><i data-lucide="plus"
-                        class="lucide-icon"></i> New</button>
+                <button type="button" class="saved-btn new" onclick="startNewForm()"><i data-lucide="rotate-ccw"
+                        class="lucide-icon"></i> Start Over</button>
             </div>
         </div>
 
@@ -6214,12 +6237,14 @@
                 <p>Take a photo of the VIN sticker to auto-fill vehicle info</p>
                 <input type="file" id="vinCameraInput" accept="image/*" capture="environment" style="display: none;"
                     onchange="handleVinScan(event)">
-                <button type="button" class="vin-scan-btn" onclick="document.getElementById('vinCameraInput').click()">
-                    <i data-lucide="camera" class="lucide-icon"></i> Take Photo of VIN
-                </button>
-                <button type="button" class="vin-manual-btn" onclick="skipVinScan()">
-                    <i data-lucide="pen-tool" class="lucide-icon"></i> Enter Manually
-                </button>
+                <div class="vin-scan-actions">
+                    <button type="button" class="vin-scan-btn" onclick="document.getElementById('vinCameraInput').click()">
+                        <i data-lucide="camera" class="lucide-icon"></i> Take Photo of VIN
+                    </button>
+                    <button type="button" class="vin-manual-btn" onclick="skipVinScan()">
+                        <i data-lucide="pen-tool" class="lucide-icon"></i> Enter Manually
+                    </button>
+                </div>
             </div>
             <!-- OCR Progress -->
             <div class="vin-scan-progress" id="vinScanProgress" style="display: none;">
@@ -7320,6 +7345,11 @@
                                     <td>Cowl</td>
                                     <td><input type="checkbox" name="hood_rr_cowl"></td>
                                 </tr>
+                                <tr>
+                                    <td><input type="checkbox" name="hood_ri_hood"></td>
+                                    <td>Hood</td>
+                                    <td><input type="checkbox" name="hood_rr_hood"></td>
+                                </tr>
                             </table>
                             <div class="panel-notes" style="margin-top: 12px; padding: 0 4px 12px 4px;">
                                 <label
@@ -8001,6 +8031,15 @@
                     </span>
                 </button>
 
+                <!-- Start over action -->
+                <div class="sz-startover-wrap">
+                    <button type="button" class="sz-startover-btn" onclick="openStartOverModal()">
+                        <i data-lucide="rotate-ccw" class="lucide-icon"></i> Start Over
+                    </button>
+                    <div class="sz-startover-hint">Clears this scope and photos after confirmation. Use this for a
+                        clean reset on web + PC.</div>
+                </div>
+
                 <!-- Secondary actions -->
                 <div class="sz-secondary">
                     <button type="button" class="sz-sec-btn" onclick="generatePDF()">
@@ -8518,6 +8557,18 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="startOverModal" onclick="handleStartOverOverlayClick(event)">
+        <div class="modal modal-confirm">
+            <div class="modal-icon warning"><i data-lucide="alert-triangle" class="lucide-icon"></i></div>
+            <h2>Start Over?</h2>
+            <p>This will clear all current scope details and photo selections.</p>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeStartOverModal()">Keep Editing</button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmStartOver()">Yes, Start Over</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Retaining Scripts & Styles block (will update CSS next tool call) -->
     <style>
         /* BASE & RESET */
@@ -9026,6 +9077,11 @@
             width: 100%;
         }
 
+        /* Prevent grid items from forcing horizontal overflow on very narrow phones */
+        .visual-grid>* {
+            min-width: 0;
+        }
+
         /* iPad Pro / Landscape / Tablet Tweak (Prevent Cutoff) */
         @media (max-width: 1100px) {
             .visual-grid {
@@ -9252,6 +9308,43 @@
             border-color: #1A6CFF;
             background: rgba(26, 108, 255, 0.1);
             outline: none;
+        }
+
+        .panel-details-toggle {
+            width: calc(100% - 24px);
+            margin: 8px 12px 0 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: #d5d8e0;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .panel-details-toggle:hover {
+            border-color: rgba(26, 108, 255, 0.5);
+            background: rgba(26, 108, 255, 0.12);
+        }
+
+        .panel-details-toggle:active {
+            transform: translateY(1px);
+        }
+
+        .panel-extra-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.28s ease, opacity 0.2s ease;
+        }
+
+        .panel-extra-content.open {
+            max-height: 1200px;
+            opacity: 1;
         }
 
         /* SMART STEPPER UI v2 */
@@ -9545,6 +9638,11 @@
             margin-top: 20px;
         }
 
+        .footer-section .notes-box {
+            grid-column: 1 / -1;
+            width: 100%;
+        }
+
         .notes-box textarea {
             width: 100%;
             background: #222;
@@ -9761,6 +9859,48 @@
         }
 
         /* Secondary buttons */
+        .sz-startover-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sz-startover-btn {
+            width: 100%;
+            height: 48px;
+            border: 1px solid rgba(239, 68, 68, 0.6);
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.14);
+            color: #fca5a5;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sz-startover-btn:hover {
+            background: rgba(239, 68, 68, 0.22);
+            border-color: rgba(248, 113, 113, 0.9);
+            color: #fecaca;
+        }
+
+        .sz-startover-btn .lucide-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sz-startover-hint {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #9ca3af;
+            text-align: center;
+        }
+
         .sz-secondary {
             display: flex;
             gap: 10px;
@@ -10882,6 +11022,32 @@
             }
         }
 
+        @media (max-width: 360px) {
+            .parts-header,
+            .records-header {
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .parts-header h2,
+            .records-header h2 {
+                white-space: normal;
+                font-size: 18px;
+            }
+
+            .header-badge {
+                margin-left: 8px;
+                font-size: 12px;
+                padding: 2px 8px;
+            }
+
+            .refresh-btn {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+        }
+
         /* ---- Parts filters: stack vertically on mobile ---- */
         @media (max-width: 600px) {
             .parts-filters {
@@ -10953,6 +11119,372 @@
         }
     </style>
 
+    <style>
+        /* Final responsive overrides (must come after all prior style blocks) */
+        :root {
+            --app-side-gutter-final: clamp(12px, 3vw, 24px);
+        }
+
+        body {
+            padding-left: max(var(--app-side-gutter-final), env(safe-area-inset-left, 0px));
+            padding-right: max(var(--app-side-gutter-final), env(safe-area-inset-right, 0px));
+        }
+
+        html.native-wrapper,
+        body.native-wrapper {
+            overscroll-behavior-y: contain;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html.native-wrapper {
+            scroll-padding-bottom: calc(var(--native-keyboard-offset) + 120px);
+        }
+
+        body.native-wrapper button,
+        body.native-wrapper .mode-btn,
+        body.native-wrapper .saved-btn,
+        body.native-wrapper .refresh-btn,
+        body.native-wrapper .inside-input-btn {
+            touch-action: manipulation;
+        }
+
+        .container {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .mode-btn,
+        .saved-btn,
+        .saved-forms-select,
+        .panel-details-toggle,
+        .sz-sec-btn,
+        .sz-startover-btn {
+            min-height: 44px;
+        }
+
+        .help-link,
+        .app-btn {
+            min-height: 40px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .panel-photo-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
+            padding: 0 11px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            opacity: 0.9;
+        }
+
+        .panel-photo-btn:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .coin-btn {
+            min-height: 44px;
+            min-width: 64px;
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .footer-section {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .footer-section .notes-box,
+        .footer-section #notes,
+        .panel-notes,
+        .panel-notes textarea {
+            width: 100%;
+            max-width: 100%;
+            display: block;
+        }
+
+        .notes-box textarea {
+            min-height: 120px;
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) and (max-width: 1200px) {
+            .container {
+                max-width: 1120px;
+            }
+
+            .general-info-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+            }
+
+            .general-info-grid .col-span-2,
+            .general-info-grid .col-span-4 {
+                grid-column: 1 / -1;
+            }
+
+            .general-info-grid .col-span-1 {
+                grid-column: span 1;
+            }
+
+            .action-toolbar {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .action-toolbar .meta-group {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .action-toolbar .meta-group:nth-child(4) {
+                grid-column: 1 / -1;
+            }
+
+            .visual-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .center-column {
+                grid-column: 1 / -1;
+                order: -1;
+                margin-bottom: 12px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            body {
+                padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+                padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 120px) !important;
+            }
+
+            .vin-scan-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .vin-scan-btn,
+            .vin-manual-btn {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .footer-section {
+                padding: 14px 12px;
+            }
+
+            .notes-box textarea {
+                min-height: 140px;
+            }
+
+            .brand-bar {
+                padding: 10px 0 12px;
+                margin-bottom: 12px;
+                gap: 10px;
+            }
+
+            .saved-forms-bar {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .saved-forms-left {
+                flex-direction: column;
+                align-items: stretch;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .saved-forms-left label {
+                font-size: 12px;
+            }
+
+            .saved-forms-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .saved-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+
+            .inside-input-btn {
+                min-height: 34px;
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .input-with-button input {
+                padding-right: 92px !important;
+            }
+
+            .action-toolbar {
+                display: grid;
+                grid-template-columns: 1fr;
+                padding: 12px;
+                margin-bottom: 14px;
+            }
+
+            .action-toolbar .meta-group {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .action-toolbar .meta-group label {
+                width: 100%;
+                font-size: 12px;
+            }
+
+            .toolbar-input,
+            .pipeline-seg {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .pipeline-seg-btn {
+                font-size: 12px;
+                padding: 0 6px;
+            }
+
+            .progress-pill {
+                flex-wrap: wrap;
+                row-gap: 8px;
+                column-gap: 10px;
+            }
+
+            .progress-pill .pill-divider {
+                display: none;
+            }
+
+            .damage-grid-container {
+                padding: 12px 10px;
+                border-radius: 12px;
+            }
+
+            .panel-box {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 10px;
+            }
+
+            .panel-header {
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+                padding-left: 8px;
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            .panel-title-text {
+                flex-basis: 100%;
+                font-size: 13px;
+            }
+
+            .panel-done-toggle {
+                margin-left: 0;
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .panel-photo-btn {
+                margin-left: auto;
+                min-width: 42px;
+                min-height: 42px;
+                padding: 0 13px;
+            }
+
+            .coin-btn {
+                min-height: 44px;
+            }
+
+            .panel-ratings {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .panel-details-toggle {
+                margin: 8px 10px 0;
+                width: calc(100% - 20px);
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+
+            .checklist-table td {
+                height: 42px;
+                font-size: 13px;
+            }
+
+            .checklist-table input[type="checkbox"] {
+                width: 24px;
+                height: 24px;
+            }
+
+            .submit-zone {
+                margin-top: 20px;
+                padding: 18px 14px calc(env(safe-area-inset-bottom, 0px) + 18px);
+                border-radius: 16px;
+            }
+
+            .sz-summary {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                row-gap: 12px;
+            }
+
+            .sz-stat {
+                width: 48%;
+                flex: 0 0 48%;
+                padding: 0;
+            }
+
+            .sz-stat-divider {
+                display: none;
+            }
+
+            .sz-secondary {
+                flex-direction: column;
+            }
+
+            .sz-sec-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .saved-forms-actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .saved-btn.new {
+                grid-column: 1 / -1;
+            }
+
+            .saved-btn {
+                font-size: 12px;
+            }
+
+            .refresh-btn {
+                min-height: 40px;
+            }
+        }
+    </style>
 
     <script>
         // CONFIGURATION
@@ -11245,6 +11777,70 @@
             setTimeout(updateAllFieldBackgrounds, 200);
         }
 
+        const nativeWrapperPolishState = {
+            initialized: false
+        };
+
+        function isNativeFormField(el) {
+            if (!el || !el.tagName) return false;
+            return /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !el.readOnly && !el.disabled;
+        }
+
+        function updateNativeKeyboardOffset() {
+            const vv = window.visualViewport;
+            if (!vv) return;
+            const keyboardOffset = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+            document.documentElement.style.setProperty('--native-keyboard-offset', `${keyboardOffset}px`);
+            if (document.body) document.body.classList.toggle('keyboard-open', keyboardOffset > 70);
+        }
+
+        function cleanupNativeCaptureState() {
+            activeVolumeShutterKeys.clear();
+            if (typeof closeScanner === 'function') {
+                const scannerModal = document.getElementById('scannerModal');
+                if (scannerModal && getComputedStyle(scannerModal).display !== 'none') {
+                    closeScanner();
+                }
+            }
+            if (typeof isPhotoCameraModalOpen === 'function' && isPhotoCameraModalOpen()) {
+                closeCameraModal(false);
+            }
+        }
+
+        function setupNativeWrapperPolish() {
+            if (nativeWrapperPolishState.initialized) return;
+            nativeWrapperPolishState.initialized = true;
+
+            document.documentElement.classList.add('native-wrapper');
+            if (document.body) document.body.classList.add('native-wrapper');
+
+            document.addEventListener('focusin', (event) => {
+                if (!isNativeFormField(event.target)) return;
+                setTimeout(() => {
+                    try {
+                        event.target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
+                    } catch (err) {
+                        event.target.scrollIntoView({ block: 'center', inline: 'nearest' });
+                    }
+                }, 120);
+            }, true);
+
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', updateNativeKeyboardOffset);
+                window.visualViewport.addEventListener('scroll', updateNativeKeyboardOffset);
+                updateNativeKeyboardOffset();
+            }
+
+            const handleBackground = () => {
+                updateNativeKeyboardOffset();
+                cleanupNativeCaptureState();
+            };
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) handleBackground();
+            });
+            window.addEventListener('pagehide', handleBackground);
+        }
+
         // INITIALIZATION
         document.addEventListener('DOMContentLoaded', () => {
             // Setup global listeners for valid value background highlighting
@@ -11262,13 +11858,18 @@
                 handleGenerateRO(true); // Attempt to silently sync with Airtable
             }
 
+            const isNativeWrapper = !!(window.DentNative && window.DentNative.isNativeWrapper);
+            if (isNativeWrapper) {
+                setupNativeWrapperPolish();
+            }
+
             // Register Service Worker for browser PWA only.
             // In native Capacitor wrapper, disable SW to avoid stale-cache issues.
             if ('serviceWorker' in navigator) {
-                const isNativeWrapper = !!(window.DentNative && window.DentNative.isNativeWrapper);
                 if (isNativeWrapper) {
                     navigator.serviceWorker.getRegistrations()
                         .then((regs) => Promise.all(regs.map((reg) => reg.unregister())))
+                        .then(() => ('caches' in window) ? caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))) : Promise.resolve())
                         .then(() => console.log('Service Worker disabled in native wrapper'))
                         .catch((err) => console.log('Service Worker cleanup failed', err));
                 } else {
@@ -11538,14 +12139,42 @@
             }
         }
 
-        function startNewForm() {
-            if (confirm('Start a new blank form?\n\nMake sure you\'ve saved your current work.')) {
-                resetForm();
-                const dropdown = document.getElementById('savedFormsDropdown');
-                if (dropdown) dropdown.value = '';
-                showToast('<i data-lucide="file-plus" class="lucide-icon"></i> New form started', 'success');
+        function openStartOverModal() {
+            const modal = document.getElementById('startOverModal');
+            if (!modal) return;
+            modal.classList.add('show');
+            refreshIcons();
+        }
+
+        function closeStartOverModal() {
+            const modal = document.getElementById('startOverModal');
+            if (!modal) return;
+            modal.classList.remove('show');
+        }
+
+        function handleStartOverOverlayClick(event) {
+            if (event.target && event.target.id === 'startOverModal') {
+                closeStartOverModal();
             }
         }
+
+        function confirmStartOver() {
+            closeStartOverModal();
+            resetForm();
+            const dropdown = document.getElementById('savedFormsDropdown');
+            if (dropdown) dropdown.value = '';
+            showToast('<i data-lucide="rotate-ccw" class="lucide-icon"></i> New scope started', 'success');
+        }
+
+        function startNewForm() {
+            openStartOverModal();
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            const modal = document.getElementById('startOverModal');
+            if (modal && modal.classList.contains('show')) closeStartOverModal();
+        });
 
         function refreshIcons() {
             if (typeof lucide !== "undefined") {
@@ -12797,8 +13426,14 @@
             // Camera handler
             document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
 
+            // Ensure every panel has a notes textarea with a consistent naming pattern.
+            ensurePanelNotesInputs();
+
             // Inject "Done" toggles into each panel
             initPanelToggles();
+
+            // Collapse parts + notes sections by default for cleaner UI.
+            initPanelAccordions();
 
             // Initialize Auto-Save
             initAutoSave();
@@ -12821,6 +13456,87 @@
             return headerEl.textContent?.trim() || 'Panel';
         }
 
+        function getPanelKey(panelBox) {
+            const dcInput = panelBox?.querySelector('input[name$="_dc"]');
+            return dcInput?.name?.replace(/_dc$/, '') || '';
+        }
+
+        function ensurePanelNotesInputs() {
+            document.querySelectorAll('.panel-box').forEach(box => {
+                const panelKey = getPanelKey(box);
+                if (!panelKey) return;
+                if (box.querySelector('textarea[name$="_notes"]')) return;
+
+                const notesWrap = document.createElement('div');
+                notesWrap.className = 'panel-notes';
+                notesWrap.style.marginTop = '12px';
+                notesWrap.style.padding = '0 4px 12px 4px';
+
+                const label = document.createElement('label');
+                label.style.fontSize = '11px';
+                label.style.color = '#888';
+                label.style.fontWeight = '500';
+                label.style.marginBottom = '6px';
+                label.style.display = 'block';
+                label.innerHTML = '<i data-lucide="edit-3" class="lucide-icon" style="width:12px; height:12px; margin-right:4px;"></i>Notes:';
+
+                const textarea = document.createElement('textarea');
+                textarea.name = `${panelKey}_notes`;
+                textarea.className = 'part-input';
+                textarea.rows = 2;
+                textarea.placeholder = 'Add specific notes for this panel...';
+
+                notesWrap.appendChild(label);
+                notesWrap.appendChild(textarea);
+                box.appendChild(notesWrap);
+            });
+
+            refreshIcons();
+        }
+
+        function initPanelAccordions() {
+            document.querySelectorAll('.panel-box').forEach(box => {
+                if (box.dataset.detailsAccordionInit === '1') return;
+
+                const ratings = box.querySelector('.panel-ratings');
+                if (!ratings) return;
+
+                const extraSections = [];
+                let nextEl = ratings.nextElementSibling;
+                while (nextEl) {
+                    const current = nextEl;
+                    nextEl = nextEl.nextElementSibling;
+                    extraSections.push(current);
+                }
+
+                if (!extraSections.length) {
+                    box.dataset.detailsAccordionInit = '1';
+                    return;
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'panel-extra-content';
+                extraSections.forEach(el => wrapper.appendChild(el));
+                box.appendChild(wrapper);
+
+                const toggle = document.createElement('button');
+                toggle.type = 'button';
+                toggle.className = 'panel-details-toggle';
+                toggle.textContent = 'Show Parts & Notes';
+                toggle.setAttribute('aria-expanded', 'false');
+                ratings.insertAdjacentElement('afterend', toggle);
+
+                toggle.addEventListener('click', () => {
+                    const isOpen = wrapper.classList.toggle('open');
+                    toggle.textContent = isOpen ? 'Hide Parts & Notes' : 'Show Parts & Notes';
+                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    if (typeof haptic === 'function') haptic('light');
+                });
+
+                box.dataset.detailsAccordionInit = '1';
+            });
+        }
+
         function initPanelToggles() {
             document.querySelectorAll('.panel-box').forEach(box => {
                 const header = box.querySelector('.panel-header');
@@ -12836,11 +13552,7 @@
 
                 // Derive a unique name for this panel
                 const refInput = box.querySelector('input[name]');
-                let baseName = "panel";
-                if (refInput) {
-                    const match = refInput.name.match(/^(.+?)_/);
-                    if (match) baseName = match[1];
-                }
+                const baseName = getPanelKey(box) || refInput?.name?.match(/^(.+?)_/)?.[1] || 'panel';
                 const doneName = baseName + "_done";
 
                 // Create Done Toggle
@@ -12967,7 +13679,7 @@
 
 
         function updateSummary() {
-            let panelsWithDamage = 0;
+            const panelsWithDamage = collectDamagedPanels().length;
             let totalOs = 0;
             let totalRi = 0;
             let totalRr = 0;
@@ -12985,11 +13697,6 @@
                 if (el.type === 'checkbox' && name.includes('_rr_') && el.checked) {
                     totalRr++;
                     return;
-                }
-
-                // Count panels with DC range selected
-                if (el.type === 'hidden' && name.endsWith('_dc') && el.value) {
-                    panelsWithDamage++;
                 }
 
                 // Sum Oversized values
@@ -13311,8 +14018,16 @@
 
         function hidePhotoUploadProgress() {
             const statusEl = document.getElementById('photoUploadStatus');
+            const progressFill = document.getElementById('photoProgressFill');
+            const statusTextEl = document.getElementById('photoStatusText');
             if (statusEl) {
                 statusEl.style.display = 'none';
+            }
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
+            if (statusTextEl) {
+                statusTextEl.textContent = 'Preparing photos...';
             }
         }
 
@@ -14710,18 +15425,16 @@
                 // Build Panel Data with R&R/R&I support
                 const panelData = {};
 
-                // Use actual HTML panel names for consistency
-                const HTML_PANELS = [
-                    'lf_fender', 'rf_fender', 'lf_door', 'rf_door',
-                    'lr_door', 'rr_door', 'lr_quarter', 'rr_quarter',
-                    'hood', 'roof', 'deck', 'l_cab', 'r_cab'
-                ];
+                const panelKeys = [...new Set(Array.from(document.querySelectorAll('.panel-box input[name$="_dc"]'))
+                    .map(input => input.name.replace('_dc', ''))
+                    .filter(Boolean))];
 
-                HTML_PANELS.forEach(panel => {
+                panelKeys.forEach(panel => {
                     panelData[panel] = {
                         dc: formData[`${panel}_dc`] || '',
                         os: formData[`${panel}_os`] || '0',
-                        coin: formData[`${panel}_coin`] || ''
+                        coin: formData[`${panel}_coin`] || '',
+                        notes: (formData[`${panel}_notes`] || '').trim()
                     };
                 });
 
@@ -17317,8 +18030,14 @@
         }
 
         function resetForm() {
+            closeStartOverModal();
+
             // 1. Reset all native form inputs to their default values
             document.getElementById('scopeForm').reset();
+
+            // Reset any visible validation states from prior submit attempts.
+            clearValidationErrors();
+            document.querySelectorAll('.has-valid-value').forEach(el => el.classList.remove('has-valid-value'));
 
             // 2. Explicitly blank header fields that live OUTSIDE the form element
             //    (form.reset() only resets inputs that are children of the form)
@@ -17398,6 +18117,7 @@
             // 9. Clear photos
             selectedPhotos = [];
             renderPreviews();
+            hidePhotoUploadProgress();
 
             // 10. Reset live summary to zero
             updateSummary();
@@ -17420,6 +18140,10 @@
                 roEl.value = generateNextRO();
                 handleGenerateRO(true);
             }
+
+            // Re-evaluate filled-field highlighting after all reset operations complete.
+            updateAllFieldBackgrounds();
+            resetSubmitButton();
 
         }
 
@@ -18899,7 +19623,7 @@
                 setField('estimator', f.Estimator);
 
                 // Notes field
-                const notesField = document.querySelector('textarea[name="notes"]');
+                const notesField = document.querySelector('textarea[name="notes"]') || document.getElementById('notes');
                 if (notesField && f.Notes) notesField.value = f.Notes;
 
                 // Parse and load panel data if available
@@ -18913,11 +19637,26 @@
                                 const panel = panelData.panels[panelKey];
                                 const dcInput = document.querySelector(`input[name="${panelKey}_dc"]`);
                                 const osInput = document.querySelector(`input[name="${panelKey}_os"]`);
-                                const coinSelect = document.querySelector(`select[name="${panelKey}_coin"]`);
+                                const coinInput = document.querySelector(`input[name="${panelKey}_coin"]`);
+                                const notesInput = document.querySelector(`textarea[name="${panelKey}_notes"]`);
 
-                                if (dcInput && panel.dc) dcInput.value = panel.dc;
-                                if (osInput && panel.os) osInput.value = panel.os;
-                                if (coinSelect && panel.coin) coinSelect.value = panel.coin;
+                                if (dcInput && panel.dc !== undefined) {
+                                    dcInput.value = panel.dc || '';
+                                    updateDentCount(`${panelKey}_dc`, 0);
+                                }
+
+                                if (osInput && panel.os !== undefined) {
+                                    osInput.value = panel.os || '0';
+                                    updateOsCount(`${panelKey}_os`, 0);
+                                }
+
+                                if (coinInput && panel.coin) {
+                                    updateCoinSize(panelKey, panel.coin);
+                                }
+
+                                if (notesInput && typeof panel.notes === 'string') {
+                                    notesInput.value = panel.notes;
+                                }
                             });
                         }
 
@@ -18949,6 +19688,9 @@
                 if (typeof checkAllHighlighting === 'function') {
                     checkAllHighlighting();
                 }
+                if (typeof updateSummary === 'function') {
+                    updateSummary();
+                }
 
                 showToast('<i data-lucide="check-circle" class="lucide-icon"></i> Record loaded into form', 'success');
             }, 100);
@@ -18970,8 +19712,10 @@
 
             // Check if Quagga is available
             if (typeof Quagga === 'undefined') {
-                status.textContent = 'Scanner library not loaded. Using manual entry.';
-                status.className = 'scanner-status error';
+                scannerActive = false;
+                switchScannerTab('photo');
+                status.textContent = 'Barcode scanner unavailable on this device. Use Photo OCR.';
+                status.className = 'scanner-status';
                 return;
             }
 
@@ -19090,6 +19834,19 @@
             const barcodeView = document.getElementById('barcodeView');
             const photoView = document.getElementById('photoView');
             const status = document.getElementById('scannerStatus');
+
+            if (tab === 'barcode' && typeof Quagga === 'undefined') {
+                barcodeTab.classList.remove('active');
+                photoTab.classList.add('active');
+                barcodeView.classList.remove('active');
+                barcodeView.style.display = 'none';
+                photoView.classList.add('active');
+                photoView.style.display = 'block';
+                status.textContent = 'Barcode scanner unavailable on this device. Use Photo OCR.';
+                status.className = 'scanner-status';
+                scannerActive = false;
+                return;
+            }
 
             if (tab === 'barcode') {
                 barcodeTab.classList.add('active');

@@ -32,6 +32,14 @@ Prepare web assets for Capacitor:
 npm run prepare:capacitor
 ```
 
+`prepare:capacitor` now auto-selects a usable native config in this order:
+
+1. `CAP_CONFIG_PATH` (if set)
+2. `config.native.json`
+3. `config.json`
+
+If no valid Airtable config is found, it writes a placeholder `capacitor-www/config.json`.
+
 Prepare web assets and include local secret config (local debugging only):
 
 ```bash
@@ -58,6 +66,6 @@ npm run cap:open:ios
 
 ## Current Limitation
 
-- By default, Capacitor bundle prep does **not** include local `config.json` / `config.js` to avoid shipping secrets.
+- Capacitor bundle prep needs a usable Airtable config source (`CAP_CONFIG_PATH`, `config.native.json`, or `config.json`) or Airtable calls will fail.
 - Native wrapper disables service worker registration to prevent stale cache behavior inside WKWebView.
-- If you need live Airtable/GHL calls in a local native debug build, run `CAP_INCLUDE_LOCAL_CONFIG=1 npm run prepare:capacitor` before `npm run cap:sync`.
+- If you need local `config.js` in the bundle, run `CAP_INCLUDE_LOCAL_CONFIG=1 npm run prepare:capacitor` before `npm run cap:sync`.

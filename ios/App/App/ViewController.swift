@@ -6,9 +6,25 @@ class ViewController: CAPBridgeViewController {
         view.backgroundColor = .black
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(DentCameraBridgePlugin())
-        bridge?.webView?.backgroundColor = .black
-        bridge?.webView?.scrollView.backgroundColor = .black
+        guard let webView = bridge?.webView else { return }
+
+        webView.backgroundColor = .black
+        webView.isOpaque = false
+
+        let scrollView = webView.scrollView
+        scrollView.backgroundColor = .black
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.keyboardDismissMode = .interactive
+        scrollView.delaysContentTouches = false
+        scrollView.canCancelContentTouches = true
+        if #available(iOS 13.0, *) {
+            scrollView.automaticallyAdjustsScrollIndicatorInsets = false
+        }
     }
 }

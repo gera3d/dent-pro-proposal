@@ -21495,6 +21495,9 @@
             push(fieldMap.year, formData.year);
             push(fieldMap.make, formData.make);
             push(fieldMap.model, formData.model);
+            if (targetModel === 'opportunity' && fieldMap.customerPhone) {
+                push(fieldMap.customerPhone, formData.customerPhone);
+            }
 
             const ymm = [formData.year, formData.make, formData.model].filter(Boolean).join(' ');
             push(fieldMap.yearMakeModel, ymm);
@@ -21554,6 +21557,7 @@
             if (!fieldId || !opportunity?.customFields?.length) return '';
             const field = opportunity.customFields.find(cf => cf.id === fieldId);
             return (
+                field?.fieldValue ||
                 field?.fieldValueString ||
                 field?.field_value ||
                 field?.value ||
@@ -21578,7 +21582,14 @@
                 const oppClaim = getGHLOpportunityFieldValue(opp, GHL_OPPORTUNITY_FIELDS.claimNumber);
                 const oppVin = getGHLOpportunityFieldValue(opp, GHL_OPPORTUNITY_FIELDS.vin).toUpperCase();
                 return claimNumber && vin && oppClaim === claimNumber && oppVin === vin;
-            }) || null;
+            }) || (() => {
+                const claimMatches = opportunities.filter(opp =>
+                    opp.pipelineId === pipelineId &&
+                    claimNumber &&
+                    getGHLOpportunityFieldValue(opp, GHL_OPPORTUNITY_FIELDS.claimNumber) === claimNumber
+                );
+                return claimMatches.length === 1 ? claimMatches[0] : null;
+            })();
         }
 
         async function getGHLOpportunityById(opportunityId) {
@@ -21802,59 +21813,9 @@
                 });
             }
 
-            // Search for existing contact ideally by whatever the user provided, else the claim number dummy 
-            const searchQuery = email || phone || finalEmail;
-            try {
-                // GHL search endpoint: GET /contacts/ with query param (NOT /contacts/search)
-                const searchResponse = await fetch(
-                    `${GHL_CONFIG.baseUrl}/contacts/?locationId=${GHL_CONFIG.locationId}&query=${encodeURIComponent(searchQuery)}&limit=5`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
-                            'Version': '2021-07-28'
-                        }
-                    }
-                );
-
-                const searchResult = await safeJsonParse(searchResponse);
-
-                if (searchResult.contacts && searchResult.contacts.length > 0) {
-                    const existingId = searchResult.contacts[0].id;
-                    console.log('Found existing contact, updating:', existingId);
-
-                    // UPDATE existing contact
-                    const updatePayload = { ...contactPayload };
-                    delete updatePayload.locationId; // GHL API v2 rejects locationId on PUT
-
-                    const updateResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/${existingId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
-                            'Version': '2021-07-28',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(updatePayload)
-                    });
-                    const updateText = await updateResponse.text();
-                    const updateResult = parseGHLApiResponse(updateText);
-                    // contact update response omitted (PII)
-
-                    if (!updateResponse.ok) {
-                        return {
-                            success: false,
-                            error: formatGHLError(updateResponse, updateResult, 'Failed to update contact in GHL')
-                        };
-                    }
-
-                    return { success: true, contactId: existingId };
-                }
-            } catch (e) {
-                console.error('Search/Update failed, creating new contact', e);
-            }
-
-            // Create new contact
-            const createResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/`, {
+            // Upsert by configured HighLevel duplicate identifiers. This is more reliable than
+            // searching first because the search index can lag right after manual contact creation.
+            const upsertResponse = await fetch(`${GHL_CONFIG.baseUrl}/contacts/upsert`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
@@ -21864,25 +21825,24 @@
                 body: JSON.stringify(contactPayload)
             });
 
-            const createText = await createResponse.text();
-            const createResult = parseGHLApiResponse(createText);
-            // contact create response omitted (PII)
+            const upsertText = await upsertResponse.text();
+            const upsertResult = parseGHLApiResponse(upsertText);
 
-            if (!createResponse.ok) {
+            if (!upsertResponse.ok) {
                 return {
                     success: false,
-                    error: formatGHLError(createResponse, createResult, 'Failed to create contact in GHL')
+                    error: formatGHLError(upsertResponse, upsertResult, 'Failed to upsert contact in GHL')
                 };
             }
 
-            if (createResult.contact && createResult.contact.id) {
-                console.log('Created contact:', createResult.contact.id);
-                return { success: true, contactId: createResult.contact.id };
+            if (upsertResult.contact && upsertResult.contact.id) {
+                console.log(upsertResult.new ? 'Created contact:' : 'Upserted contact:', upsertResult.contact.id);
+                return { success: true, contactId: upsertResult.contact.id };
             }
 
             return {
                 success: false,
-                error: formatGHLError(createResponse, createResult, 'Failed to create contact in GHL')
+                error: formatGHLError(upsertResponse, upsertResult, 'Failed to upsert contact in GHL')
             };
         }
 
@@ -22409,7 +22369,8 @@
             roNumber: 'cHqj3TzHR1qipS5zXv4L',
             insurance: 'wcjFn8HG8fhssQWn0TFM',
             claimNumber: 'Y8BZnpg3SgTCaF6eNcwt',
-            estimator: 'azCw1OZR3Rm9f9NhiQpn'
+            estimator: 'azCw1OZR3Rm9f9NhiQpn',
+            customerPhone: 'hCzDXh6evIBDsoNvEfpn'
         };
 
         // Build customFields array from Airtable record fields

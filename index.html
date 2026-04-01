@@ -21403,7 +21403,9 @@
                 }
 
                 // Step 2: Create opportunity
-                const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey);
+                const opportunity = await createGHLOpportunity(formData, contact.contactId, pipelineKey, {
+                    contactWasNew: contact.isNew
+                });
                 if (!opportunity.success) {
                     throw new Error(opportunity.error || 'Failed to create opportunity');
                 }
@@ -21682,42 +21684,53 @@
             };
         }
 
-        async function findExistingGHLOpportunity(contactId, pipelineId, formData) {
+        async function findExistingGHLOpportunity(contactId, pipelineId, formData, options = {}) {
             if (!contactId || !pipelineId) return null;
 
-            try {
-                const opportunities = await listGHLOpportunitiesByContactAdvanced(contactId, pipelineId);
-                const advancedMatch = findMatchingGHLOpportunity(opportunities, pipelineId, formData);
-                if (advancedMatch) return advancedMatch;
-            } catch (advancedErr) {
-                console.warn('Advanced GHL opportunity search failed, falling back to legacy search:', advancedErr.message);
-            }
+            const retryDelays = Array.isArray(options.retryDelaysMs) && options.retryDelaysMs.length
+                ? options.retryDelaysMs
+                : [0];
 
-            let nextUrl = `${GHL_CONFIG.baseUrl}/opportunities/search?location_id=${GHL_CONFIG.locationId}&contact_id=${encodeURIComponent(contactId)}&limit=20`;
-            let pageCount = 0;
-
-            while (nextUrl && pageCount < 5) {
-                pageCount += 1;
-                const response = await fetch(nextUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
-                        'Version': '2021-07-28'
-                    }
-                });
-
-                if (!response.ok) {
-                    const responseText = await response.text();
-                    const parsed = parseGHLApiResponse(responseText);
-                    throw new Error(formatGHLError(response, parsed, 'Failed to search opportunities in GHL'));
+            for (let attemptIndex = 0; attemptIndex < retryDelays.length; attemptIndex += 1) {
+                const waitMs = retryDelays[attemptIndex] || 0;
+                if (waitMs > 0) {
+                    await delayMs(waitMs);
                 }
 
-                const result = await safeJsonParse(response);
-                const opportunities = Array.isArray(result.opportunities) ? result.opportunities : [];
-                const fallbackMatch = findMatchingGHLOpportunity(opportunities, pipelineId, formData);
-                if (fallbackMatch) return fallbackMatch;
+                try {
+                    const opportunities = await listGHLOpportunitiesByContactAdvanced(contactId, pipelineId);
+                    const advancedMatch = findMatchingGHLOpportunity(opportunities, pipelineId, formData);
+                    if (advancedMatch) return advancedMatch;
+                } catch (advancedErr) {
+                    console.warn('Advanced GHL opportunity search failed, falling back to legacy search:', advancedErr.message);
+                }
 
-                nextUrl = result.meta?.nextPageUrl || '';
+                let nextUrl = `${GHL_CONFIG.baseUrl}/opportunities/search?location_id=${GHL_CONFIG.locationId}&contact_id=${encodeURIComponent(contactId)}&limit=20`;
+                let pageCount = 0;
+
+                while (nextUrl && pageCount < 5) {
+                    pageCount += 1;
+                    const response = await fetch(nextUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${GHL_CONFIG.accessToken}`,
+                            'Version': '2021-07-28'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const responseText = await response.text();
+                        const parsed = parseGHLApiResponse(responseText);
+                        throw new Error(formatGHLError(response, parsed, 'Failed to search opportunities in GHL'));
+                    }
+
+                    const result = await safeJsonParse(response);
+                    const opportunities = Array.isArray(result.opportunities) ? result.opportunities : [];
+                    const fallbackMatch = findMatchingGHLOpportunity(opportunities, pipelineId, formData);
+                    if (fallbackMatch) return fallbackMatch;
+
+                    nextUrl = result.meta?.nextPageUrl || '';
+                }
             }
 
             return null;
@@ -21803,7 +21816,7 @@
 
                 if (updateResponse.ok) {
                     console.log('Updated linked GHL contact:', formData.ghlContactId);
-                    return { success: true, contactId: formData.ghlContactId };
+                    return { success: true, contactId: formData.ghlContactId, isNew: false };
                 }
 
                 console.warn('Linked GHL contact update failed, falling back to search/create:', {
@@ -21837,7 +21850,7 @@
 
             if (upsertResult.contact && upsertResult.contact.id) {
                 console.log(upsertResult.new ? 'Created contact:' : 'Upserted contact:', upsertResult.contact.id);
-                return { success: true, contactId: upsertResult.contact.id };
+                return { success: true, contactId: upsertResult.contact.id, isNew: !!upsertResult.new };
             }
 
             return {
@@ -21846,7 +21859,7 @@
             };
         }
 
-        async function createGHLOpportunity(formData, contactId, pipelineKey = 'repair_tracker') {
+        async function createGHLOpportunity(formData, contactId, pipelineKey = 'repair_tracker', options = {}) {
             const pipeline = GHL_CONFIG.pipelines[pipelineKey] || GHL_CONFIG.pipelines.repair_tracker;
             const payload = buildGHLOpportunityPayload(formData, contactId, pipeline);
             const traceContext = {
@@ -21856,6 +21869,10 @@
                 claimNumber: String(formData.claimNumber || '').trim(),
                 vin: String(formData.vin || '').trim().toUpperCase()
             };
+            const hasMergeIdentifiers = !!(traceContext.roNumber || traceContext.claimNumber || traceContext.vin);
+            const retryDelaysMs = (!options.contactWasNew && !formData.ghlOpportunityId && hasMergeIdentifiers)
+                ? [0, 1500, 4000]
+                : [0];
 
             if (formData.ghlOpportunityId) {
                 const linkedOpportunity = await getGHLOpportunityById(formData.ghlOpportunityId);
@@ -21870,7 +21887,7 @@
             }
 
             try {
-                const existingOpportunity = await findExistingGHLOpportunity(contactId, pipeline.id, formData);
+                const existingOpportunity = await findExistingGHLOpportunity(contactId, pipeline.id, formData, { retryDelaysMs });
                 if (existingOpportunity?.id) {
                     createGHLTrace('opportunity_match_found', {
                         ...traceContext,
@@ -21878,7 +21895,9 @@
                         matchStrategy:
                             traceContext.roNumber && getGHLOpportunityFieldValue(existingOpportunity, GHL_OPPORTUNITY_FIELDS.roNumber) === traceContext.roNumber
                                 ? 'ro_number'
-                                : (traceContext.claimNumber && traceContext.vin ? 'claim_plus_vin' : 'unknown')
+                                : (traceContext.claimNumber && traceContext.vin
+                                    ? 'claim_plus_vin'
+                                    : (traceContext.claimNumber ? 'claim_number' : 'unknown'))
                     });
                     return await updateGHLOpportunity(existingOpportunity.id, payload);
                 }
@@ -23928,7 +23947,10 @@
                     // For Drive: use photos WITH branded category separators inserted
                     const drivePhotos = await getPhotosWithSeparators();
 
-                    const ghlFormData = buildGhlPayloadFromFormData(rawData);
+                    const ghlFormData = buildGhlPayloadFromFormData({
+                        ...rawData,
+                        ...currentFormLinkage
+                    });
                     const airtableRecordId = airtableResult._recordId || airtableResult.id || currentDraftRecordId || '';
 
                     clearDraft();
@@ -26225,6 +26247,8 @@
                 setField('odometer', f.Odometer);
                 setField('manufacturesDate', normalizeManufactureDateValue(getFieldValue(f, ['Manufactures Date', 'Manufacture Date'])));
                 setField('insuredName', f['Customer Name']);
+                setField('customerEmail', getFieldValue(f, ['Customer Email', 'Email', 'CustomerEmail', 'E-mail', 'Email Address']));
+                setField('customerPhone', getFieldValue(f, ['Customer Phone', 'Phone', 'CustomerPhone', 'Phone Number', 'Mobile', 'Mobile Phone']));
                 setField('insuranceCompany', f['Insurance Company']);
                 setField('claimNumber', f['Claim Number']);
                 setField('location', f.Location);

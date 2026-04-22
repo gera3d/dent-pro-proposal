@@ -10,7 +10,7 @@
     <meta name="application-name" content="StormOpsFlow">
     <meta name="apple-mobile-web-app-title" content="StormOpsFlow">
     <meta name="theme-color" content="#4CD964">
-    <link rel="manifest" href="manifest.json?v=2026.03.25.01">
+    <link rel="manifest" href="manifest.json?v=2026.04.10.03">
     <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
@@ -16261,7 +16261,7 @@
                         .then(() => console.log('Service Worker disabled in native wrapper'))
                         .catch((err) => console.log('Service Worker cleanup failed', err));
                 } else {
-                    navigator.serviceWorker.register('service-worker.js?v=2026.03.25.01', { updateViaCache: 'none' })
+                    navigator.serviceWorker.register('service-worker.js?v=2026.04.10.03', { updateViaCache: 'none' })
                         .then(() => console.log('Service Worker registered'))
                         .catch((err) => console.log('Service Worker registration failed', err));
                 }

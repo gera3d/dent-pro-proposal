@@ -53,7 +53,7 @@
 
     <script>
         const GHL_CONFIG = {
-            accessToken: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+            accessToken: '',
             locationId: 'AAzBZNLXS4rdwhG76MLi',
             baseUrl: 'https://services.leadconnectorhq.com',
             pipelines: {
@@ -78,7 +78,14 @@
             output.innerHTML = `<span class="${isError ? 'error' : 'success'}">${msg}</span>`;
         }
 
+        function ensureTokenConfigured() {
+            if (GHL_CONFIG.accessToken) return true;
+            log('Missing GHL token. Set GHL_CONFIG.accessToken in this test page before running tests.', true);
+            return false;
+        }
+
         async function testCreateContact() {
+            if (!ensureTokenConfigured()) return;
             log('Creating test contact...');
 
             const timestamp = Date.now();
@@ -126,6 +133,7 @@
         }
 
         async function testCreateOpportunity() {
+            if (!ensureTokenConfigured()) return;
             if (!window.testContactId) {
                 log('⚠️ Please run Test 1 first to create a contact!', true);
                 return;

@@ -1,6 +1,6 @@
 
 const GHL_CONFIG = {
-    accessToken: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+    accessToken: process.env.GHL_ACCESS_TOKEN || '',
     locationId: 'AAzBZNLXS4rdwhG76MLi',
     baseUrl: 'https://services.leadconnectorhq.com',
     pipelines: {

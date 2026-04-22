@@ -206,7 +206,7 @@
 
     <script>
         const GHL = {
-            token: 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79',
+            token: '',
             locationId: 'AAzBZNLXS4rdwhG76MLi',
             baseUrl: 'https://services.leadconnectorhq.com'
         };
@@ -220,6 +220,10 @@
         }
 
         async function apiCall(method, path, body = null) {
+            if (!GHL.token) {
+                log('Missing GHL token. Set GHL.token in this test page before running calls.', 'error');
+                throw new Error('Missing GHL token');
+            }
             const url = `${GHL.baseUrl}${path}`;
             const opts = {
                 method,

@@ -27,7 +27,7 @@ Dent Experts – Product Development Drive (Shared Drive)
 - **File:** `brain/DriveUpload.gs`
 - **Project:** Dent Experts (Google Apps Script)
 - **Project ID:** `1ybGBhpGU5mEmEOXp3o-VQhg3iXZeHqG-XnowgLuln-D3fAe2CHZRkn1t`
-- **Deployment ID:** `AKfycbzliw6vJpduhKK5EUPQ1uJUu37NdPCiYJ4xSI2pP1Em6Qr_pjNqFvhA9HW3y0rkVwFQyw`
+- **Deployment ID:** `AKfycbzP09CjY8iNGCDR4QmnAEQ_d2szkJxp286hoqgYWsSey2bfjcLakoF0zLzy_MnB-FIq9w`
 - **Deploy settings:** Execute as: Me | Access: Anyone
 - **Advanced Service required:** Drive API v3 (must be enabled in Services panel)
 
@@ -112,17 +112,20 @@ This is required because `DriveApp` (the built-in service) does not support Shar
 ### Payload accepted by `doPost`
 ```json
 {
-  "action": "uploadPhoto",
-  "brandFolder": "Dent Experts",
+  "action": "uploadBatch",
   "folderName": "John Doe - CLM-001 - 2023 Ford F-150",
-  "fileName": "VOIL - 01 - VIN Overview.jpg",
-  "base64Data": "...",
-  "mimeType": "image/jpeg"
+  "files": [
+    {
+      "fileName": "VOIL - 01 - VIN Overview.jpg",
+      "base64Data": "...",
+      "mimeType": "image/jpeg"
+    }
+  ]
 }
 ```
 Also accepts `mimeType: "application/pdf"` for the PDF file.
 
-All uploaded files are made public (reader, anyone) via `Drive.Permissions.create()`.
+Folder visibility is made public (reader, anyone). File-level public permission calls are optional.
 
 ---
 
@@ -138,7 +141,7 @@ async function uploadToGoogleDrive(
 )
 ```
 
-**Batching:** Uploads in parallel batches of 5 (`BATCH_SIZE = 5`). Gives ~5× speed over sequential (important for 150+ photo jobs).
+**Batching:** Uploads are grouped by folder and sent as `uploadBatch` requests (`DRIVE_UPLOAD_BATCH_SIZE = 5`). This reduces Apps Script invocations and smooths peak load.
 
 **CORS:** Uses `mode: 'no-cors'` — Apps Script redirects strip CORS headers. Requests still reach Google correctly; we just can't read the response body.
 

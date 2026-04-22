@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const API_KEY = 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79';
+const API_KEY = process.env.GHL_ACCESS_TOKEN || '';
 const LOCATION_ID = 'AAzBZNLXS4rdwhG76MLi';
 const fieldId = 'Oy4NbiWhcxoV3IOlq9Ar'; // VOIL Gallery 2198
 

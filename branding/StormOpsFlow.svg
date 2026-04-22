@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title">
+  <title id="title">StormOpsFlow logo</title>
+  <defs>
+    <linearGradient id="stormopsIconBg" x1="168" y1="128" x2="856" y2="896" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#F3F6FC"/>
+      <stop offset="1" stop-color="#E4EBF8"/>
+    </linearGradient>
+    <linearGradient id="stormopsIconGlow" x1="180" y1="112" x2="700" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="stormopsIconClip">
+      <rect width="1024" height="1024" rx="280" ry="280"/>
+    </clipPath>
+    <filter id="stormopsGlyphShadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#A8B6D6" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <g clip-path="url(#stormopsIconClip)">
+    <rect width="1024" height="1024" fill="url(#stormopsIconBg)"/>
+    <rect width="1024" height="1024" fill="url(#stormopsIconGlow)"/>
+    <rect x="28" y="28" width="968" height="968" rx="252" ry="252" fill="none" stroke="#C9D4E8" stroke-opacity="0.95" stroke-width="14"/>
+    <g transform="translate(174 154) scale(1.9)" filter="url(#stormopsGlyphShadow)">
+      <path fill="#1F2E88" d="M280.066 166.594h66.231V15.949H215.379v72.203h64.687z"/>
+      <path fill="#2F62E4" d="M185.836 261.953h66.23V111.305H121.148v72.202h64.688z"/>
+      <path fill="#AEBBCE" d="M93.457 359.113h66.231V208.469H28.77v72.202h64.687z"/>
+    </g>
+  </g>
+</svg>

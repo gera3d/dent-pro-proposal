@@ -45,7 +45,7 @@ head -n 2 service-worker.js
 ## 3) Sync web assets into iOS wrapper
 
 ```bash
-npm run cap:sync
+npm run cap:sync:testflight
 ```
 
 Critical check (prevents Airtable breakage in native build):
@@ -55,6 +55,11 @@ cat ios/App/App/public/config.json
 ```
 
 Confirm `airtable.apiKey` and `airtable.baseId` are non-empty.
+
+Important:
+- Shipping `config.json` inside a TestFlight/native build does not make those credentials secret.
+- Anyone with the app binary, a proxy, or device debugging access can still extract embedded tokens.
+- Keep tokens least-privileged and treat TestFlight as low-distribution only until Airtable/GHL calls move behind a server-side proxy.
 
 ## 4) Archive iOS build
 
@@ -144,7 +149,7 @@ If TestFlight still shows old build:
 
 If Airtable fails in iOS/TestFlight build:
 
-1. Re-run `npm run cap:sync`
+1. Re-run `npm run cap:sync:testflight`
 2. Re-check `ios/App/App/public/config.json` is populated
 3. Re-archive and re-upload with new build number
 
@@ -154,7 +159,7 @@ If Airtable fails in iOS/TestFlight build:
 - [ ] Bumped `CURRENT_PROJECT_VERSION`
 - [ ] Bumped `version.json`
 - [ ] Bumped `service-worker.js APP_VERSION`
-- [ ] Ran `npm run cap:sync`
+- [ ] Ran `npm run cap:sync:testflight`
 - [ ] Verified native `config.json` has Airtable credentials
 - [ ] Archived successfully
 - [ ] Uploaded successfully to App Store Connect

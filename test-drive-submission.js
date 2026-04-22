@@ -1,4 +1,4 @@
-const driveScriptUrl = 'https://script.google.com/macros/s/AKfycbzliw6vJpduhKK5EUPQ1uJUu37NdPCiYJ4xSI2pP1Em6Qr_pjNqFvhA9HW3y0rkVwFQyw/exec';
+const driveScriptUrl = 'https://script.google.com/macros/s/AKfycbzP09CjY8iNGCDR4QmnAEQ_d2szkJxp286hoqgYWsSey2bfjcLakoF0zLzy_MnB-FIq9w/exec';
 
 async function testDriveUpload() {
     const timestamp = new Date().getTime();

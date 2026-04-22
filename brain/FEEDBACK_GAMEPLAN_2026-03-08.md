@@ -28,6 +28,12 @@ Source: Judah + Katie field feedback (3/8/2026 evening)
 
 4. Final panel order changes are pending user-confirmed order list.
 
+5. Camera focus behavior is unclear during capture.
+- The camera modal shows an `AF` button and a center reticle, but neither explains what it does.
+- Current code does not implement tap-to-focus on the preview. Long-pressing or tapping the image does not move focus or set a focus point.
+- The center reticle is a static framing guide, not a live focus target.
+- The `AF` button only tries to refresh focus through browser camera constraints when the device supports it, so on many devices it can appear to do nothing.
+
 ## 2) Prioritized Execution Plan
 
 ## Phase A — Critical UX Clarity (ship first)
@@ -97,6 +103,32 @@ Goal: implement preferred scoping sequence without churn.
 Acceptance criteria:
 - Panel traversal order matches approved list in all places.
 
+## Phase E — Camera Focus Clarity
+Goal: remove confusion around autofocus, touch interaction, and the center marker.
+
+1. Make current camera behavior explicit in UI copy.
+- Add short helper text in the camera modal such as: `Focus is automatic. The center marker is a framing guide. Tap AF to refresh focus if the image looks soft.`
+- Keep wording simple and technician-facing, not camera-jargon-heavy.
+
+2. Give the `AF` action visible feedback.
+- When `AF` is tapped, show an in-modal status message or brief animation near the reticle, not only a toast.
+- If autofocus is unsupported on the current device, say that plainly.
+- Avoid a state where the tap appears ignored.
+
+3. Clarify the center reticle's meaning.
+- Rename or visually position it as a framing target, not a selectable focus point.
+- If the team wants a true focus target later, only keep the reticle if it can eventually reflect actual focus behavior.
+
+4. Decide between documenting vs implementing touch-to-focus.
+- Option A: explicitly document that preview taps do not focus and only the shutter / AF controls are active.
+- Option B: add real tap-to-focus if browser/device capability support is reliable enough.
+- Do not imply touch focus unless it actually works.
+
+Acceptance criteria:
+- First-time users can explain what `AF` does after one use.
+- Users do not assume the center marker is broken or tappable.
+- Tapping or long-pressing the preview no longer creates ambiguity about whether focus changed.
+
 ## 3) QA Checklist (for sign-off)
 
 1. Start scope, type customer/email/phone, add photos, click Start Over:
@@ -119,11 +151,18 @@ Acceptance criteria:
 - manual refresh behavior is predictable,
 - no confusing stale states after refresh.
 
+5. Camera clarity test:
+- Open the camera modal on iPhone/iPad.
+- Confirm helper copy explains autofocus and the center marker.
+- Tap `AF` and verify there is visible feedback even if hardware focus does not visibly change.
+- Tap and long-press the preview and confirm the app no longer suggests unsupported touch-to-focus behavior.
+
 ## 4) Rollout Order
 
 1. Phase A + B together (single UX patch release).
 2. Phase C immediately after (small content patch).
 3. Phase D only after approved order list arrives.
+4. Phase E can ship with any camera polish pass; it is mostly UX clarity unless true tap-to-focus is added.
 
 ## 5) Notes From Feedback to Preserve
 
@@ -133,3 +172,8 @@ Acceptance criteria:
 
 2. Prioritize desktop clarity.
 - Judah noted parts managers on PC; reset/refresh cues should be clear in web workflow.
+
+3. Important implementation note for camera feedback.
+- As of March 15, 2026, the app has an `AF` button (`refocusPhotoCamera()`), but no tap-to-focus handler in the camera preview.
+- The center reticle in the modal is currently a static overlay only.
+- Any copy, training, or UI should match that reality until the camera behavior changes.

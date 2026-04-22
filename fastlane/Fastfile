@@ -1,0 +1,97 @@
+require 'base64'
+
+def parse_groups(value)
+  return nil if value.nil? || value.strip.empty?
+
+  value.split(',').map(&:strip).reject(&:empty?)
+end
+
+def asc_api_key_from_env
+  key_id = ENV['ASC_KEY_ID']
+  issuer_id = ENV['ASC_ISSUER_ID']
+
+  UI.user_error!('Missing ASC_KEY_ID') if key_id.to_s.strip.empty?
+  UI.user_error!('Missing ASC_ISSUER_ID') if issuer_id.to_s.strip.empty?
+
+  key_content_base64 = ENV['ASC_KEY_CONTENT_BASE64']
+  key_file = ENV['ASC_KEY_FILE']
+
+  if !key_content_base64.to_s.strip.empty?
+    return app_store_connect_api_key(
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_content: Base64.decode64(key_content_base64),
+      is_key_content_base64: false,
+      duration: 1200,
+      in_house: false
+    )
+  end
+
+  if !key_file.to_s.strip.empty?
+    return app_store_connect_api_key(
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_filepath: key_file,
+      duration: 1200,
+      in_house: false
+    )
+  end
+
+  UI.user_error!('Set ASC_KEY_CONTENT_BASE64 or ASC_KEY_FILE for App Store Connect authentication')
+end
+
+def maybe_set_marketing_version(version)
+  return if version.nil? || version.to_s.strip.empty?
+
+  increment_version_number(
+    version_number: version,
+    xcodeproj: 'ios/App/App.xcodeproj'
+  )
+end
+
+def set_build_number(build_number)
+  if build_number.nil? || build_number.to_s.strip.empty?
+    increment_build_number(xcodeproj: 'ios/App/App.xcodeproj')
+  else
+    increment_build_number(
+      build_number: build_number,
+      xcodeproj: 'ios/App/App.xcodeproj'
+    )
+  end
+end
+
+platform :ios do
+  desc 'Sync Capacitor web assets, build iOS archive, upload to TestFlight, and optionally submit external review'
+  lane :testflight_release do |options|
+    api_key = asc_api_key_from_env
+
+    sh('npm run cap:sync:testflight')
+
+    maybe_set_marketing_version(options[:version] || ENV['APP_VERSION'])
+    set_build_number(options[:build_number] || ENV['BUILD_NUMBER'])
+
+    build_app(
+      workspace: 'ios/App/App.xcworkspace',
+      scheme: 'App',
+      clean: true,
+      export_method: 'app-store',
+      output_directory: 'build/fastlane',
+      output_name: 'App.ipa'
+    )
+
+    groups = parse_groups(options[:groups] || ENV['TESTFLIGHT_GROUPS'])
+    what_to_test = options[:what_to_test] || ENV['TESTFLIGHT_WHAT_TO_TEST']
+    external = options.key?(:external) ? options[:external] : true
+    submit_review = options.key?(:submit_beta_review) ? options[:submit_beta_review] : external
+
+    upload_to_testflight(
+      api_key: api_key,
+      distribute_external: external,
+      submit_beta_review: submit_review,
+      groups: groups,
+      changelog: what_to_test,
+      skip_waiting_for_build_processing: false,
+      notify_external_testers: false
+    )
+  end
+end

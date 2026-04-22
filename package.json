@@ -7,10 +7,19 @@
     "prepare:capacitor": "node scripts/prepare-capacitor-web.mjs",
     "prepare:capacitor:with-config": "CAP_INCLUDE_LOCAL_CONFIG=1 node scripts/prepare-capacitor-web.mjs",
     "cap:sync": "npm run prepare:capacitor && npx cap sync",
+    "cap:sync:testflight": "npm run cap:sync && node scripts/preflight-testflight-sync.mjs",
     "cap:sync:with-config": "npm run prepare:capacitor:with-config && npx cap sync",
     "cap:copy": "npm run prepare:capacitor && npx cap copy",
     "cap:add:ios": "npm run prepare:capacitor && npx cap add ios",
-    "cap:open:ios": "npx cap open ios"
+    "cap:open:ios": "npx cap open ios",
+    "ios:build:sim": "npm run cap:sync && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' build",
+    "ios:clean:build:sim": "npm run cap:sync && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' clean build",
+    "ios:sync:clean:build": "npm run cap:sync && npm run ios:clean:build:sim",
+    "ios:build:device": "npm run cap:sync && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination \"id=${IOS_DEVICE_ID}\" -allowProvisioningUpdates -allowProvisioningDeviceRegistration build",
+    "ios:install:device": "APP_PATH=$(ls -td ~/Library/Developer/Xcode/DerivedData/App-*/Build/Products/Debug-iphoneos/App.app | head -n1) && xcrun devicectl device install app --device \"${IOS_DEVICE_ID}\" \"$APP_PATH\"",
+    "ios:launch:device": "xcrun devicectl device process launch --device \"${IOS_DEVICE_ID}\" com.v8zqk8u83a.dentexpertsscoper",
+    "ios:testflight": "fastlane ios testflight_release",
+    "ios:testflight:install": "echo 'Using global fastlane installed via brew'"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.3"
@@ -18,6 +27,7 @@
   "devDependencies": {
     "@capacitor/cli": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
+    "playwright": "^1.58.2",
     "typescript": "^5.9.2"
   }
 }

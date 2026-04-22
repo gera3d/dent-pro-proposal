@@ -26,7 +26,7 @@ from pathlib import Path
 
 # ─── Config ────────────────────────────────────────────────────────────────
 API      = "https://services.leadconnectorhq.com/contacts"
-TOKEN    = "pit-a8576171-f084-46c5-8b31-e8bd0d05da79"
+TOKEN    = os.environ.get("GHL_ACCESS_TOKEN", "").strip()
 TAG      = "[warmup] seed"
 VERSION  = "2021-07-28"
 
@@ -66,6 +66,10 @@ def save_config(cfg):
 # ─── Pre-flight checks ────────────────────────────────────────────────────
 def preflight():
     cfg = load_config()
+
+    if not TOKEN:
+        log("❌ Missing GHL_ACCESS_TOKEN environment variable. Warmup aborted.")
+        return False
 
     # Track start date
     if "start_date" not in cfg:

@@ -1,4 +1,4 @@
-const accessToken = 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79';
+const accessToken = process.env.GHL_ACCESS_TOKEN || '';
 const locationId = 'AAzBZNLXS4rdwhG76MLi';
 const baseUrl = 'https://services.leadconnectorhq.com';
 

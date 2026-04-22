@@ -118,6 +118,31 @@ Key additions:
 
 ---
 
+### Item 4 — Camera Focus UX Is Ambiguous
+
+**Observed behavior in current code:**
+- The camera modal includes an `AF` button and a center reticle.
+- There is no tap-to-focus handler on the preview today.
+- The center reticle is a static framing overlay, not an interactive focus point.
+- `AF` calls `refocusPhotoCamera()`, which only refreshes focus if the browser/device exposes supported camera focus controls. On unsupported devices it can feel like nothing happened.
+
+**User confusion this creates:**
+- Techs naturally tap or long-press the preview expecting iPhone-style touch focus.
+- When nothing changes, it feels broken.
+- The center marker looks like a focus target, so people assume it should react.
+- `AF` has weak visible feedback, so users cannot tell whether it worked, was unsupported, or was ignored.
+
+**What to build:**
+1. Add helper copy in the camera modal:
+   `Focus is automatic. The center marker is for framing. Tap AF to refresh focus if needed.`
+2. Give `AF` stronger visible feedback in the modal itself, not toast-only.
+3. If autofocus is unsupported, say that clearly.
+4. Decide whether to keep documenting the current behavior or implement true tap-to-focus later. Until then, do not imply preview taps change focus.
+
+**Files:** `index.html` — camera modal markup/styles/copy + `refocusPhotoCamera()`
+
+---
+
 ## Implementation Order
 
 | # | Task | Effort | Impact |
@@ -125,8 +150,9 @@ Key additions:
 | 1 | Auto-generate RO number in `resetForm()` + page load | Small | ⭐⭐⭐⭐⭐ |
 | 2 | Make Estimator sticky per device (don't reset, save to localStorage) | Small | ⭐⭐⭐⭐ |
 | 3 | Expand success modal with photo count + "what to do next" steps | Small | ⭐⭐⭐⭐ |
+| 4 | Clarify autofocus / reticle behavior in camera modal | Small | ⭐⭐⭐⭐ |
 
-All 3 changes are in `index.html` only. No backend or Airtable schema changes needed.
+All 4 changes are in `index.html` only. No backend or Airtable schema changes needed.
 
 ---
 

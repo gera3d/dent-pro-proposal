@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +18,7 @@ const entriesToCopy = [
     'version.json',
     'logo.webp',
     'app-icon.png',
+    'icons',
     'capacitor-bridge.js',
     'Option_B_Custom_WebApp'
 ];
@@ -47,6 +49,42 @@ function readJsonIfPresent(filePath) {
     try {
         return JSON.parse(readFileSync(filePath, 'utf8'));
     } catch {
+        return null;
+    }
+}
+
+function isPlainObject(value) {
+    return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+function mergeConfigObjects(base, overrides) {
+    if (!isPlainObject(base)) return isPlainObject(overrides) ? { ...overrides } : base;
+    const next = { ...base };
+    if (!isPlainObject(overrides)) return next;
+
+    Object.entries(overrides).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+            next[key] = value.slice();
+        } else if (isPlainObject(value) && isPlainObject(next[key])) {
+            next[key] = mergeConfigObjects(next[key], value);
+        } else if (value !== undefined) {
+            next[key] = value;
+        }
+    });
+
+    return next;
+}
+
+function readLocalConfigJsIfPresent(filePath) {
+    if (!existsSync(filePath)) return null;
+    try {
+        const source = readFileSync(filePath, 'utf8');
+        const sandbox = { window: {} };
+        vm.createContext(sandbox);
+        vm.runInContext(source, sandbox, { filename: filePath });
+        return isPlainObject(sandbox.window.LOCAL_CONFIG) ? sandbox.window.LOCAL_CONFIG : null;
+    } catch (error) {
+        console.warn(`Failed to parse ${path.relative(rootDir, filePath)}: ${error.message}`);
         return null;
     }
 }
@@ -91,9 +129,15 @@ function resolveNativeConfigSource() {
 
 const resolvedConfigPath = resolveNativeConfigSource();
 const targetConfigPath = path.join(outputDir, 'config.json');
+const localConfigJsPath = path.join(rootDir, 'config.js');
+const localConfigOverrides = readLocalConfigJsIfPresent(localConfigJsPath);
 
 if (resolvedConfigPath) {
-    cpSync(resolvedConfigPath, targetConfigPath);
+    const resolvedConfig = readJsonIfPresent(resolvedConfigPath) || {};
+    const mergedConfig = localConfigOverrides
+        ? mergeConfigObjects(resolvedConfig, localConfigOverrides)
+        : resolvedConfig;
+    writeFileSync(targetConfigPath, JSON.stringify(mergedConfig, null, 4));
 } else {
     // Keep builds deterministic when no usable native config is available.
     const fallbackConfig = {
@@ -108,7 +152,10 @@ if (resolvedConfigPath) {
             note: 'Files uploaded to tmpfiles.org are immediately downloaded by Airtable.'
         }
     };
-    writeFileSync(targetConfigPath, JSON.stringify(fallbackConfig, null, 4));
+    const mergedFallbackConfig = localConfigOverrides
+        ? mergeConfigObjects(fallbackConfig, localConfigOverrides)
+        : fallbackConfig;
+    writeFileSync(targetConfigPath, JSON.stringify(mergedFallbackConfig, null, 4));
 }
 
 console.log(`Prepared Capacitor web bundle in ${outputDir}`);
@@ -118,6 +165,9 @@ if (resolvedConfigPath) {
     console.log('Forced placeholder config (CAP_FORCE_PLACEHOLDER_CONFIG=1).');
 } else {
     console.log('No usable Airtable config found (checked CAP_CONFIG_PATH, config.native.json, config.json). Wrote placeholder config.json.');
+}
+if (localConfigOverrides) {
+    console.log('Merged LOCAL_CONFIG from config.js into native config.json.');
 }
 if (includeLocalConfig) {
     console.log('CAP_INCLUDE_LOCAL_CONFIG=1 enabled: copied config.js when available.');

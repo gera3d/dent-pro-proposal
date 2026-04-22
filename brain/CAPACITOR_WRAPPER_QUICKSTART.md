@@ -20,6 +20,10 @@ The current web app remains the source of truth.
 
 ## Commands
 
+For the exact repeatable local deployment workflow (sync + clean build + deploy to iPad), see:
+
+- `brain/LOCAL_IOS_DEPLOYMENT_FLOW.md`
+
 Install dependencies:
 
 ```bash

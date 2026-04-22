@@ -1,4 +1,4 @@
-const API_KEY = 'pit-a8576171-f084-46c5-8b31-e8bd0d05da79';
+const API_KEY = process.env.GHL_ACCESS_TOKEN || '';
 const LOCATION_ID = 'AAzBZNLXS4rdwhG76MLi';
 const BASE_URL = 'https://services.leadconnectorhq.com';
 

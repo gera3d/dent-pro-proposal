@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.dentexperts.scoper',
-  appName: 'Dent Experts',
+  appId: 'com.v8zqk8u83a.dentexpertsscoper',
+  appName: 'StormOpsFlow',
   webDir: 'capacitor-www',
   bundledWebRuntime: false,
   server: {

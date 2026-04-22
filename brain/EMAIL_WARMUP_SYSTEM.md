@@ -48,7 +48,7 @@ New sending domains/IPs start with zero reputation. Without warmup, emails land 
 |---|---|
 | Platform URL | `https://app.stormopsflow.com` (white-labeled GHL) |
 | Location ID | `AAzBZNLXS4rdwhG76MLi` |
-| API Token | `pit-a8576171-f084-46c5-8b31-e8bd0d05da79` |
+| API Token | `YOUR_GHL_ACCESS_TOKEN` |
 | API Version | `2021-07-28` |
 | API Base URL | `https://services.leadconnectorhq.com` |
 
